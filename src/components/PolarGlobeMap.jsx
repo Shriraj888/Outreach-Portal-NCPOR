@@ -27,6 +27,64 @@ const HQ = {
   status: 'Operational Headquarters'
 };
 
+// ─── Curated Geographic Reference Labels (Continents, Countries, Polar Oceans) ──
+const GEO_LABELS = [
+  // ── Continents ──
+  { name: 'ANTARCTICA', type: 'continent', lng: 0, lat: -82, minScale: 140 },
+  { name: 'ASIA', type: 'continent', lng: 90, lat: 46, minScale: 140 },
+  { name: 'AFRICA', type: 'continent', lng: 22, lat: 2, minScale: 140 },
+  { name: 'EUROPE', type: 'continent', lng: 18, lat: 50, minScale: 160 },
+  { name: 'AUSTRALIA', type: 'continent', lng: 134, lat: -25, minScale: 140 },
+  { name: 'NORTH AMERICA', type: 'continent', lng: -100, lat: 46, minScale: 140 },
+  { name: 'SOUTH AMERICA', type: 'continent', lng: -58, lat: -16, minScale: 140 },
+
+  // ── Polar Geographic Sectors ──
+  { name: 'South Pole (90°S)', type: 'polar', lng: 0, lat: -89.8, minScale: 220 },
+  { name: 'North Pole (90°N)', type: 'polar', lng: 0, lat: 89.8, minScale: 200 },
+  { name: 'Dronning Maud Land', type: 'region', lng: 14, lat: -73.5, minScale: 240 },
+  { name: 'Princess Astrid Coast', type: 'region', lng: 12, lat: -68.8, minScale: 280 },
+  { name: 'Larsemann Hills', type: 'region', lng: 76.5, lat: -67.8, minScale: 280 },
+  { name: 'Schirmacher Oasis', type: 'region', lng: 11.6, lat: -71.5, minScale: 300 },
+  { name: 'Weddell Sea', type: 'water', lng: -45, lat: -73, minScale: 210 },
+  { name: 'Ross Sea', type: 'water', lng: 175, lat: -75, minScale: 210 },
+  { name: 'Southern Ocean', type: 'water', lng: 60, lat: -56, minScale: 160 },
+  { name: 'Arctic Ocean', type: 'water', lng: 0, lat: 84, minScale: 170 },
+  { name: 'Barents Sea', type: 'water', lng: 40, lat: 74, minScale: 220 },
+  { name: 'Indian Ocean', type: 'water', lng: 75, lat: -12, minScale: 150 },
+  { name: 'Atlantic Ocean', type: 'water', lng: -28, lat: 15, minScale: 150 },
+  { name: 'Pacific Ocean', type: 'water', lng: -160, lat: 5, minScale: 150 },
+
+  // ── High Arctic & Cryosphere Regions ──
+  { name: 'Svalbard (Norway)', type: 'country', lng: 18, lat: 78.5, minScale: 200 },
+  { name: 'Greenland', type: 'country', lng: -40, lat: 72, minScale: 160 },
+  { name: 'Kongsfjorden Fjord', type: 'region', lng: 12.2, lat: 80.2, minScale: 310 },
+
+  // ── Prominent Countries ──
+  { name: 'INDIA', type: 'highlight_country', lng: 79, lat: 21.5, minScale: 140 },
+  { name: 'Himalayas / Third Pole', type: 'region', lng: 84, lat: 30, minScale: 200 },
+  { name: 'Spiti Valley', type: 'region', lng: 78.2, lat: 33.2, minScale: 310 },
+  { name: 'Norway', type: 'country', lng: 8.5, lat: 61, minScale: 220 },
+  { name: 'Sweden', type: 'country', lng: 15.5, lat: 62, minScale: 240 },
+  { name: 'Finland', type: 'country', lng: 26, lat: 64, minScale: 240 },
+  { name: 'Russia / Siberia', type: 'country', lng: 95, lat: 62, minScale: 160 },
+  { name: 'Canada', type: 'country', lng: -105, lat: 58, minScale: 160 },
+  { name: 'Alaska (USA)', type: 'country', lng: -152, lat: 64, minScale: 180 },
+  { name: 'United States', type: 'country', lng: -98, lat: 38, minScale: 170 },
+  { name: 'South Africa', type: 'country', lng: 24, lat: -29, minScale: 170 },
+  { name: 'Madagascar', type: 'country', lng: 47, lat: -19, minScale: 210 },
+  { name: 'New Zealand', type: 'country', lng: 172, lat: -42, minScale: 190 },
+  { name: 'Chile', type: 'country', lng: -71, lat: -35, minScale: 190 },
+  { name: 'Argentina', type: 'country', lng: -65, lat: -38, minScale: 190 },
+  { name: 'Brazil', type: 'country', lng: -52, lat: -10, minScale: 170 },
+  { name: 'China', type: 'country', lng: 104, lat: 35, minScale: 160 },
+  { name: 'Japan', type: 'country', lng: 138, lat: 37, minScale: 210 },
+  { name: 'United Kingdom', type: 'country', lng: -2, lat: 54, minScale: 230 },
+  { name: 'France', type: 'country', lng: 2.5, lat: 46.5, minScale: 240 },
+  { name: 'Germany', type: 'country', lng: 10.5, lat: 51, minScale: 240 },
+  { name: 'Saudi Arabia', type: 'country', lng: 45, lat: 24, minScale: 190 },
+  { name: 'Indonesia', type: 'country', lng: 114, lat: -1, minScale: 190 },
+];
+
 // ─── Color & Math Helpers ───────────────────────────────────────────────────
 function hexToRgba(hex, alpha = 1) {
   if (!hex) return `rgba(56, 189, 248, ${alpha})`;
@@ -100,6 +158,7 @@ export default function PolarGlobeMap({
     showSatellite: true,
     showSeaIce: true,
     showGraticule: true,
+    showLabels: true,
     autoRotate: false,
   },
 }) {
@@ -320,6 +379,62 @@ export default function PolarGlobeMap({
       ctx.fillStyle = 'rgba(168, 85, 247, 0.08)';
       ctx.fill();
       ctx.stroke();
+    }
+
+    // 5.5. Geographic Country, Continent & Ocean Labels
+    if (layersRef.current.showLabels !== false) {
+      GEO_LABELS.forEach((lbl) => {
+        if (currentScale < (lbl.minScale || 140)) return;
+        if (!isCoordFacing(lbl.lng, lbl.lat, currentRot, pt)) return;
+
+        const lp = proj([lbl.lng, lbl.lat]);
+        if (!lp) return;
+
+        ctx.save();
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
+        if (lbl.type === 'continent') {
+          const fontSize = Math.round(clamp(currentScale * 0.038, 9, 13));
+          ctx.font = `bold ${fontSize}px Inter, sans-serif`;
+          ctx.fillStyle = 'rgba(224, 242, 254, 0.65)';
+          ctx.strokeStyle = 'rgba(3, 10, 23, 0.85)';
+          ctx.lineWidth = 2.5;
+          ctx.strokeText(lbl.name, lp[0], lp[1]);
+          ctx.fillText(lbl.name, lp[0], lp[1]);
+        } else if (lbl.type === 'highlight_country') {
+          const fontSize = Math.round(clamp(currentScale * 0.034, 9, 12));
+          ctx.font = `bold ${fontSize}px Inter, sans-serif`;
+          ctx.fillStyle = '#fcd34d'; // Warm Amber/Gold for India
+          ctx.strokeStyle = 'rgba(3, 10, 23, 0.9)';
+          ctx.lineWidth = 2.5;
+          ctx.strokeText(lbl.name, lp[0], lp[1]);
+          ctx.fillText(lbl.name, lp[0], lp[1]);
+        } else if (lbl.type === 'country') {
+          const fontSize = Math.round(clamp(currentScale * 0.029, 8, 10.5));
+          ctx.font = `600 ${fontSize}px Inter, sans-serif`;
+          ctx.fillStyle = 'rgba(203, 213, 225, 0.72)';
+          ctx.strokeStyle = 'rgba(3, 10, 23, 0.85)';
+          ctx.lineWidth = 2.2;
+          ctx.strokeText(lbl.name, lp[0], lp[1]);
+          ctx.fillText(lbl.name, lp[0], lp[1]);
+        } else if (lbl.type === 'region' || lbl.type === 'polar') {
+          const fontSize = Math.round(clamp(currentScale * 0.028, 8, 10));
+          ctx.font = `italic 600 ${fontSize}px Inter, sans-serif`;
+          ctx.fillStyle = lbl.type === 'polar' ? '#7dd3fc' : 'rgba(186, 230, 253, 0.65)';
+          ctx.strokeStyle = 'rgba(3, 10, 23, 0.85)';
+          ctx.lineWidth = 2;
+          ctx.strokeText(lbl.name, lp[0], lp[1]);
+          ctx.fillText(lbl.name, lp[0], lp[1]);
+        } else if (lbl.type === 'water') {
+          const fontSize = Math.round(clamp(currentScale * 0.03, 8.5, 11));
+          ctx.font = `italic ${fontSize}px Inter, sans-serif`;
+          ctx.fillStyle = 'rgba(56, 189, 248, 0.45)';
+          ctx.fillText(lbl.name, lp[0], lp[1]);
+        }
+
+        ctx.restore();
+      });
     }
 
     // 6. Logistics Great-Circle Routes from Goa HQ

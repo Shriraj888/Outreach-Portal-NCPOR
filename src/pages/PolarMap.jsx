@@ -44,6 +44,7 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
     showSatellite: true,
     showSeaIce: true,
     showGraticule: true,
+    showLabels: true,
     autoRotate: false
   });
 
@@ -282,6 +283,14 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
                 title="Toggle Latitude & Longitude Graticule Grid"
               >
                 <span>🌐 Lat/Lng Grid</span>
+              </button>
+
+              <button 
+                className={`layer-chip ${layers.showLabels ? 'active' : ''}`}
+                onClick={() => toggleLayer('showLabels')}
+                title="Toggle Country, Continent & Ocean Geographic Labels"
+              >
+                <span>🏷️ Geo Labels</span>
               </button>
 
               <button 
