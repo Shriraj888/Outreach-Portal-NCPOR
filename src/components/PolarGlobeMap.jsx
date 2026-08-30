@@ -93,6 +93,7 @@ export default function PolarGlobeMap({
   onSelectStation = () => {},
   activePreset = 'all',
   projectionType = 'geoOrthographic',
+  satellitePosition = null,  // { lat, lng } from real TLE orbital calc. Falls back to animation.
   layers = {
     showRoutes: true,
     showAurora: true,
@@ -106,13 +107,14 @@ export default function PolarGlobeMap({
   const containerRef = useRef(null);
 
   // Smooth animation and physics refs
-  const rotRef = useRef([-70, -10, 0]);      // [lambda, phi, gamma]
+  const rotRef = useRef([-80.3, -21.0, 0]);   // [lambda, phi, gamma] Centered on India (80.3°E, 21.0°N)
   const targetRef = useRef(null);            // tween target rotation
-  const scaleRef = useRef(240);              // current zoom scale
+  const scaleRef = useRef(300);              // current zoom scale
   const targetScaleRef = useRef(null);       // tween target scale
   const velRef = useRef([0, 0]);             // drag inertia velocity
   const dragRef = useRef(null);              // active drag session
   const satRef = useRef({ angle: 0, lng: 15, lat: 60 });
+  const satPosRef = useRef(null);            // real TLE position override
   const pulseRef = useRef(0);                // radar pulse phase
   const hovRef = useRef(null);               // hovered station item
   const rafRef = useRef(null);
@@ -122,8 +124,8 @@ export default function PolarGlobeMap({
   const projTypeRef = useRef(projectionType);
 
   // React UI state for HUD
-  const [scaleState, setScaleState] = useState(240);
-  const [rotState, setRotState] = useState([-70, -10, 0]);
+  const [scaleState, setScaleState] = useState(300);
+  const [rotState, setRotState] = useState([-80.3, -21.0, 0]);
   const [isHoveringPin, setIsHoveringPin] = useState(false);
 
   // Keep references fresh
@@ -131,6 +133,7 @@ export default function PolarGlobeMap({
   useEffect(() => { selStRef.current = selectedStation; }, [selectedStation]);
   useEffect(() => { stationsRef.current = stations; }, [stations]);
   useEffect(() => { projTypeRef.current = projectionType; }, [projectionType]);
+  useEffect(() => { satPosRef.current = satellitePosition; }, [satellitePosition]);
 
   // Preset Camera Angles
   const applyPreset = useCallback((preset) => {
@@ -139,7 +142,7 @@ export default function PolarGlobeMap({
       arctic:           { rot: [-12, -78, 0], scale: 290 },
       himalaya:         { rot: [-77.6, -32.4, 0], scale: 330 },
       'southern-ocean': { rot: [-55, 45, 0], scale: 260 },
-      all:              { rot: [-68, -12, 0], scale: 240 },
+      all:              { rot: [-80.3, -21.0, 0], scale: 300 },
     };
     const p = map[preset] || map.all;
     targetRef.current = p.rot;
@@ -403,7 +406,10 @@ export default function PolarGlobeMap({
 
     // 8. Earth Observation Polar Satellite Track
     if (layersRef.current.showSatellite) {
-      const sat = satRef.current;
+      // Use real TLE position if available (from usePolarData hook), fallback to animation
+      const sat = satPosRef.current
+        ? { lng: satPosRef.current.lng, lat: satPosRef.current.lat }
+        : satRef.current;
       if (isCoordFacing(sat.lng, sat.lat, currentRot, pt)) {
         const satPt = proj([sat.lng, sat.lat]);
         if (satPt) {
@@ -924,7 +930,7 @@ function roundRect(ctx, x, y, w, h, r) {
   ctx.quadraticCurveTo(x + w, y, x + w, y + r);
   ctx.lineTo(x + w, y + h - r);
   ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
-  ctx.lineTo(x + r, y + h);
+    ctx.lineTo(x + r, y + h);
   ctx.quadraticCurveTo(x, y + h, x, y + h - r);
   ctx.lineTo(x, y + r);
   ctx.quadraticCurveTo(x, y, x + r, y);

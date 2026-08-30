@@ -15,20 +15,20 @@ import {
   Sparkles,
   Satellite,
   Waves,
-  Eye,
   RotateCw,
   Gauge,
   Activity,
-  Maximize2,
   Sun,
-  BarChart3
+  BarChart3,
+  RefreshCw
 } from 'lucide-react';
+import { usePolarData } from '../hooks/usePolarData';
 
 export default function PolarMap({ onSelectExpedition, navigateTo }) {
   const { stations, expeditions, lang } = usePortal();
   
-  // Selected Station (default to Bharati Station)
-  const [selectedStation, setSelectedStation] = useState(stations[0] || null);
+  // Selected Station (starts as null to show full India/global overview)
+  const [selectedStation, setSelectedStation] = useState(null);
   
   // Camera view preset: 'all' | 'antarctica' | 'arctic' | 'himalaya' | 'southern-ocean'
   const [activeRegionView, setActiveRegionView] = useState('all');
@@ -49,27 +49,22 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
     autoRotate: false
   });
 
-  // Realtime Live Telemetry Clock & Simulation
-  const [liveMetrics, setLiveMetrics] = useState({
-    utcTime: new Date().toUTCString().slice(17, 25),
-    solarDeclination: '-11.4° S',
-    auroraIndex: 'Kp 4.2 (Active)',
-    satelliteStatus: 'SARAL / Oceansat-3 Nominal',
-    solarRadiation: '210 W/m²',
-    baroPressure: '984.2 hPa',
-    dataPackets: '1,420 pkts/min'
-  });
+  // ── Real-Time Data from Open-Meteo + NOAA + NCPOR ────────────────────────
+  const {
+    aurora,
+    news: ncporNews,
+    satellite: satPos,
+    loading: dataLoading,
+    error: dataError,
+    lastUpdated,
+    refetch,
+    getStationWeather,
+  } = usePolarData({ refreshIntervalMs: 10 * 60 * 1000 });
 
+  // UTC clock (client-side, updates every second)
+  const [utcTime, setUtcTime] = useState(new Date().toUTCString().slice(17, 25));
   useEffect(() => {
-    const timer = setInterval(() => {
-      const d = new Date();
-      setLiveMetrics(prev => ({
-        ...prev,
-        utcTime: d.toUTCString().slice(17, 25),
-        baroPressure: (984 + (Math.random() * 0.6 - 0.3)).toFixed(1) + ' hPa',
-        solarRadiation: (208 + Math.floor(Math.random() * 8)) + ' W/m²'
-      }));
-    }, 1000);
+    const timer = setInterval(() => setUtcTime(new Date().toUTCString().slice(17, 25)), 1000);
     return () => clearInterval(timer);
   }, []);
 
@@ -79,9 +74,9 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
 
   const handleStationClick = (st) => {
     setSelectedStation(st);
-    if (st.region === 'Antarctica') setActiveRegionView('antarctica');
-    else if (st.region === 'Arctic') setActiveRegionView('arctic');
-    else if (st.region === 'Himalaya') setActiveRegionView('himalaya');
+    if (!st) {
+      setActiveRegionView('all');
+    }
   };
 
   // Filter stations for directory
@@ -155,8 +150,11 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
         </div>
         <div className="pills-scroll">
           <button 
-            className={`map-view-btn ${activeRegionView === 'all' ? 'active' : ''}`}
-            onClick={() => { setActiveRegionView('all'); setSelectedStation(null); }}
+            className={`map-view-btn ${activeRegionView === 'all' && !selectedStation ? 'active' : ''}`}
+            onClick={() => {
+              setActiveRegionView('all');
+              setSelectedStation(null);
+            }}
           >
             <Globe2 size={14} />
             <span>Global Overview (All Bases)</span>
@@ -200,22 +198,40 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
       {/* Live Telemetry Realtime Status Banner */}
       <div className="telemetry-statusbar">
         <div className="status-item">
-          <span className="dot dot-green"></span>
+          <span className={`dot ${dataLoading ? 'dot-orange' : dataError ? 'dot-red' : 'dot-green'}`} />
           <span className="status-label">SATCOM LINK:</span>
-          <span className="status-value">{liveMetrics.satelliteStatus}</span>
+          <span className="status-value">
+            SARAL-AltiKa / Oceansat-3
+            {satPos && <span style={{color:'#38bdf8'}}> @ {satPos.lat.toFixed(1)}°, {satPos.lng.toFixed(1)}°</span>}
+          </span>
         </div>
         <div className="status-item">
           <span className="status-label">AURORA ACTIVITY:</span>
-          <span className="status-value highlight-cyan">{liveMetrics.auroraIndex}</span>
+          <span className={`status-value highlight-cyan ${
+            aurora?.kpRaw >= 5 ? 'highlight-red' : aurora?.kpRaw >= 3 ? 'highlight-orange' : ''
+          }`}>
+            {aurora ? aurora.label : 'Kp — (fetching…)'}
+          </span>
         </div>
         <div className="status-item">
-          <span className="status-label">SOLAR DECLINATION:</span>
-          <span className="status-value">{liveMetrics.solarDeclination}</span>
+          <span className="status-label">DATA SOURCE:</span>
+          <span className="status-value">
+            {lastUpdated
+              ? <><span style={{color:'#34d399'}}>● LIVE</span> NOAA / Open-Meteo · {lastUpdated.toLocaleTimeString()}</>
+              : <span style={{color:'#94a3b8'}}>Connecting to NOAA…</span>}
+          </span>
         </div>
         <div className="status-item">
           <span className="status-label">UTC CLOCK:</span>
-          <span className="status-value font-mono">{liveMetrics.utcTime} UTC</span>
+          <span className="status-value font-mono">{utcTime} UTC</span>
         </div>
+        <button
+          onClick={refetch}
+          title="Refresh live data"
+          style={{ marginLeft: 'auto', background: 'none', border: '1px solid rgba(56,189,248,0.3)', borderRadius: 6, color: '#7dd3fc', padding: '2px 8px', cursor: 'pointer', display:'flex', alignItems:'center', gap:4, fontSize:'0.72rem' }}
+        >
+          <RefreshCw size={11} /> Refresh
+        </button>
       </div>
 
       {/* Main Map Layout Grid */}
@@ -289,6 +305,7 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
               activePreset={activeRegionView}
               projectionType={projectionType}
               layers={layers}
+              satellitePosition={satPos}
             />
           </div>
 
@@ -374,55 +391,99 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
               {stationTab === 'telemetry' && (
                 <div className="tab-content-pane">
                   <div className="station-telemetry-grid">
-                    <div className="telem-box">
-                      <ThermometerSnowflake size={18} className="telem-icon telem-cyan" />
-                      <div>
-                        <div className="telem-lbl">Ambient Temp</div>
-                        <div className="telem-val highlight-temp">{selectedStation.temp}</div>
-                      </div>
-                    </div>
+                    {/* Real-time temperature from Open-Meteo / NCPOR GPS coords */}
+                    {(() => {
+                      const live = getStationWeather(selectedStation.id, selectedStation.temp, selectedStation.wind);
+                      return (
+                        <>
+                          <div className="telem-box">
+                            <ThermometerSnowflake size={18} className="telem-icon telem-cyan" />
+                            <div>
+                              <div className="telem-lbl">
+                                Ambient Temp
+                                {live.isLive && <span style={{color:'#34d399',fontSize:'0.65rem',marginLeft:4}}>● LIVE</span>}
+                              </div>
+                              <div className="telem-val highlight-temp">{live.temp}</div>
+                            </div>
+                          </div>
 
-                    <div className="telem-box">
-                      <Wind size={18} className="telem-icon telem-blue" />
-                      <div>
-                        <div className="telem-lbl">Wind Vector</div>
-                        <div className="telem-val">{selectedStation.wind}</div>
-                      </div>
-                    </div>
+                          <div className="telem-box">
+                            <Wind size={18} className="telem-icon telem-blue" />
+                            <div>
+                              <div className="telem-lbl">
+                                Wind Vector
+                                {live.isLive && <span style={{color:'#34d399',fontSize:'0.65rem',marginLeft:4}}>● LIVE</span>}
+                              </div>
+                              <div className="telem-val">{live.wind} {live.windDir}</div>
+                            </div>
+                          </div>
 
-                    <div className="telem-box">
-                      <Navigation size={18} className="telem-icon telem-orange" />
-                      <div>
-                        <div className="telem-lbl">Site Elevation</div>
-                        <div className="telem-val">{selectedStation.elevation}</div>
-                      </div>
-                    </div>
+                          <div className="telem-box">
+                            <Navigation size={18} className="telem-icon telem-orange" />
+                            <div>
+                              <div className="telem-lbl">Site Elevation</div>
+                              <div className="telem-val">{selectedStation.elevation}</div>
+                            </div>
+                          </div>
 
-                    <div className="telem-box">
-                      <Radio size={18} className="telem-icon telem-green" />
-                      <div>
-                        <div className="telem-lbl">Telemetry Uplink</div>
-                        <div className="telem-val">Active (GSAT-7A / Inmarsat)</div>
-                      </div>
-                    </div>
+                          <div className="telem-box">
+                            <Radio size={18} className="telem-icon telem-green" />
+                            <div>
+                              <div className="telem-lbl">Telemetry Uplink</div>
+                              <div className="telem-val">Active (GSAT-7A / Inmarsat)</div>
+                            </div>
+                          </div>
+                        </>
+                      );
+                    })()}
                   </div>
 
                   <div className="station-telemetry-grid sub-grid">
-                    <div className="telem-box">
-                      <Sun size={18} className="telem-icon telem-orange" />
-                      <div>
-                        <div className="telem-lbl">Solar Radiation</div>
-                        <div className="telem-val">{liveMetrics.solarRadiation}</div>
-                      </div>
-                    </div>
+                    {(() => {
+                      const live = getStationWeather(selectedStation.id, selectedStation.temp, selectedStation.wind);
+                      return (
+                        <>
+                          <div className="telem-box">
+                            <Sun size={18} className="telem-icon telem-orange" />
+                            <div>
+                              <div className="telem-lbl">
+                                Solar Radiation
+                                {live.isLive && <span style={{color:'#34d399',fontSize:'0.65rem',marginLeft:4}}>● LIVE</span>}
+                              </div>
+                              <div className="telem-val">{live.solar || '— W/m²'}</div>
+                            </div>
+                          </div>
 
-                    <div className="telem-box">
-                      <BarChart3 size={18} className="telem-icon telem-cyan" />
-                      <div>
-                        <div className="telem-lbl">Baro Pressure</div>
-                        <div className="telem-val">{liveMetrics.baroPressure}</div>
-                      </div>
-                    </div>
+                          <div className="telem-box">
+                            <BarChart3 size={18} className="telem-icon telem-cyan" />
+                            <div>
+                              <div className="telem-lbl">
+                                Baro Pressure
+                                {live.isLive && <span style={{color:'#34d399',fontSize:'0.65rem',marginLeft:4}}>● LIVE</span>}
+                              </div>
+                              <div className="telem-val">{live.pressure || '— hPa'}</div>
+                            </div>
+                          </div>
+
+                          <div className="telem-box">
+                            <Waves size={18} className="telem-icon telem-blue" />
+                            <div>
+                              <div className="telem-lbl">
+                                Rel. Humidity
+                                {live.isLive && <span style={{color:'#34d399',fontSize:'0.65rem',marginLeft:4}}>● LIVE</span>}
+                              </div>
+                              <div className="telem-val">{live.humidity || '—'}</div>
+                            </div>
+                          </div>
+                        </>
+                      );
+                    })()}
+                  </div>
+
+                  {/* Data source attribution */}
+                  <div style={{ marginTop: '0.6rem', padding: '0.4rem 0.7rem', background: 'rgba(56,189,248,0.06)', borderRadius: 6, fontSize: '0.67rem', color: '#64748b', borderLeft: '2px solid rgba(56,189,248,0.3)' }}>
+                    📡 Weather data: <a href="https://data.ncpor.res.in" target="_blank" rel="noreferrer" style={{color:'#7dd3fc'}}>NCPOR MET Portal</a> coords via Open-Meteo ·
+                    Aurora: <a href="https://www.swpc.noaa.gov" target="_blank" rel="noreferrer" style={{color:'#7dd3fc'}}>NOAA Space Weather</a>
                   </div>
 
                   {/* Specialized Station Callout */}
@@ -544,12 +605,50 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
           ) : (
             <div className="empty-inspect">
               <Globe2 size={42} className="empty-icon" />
-              <h3>Select a Research Station</h3>
-              <p>Click on any station pin on the 3D globe or choose from the directory below to inspect real-time telemetry, scientific deliverables, and climate findings.</p>
+              <h3>NCPOR Polar Geospatial Network</h3>
+              <p>Select any research base on the 3D globe or click below to inspect live telemetry, weather metrics, and ongoing missions:</p>
+              
+              <div className="empty-station-chips">
+                {stations.map(st => (
+                  <button
+                    key={st.id}
+                    className="empty-station-chip"
+                    onClick={() => handleStationClick(st)}
+                  >
+                    <span className={`chip-dot ${st.region.toLowerCase()}`} />
+                    <span className="chip-name">{st.name}</span>
+                    <span className="chip-region">{st.region}</span>
+                  </button>
+                ))}
+              </div>
             </div>
           )}
         </div>
       </div>
+
+      {/* NCPOR Latest News Ticker from ncpor.res.in */}
+      {ncporNews && ncporNews.length > 0 && (
+        <div className="ncpor-news-banner">
+          <div className="news-banner-label">
+            <span className="dot dot-green" />
+            <span>NCPOR LATEST</span>
+          </div>
+          <div className="news-ticker-track">
+            {ncporNews.map((item, i) => (
+              <a
+                key={i}
+                href={item.link}
+                target="_blank"
+                rel="noreferrer"
+                className="news-ticker-item"
+              >
+                <span className="news-sep">❯</span>
+                {item.title}
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Permanent Polar Research Facilities Directory */}
       <div className="stations-directory-section">
@@ -1243,8 +1342,63 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
         .empty-inspect p {
           font-size: 0.85rem;
           line-height: 1.5;
+          max-width: 340px;
+          margin-bottom: 1.25rem;
+        }
+
+        .empty-station-chips {
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+          width: 100%;
           max-width: 320px;
         }
+
+        .empty-station-chip {
+          display: flex;
+          align-items: center;
+          gap: 0.6rem;
+          background: rgba(7, 16, 30, 0.85);
+          border: 1px solid rgba(56, 189, 248, 0.2);
+          border-radius: var(--radius-xs, 6px);
+          padding: 0.55rem 0.75rem;
+          color: #e2e8f0;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          text-align: left;
+        }
+
+        .empty-station-chip:hover {
+          border-color: #38bdf8;
+          background: rgba(56, 189, 248, 0.12);
+          transform: translateY(-1px);
+        }
+
+        .chip-dot {
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          flex-shrink: 0;
+        }
+        .chip-dot.antarctica { background: #38bdf8; box-shadow: 0 0 6px #38bdf8; }
+        .chip-dot.arctic     { background: #10b981; box-shadow: 0 0 6px #10b981; }
+        .chip-dot.himalaya   { background: #f59e0b; box-shadow: 0 0 6px #f59e0b; }
+        .chip-dot.southern-ocean { background: #6366f1; box-shadow: 0 0 6px #6366f1; }
+
+        .chip-name {
+          font-size: 0.82rem;
+          font-weight: 700;
+          color: #ffffff;
+          flex: 1;
+        }
+
+        .chip-region {
+          font-size: 0.68rem;
+          color: #94a3b8;
+          font-weight: 500;
+          text-transform: uppercase;
+        }
+
 
         /* Facility Directory */
         .stations-directory-section {
@@ -1407,7 +1561,59 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
             min-height: 460px;
           }
         }
+
+        /* NCPOR Live News Banner */
+        .ncpor-news-banner {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          background: rgba(7, 16, 30, 0.85);
+          border: 1px solid rgba(56, 189, 248, 0.2);
+          border-radius: var(--radius-sm, 8px);
+          padding: 0.5rem 0.85rem;
+          margin-bottom: 1.25rem;
+          overflow: hidden;
+        }
+
+        .news-banner-label {
+          display: flex;
+          align-items: center;
+          gap: 0.4rem;
+          font-size: 0.68rem;
+          font-weight: 800;
+          letter-spacing: 0.08em;
+          color: #38bdf8;
+          white-space: nowrap;
+          padding-right: 0.6rem;
+          border-right: 1px solid rgba(56, 189, 248, 0.25);
+        }
+
+        .news-ticker-track {
+          display: flex;
+          gap: 1.5rem;
+          overflow-x: auto;
+          scrollbar-width: none;
+        }
+        .news-ticker-track::-webkit-scrollbar { display: none; }
+
+        .news-ticker-item {
+          display: flex;
+          align-items: center;
+          gap: 0.4rem;
+          font-size: 0.73rem;
+          color: #94a3b8;
+          text-decoration: none;
+          white-space: nowrap;
+          transition: color 0.15s;
+        }
+        .news-ticker-item:hover { color: #e2e8f0; }
+        .news-sep { color: #38bdf8; font-size: 0.65rem; }
+
+        /* Aurora severity highlight classes */
+        .highlight-red   { color: #f87171 !important; }
+        .highlight-orange { color: #fb923c !important; }
       `}</style>
+
     </div>
   );
 }
