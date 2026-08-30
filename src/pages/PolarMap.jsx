@@ -1,0 +1,1413 @@
+import React, { useState, useEffect } from 'react';
+import { usePortal } from '../context/PortalContext';
+import PolarGlobeMap from '../components/PolarGlobeMap';
+import { 
+  MapPin, 
+  Compass, 
+  ThermometerSnowflake, 
+  Wind, 
+  Radio, 
+  Layers, 
+  ArrowRight, 
+  Globe2, 
+  ShieldCheck,
+  Navigation,
+  Sparkles,
+  Satellite,
+  Waves,
+  Eye,
+  RotateCw,
+  Gauge,
+  Activity,
+  Maximize2,
+  Sun,
+  BarChart3
+} from 'lucide-react';
+
+export default function PolarMap({ onSelectExpedition, navigateTo }) {
+  const { stations, expeditions, lang } = usePortal();
+  
+  // Selected Station (default to Bharati Station)
+  const [selectedStation, setSelectedStation] = useState(stations[0] || null);
+  
+  // Camera view preset: 'all' | 'antarctica' | 'arctic' | 'himalaya' | 'southern-ocean'
+  const [activeRegionView, setActiveRegionView] = useState('all');
+  
+  // Projection mode: 'geoOrthographic' (3D Globe) | 'geoStereographic' (Polar Radar) | 'geoEqualEarth' (World Map)
+  const [projectionType, setProjectionType] = useState('geoOrthographic');
+
+  // Active Station Inspector Tab: 'telemetry' | 'science' | 'expeditions'
+  const [stationTab, setStationTab] = useState('telemetry');
+
+  // Layer Toggles
+  const [layers, setLayers] = useState({
+    showRoutes: true,
+    showAurora: true,
+    showSatellite: true,
+    showSeaIce: true,
+    showGraticule: true,
+    autoRotate: false
+  });
+
+  // Realtime Live Telemetry Clock & Simulation
+  const [liveMetrics, setLiveMetrics] = useState({
+    utcTime: new Date().toUTCString().slice(17, 25),
+    solarDeclination: '-11.4° S',
+    auroraIndex: 'Kp 4.2 (Active)',
+    satelliteStatus: 'SARAL / Oceansat-3 Nominal',
+    solarRadiation: '210 W/m²',
+    baroPressure: '984.2 hPa',
+    dataPackets: '1,420 pkts/min'
+  });
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      const d = new Date();
+      setLiveMetrics(prev => ({
+        ...prev,
+        utcTime: d.toUTCString().slice(17, 25),
+        baroPressure: (984 + (Math.random() * 0.6 - 0.3)).toFixed(1) + ' hPa',
+        solarRadiation: (208 + Math.floor(Math.random() * 8)) + ' W/m²'
+      }));
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const toggleLayer = (layerName) => {
+    setLayers(prev => ({ ...prev, [layerName]: !prev[layerName] }));
+  };
+
+  const handleStationClick = (st) => {
+    setSelectedStation(st);
+    if (st.region === 'Antarctica') setActiveRegionView('antarctica');
+    else if (st.region === 'Arctic') setActiveRegionView('arctic');
+    else if (st.region === 'Himalaya') setActiveRegionView('himalaya');
+  };
+
+  // Filter stations for directory
+  const filteredStations = stations.filter(s => {
+    if (activeRegionView === 'all') return true;
+    if (activeRegionView === 'antarctica') return s.region === 'Antarctica';
+    if (activeRegionView === 'arctic') return s.region === 'Arctic';
+    if (activeRegionView === 'himalaya') return s.region === 'Himalaya';
+    if (activeRegionView === 'southern-ocean') return s.region === 'Southern Ocean' || s.region === 'Antarctica';
+    return true;
+  });
+
+  // Find related expeditions for the selected station
+  const relatedExpeditions = expeditions.filter(
+    e => e.region === selectedStation?.region || (selectedStation?.name && e.stations?.some(s => s.includes(selectedStation.name.split(' ')[0])))
+  );
+
+  return (
+    <div className="container polar-map-page">
+      {/* Top Header & Geospatial Network Bar */}
+      <div className="page-header-row">
+        <div>
+          <div className="section-eyebrow">
+            <Radio size={14} className="eyebrow-icon pulse" />
+            <span>NCPOR GEOSPATIAL EARTH OBSERVATION & CRYOSPHERE NETWORK</span>
+          </div>
+          <h1 className="page-title">
+            {lang === 'hi' ? 'इंटरैक्टिव 3D ध्रुवीय एवं क्रायोस्फीयर मानचित्र' : 'Interactive 3D Polar & Cryosphere Globe'}
+          </h1>
+          <p className="page-sub">
+            {lang === 'hi' 
+              ? 'अंटार्कटिका, आर्कटिक और हिमालय के तीसरे ध्रुव पर भारत के स्थायी वैज्ञानिक स्टेशनों, समुद्री वेधशालाओं और उपग्रह टेलीमेट्री का अन्वेषण करें।'
+              : 'Explore India\'s permanent polar stations, deep-fjord ocean observatories, and satellite telemetry grids across Antarctica, the High Arctic, and the Himalayan Third Pole.'}
+          </p>
+        </div>
+
+        {/* Projection Mode Switcher */}
+        <div className="view-mode-toggle-group">
+          <button 
+            className={`mode-toggle-btn ${projectionType === 'geoOrthographic' ? 'active' : ''}`}
+            onClick={() => setProjectionType('geoOrthographic')}
+            title="3D Spherical Earth Globe View"
+          >
+            <Globe2 size={16} />
+            <span>3D Globe View</span>
+          </button>
+          <button 
+            className={`mode-toggle-btn ${projectionType === 'geoStereographic' ? 'active' : ''}`}
+            onClick={() => setProjectionType('geoStereographic')}
+            title="Polar Top-Down Stereographic Projection"
+          >
+            <Gauge size={16} />
+            <span>Polar Radar</span>
+          </button>
+          <button 
+            className={`mode-toggle-btn ${projectionType === 'geoEqualEarth' ? 'active' : ''}`}
+            onClick={() => setProjectionType('geoEqualEarth')}
+            title="Planar Equal Earth Global Map"
+          >
+            <Layers size={16} />
+            <span>Equal Earth</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Region Camera Presets Bar */}
+      <div className="map-view-pills-bar">
+        <div className="pills-label">
+          <Compass size={14} />
+          <span>Camera Focus:</span>
+        </div>
+        <div className="pills-scroll">
+          <button 
+            className={`map-view-btn ${activeRegionView === 'all' ? 'active' : ''}`}
+            onClick={() => { setActiveRegionView('all'); setSelectedStation(null); }}
+          >
+            <Globe2 size={14} />
+            <span>Global Overview (All Bases)</span>
+          </button>
+          <button 
+            className={`map-view-btn ${activeRegionView === 'antarctica' ? 'active' : ''}`}
+            onClick={() => {
+              setActiveRegionView('antarctica');
+              setSelectedStation(stations.find(s => s.id === 'st-bharati') || stations[0]);
+            }}
+          >
+            <span>🇦🇶 Antarctica (Bharati & Maitri)</span>
+          </button>
+          <button 
+            className={`map-view-btn ${activeRegionView === 'arctic' ? 'active' : ''}`}
+            onClick={() => {
+              setActiveRegionView('arctic');
+              setSelectedStation(stations.find(s => s.id === 'st-himadri') || stations[0]);
+            }}
+          >
+            <span>❄️ High Arctic (Himadri & IndARC)</span>
+          </button>
+          <button 
+            className={`map-view-btn ${activeRegionView === 'himalaya' ? 'active' : ''}`}
+            onClick={() => {
+              setActiveRegionView('himalaya');
+              setSelectedStation(stations.find(s => s.id === 'st-himansh') || stations[0]);
+            }}
+          >
+            <span>🏔️ Himalayan Third Pole (Himansh)</span>
+          </button>
+          <button 
+            className={`map-view-btn ${activeRegionView === 'southern-ocean' ? 'active' : ''}`}
+            onClick={() => setActiveRegionView('southern-ocean')}
+          >
+            <span>🌊 Southern Ocean Cruise Transect</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Live Telemetry Realtime Status Banner */}
+      <div className="telemetry-statusbar">
+        <div className="status-item">
+          <span className="dot dot-green"></span>
+          <span className="status-label">SATCOM LINK:</span>
+          <span className="status-value">{liveMetrics.satelliteStatus}</span>
+        </div>
+        <div className="status-item">
+          <span className="status-label">AURORA ACTIVITY:</span>
+          <span className="status-value highlight-cyan">{liveMetrics.auroraIndex}</span>
+        </div>
+        <div className="status-item">
+          <span className="status-label">SOLAR DECLINATION:</span>
+          <span className="status-value">{liveMetrics.solarDeclination}</span>
+        </div>
+        <div className="status-item">
+          <span className="status-label">UTC CLOCK:</span>
+          <span className="status-value font-mono">{liveMetrics.utcTime} UTC</span>
+        </div>
+      </div>
+
+      {/* Main Map Layout Grid */}
+      <div className="map-layout-grid">
+        {/* Left Column: Interactive 3D Globe / Polar Map Viewport Card */}
+        <div className="glass-panel map-viewport-card">
+          {/* Interactive Layer Switches HUD */}
+          <div className="viewport-layers-toolbar">
+            <div className="layers-title">
+              <Layers size={14} />
+              <span>Interactive Layers</span>
+            </div>
+            
+            <div className="layer-chip-buttons">
+              <button 
+                className={`layer-chip ${layers.showRoutes ? 'active' : ''}`}
+                onClick={() => toggleLayer('showRoutes')}
+                title="Toggle Great-Circle logistics & flight arcs from Goa"
+              >
+                <span>✈️ Logistics Arcs</span>
+              </button>
+
+              <button 
+                className={`layer-chip ${layers.showAurora ? 'active' : ''}`}
+                onClick={() => toggleLayer('showAurora')}
+                title="Toggle Aurora Oval geomagnetic field rings"
+              >
+                <span>🌌 Aurora Oval</span>
+              </button>
+
+              <button 
+                className={`layer-chip ${layers.showSatellite ? 'active' : ''}`}
+                onClick={() => toggleLayer('showSatellite')}
+                title="Toggle Polar Earth Observation Satellite Ground Track"
+              >
+                <span>🛰️ Orbit Satellite</span>
+              </button>
+
+              <button 
+                className={`layer-chip ${layers.showSeaIce ? 'active' : ''}`}
+                onClick={() => toggleLayer('showSeaIce')}
+                title="Toggle Cryospheric Sea-Ice extent boundary"
+              >
+                <span>🧊 Cryosphere Ice</span>
+              </button>
+
+              <button 
+                className={`layer-chip ${layers.showGraticule ? 'active' : ''}`}
+                onClick={() => toggleLayer('showGraticule')}
+                title="Toggle Latitude & Longitude Graticule Grid"
+              >
+                <span>🌐 Lat/Lng Grid</span>
+              </button>
+
+              <button 
+                className={`layer-chip ${layers.autoRotate ? 'active' : ''}`}
+                onClick={() => toggleLayer('autoRotate')}
+                title="Toggle Auto Orbit rotation"
+              >
+                <span>🔄 Auto-Orbit</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Interactive Globe Canvas */}
+          <div className="viewport-stage">
+            <PolarGlobeMap 
+              stations={stations}
+              selectedStation={selectedStation}
+              onSelectStation={handleStationClick}
+              activePreset={activeRegionView}
+              projectionType={projectionType}
+              layers={layers}
+            />
+          </div>
+
+          {/* Footer Legend Bar */}
+          <div className="viewport-footer-bar">
+            <div className="interactive-tips">
+              <span className="tip-badge">HOW TO INTERACT</span>
+              <span>🖱️ Drag to rotate 3D sphere • 📜 Wheel to zoom • 📍 Click pin to lock telemetry</span>
+            </div>
+            
+            <div className="legend-strip">
+              <span className="legend-item"><span className="legend-dot antarctica-dot"></span> Antarctica Bases</span>
+              <span className="legend-item"><span className="legend-dot arctic-dot"></span> High Arctic</span>
+              <span className="legend-item"><span className="legend-dot himalaya-dot"></span> Himalayas</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Column: Selected Station Telemetry & Mission Command Center */}
+        <div className="glass-panel station-inspect-card">
+          {selectedStation ? (
+            <div className="station-card-inner">
+              {/* Header Visual with Badges */}
+              <div className="station-thumb-wrap">
+                <img 
+                  src={selectedStation.image} 
+                  alt={selectedStation.name} 
+                  className="station-thumb" 
+                />
+                <div className="station-thumb-overlay"></div>
+                
+                <div className="station-badge-group">
+                  <div className={`station-region-tag ${selectedStation.region.toLowerCase()}`}>
+                    <MapPin size={12} />
+                    <span>{selectedStation.region}</span>
+                  </div>
+                  <div className="station-status-pill">
+                    <span className="live-pulse"></span>
+                    <span>{selectedStation.status}</span>
+                  </div>
+                </div>
+
+                <div className="station-image-footer">
+                  <span className="commission-year">Est. {selectedStation.commissioned}</span>
+                  <span className="coords-tag">{selectedStation.lat.toFixed(2)}°N / {selectedStation.lng.toFixed(2)}°E</span>
+                </div>
+              </div>
+
+              {/* Station Info Title */}
+              <div className="station-header-info">
+                <h2 className="station-title">
+                  {lang === 'hi' && selectedStation.nameHi ? selectedStation.nameHi : selectedStation.name}
+                </h2>
+                <p className="station-summary">{selectedStation.description}</p>
+              </div>
+
+              {/* Inspector Navigation Tabs */}
+              <div className="station-tabs-nav">
+                <button 
+                  className={`tab-nav-btn ${stationTab === 'telemetry' ? 'active' : ''}`}
+                  onClick={() => setStationTab('telemetry')}
+                >
+                  <Activity size={14} />
+                  <span>Live Telemetry</span>
+                </button>
+                <button 
+                  className={`tab-nav-btn ${stationTab === 'science' ? 'active' : ''}`}
+                  onClick={() => setStationTab('science')}
+                >
+                  <Sparkles size={14} />
+                  <span>Science Focus</span>
+                </button>
+                <button 
+                  className={`tab-nav-btn ${stationTab === 'expeditions' ? 'active' : ''}`}
+                  onClick={() => setStationTab('expeditions')}
+                >
+                  <Compass size={14} />
+                  <span>Missions ({relatedExpeditions.length})</span>
+                </button>
+              </div>
+
+              {/* Tab 1: Live Telemetry Grid */}
+              {stationTab === 'telemetry' && (
+                <div className="tab-content-pane">
+                  <div className="station-telemetry-grid">
+                    <div className="telem-box">
+                      <ThermometerSnowflake size={18} className="telem-icon telem-cyan" />
+                      <div>
+                        <div className="telem-lbl">Ambient Temp</div>
+                        <div className="telem-val highlight-temp">{selectedStation.temp}</div>
+                      </div>
+                    </div>
+
+                    <div className="telem-box">
+                      <Wind size={18} className="telem-icon telem-blue" />
+                      <div>
+                        <div className="telem-lbl">Wind Vector</div>
+                        <div className="telem-val">{selectedStation.wind}</div>
+                      </div>
+                    </div>
+
+                    <div className="telem-box">
+                      <Navigation size={18} className="telem-icon telem-orange" />
+                      <div>
+                        <div className="telem-lbl">Site Elevation</div>
+                        <div className="telem-val">{selectedStation.elevation}</div>
+                      </div>
+                    </div>
+
+                    <div className="telem-box">
+                      <Radio size={18} className="telem-icon telem-green" />
+                      <div>
+                        <div className="telem-lbl">Telemetry Uplink</div>
+                        <div className="telem-val">Active (GSAT-7A / Inmarsat)</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="station-telemetry-grid sub-grid">
+                    <div className="telem-box">
+                      <Sun size={18} className="telem-icon telem-orange" />
+                      <div>
+                        <div className="telem-lbl">Solar Radiation</div>
+                        <div className="telem-val">{liveMetrics.solarRadiation}</div>
+                      </div>
+                    </div>
+
+                    <div className="telem-box">
+                      <BarChart3 size={18} className="telem-icon telem-cyan" />
+                      <div>
+                        <div className="telem-lbl">Baro Pressure</div>
+                        <div className="telem-val">{liveMetrics.baroPressure}</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Specialized Station Callout */}
+                  {selectedStation.id === 'st-indarc' && (
+                    <div className="specialized-info-box fjord-ocean">
+                      <Waves size={16} className="spec-icon" />
+                      <div>
+                        <strong>Sub-surface Acoustic Mooring (192m Depth)</strong>
+                        <p>10 oceanographic CTD & acoustic sensors continuously log temperature, salinity, and Atlantic warm-water influx into Kongsfjorden.</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {selectedStation.id === 'st-himansh' && (
+                    <div className="specialized-info-box himalaya-glacier">
+                      <Compass size={16} className="spec-icon" />
+                      <div>
+                        <strong>High-Altitude Cryospheric Lab (13,400 ft)</strong>
+                        <p>Real-time GLOF (Glacial Lake Outburst Flood) sensor arrays and ground-penetrating radar monitoring Sutri Dhaka and Chandra basin glaciers.</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {selectedStation.id === 'st-bharati' && (
+                    <div className="specialized-info-box green-habitat">
+                      <ShieldCheck size={16} className="spec-icon" />
+                      <div>
+                        <strong>Energy-Efficient Container Architecture</strong>
+                        <p>State-of-the-art green building with zero-waste discharge, greywater recycling, and hybrid solar-wind auxiliary microgrids.</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {selectedStation.id === 'st-maitri' && (
+                    <div className="specialized-info-box green-habitat">
+                      <Radio size={16} className="spec-icon" />
+                      <div>
+                        <strong>Schirmacher Oasis Geoscience Hub</strong>
+                        <p>Longest continuous meteorological & ozone-hole time-series station in East Antarctica, housing cosmic ray and seismological detectors.</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Tab 2: Science Focus & Core Instruments */}
+              {stationTab === 'science' && (
+                <div className="tab-content-pane">
+                  <div className="science-instruments-list">
+                    <div className="instrument-card">
+                      <div className="inst-header">
+                        <span className="inst-tag">Atmospheric Physics</span>
+                        <h4>Aerosol & Black Carbon Monitoring</h4>
+                      </div>
+                      <p>Multi-wavelength Aethalometers and Sun Photometers tracking long-range transboundary particulate transport.</p>
+                    </div>
+
+                    <div className="instrument-card">
+                      <div className="inst-header">
+                        <span className="inst-tag">Cryosphere & Glaciology</span>
+                        <h4>Ice Core Paleoclimatology</h4>
+                      </div>
+                      <p>Electro-mechanical core drilling retrieving deep ice to analyze greenhouse gas isotope ratios spanning thousands of years.</p>
+                    </div>
+
+                    <div className="instrument-card">
+                      <div className="inst-header">
+                        <span className="inst-tag">Space Geodesy</span>
+                        <h4>Ionospheric GPS & Magnetometry</h4>
+                      </div>
+                      <p>Studying space weather, auroral electrojets, and geomagnetic field line fluctuations affecting satellite navigation.</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Tab 3: Related Expeditions */}
+              {stationTab === 'expeditions' && (
+                <div className="tab-content-pane">
+                  <div className="related-expeditions-list">
+                    {relatedExpeditions.length > 0 ? (
+                      relatedExpeditions.map(exp => (
+                        <div key={exp.id} className="mini-expedition-item" onClick={() => onSelectExpedition(exp.id)}>
+                          <div className="mini-exp-img-wrap">
+                            <img src={exp.heroImage} alt={exp.title} className="mini-exp-img" />
+                          </div>
+                          <div className="mini-exp-info">
+                            <span className="mini-exp-year">{exp.year} • {exp.region}</span>
+                            <h5 className="mini-exp-title">{lang === 'hi' && exp.titleHi ? exp.titleHi : exp.title}</h5>
+                            <span className="mini-exp-action">Explore Fieldwork <ArrowRight size={12} /></span>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="no-items-text">No direct expeditions tagged for this specific depot. Explore the Expeditions tab for all records.</p>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Action Buttons */}
+              <div className="station-card-actions">
+                <button 
+                  className="btn-primary full-width"
+                  onClick={() => {
+                    const matchedExp = expeditions.find(e => e.region === selectedStation.region);
+                    if (matchedExp) {
+                      onSelectExpedition(matchedExp.id);
+                    } else {
+                      navigateTo('expeditions');
+                    }
+                  }}
+                >
+                  <Compass size={16} />
+                  <span>{lang === 'hi' ? 'संबंधित अभियान देखें' : 'View Scientific Expeditions'}</span>
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="empty-inspect">
+              <Globe2 size={42} className="empty-icon" />
+              <h3>Select a Research Station</h3>
+              <p>Click on any station pin on the 3D globe or choose from the directory below to inspect real-time telemetry, scientific deliverables, and climate findings.</p>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Permanent Polar Research Facilities Directory */}
+      <div className="stations-directory-section">
+        <div className="section-header-flex">
+          <div>
+            <div className="section-eyebrow">RESEARCH INFRASTRUCTURE</div>
+            <h3 className="section-title">
+              {lang === 'hi' ? 'समस्त भारतीय स्थायी ध्रुवीय अनुसंधान केंद्र' : 'All Permanent Indian Polar Research Facilities'}
+            </h3>
+          </div>
+          <span className="facility-count-badge">{filteredStations.length} Active Stations</span>
+        </div>
+
+        <div className="stations-grid">
+          {filteredStations.map((st) => {
+            const isSelected = selectedStation?.id === st.id;
+            return (
+              <div 
+                key={st.id} 
+                className={`glass-panel station-mini-card ${isSelected ? 'active-station' : ''}`}
+                onClick={() => handleStationClick(st)}
+              >
+                <div className="mini-card-top">
+                  <div className="mini-card-img-wrap">
+                    <img src={st.image} alt={st.name} className="mini-card-img" />
+                    <span className={`mini-region-badge ${st.region.toLowerCase()}`}>{st.region}</span>
+                  </div>
+                  
+                  <div className="mini-card-header">
+                    <h4>{lang === 'hi' && st.nameHi ? st.nameHi : st.name}</h4>
+                    <span className="mini-status-text">
+                      <span className="dot dot-green"></span>
+                      {st.status.split('(')[0]}
+                    </span>
+                  </div>
+                </div>
+
+                <p className="mini-desc">{st.description}</p>
+                
+                <div className="mini-footer-stats">
+                  <div className="stat-pill">
+                    <ThermometerSnowflake size={13} className="pill-icon" />
+                    <span>{st.temp}</span>
+                  </div>
+                  <div className="stat-pill">
+                    <Navigation size={13} className="pill-icon" />
+                    <span>{st.elevation}</span>
+                  </div>
+                  <div className="stat-pill coords">
+                    <span>{st.lat.toFixed(1)}° / {st.lng.toFixed(1)}°</span>
+                  </div>
+                </div>
+
+                <div className="mini-card-action-bar">
+                  <span className="inspect-link">
+                    <span>Focus in Globe</span>
+                    <ArrowRight size={13} />
+                  </span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      <style>{`
+        .polar-map-page {
+          padding: 2.5rem 1.5rem 6rem;
+        }
+
+        .eyebrow-icon {
+          color: #38bdf8;
+        }
+
+        .eyebrow-icon.pulse {
+          animation: radarPing 2s infinite;
+        }
+
+        @keyframes radarPing {
+          0%, 100% { opacity: 1; transform: scale(1); }
+          50% { opacity: 0.5; transform: scale(1.15); }
+        }
+
+        /* View Mode Switcher */
+        .view-mode-toggle-group {
+          display: flex;
+          align-items: center;
+          background: rgba(7, 16, 30, 0.8);
+          border: 1px solid var(--border-subtle);
+          padding: 0.25rem;
+          border-radius: var(--radius-full);
+          gap: 0.25rem;
+        }
+
+        .mode-toggle-btn {
+          display: flex;
+          align-items: center;
+          gap: 0.45rem;
+          background: transparent;
+          border: none;
+          color: var(--text-secondary);
+          padding: 0.45rem 0.9rem;
+          border-radius: var(--radius-full);
+          font-size: 0.8rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.2s ease;
+        }
+
+        .mode-toggle-btn:hover {
+          color: #ffffff;
+        }
+
+        .mode-toggle-btn.active {
+          background: rgba(56, 189, 248, 0.2);
+          color: var(--accent-ice);
+          border: 1px solid rgba(56, 189, 248, 0.4);
+        }
+
+        /* Region Presets Bar */
+        .map-view-pills-bar {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          margin-bottom: 1rem;
+          flex-wrap: wrap;
+        }
+
+        .pills-label {
+          display: flex;
+          align-items: center;
+          gap: 0.35rem;
+          font-size: 0.8rem;
+          font-weight: 700;
+          color: var(--text-muted);
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+        }
+
+        .pills-scroll {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          flex-wrap: wrap;
+        }
+
+        .map-view-btn {
+          display: flex;
+          align-items: center;
+          gap: 0.4rem;
+          background: rgba(255, 255, 255, 0.04);
+          border: 1px solid var(--border-subtle);
+          color: var(--text-secondary);
+          padding: 0.45rem 0.85rem;
+          border-radius: var(--radius-full);
+          font-size: 0.8rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.2s ease;
+        }
+
+        .map-view-btn:hover {
+          background: rgba(255, 255, 255, 0.08);
+          color: #ffffff;
+          border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .map-view-btn.active {
+          background: rgba(56, 189, 248, 0.15);
+          border-color: var(--accent-ice);
+          color: var(--accent-ice);
+          box-shadow: 0 0 14px rgba(56, 189, 248, 0.25);
+        }
+
+        /* Telemetry Status Bar */
+        .telemetry-statusbar {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          background: rgba(7, 16, 30, 0.85);
+          border: 1px solid rgba(56, 189, 248, 0.15);
+          padding: 0.6rem 1.25rem;
+          border-radius: var(--radius-sm);
+          margin-bottom: 1.5rem;
+          font-size: 0.76rem;
+          flex-wrap: wrap;
+          gap: 0.75rem;
+        }
+
+        .status-item {
+          display: flex;
+          align-items: center;
+          gap: 0.4rem;
+        }
+
+        .dot {
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+        }
+
+        .dot-green {
+          background: #34d399;
+          box-shadow: 0 0 6px #34d399;
+        }
+
+        .status-label {
+          color: var(--text-muted);
+          font-weight: 700;
+        }
+
+        .status-value {
+          color: #ffffff;
+          font-weight: 600;
+        }
+
+        .status-value.highlight-cyan {
+          color: #38bdf8;
+        }
+
+        /* Main Grid Layout */
+        .map-layout-grid {
+          display: grid;
+          grid-template-columns: 1.85fr 1.15fr;
+          gap: 1.5rem;
+          margin-bottom: 3.5rem;
+        }
+
+        .map-viewport-card {
+          padding: 1rem;
+          display: flex;
+          flex-direction: column;
+          background: rgba(11, 24, 41, 0.85);
+          border: 1px solid rgba(56, 189, 248, 0.2);
+          overflow: hidden;
+        }
+
+        /* Viewport Layers Toolbar */
+        .viewport-layers-toolbar {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-bottom: 0.85rem;
+          flex-wrap: wrap;
+          gap: 0.5rem;
+        }
+
+        .layers-title {
+          display: flex;
+          align-items: center;
+          gap: 0.4rem;
+          font-size: 0.78rem;
+          font-weight: 700;
+          color: var(--text-muted);
+          text-transform: uppercase;
+        }
+
+        .layer-chip-buttons {
+          display: flex;
+          align-items: center;
+          gap: 0.4rem;
+          flex-wrap: wrap;
+        }
+
+        .layer-chip {
+          background: rgba(255, 255, 255, 0.04);
+          border: 1px solid var(--border-subtle);
+          color: var(--text-secondary);
+          padding: 0.3rem 0.65rem;
+          border-radius: var(--radius-full);
+          font-size: 0.72rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.2s ease;
+        }
+
+        .layer-chip:hover {
+          color: #ffffff;
+          background: rgba(255, 255, 255, 0.08);
+        }
+
+        .layer-chip.active {
+          background: rgba(56, 189, 248, 0.18);
+          border-color: rgba(56, 189, 248, 0.5);
+          color: #7dd3fc;
+        }
+
+        .viewport-stage {
+          position: relative;
+          min-height: 520px;
+          border-radius: var(--radius-sm);
+          overflow: hidden;
+        }
+
+        .viewport-footer-bar {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-top: 1rem;
+          padding-top: 0.85rem;
+          border-top: 1px solid rgba(255, 255, 255, 0.08);
+          font-size: 0.76rem;
+          color: var(--text-secondary);
+          flex-wrap: wrap;
+          gap: 0.75rem;
+        }
+
+        .interactive-tips {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+        }
+
+        .tip-badge {
+          background: rgba(245, 158, 11, 0.15);
+          color: #f59e0b;
+          font-weight: 700;
+          font-size: 0.65rem;
+          padding: 1px 6px;
+          border-radius: 4px;
+        }
+
+        .legend-strip {
+          display: flex;
+          align-items: center;
+          gap: 0.85rem;
+        }
+
+        .legend-item {
+          display: flex;
+          align-items: center;
+          gap: 0.35rem;
+        }
+
+        .legend-dot {
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+        }
+
+        .antarctica-dot { background: #38bdf8; box-shadow: 0 0 6px #38bdf8; }
+        .arctic-dot { background: #10b981; box-shadow: 0 0 6px #10b981; }
+        .himalaya-dot { background: #f59e0b; box-shadow: 0 0 6px #f59e0b; }
+
+        /* Station Inspect Card (Right Column) */
+        .station-inspect-card {
+          padding: 1.25rem;
+          display: flex;
+          flex-direction: column;
+          background: rgba(11, 24, 41, 0.85);
+          border: 1px solid rgba(56, 189, 248, 0.2);
+        }
+
+        .station-thumb-wrap {
+          position: relative;
+          height: 190px;
+          border-radius: var(--radius-sm);
+          overflow: hidden;
+          margin-bottom: 1rem;
+        }
+
+        .station-thumb {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+
+        .station-thumb-overlay {
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(180deg, rgba(7, 13, 24, 0.1) 0%, rgba(7, 13, 24, 0.95) 100%);
+        }
+
+        .station-badge-group {
+          position: absolute;
+          top: 0.75rem;
+          left: 0.75rem;
+          right: 0.75rem;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+
+        .station-region-tag {
+          display: flex;
+          align-items: center;
+          gap: 0.35rem;
+          background: rgba(7, 13, 24, 0.85);
+          backdrop-filter: blur(8px);
+          padding: 0.25rem 0.6rem;
+          border-radius: var(--radius-full);
+          font-size: 0.72rem;
+          font-weight: 700;
+          border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .station-region-tag.antarctica { color: #38bdf8; border-color: rgba(56, 189, 248, 0.4); }
+        .station-region-tag.arctic { color: #34d399; border-color: rgba(52, 211, 153, 0.4); }
+        .station-region-tag.himalaya { color: #fcd34d; border-color: rgba(245, 158, 11, 0.4); }
+
+        .station-status-pill {
+          display: flex;
+          align-items: center;
+          gap: 0.35rem;
+          background: rgba(7, 13, 24, 0.85);
+          backdrop-filter: blur(8px);
+          padding: 0.25rem 0.6rem;
+          border-radius: var(--radius-full);
+          font-size: 0.7rem;
+          color: #34d399;
+          font-weight: 600;
+        }
+
+        .station-image-footer {
+          position: absolute;
+          bottom: 0.75rem;
+          left: 0.75rem;
+          right: 0.75rem;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          font-size: 0.72rem;
+          color: var(--text-muted);
+          font-family: var(--font-mono);
+        }
+
+        .station-header-info {
+          margin-bottom: 1rem;
+        }
+
+        .station-title {
+          font-size: 1.45rem;
+          color: #ffffff;
+          margin-bottom: 0.4rem;
+        }
+
+        .station-summary {
+          font-size: 0.84rem;
+          color: var(--text-secondary);
+          line-height: 1.45;
+        }
+
+        /* Tabs Nav */
+        .station-tabs-nav {
+          display: flex;
+          align-items: center;
+          gap: 0.35rem;
+          background: rgba(7, 16, 30, 0.75);
+          border: 1px solid var(--border-subtle);
+          padding: 0.25rem;
+          border-radius: var(--radius-sm);
+          margin-bottom: 1rem;
+        }
+
+        .tab-nav-btn {
+          flex: 1;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.35rem;
+          background: transparent;
+          border: none;
+          color: var(--text-secondary);
+          padding: 0.4rem 0.25rem;
+          border-radius: var(--radius-xs);
+          font-size: 0.75rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.2s ease;
+        }
+
+        .tab-nav-btn:hover {
+          color: #ffffff;
+        }
+
+        .tab-nav-btn.active {
+          background: rgba(56, 189, 248, 0.2);
+          color: #38bdf8;
+          border: 1px solid rgba(56, 189, 248, 0.3);
+        }
+
+        .tab-content-pane {
+          display: flex;
+          flex-direction: column;
+          gap: 0.85rem;
+          margin-bottom: 1.25rem;
+        }
+
+        /* Telemetry Grid */
+        .station-telemetry-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 0.65rem;
+        }
+
+        .station-telemetry-grid.sub-grid {
+          margin-top: -0.2rem;
+        }
+
+        .telem-box {
+          background: rgba(7, 16, 30, 0.8);
+          border: 1px solid var(--border-subtle);
+          border-radius: var(--radius-sm);
+          padding: 0.65rem 0.75rem;
+          display: flex;
+          align-items: center;
+          gap: 0.6rem;
+        }
+
+        .telem-icon.telem-cyan { color: #38bdf8; }
+        .telem-icon.telem-blue { color: #60a5fa; }
+        .telem-icon.telem-orange { color: #f59e0b; }
+        .telem-icon.telem-green { color: #34d399; }
+
+        .telem-lbl {
+          font-size: 0.65rem;
+          color: var(--text-muted);
+          text-transform: uppercase;
+          letter-spacing: 0.04em;
+        }
+
+        .telem-val {
+          font-size: 0.85rem;
+          color: #ffffff;
+          font-weight: 700;
+        }
+
+        .highlight-temp {
+          color: #38bdf8;
+        }
+
+        .specialized-info-box {
+          display: flex;
+          align-items: flex-start;
+          gap: 0.65rem;
+          padding: 0.75rem 0.85rem;
+          border-radius: var(--radius-sm);
+          font-size: 0.78rem;
+          line-height: 1.4;
+        }
+
+        .specialized-info-box.fjord-ocean {
+          background: rgba(6, 182, 212, 0.12);
+          border: 1px solid rgba(6, 182, 212, 0.3);
+          color: #a5f3fc;
+        }
+
+        .specialized-info-box.himalaya-glacier {
+          background: rgba(245, 158, 11, 0.12);
+          border: 1px solid rgba(245, 158, 11, 0.3);
+          color: #fde68a;
+        }
+
+        .specialized-info-box.green-habitat {
+          background: rgba(56, 189, 248, 0.12);
+          border: 1px solid rgba(56, 189, 248, 0.3);
+          color: #bae6fd;
+        }
+
+        .spec-icon {
+          flex-shrink: 0;
+          margin-top: 2px;
+        }
+
+        /* Science Focus Tab */
+        .science-instruments-list {
+          display: flex;
+          flex-direction: column;
+          gap: 0.6rem;
+        }
+
+        .instrument-card {
+          background: rgba(7, 16, 30, 0.75);
+          border: 1px solid var(--border-subtle);
+          border-radius: var(--radius-sm);
+          padding: 0.65rem 0.8rem;
+        }
+
+        .inst-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: baseline;
+          margin-bottom: 0.25rem;
+        }
+
+        .inst-tag {
+          font-size: 0.65rem;
+          color: #f59e0b;
+          font-weight: 700;
+          text-transform: uppercase;
+        }
+
+        .instrument-card h4 {
+          font-size: 0.82rem;
+          color: #ffffff;
+        }
+
+        .instrument-card p {
+          font-size: 0.75rem;
+          color: var(--text-secondary);
+          line-height: 1.35;
+        }
+
+        /* Expeditions Tab */
+        .related-expeditions-list {
+          display: flex;
+          flex-direction: column;
+          gap: 0.6rem;
+        }
+
+        .mini-expedition-item {
+          display: flex;
+          gap: 0.75rem;
+          background: rgba(7, 16, 30, 0.75);
+          border: 1px solid var(--border-subtle);
+          border-radius: var(--radius-sm);
+          padding: 0.5rem;
+          cursor: pointer;
+          transition: all 0.2s ease;
+        }
+
+        .mini-expedition-item:hover {
+          border-color: var(--accent-ice);
+          background: rgba(14, 165, 233, 0.15);
+        }
+
+        .mini-exp-img-wrap {
+          width: 60px;
+          height: 60px;
+          border-radius: var(--radius-xs);
+          overflow: hidden;
+          flex-shrink: 0;
+        }
+
+        .mini-exp-img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+
+        .mini-exp-info {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+        }
+
+        .mini-exp-year {
+          font-size: 0.65rem;
+          color: #38bdf8;
+          font-weight: 700;
+          text-transform: uppercase;
+        }
+
+        .mini-exp-title {
+          font-size: 0.78rem;
+          color: #ffffff;
+          line-height: 1.25;
+          margin: 0.15rem 0;
+        }
+
+        .mini-exp-action {
+          display: flex;
+          align-items: center;
+          gap: 0.25rem;
+          font-size: 0.7rem;
+          color: #f59e0b;
+          font-weight: 600;
+        }
+
+        .empty-inspect {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          text-align: center;
+          padding: 3rem 1.5rem;
+          color: var(--text-secondary);
+        }
+
+        .empty-icon {
+          color: #38bdf8;
+          margin-bottom: 1rem;
+          opacity: 0.8;
+        }
+
+        .empty-inspect h3 {
+          color: #ffffff;
+          margin-bottom: 0.5rem;
+        }
+
+        .empty-inspect p {
+          font-size: 0.85rem;
+          line-height: 1.5;
+          max-width: 320px;
+        }
+
+        /* Facility Directory */
+        .stations-directory-section {
+          margin-top: 1rem;
+        }
+
+        .section-header-flex {
+          display: flex;
+          align-items: flex-end;
+          justify-content: space-between;
+          margin-bottom: 1.25rem;
+        }
+
+        .facility-count-badge {
+          background: rgba(56, 189, 248, 0.15);
+          color: #7dd3fc;
+          font-size: 0.75rem;
+          font-weight: 700;
+          padding: 0.3rem 0.75rem;
+          border-radius: var(--radius-full);
+          border: 1px solid rgba(56, 189, 248, 0.3);
+        }
+
+        .stations-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+          gap: 1.25rem;
+        }
+
+        .station-mini-card {
+          padding: 1.15rem;
+          cursor: pointer;
+          transition: all 0.25s ease;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          border: 1px solid var(--border-subtle);
+        }
+
+        .station-mini-card:hover, .station-mini-card.active-station {
+          border-color: var(--accent-ice);
+          background: rgba(17, 34, 54, 0.95);
+          transform: translateY(-4px);
+          box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5), 0 0 20px rgba(56, 189, 248, 0.15);
+        }
+
+        .mini-card-top {
+          display: flex;
+          gap: 0.85rem;
+          margin-bottom: 0.75rem;
+        }
+
+        .mini-card-img-wrap {
+          position: relative;
+          width: 75px;
+          height: 60px;
+          border-radius: var(--radius-xs);
+          overflow: hidden;
+          flex-shrink: 0;
+        }
+
+        .mini-card-img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+
+        .mini-region-badge {
+          position: absolute;
+          bottom: 2px;
+          left: 2px;
+          right: 2px;
+          text-align: center;
+          font-size: 0.6rem;
+          font-weight: 700;
+          padding: 1px 2px;
+          border-radius: 2px;
+          background: rgba(7, 13, 24, 0.85);
+        }
+
+        .mini-region-badge.antarctica { color: #38bdf8; }
+        .mini-region-badge.arctic { color: #34d399; }
+        .mini-region-badge.himalaya { color: #fcd34d; }
+
+        .mini-card-header h4 {
+          font-size: 0.98rem;
+          color: #ffffff;
+          margin-bottom: 0.2rem;
+        }
+
+        .mini-status-text {
+          display: flex;
+          align-items: center;
+          gap: 0.35rem;
+          font-size: 0.7rem;
+          color: var(--text-muted);
+        }
+
+        .mini-desc {
+          font-size: 0.8rem;
+          color: var(--text-secondary);
+          line-height: 1.45;
+          margin-bottom: 0.85rem;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+
+        .mini-footer-stats {
+          display: flex;
+          align-items: center;
+          gap: 0.4rem;
+          margin-bottom: 0.75rem;
+          flex-wrap: wrap;
+        }
+
+        .stat-pill {
+          display: flex;
+          align-items: center;
+          gap: 0.25rem;
+          background: rgba(7, 16, 30, 0.8);
+          border: 1px solid var(--border-subtle);
+          padding: 0.25rem 0.5rem;
+          border-radius: var(--radius-xs);
+          font-size: 0.72rem;
+          color: #ffffff;
+          font-weight: 600;
+        }
+
+        .stat-pill.coords {
+          font-family: var(--font-mono);
+          color: var(--text-muted);
+        }
+
+        .pill-icon {
+          color: #38bdf8;
+        }
+
+        .mini-card-action-bar {
+          border-top: 1px solid rgba(255, 255, 255, 0.08);
+          padding-top: 0.6rem;
+        }
+
+        .inspect-link {
+          display: flex;
+          align-items: center;
+          justify-content: flex-end;
+          gap: 0.35rem;
+          font-size: 0.75rem;
+          color: #38bdf8;
+          font-weight: 700;
+        }
+
+        @media (max-width: 1024px) {
+          .map-layout-grid {
+            grid-template-columns: 1fr;
+          }
+          .viewport-stage {
+            min-height: 460px;
+          }
+        }
+      `}</style>
+    </div>
+  );
+}

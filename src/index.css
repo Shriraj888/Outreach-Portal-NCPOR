@@ -1,0 +1,332 @@
+@import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  /* --- Typography --- */
+  --font-heading: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* --- Core Palette: Indian Govt Deep Navy + Saffron --- */
+  --bg-page:        #0b1829;
+  --bg-deep:        #07101e;
+  --bg-surface:     #112236;
+  --bg-card:        #152942;
+  --bg-card-hover:  #1a3354;
+  --bg-input:       #0f1f33;
+
+  --text-primary:   #f0f4f8;
+  --text-secondary: #8da4be;
+  --text-muted:     #546e8a;
+  --text-on-saffron: #1a0e00;
+
+  --border-subtle:  rgba(141, 164, 190, 0.15);
+  --border-active:  rgba(245, 158, 11, 0.55);
+  --border-card:    rgba(141, 164, 190, 0.12);
+
+  /* Saffron — India flag, MoES brand, CTAs */
+  --saffron:        #f59e0b;
+  --saffron-deep:   #d97706;
+  --saffron-light:  #fcd34d;
+  --saffron-glow:   rgba(245, 158, 11, 0.18);
+
+  /* Ice Blue — polar oceans, AI elements */
+  --ice:            #60a5fa;
+  --ice-deep:       #2563eb;
+  --ice-light:      #bfdbfe;
+  --ice-glow:       rgba(96, 165, 250, 0.15);
+
+  /* Region accent aliases */
+  --accent-cyan:    #2dd4bf;
+  --accent-ice:     #60a5fa;
+  --accent-blue:    #2563eb;
+  --accent-saffron: #f59e0b;
+  --accent-emerald: #34d399;
+  --accent-gold:    #fcd34d;
+
+  /* Legacy compat vars (mapped to new palette) */
+  --bg-abyss: var(--bg-page);
+
+  /* Shadows */
+  --shadow-sm:   0 2px 8px rgba(0,0,0,0.3);
+  --shadow-md:   0 6px 20px rgba(0,0,0,0.4);
+  --shadow-card: 0 1px 3px rgba(0,0,0,0.35), 0 4px 16px rgba(0,0,0,0.22);
+
+  /* Radii */
+  --radius-xs:   4px;
+  --radius-sm:   6px;
+  --radius-md:   10px;
+  --radius-lg:   18px;
+  --radius-full: 9999px;
+
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --font-scale: 1;
+}
+
+[data-font-size="large"]  { --font-scale: 1.14; }
+[data-font-size="larger"] { --font-scale: 1.28; }
+
+/* High Contrast (WCAG-AA) */
+.high-contrast {
+  --bg-page:        #000000;
+  --bg-deep:        #000000;
+  --bg-surface:     #0a0a0a;
+  --bg-card:        #111111;
+  --bg-card-hover:  #1c1c1c;
+  --bg-input:       #050505;
+  --text-primary:   #ffffff;
+  --text-secondary: #ffff00;
+  --text-muted:     #d1d5db;
+  --border-subtle:  rgba(255,255,255,0.4);
+  --border-active:  #ffff00;
+  --saffron:        #ffff00;
+  --saffron-light:  #ffff00;
+  --ice:            #00ffff;
+  --ice-light:      #00ffff;
+  --accent-cyan:    #00ffff;
+  --accent-ice:     #ffff00;
+}
+
+/* --- Reset --- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  scroll-behavior: smooth;
+  font-size: calc(16px * var(--font-scale));
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--bg-page);
+  color: var(--text-primary);
+  min-height: 100vh;
+  line-height: 1.65;
+  overflow-x: hidden;
+  background-image:
+    radial-gradient(ellipse 100% 50% at 0% 0%,   rgba(21, 41, 66, 0.7) 0%, transparent 60%),
+    radial-gradient(ellipse 80%  40% at 100% 90%, rgba(17, 34, 54, 0.5) 0%, transparent 55%);
+  background-attachment: fixed;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+a { color: inherit; text-decoration: none; }
+
+button, input, select, textarea {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-deep); }
+::-webkit-scrollbar-thumb {
+  background: rgba(245, 158, 11, 0.3);
+  border-radius: var(--radius-full);
+}
+::-webkit-scrollbar-thumb:hover { background: rgba(245, 158, 11, 0.55); }
+
+/* Layout */
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* Card surface */
+.glass-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  transition: border-color 200ms var(--ease), box-shadow 200ms var(--ease);
+}
+
+.glass-panel:hover {
+  border-color: rgba(245, 158, 11, 0.22);
+  box-shadow: var(--shadow-md);
+}
+
+/* Badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.2rem 0.65rem;
+  border-radius: var(--radius-xs);
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.badge-antarctica {
+  background: rgba(13, 148, 136, 0.18);
+  color: #2dd4bf;
+  border: 1px solid rgba(13, 148, 136, 0.35);
+}
+
+.badge-arctic {
+  background: rgba(5, 150, 105, 0.18);
+  color: #34d399;
+  border: 1px solid rgba(5, 150, 105, 0.35);
+}
+
+.badge-himalaya {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fcd34d;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+/* Ocean badge — deep blue, no purple */
+.badge-ocean {
+  background: rgba(30, 64, 175, 0.22);
+  color: #93c5fd;
+  border: 1px solid rgba(96, 165, 250, 0.28);
+}
+
+/* --- Buttons --- */
+
+/* Primary: Saffron — India's colour, main CTA */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: var(--saffron);
+  color: var(--text-on-saffron);
+  padding: 0.6rem 1.35rem;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  font-size: 0.9rem;
+  border: none;
+  box-shadow: 0 2px 10px rgba(245, 158, 11, 0.28), inset 0 1px 0 rgba(255,255,255,0.2);
+  cursor: pointer;
+  transition: all 200ms var(--ease);
+}
+
+.btn-primary:hover {
+  background: var(--saffron-deep);
+  transform: translateY(-1px);
+  box-shadow: 0 5px 18px rgba(245, 158, 11, 0.4);
+}
+
+.btn-primary:active { transform: translateY(0); }
+
+/* Secondary: Translucent slate */
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: rgba(240, 244, 248, 0.07);
+  color: var(--text-primary);
+  padding: 0.6rem 1.35rem;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 0.9rem;
+  border: 1px solid var(--border-subtle);
+  cursor: pointer;
+  transition: all 200ms var(--ease);
+}
+
+.btn-secondary:hover {
+  background: rgba(240, 244, 248, 0.13);
+  border-color: rgba(245, 158, 11, 0.35);
+}
+
+/* AI/Generate: Ice Blue — no purple */
+.btn-ai {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+  color: #ffffff;
+  padding: 0.6rem 1.35rem;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  font-size: 0.9rem;
+  border: 1px solid rgba(96, 165, 250, 0.28);
+  box-shadow: 0 3px 12px rgba(37, 99, 235, 0.28);
+  cursor: pointer;
+  transition: all 200ms var(--ease);
+}
+
+.btn-ai:hover {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.45);
+}
+
+/* --- Animations --- */
+@keyframes pulse-slow {
+  0%, 100% { opacity: 0.65; transform: scale(1); }
+  50%       { opacity: 1;    transform: scale(1.06); }
+}
+
+.pulse-glow { animation: pulse-slow 3.5s ease-in-out infinite; }
+
+@keyframes slide-in-up {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.animate-in { animation: slide-in-up 0.35s var(--ease) both; }
+
+/* Saffron shimmer — headings */
+@keyframes saffron-shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+
+.shimmer-text {
+  background: linear-gradient(
+    90deg,
+    var(--saffron) 0%,
+    #fffbeb 40%,
+    var(--saffron-light) 60%,
+    var(--saffron) 100%
+  );
+  background-size: 200% auto;
+  color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: saffron-shimmer 4.5s linear infinite;
+}
+
+/* --- Section Divider --- */
+.section-divider {
+  width: 44px;
+  height: 3px;
+  background: var(--saffron);
+  border-radius: var(--radius-full);
+  margin: 0.4rem 0 1.1rem;
+}
+
+/* --- Card Grid --- */
+.grid-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 1.5rem;
+}
+
+/* --- Form Elements --- */
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--saffron);
+  box-shadow: 0 0 0 3px var(--saffron-glow);
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+  .grid-cards { grid-template-columns: 1fr; }
+  .container  { padding: 0 1rem; }
+}
+
+
