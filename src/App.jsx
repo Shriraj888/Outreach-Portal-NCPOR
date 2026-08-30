@@ -10,6 +10,7 @@ import Learn from './pages/Learn';
 import Publications from './pages/Publications';
 import AdminLogin from './pages/admin/AdminLogin';
 import AdminDashboard from './pages/admin/AdminDashboard';
+import UploadStudio from './pages/admin/UploadStudio';
 import ExpeditionForm from './pages/admin/ExpeditionForm';
 import AIGenerateStudio from './pages/admin/AIGenerateStudio';
 import './App.css';
@@ -54,9 +55,23 @@ function MainApp() {
       );
     }
 
+    if (currentRoute === 'admin-upload' || currentRoute.startsWith('admin-upload-')) {
+      const category = currentRoute.startsWith('admin-upload-') 
+        ? currentRoute.replace('admin-upload-', '') 
+        : 'reports';
+      return (
+        <UploadStudio 
+          initialCategory={category}
+          onBack={() => navigateTo('admin-dashboard')} 
+          navigateTo={navigateTo} 
+        />
+      );
+    }
+
     if (currentRoute === 'admin-new-expedition') {
       return (
-        <ExpeditionForm 
+        <UploadStudio 
+          initialCategory="reports"
           onBack={() => navigateTo('admin-dashboard')} 
           navigateTo={navigateTo} 
         />

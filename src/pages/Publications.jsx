@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { usePortal } from '../context/PortalContext';
 import { 
   FileText, 
@@ -7,21 +7,26 @@ import {
   ExternalLink, 
   Copy, 
   Check, 
-  Layers, 
   Calendar, 
   User, 
   ChevronDown, 
   ChevronUp, 
-  Filter,
-  Plus
+  Database,
+  Download,
+  MapPin,
+  Clock,
+  Plus,
+  ShieldCheck
 } from 'lucide-react';
 
 export default function Publications({ navigateTo }) {
-  const { publications, auth } = usePortal();
+  const { publications, datasets, auth } = usePortal();
+  const [viewTab, setViewTab] = useState('all'); // all, publications, datasets
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
-  const [expandedPubId, setExpandedPubId] = useState(null);
+  const [expandedId, setExpandedId] = useState(null);
   const [copiedId, setCopiedId] = useState(null);
+  const [downloadToast, setDownloadToast] = useState(null);
 
   const categories = [
     'All',
@@ -47,8 +52,22 @@ export default function Publications({ navigateTo }) {
     return true;
   });
 
+  const filteredDatasets = datasets.filter(ds => {
+    if (selectedCategory !== 'All' && ds.category !== selectedCategory) {
+      return false;
+    }
+    if (searchTerm.trim() !== '') {
+      const q = searchTerm.toLowerCase();
+      const titleMatch = ds.title.toLowerCase().includes(q);
+      const regionMatch = (ds.region || '').toLowerCase().includes(q);
+      const paramMatch = (ds.parameters || []).some(p => p.toLowerCase().includes(q));
+      return titleMatch || regionMatch || paramMatch;
+    }
+    return true;
+  });
+
   const toggleExpand = (id) => {
-    setExpandedPubId(expandedPubId === id ? null : id);
+    setExpandedId(expandedId === id ? null : id);
   };
 
   const copyCitation = (pub) => {
@@ -58,17 +77,65 @@ export default function Publications({ navigateTo }) {
     setTimeout(() => setCopiedId(null), 2500);
   };
 
+  const handleDownload = (ds) => {
+    setDownloadToast(`Initiated direct open-access download for "${ds.title}" (${ds.format})`);
+    setTimeout(() => setDownloadToast(null), 3500);
+  };
+
   return (
     <div className="container publications-page-container">
       {/* Header */}
       <div className="page-header-row">
         <div>
-          <div className="section-eyebrow">OPEN RESEARCH ARCHIVE</div>
+          <div className="section-eyebrow">OPEN RESEARCH & DATA ARCHIVE</div>
           <h1 className="page-title">Polar Science Publications & Datasets</h1>
           <p className="page-sub">
-            Access peer-reviewed research papers, open paleoclimate datasets, and cruise scientific summaries from India's polar missions.
+            Access peer-reviewed research papers, verified open paleoclimate datasets (NetCDF/CSV), and technical summaries from India's polar missions.
           </p>
         </div>
+
+        {auth.isAuthenticated && (
+          <div className="header-action-upload">
+            <button 
+              className="btn-upload-hub"
+              onClick={() => navigateTo('admin-upload')}
+            >
+              <Plus size={16} />
+              <span>Upload Dataset / Paper</span>
+            </button>
+          </div>
+        )}
+      </div>
+
+      {downloadToast && (
+        <div className="download-toast-box">
+          <Download size={16} />
+          <span>{downloadToast}</span>
+        </div>
+      )}
+
+      {/* Main Mode Tabs */}
+      <div className="view-mode-tabs">
+        <button 
+          className={`mode-tab ${viewTab === 'all' ? 'active' : ''}`}
+          onClick={() => setViewTab('all')}
+        >
+          <span>All Open Assets ({publications.length + datasets.length})</span>
+        </button>
+        <button 
+          className={`mode-tab ${viewTab === 'publications' ? 'active' : ''}`}
+          onClick={() => setViewTab('publications')}
+        >
+          <BookOpen size={16} />
+          <span>Peer-Reviewed Papers ({publications.length})</span>
+        </button>
+        <button 
+          className={`mode-tab ${viewTab === 'datasets' ? 'active' : ''}`}
+          onClick={() => setViewTab('datasets')}
+        >
+          <Database size={16} />
+          <span>Scientific Datasets ({datasets.length})</span>
+        </button>
       </div>
 
       {/* Filter & Search Bar */}
@@ -77,8 +144,8 @@ export default function Publications({ navigateTo }) {
           <div className="search-input-wrap">
             <Search size={18} className="search-icon" />
             <input 
-              type="text"
-              placeholder="Search by paper title, author, journal, or topic..."
+              type="text" 
+              placeholder="Search by title, author, parameter, DOI, or keyword..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="search-field"
@@ -101,120 +168,306 @@ export default function Publications({ navigateTo }) {
 
       {/* Results List */}
       <div className="publications-list-wrapper">
-        <div className="list-count-header">
-          <span>Found <strong>{filteredPubs.length}</strong> publications</span>
-        </div>
+        {/* DATASETS SECTION */}
+        {(viewTab === 'all' || viewTab === 'datasets') && filteredDatasets.length > 0 && (
+          <div className="section-block">
+            <div className="list-count-header">
+              <span className="section-type-title">
+                <Database size={18} className="icon-cyan" />
+                <span>Open Scientific Datasets ({filteredDatasets.length})</span>
+              </span>
+            </div>
 
-        <div className="pubs-vertical-stack">
-          {filteredPubs.map((pub) => {
-            const isExpanded = expandedPubId === pub.id;
-            return (
-              <div key={pub.id} className="glass-panel pub-record-card">
-                <div className="pub-card-top">
-                  <div className="pub-badge-line">
-                    <span className="pub-discipline-badge">{pub.category}</span>
-                    <span className="pub-year-badge">
-                      <Calendar size={12} /> {pub.year}
-                    </span>
-                    <span className="citation-pill">
-                      📚 {pub.citations} Citations
-                    </span>
-                  </div>
+            <div className="pubs-vertical-stack">
+              {filteredDatasets.map((ds) => {
+                const isExpanded = expandedId === ds.id;
+                return (
+                  <div key={ds.id} className="glass-panel pub-record-card dataset-card-accent">
+                    <div className="pub-card-top">
+                      <div className="pub-badge-line">
+                        <span className="pub-discipline-badge dataset-badge">{ds.category}</span>
+                        <span className="pub-format-badge">{ds.format}</span>
+                        <span className="pub-year-badge">
+                          <Calendar size={12} /> {ds.year}
+                        </span>
+                        <span className="license-pill">
+                          <ShieldCheck size={12} /> {ds.license || 'CC-BY Open Data'}
+                        </span>
+                      </div>
 
-                  <h3 className="pub-title-text">{pub.title}</h3>
+                      <h3 className="pub-title-text">{ds.title}</h3>
 
-                  <div className="pub-authors-line">
-                    <User size={14} className="author-icon" />
-                    <span>{pub.authors.join(', ')}</span>
-                  </div>
+                      <div className="dataset-meta-row">
+                        <span className="dataset-meta-item">
+                          <MapPin size={13} /> {ds.spatialCoverage}
+                        </span>
+                        <span className="dataset-meta-item">
+                          <Clock size={13} /> {ds.temporalCoverage}
+                        </span>
+                        <span className="dataset-meta-item">
+                          <FileText size={13} /> Size: {ds.fileSize}
+                        </span>
+                      </div>
 
-                  <div className="pub-journal-line">
-                    <em>{pub.journal}</em> • DOI: <span className="doi-text">{pub.doi}</span>
-                  </div>
-
-                  {pub.tags && (
-                    <div className="pub-tags-list">
-                      {pub.tags.map((tag, i) => (
-                        <span key={i} className="mini-tag">{tag}</span>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                {/* Abstract Section (collapsible) */}
-                {isExpanded && (
-                  <div className="abstract-expanded-box">
-                    <h5 className="abstract-title">Abstract</h5>
-                    <p className="abstract-body">{pub.abstract}</p>
-                  </div>
-                )}
-
-                {/* Card Actions */}
-                <div className="pub-card-actions">
-                  <button 
-                    className="btn-text-action"
-                    onClick={() => toggleExpand(pub.id)}
-                  >
-                    <span>{isExpanded ? 'Hide Abstract' : 'Read Abstract'}</span>
-                    {isExpanded ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
-                  </button>
-
-                  <div className="pub-action-btns-right">
-                    <button 
-                      className="btn-secondary btn-sm"
-                      onClick={() => copyCitation(pub)}
-                      title="Copy APA Citation"
-                    >
-                      {copiedId === pub.id ? (
-                        <>
-                          <Check size={13} className="check-icon" />
-                          <span>Citation Copied!</span>
-                        </>
-                      ) : (
-                        <>
-                          <Copy size={13} />
-                          <span>Copy Citation</span>
-                        </>
+                      {/* Parameters Tags */}
+                      {ds.parameters && (
+                        <div className="param-chips-row">
+                          <span className="param-label">Measured Variables:</span>
+                          {ds.parameters.map((p, i) => (
+                            <span key={i} className="param-chip">{p}</span>
+                          ))}
+                        </div>
                       )}
-                    </button>
+                    </div>
 
-                    <a 
-                      href={`https://doi.org/${pub.doi}`} 
-                      target="_blank" 
-                      rel="noopener noreferrer" 
-                      className="btn-primary btn-sm"
-                    >
-                      <span>DOI Link</span>
-                      <ExternalLink size={13} />
-                    </a>
+                    {isExpanded && (
+                      <div className="abstract-expanded-box">
+                        <h5 className="abstract-title">Dataset Description & Ingestion Notes</h5>
+                        <p className="abstract-body">{ds.summary}</p>
+                        <div className="doi-direct-row">
+                          <span>DOI Identifier: <strong>https://doi.org/{ds.doi}</strong></span>
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="pub-card-actions">
+                      <button 
+                        className="btn-text-expand"
+                        onClick={() => toggleExpand(ds.id)}
+                      >
+                        {isExpanded ? (
+                          <><span>Hide Metadata</span><ChevronUp size={15} /></>
+                        ) : (
+                          <><span>Inspect Variables & Abstract</span><ChevronDown size={15} /></>
+                        )}
+                      </button>
+
+                      <div className="pub-right-actions">
+                        <button 
+                          className="btn-action-pill download"
+                          onClick={() => handleDownload(ds)}
+                          title="Download dataset file"
+                        >
+                          <Download size={14} />
+                          <span>Download {ds.format.split(' ')[0]}</span>
+                        </button>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* PUBLICATIONS SECTION */}
+        {(viewTab === 'all' || viewTab === 'publications') && filteredPubs.length > 0 && (
+          <div className="section-block">
+            <div className="list-count-header">
+              <span className="section-type-title">
+                <BookOpen size={18} className="icon-amber" />
+                <span>Peer-Reviewed Publications ({filteredPubs.length})</span>
+              </span>
+            </div>
+
+            <div className="pubs-vertical-stack">
+              {filteredPubs.map((pub) => {
+                const isExpanded = expandedId === pub.id;
+                return (
+                  <div key={pub.id} className="glass-panel pub-record-card">
+                    <div className="pub-card-top">
+                      <div className="pub-badge-line">
+                        <span className="pub-discipline-badge">{pub.category}</span>
+                        <span className="pub-year-badge">
+                          <Calendar size={12} /> {pub.year}
+                        </span>
+                        <span className="citation-pill">
+                          📚 {pub.citations} Citations
+                        </span>
+                      </div>
+
+                      <h3 className="pub-title-text">{pub.title}</h3>
+
+                      <div className="pub-authors-line">
+                        <User size={14} className="author-icon" />
+                        <span>{pub.authors.join(', ')}</span>
+                      </div>
+
+                      <div className="pub-journal-line">
+                        <em>{pub.journal}</em> • DOI: <span className="doi-text">{pub.doi}</span>
+                      </div>
+
+                      {pub.tags && (
+                        <div className="pub-tags-list">
+                          {pub.tags.map((tag, i) => (
+                            <span key={i} className="mini-tag">{tag}</span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Abstract Section (collapsible) */}
+                    {isExpanded && (
+                      <div className="abstract-expanded-box">
+                        <h5 className="abstract-title">Abstract</h5>
+                        <p className="abstract-body">{pub.abstract}</p>
+                      </div>
+                    )}
+
+                    <div className="pub-card-actions">
+                      <button 
+                        className="btn-text-expand"
+                        onClick={() => toggleExpand(pub.id)}
+                      >
+                        {isExpanded ? (
+                          <><span>Hide Abstract</span><ChevronUp size={15} /></>
+                        ) : (
+                          <><span>Read Abstract</span><ChevronDown size={15} /></>
+                        )}
+                      </button>
+
+                      <div className="pub-right-actions">
+                        <button 
+                          className={`btn-action-pill ${copiedId === pub.id ? 'copied' : ''}`}
+                          onClick={() => copyCitation(pub)}
+                          title="Copy reference citation"
+                        >
+                          {copiedId === pub.id ? (
+                            <><Check size={14} /><span>Copied!</span></>
+                          ) : (
+                            <><Copy size={14} /><span>Cite</span></>
+                          )}
+                        </button>
+
+                        <a 
+                          href={`https://doi.org/${pub.doi}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="btn-action-pill doi-link"
+                          title="View on publisher website"
+                        >
+                          <span>DOI Link</span>
+                          <ExternalLink size={13} />
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
       </div>
 
       <style>{`
         .publications-page-container {
           padding: 2.5rem 1.5rem 5rem;
-        }
-
-        .filter-box {
-          padding: 1.5rem;
-          margin-bottom: 2rem;
           display: flex;
           flex-direction: column;
-          gap: 1.25rem;
+          gap: 1.75rem;
+        }
+
+        .page-header-row {
+          display: flex;
+          align-items: flex-end;
+          justify-content: space-between;
+          flex-wrap: wrap;
+          gap: 1rem;
+        }
+
+        .btn-upload-hub {
+          display: flex;
+          align-items: center;
+          gap: 0.4rem;
+          background: linear-gradient(135deg, #0284c7, #38bdf8);
+          color: #040810;
+          font-weight: 800;
+          padding: 0.6rem 1.1rem;
+          border-radius: var(--radius-sm);
+          font-size: 0.85rem;
+          border: none;
+          cursor: pointer;
+        }
+
+        .download-toast-box {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          background: rgba(56, 189, 248, 0.15);
+          border: 1px solid rgba(56, 189, 248, 0.4);
+          color: #7dd3fc;
+          padding: 0.75rem 1.25rem;
+          border-radius: var(--radius-sm);
+          font-size: 0.85rem;
+          font-weight: 600;
+        }
+
+        .view-mode-tabs {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+          padding-bottom: 0.5rem;
+        }
+
+        .mode-tab {
+          display: flex;
+          align-items: center;
+          gap: 0.45rem;
+          padding: 0.55rem 1rem;
+          background: transparent;
+          border: 1px solid transparent;
+          color: var(--text-secondary);
+          border-radius: var(--radius-sm);
+          font-size: 0.85rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.2s ease;
+        }
+
+        .mode-tab:hover {
+          color: #ffffff;
+          background: rgba(255, 255, 255, 0.05);
+        }
+
+        .mode-tab.active {
+          background: rgba(56, 189, 248, 0.15);
+          border-color: rgba(56, 189, 248, 0.35);
+          color: #38bdf8;
+        }
+
+        .section-block {
+          margin-bottom: 2rem;
+        }
+
+        .section-type-title {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          font-size: 1.1rem;
+          font-weight: 700;
+          color: #ffffff;
+        }
+
+        .icon-cyan { color: #38bdf8; }
+        .icon-amber { color: #f59e0b; }
+
+        .filter-box {
+          padding: 1.25rem 1.5rem;
+          border-radius: var(--radius-md);
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
         }
 
         .search-input-wrap {
           position: relative;
           display: flex;
           align-items: center;
+          width: 100%;
         }
 
-        .search-input-wrap .search-icon {
+        .search-icon {
           position: absolute;
           left: 1rem;
           color: var(--text-muted);
@@ -222,12 +475,12 @@ export default function Publications({ navigateTo }) {
 
         .search-field {
           width: 100%;
-          background: rgba(7, 13, 24, 0.7);
+          background: #040810;
           border: 1px solid var(--border-subtle);
           border-radius: var(--radius-sm);
-          padding: 0.75rem 1rem 0.75rem 2.6rem;
+          padding: 0.75rem 1rem 0.75rem 2.75rem;
           color: #ffffff;
-          font-size: 0.92rem;
+          font-size: 0.95rem;
         }
 
         .search-field:focus {
@@ -237,39 +490,43 @@ export default function Publications({ navigateTo }) {
 
         .category-pills {
           display: flex;
-          align-items: center;
-          gap: 0.5rem;
           flex-wrap: wrap;
+          gap: 0.5rem;
         }
 
         .category-btn {
-          background: rgba(255, 255, 255, 0.04);
+          background: rgba(255, 255, 255, 0.05);
           border: 1px solid var(--border-subtle);
           color: var(--text-secondary);
-          padding: 0.4rem 0.85rem;
+          padding: 0.35rem 0.85rem;
           border-radius: var(--radius-full);
           font-size: 0.8rem;
-          font-weight: 500;
           cursor: pointer;
           transition: all 0.2s ease;
         }
 
         .category-btn:hover {
-          background: rgba(255, 255, 255, 0.1);
           color: #ffffff;
+          background: rgba(255, 255, 255, 0.1);
         }
 
         .category-btn.active {
-          background: rgba(56, 189, 248, 0.15);
+          background: rgba(56, 189, 248, 0.2);
           border-color: var(--accent-ice);
           color: var(--accent-ice);
           font-weight: 600;
         }
 
+        .publications-list-wrapper {
+          display: flex;
+          flex-direction: column;
+          gap: 1.5rem;
+        }
+
         .list-count-header {
-          font-size: 0.9rem;
-          color: var(--text-secondary);
-          margin-bottom: 1.25rem;
+          font-size: 0.85rem;
+          color: var(--text-muted);
+          margin-bottom: 0.75rem;
         }
 
         .pubs-vertical-stack {
@@ -280,70 +537,136 @@ export default function Publications({ navigateTo }) {
 
         .pub-record-card {
           padding: 1.5rem;
+          border-radius: var(--radius-md);
           display: flex;
           flex-direction: column;
           gap: 1rem;
         }
 
+        .dataset-card-accent {
+          border-left: 3px solid #38bdf8;
+        }
+
         .pub-badge-line {
           display: flex;
           align-items: center;
-          gap: 0.6rem;
-          margin-bottom: 0.6rem;
+          gap: 0.5rem;
           flex-wrap: wrap;
+          margin-bottom: 0.4rem;
         }
 
         .pub-discipline-badge {
-          background: rgba(56, 189, 248, 0.12);
+          background: rgba(56, 189, 248, 0.15);
           color: #7dd3fc;
+          border: 1px solid rgba(56, 189, 248, 0.3);
+          font-size: 0.75rem;
+          font-weight: 600;
+          padding: 0.2rem 0.6rem;
+          border-radius: var(--radius-full);
+        }
+
+        .dataset-badge {
+          background: rgba(168, 85, 247, 0.15);
+          color: #d8b4fe;
+          border-color: rgba(168, 85, 247, 0.3);
+        }
+
+        .pub-format-badge {
+          background: rgba(16, 185, 129, 0.15);
+          color: #6ee7b7;
+          border: 1px solid rgba(16, 185, 129, 0.3);
           font-size: 0.72rem;
           font-weight: 700;
-          padding: 2px 8px;
+          padding: 0.15rem 0.55rem;
           border-radius: 4px;
+        }
+
+        .license-pill {
+          display: flex;
+          align-items: center;
+          gap: 0.3rem;
+          font-size: 0.72rem;
+          color: var(--text-muted);
         }
 
         .pub-year-badge {
-          font-size: 0.75rem;
-          color: var(--text-muted);
           display: flex;
           align-items: center;
-          gap: 0.25rem;
+          gap: 0.3rem;
+          font-size: 0.75rem;
+          color: var(--text-muted);
         }
 
         .citation-pill {
-          background: rgba(251, 191, 36, 0.12);
-          color: #fcd34d;
           font-size: 0.72rem;
-          padding: 2px 7px;
+          color: var(--text-muted);
+          background: rgba(255, 255, 255, 0.05);
+          padding: 0.15rem 0.5rem;
           border-radius: 4px;
-          font-weight: 600;
         }
 
         .pub-title-text {
-          font-size: 1.25rem;
+          font-size: 1.15rem;
           color: #ffffff;
+          font-weight: 700;
           line-height: 1.35;
-          margin-bottom: 0.5rem;
+          margin: 0.3rem 0;
+        }
+
+        .dataset-meta-row {
+          display: flex;
+          align-items: center;
+          gap: 1.25rem;
+          font-size: 0.8rem;
+          color: var(--text-ice);
+          flex-wrap: wrap;
+          margin-top: 0.3rem;
+        }
+
+        .dataset-meta-item {
+          display: flex;
+          align-items: center;
+          gap: 0.35rem;
+        }
+
+        .param-chips-row {
+          display: flex;
+          align-items: center;
+          gap: 0.4rem;
+          flex-wrap: wrap;
+          margin-top: 0.5rem;
+        }
+
+        .param-label {
+          font-size: 0.72rem;
+          color: var(--text-muted);
+          font-weight: 600;
+        }
+
+        .param-chip {
+          background: rgba(255, 255, 255, 0.06);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          color: #ffffff;
+          font-size: 0.72rem;
+          padding: 0.15rem 0.5rem;
+          border-radius: 4px;
         }
 
         .pub-authors-line {
           display: flex;
           align-items: center;
-          gap: 0.45rem;
+          gap: 0.4rem;
           font-size: 0.85rem;
-          color: #cbd5e1;
-          margin-bottom: 0.35rem;
+          color: var(--text-ice);
         }
 
         .author-icon {
           color: var(--accent-cyan);
-          flex-shrink: 0;
         }
 
         .pub-journal-line {
           font-size: 0.82rem;
-          color: var(--text-ice);
-          margin-bottom: 0.75rem;
+          color: var(--text-secondary);
         }
 
         .doi-text {
@@ -355,59 +678,112 @@ export default function Publications({ navigateTo }) {
           display: flex;
           flex-wrap: wrap;
           gap: 0.35rem;
+          margin-top: 0.4rem;
+        }
+
+        .mini-tag {
+          font-size: 0.72rem;
+          background: rgba(255, 255, 255, 0.04);
+          color: var(--text-muted);
+          padding: 0.1rem 0.45rem;
+          border-radius: 3px;
         }
 
         .abstract-expanded-box {
-          background: #040810;
-          border: 1px solid rgba(255, 255, 255, 0.1);
+          background: rgba(0, 0, 0, 0.3);
           border-radius: var(--radius-sm);
-          padding: 1.25rem;
+          padding: 1rem;
+          border-left: 2px solid var(--accent-cyan);
         }
 
         .abstract-title {
-          font-size: 0.85rem;
+          font-size: 0.8rem;
           color: var(--accent-cyan);
-          margin-bottom: 0.5rem;
           text-transform: uppercase;
+          letter-spacing: 0.05em;
+          margin-bottom: 0.4rem;
         }
 
         .abstract-body {
-          font-size: 0.9rem;
-          color: #cbd5e1;
-          line-height: 1.6;
+          font-size: 0.85rem;
+          line-height: 1.5;
+          color: var(--text-secondary);
+        }
+
+        .doi-direct-row {
+          margin-top: 0.6rem;
+          font-size: 0.78rem;
+          color: var(--text-ice);
         }
 
         .pub-card-actions {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          border-top: 1px solid rgba(255, 255, 255, 0.08);
+          border-top: 1px solid rgba(255, 255, 255, 0.06);
           padding-top: 0.85rem;
           flex-wrap: wrap;
           gap: 0.75rem;
         }
 
-        .btn-text-action {
+        .btn-text-expand {
           display: flex;
           align-items: center;
-          gap: 0.35rem;
-          background: none;
+          gap: 0.3rem;
+          background: transparent;
           border: none;
           color: var(--accent-ice);
-          font-size: 0.85rem;
+          font-size: 0.82rem;
           font-weight: 600;
           cursor: pointer;
         }
 
-        .pub-action-btns-right {
+        .pub-right-actions {
           display: flex;
           align-items: center;
-          gap: 0.6rem;
+          gap: 0.5rem;
         }
 
-        .btn-sm {
-          padding: 0.4rem 0.85rem;
-          font-size: 0.8rem;
+        .btn-action-pill {
+          display: flex;
+          align-items: center;
+          gap: 0.35rem;
+          background: rgba(255, 255, 255, 0.06);
+          border: 1px solid var(--border-subtle);
+          color: var(--text-secondary);
+          padding: 0.35rem 0.75rem;
+          border-radius: var(--radius-sm);
+          font-size: 0.78rem;
+          font-weight: 600;
+          cursor: pointer;
+          text-decoration: none;
+          transition: all 0.2s ease;
+        }
+
+        .btn-action-pill:hover {
+          background: rgba(255, 255, 255, 0.12);
+          color: #ffffff;
+        }
+
+        .btn-action-pill.download {
+          background: rgba(56, 189, 248, 0.15);
+          color: #38bdf8;
+          border-color: rgba(56, 189, 248, 0.35);
+        }
+
+        .btn-action-pill.download:hover {
+          background: rgba(56, 189, 248, 0.3);
+          color: #ffffff;
+        }
+
+        .btn-action-pill.copied {
+          background: rgba(16, 185, 129, 0.2);
+          color: #6ee7b7;
+          border-color: rgba(16, 185, 129, 0.4);
+        }
+
+        .doi-link {
+          color: #60a5fa;
         }
       `}</style>
     </div>

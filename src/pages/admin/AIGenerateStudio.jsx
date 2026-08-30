@@ -21,8 +21,28 @@ import { TwitterIcon, InstagramIcon, LinkedinIcon } from '../../components/Socia
 import SocialCardPreview from '../../components/SocialCardPreview';
 
 export default function AIGenerateStudio({ expeditionId, onBack, onSelectExpedition }) {
-  const { expeditions, saveGeneratedContent } = usePortal();
-  const expedition = expeditions.find(e => e.id === expeditionId) || expeditions[0];
+  const { 
+    expeditions, 
+    datasets, 
+    publications, 
+    mediaArchives, 
+    activities, 
+    saveGeneratedContent 
+  } = usePortal();
+
+  // Find asset across all 6 Problem Statement pillars
+  const expeditionMatch = expeditions.find(e => e.id === expeditionId);
+  const datasetMatch = datasets.find(d => d.id === expeditionId);
+  const pubMatch = publications.find(p => p.id === expeditionId);
+  const mediaMatch = mediaArchives.find(m => m.id === expeditionId);
+  const actMatch = activities.find(a => a.id === expeditionId);
+
+  const asset = expeditionMatch || datasetMatch || pubMatch || mediaMatch || actMatch || expeditions[0];
+  const assetType = datasetMatch ? 'dataset' : pubMatch ? 'publication' : mediaMatch ? 'media' : actMatch ? 'activity' : 'expedition';
+  const expedition = {
+    ...asset,
+    heroImage: asset.heroImage || asset.url || 'https://images.unsplash.com/photo-1517411032315-54ef2cb783bb?auto=format&fit=crop&w=800&q=80'
+  };
 
   const [audience, setAudience] = useState('general');
   const [isGenerating, setIsGenerating] = useState(false);
@@ -30,26 +50,29 @@ export default function AIGenerateStudio({ expeditionId, onBack, onSelectExpedit
   const [activeTab, setActiveTab] = useState('summary'); // summary, social, altText, compare
 
   // Working draft states
-  const [draftSummary, setDraftSummary] = useState(expedition.aiGeneratedContent?.summary || expedition.summary || '');
-  const [draftTwitter, setDraftTwitter] = useState(expedition.aiGeneratedContent?.socialCaptions?.twitter || '');
-  const [draftInstagram, setDraftInstagram] = useState(expedition.aiGeneratedContent?.socialCaptions?.instagram || '');
-  const [draftLinkedin, setDraftLinkedin] = useState(expedition.aiGeneratedContent?.socialCaptions?.linkedin || '');
-  const [draftFactCards, setDraftFactCards] = useState(expedition.aiGeneratedContent?.factCards || [
-    "Deep ice core extracted near Dome C margin.",
-    "Zero-waste solar green microgrid tested at Bharati.",
-    "Over 8,000 years of paleoclimate history documented."
+  const [draftSummary, setDraftSummary] = useState(asset.aiGeneratedContent?.summary || asset.summary || asset.abstract || '');
+  const [draftTwitter, setDraftTwitter] = useState(asset.aiGeneratedContent?.socialCaptions?.twitter || '');
+  const [draftInstagram, setDraftInstagram] = useState(asset.aiGeneratedContent?.socialCaptions?.instagram || '');
+  const [draftLinkedin, setDraftLinkedin] = useState(asset.aiGeneratedContent?.socialCaptions?.linkedin || '');
+  const [draftFactCards, setDraftFactCards] = useState(asset.aiGeneratedContent?.factCards || [
+    "Verified in-situ observation data archived at NCPOR Goa.",
+    "Promotes open science and climate research accessibility.",
+    "Integrated into the National Polar Outreach Portal."
   ]);
   const [altTextMap, setAltTextMap] = useState({});
-
   const [publishSuccess, setPublishSuccess] = useState(false);
 
   // Trigger Generation
   const handleGenerate = async () => {
     setIsGenerating(true);
     try {
-      const rawReport = expedition.reports && expedition.reports[0]?.rawText ? expedition.reports[0].rawText : expedition.scientificAbstract;
+      const rawReport = asset.reports && asset.reports[0]?.rawText 
+        ? asset.reports[0].rawText 
+        : asset.scientificAbstract || asset.summary || asset.abstract || asset.parameters?.join(', ') || '';
+
       const result = await generateOutreachPackage({
-        expedition: { ...expedition, scientificAbstract: rawReport },
+        asset: { ...asset, scientificAbstract: rawReport },
+        assetType,
         audience
       });
 
@@ -85,7 +108,7 @@ export default function AIGenerateStudio({ expeditionId, onBack, onSelectExpedit
       approvedAt: new Date().toISOString()
     };
 
-    saveGeneratedContent(expedition.id, aiPackage, true);
+    saveGeneratedContent(asset.id, aiPackage, true, assetType);
     setPublishSuccess(true);
     setTimeout(() => {
       setPublishSuccess(false);
@@ -93,13 +116,14 @@ export default function AIGenerateStudio({ expeditionId, onBack, onSelectExpedit
   };
 
   const prompts = buildPromptTemplate({
-    title: expedition.title,
-    region: expedition.region,
-    year: expedition.year,
-    chiefScientist: expedition.chiefScientist,
-    rawText: expedition.reports?.[0]?.rawText || expedition.scientificAbstract,
+    title: asset.title,
+    region: asset.region || "Antarctica",
+    year: asset.year || 2024,
+    chiefScientist: asset.chiefScientist || asset.authors?.join(', ') || "NCPOR Research Corps",
+    rawText: asset.reports?.[0]?.rawText || asset.scientificAbstract || asset.summary || asset.abstract || "",
     audience: AI_AUDIENCE_TONES.find(a => a.id === audience)?.label || "General Public",
-    contentType: "summary"
+    contentType: "summary",
+    assetType
   });
 
   return (

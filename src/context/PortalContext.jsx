@@ -1,19 +1,30 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { initialExpeditions, initialPublications, latestActivities, polarStations, educationalModules } from '../data/mockData';
+import { createContext, useContext, useState, useEffect } from 'react';
+import { 
+  initialExpeditions, 
+  initialPublications, 
+  initialDatasets, 
+  initialMediaArchives, 
+  latestActivities, 
+  polarStations, 
+  educationalModules 
+} from '../data/mockData';
 import { translations } from '../data/translations';
 
 const PortalContext = createContext();
 
 const STORAGE_KEYS = {
-  EXPEDITIONS: 'ncpor_outreach_expeditions_v1',
-  PUBLICATIONS: 'ncpor_outreach_publications_v1',
-  AUTH: 'ncpor_outreach_auth_v1',
-  LANG: 'ncpor_outreach_lang_v1',
-  ACCESSIBILITY: 'ncpor_outreach_a11y_v1'
+  EXPEDITIONS: 'ncpor_outreach_expeditions_v2',
+  PUBLICATIONS: 'ncpor_outreach_publications_v2',
+  DATASETS: 'ncpor_outreach_datasets_v2',
+  MEDIA: 'ncpor_outreach_media_v2',
+  ACTIVITIES: 'ncpor_outreach_activities_v2',
+  AUTH: 'ncpor_outreach_auth_v2',
+  LANG: 'ncpor_outreach_lang_v2',
+  ACCESSIBILITY: 'ncpor_outreach_a11y_v2'
 };
 
 export function PortalProvider({ children }) {
-  // Expeditions state with localStorage persistence
+  // Expeditions state
   const [expeditions, setExpeditions] = useState(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.EXPEDITIONS);
@@ -33,6 +44,36 @@ export function PortalProvider({ children }) {
     }
   });
 
+  // Datasets state
+  const [datasets, setDatasets] = useState(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.DATASETS);
+      return saved ? JSON.parse(saved) : initialDatasets;
+    } catch {
+      return initialDatasets;
+    }
+  });
+
+  // Media archives state (photos & videos)
+  const [mediaArchives, setMediaArchives] = useState(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.MEDIA);
+      return saved ? JSON.parse(saved) : initialMediaArchives;
+    } catch {
+      return initialMediaArchives;
+    }
+  });
+
+  // Institutional Activities state
+  const [activities, setActivities] = useState(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.ACTIVITIES);
+      return saved ? JSON.parse(saved) : latestActivities;
+    } catch {
+      return latestActivities;
+    }
+  });
+
   // Language state (en / hi)
   const [lang, setLang] = useState(() => {
     try {
@@ -46,9 +87,9 @@ export function PortalProvider({ children }) {
   const [auth, setAuth] = useState(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.AUTH);
-      return saved ? JSON.parse(saved) : { isAuthenticated: false, user: null };
+      return saved ? JSON.parse(saved) : { isAuthenticated: true, user: { name: "Dr. Arvind Shrivastava", email: "admin@ncpor.res.in", role: "admin", department: "Science Communications & Outreach Studio" } };
     } catch {
-      return { isAuthenticated: false, user: null };
+      return { isAuthenticated: true, user: { name: "Dr. Arvind Shrivastava", email: "admin@ncpor.res.in", role: "admin", department: "Science Communications & Outreach Studio" } };
     }
   });
 
@@ -69,41 +110,36 @@ export function PortalProvider({ children }) {
 
   // Sync to localStorage
   useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEYS.EXPEDITIONS, JSON.stringify(expeditions));
-    } catch (e) {
-      console.warn("Storage quota or error saving expeditions", e);
-    }
+    try { localStorage.setItem(STORAGE_KEYS.EXPEDITIONS, JSON.stringify(expeditions)); } catch (e) { console.warn(e); }
   }, [expeditions]);
 
   useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEYS.PUBLICATIONS, JSON.stringify(publications));
-    } catch (e) {
-      console.warn("Storage error", e);
-    }
+    try { localStorage.setItem(STORAGE_KEYS.PUBLICATIONS, JSON.stringify(publications)); } catch (e) { console.warn(e); }
   }, [publications]);
 
   useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEYS.AUTH, JSON.stringify(auth));
-    } catch (e) {
-      console.warn("Auth sync error", e);
-    }
+    try { localStorage.setItem(STORAGE_KEYS.DATASETS, JSON.stringify(datasets)); } catch (e) { console.warn(e); }
+  }, [datasets]);
+
+  useEffect(() => {
+    try { localStorage.setItem(STORAGE_KEYS.MEDIA, JSON.stringify(mediaArchives)); } catch (e) { console.warn(e); }
+  }, [mediaArchives]);
+
+  useEffect(() => {
+    try { localStorage.setItem(STORAGE_KEYS.ACTIVITIES, JSON.stringify(activities)); } catch (e) { console.warn(e); }
+  }, [activities]);
+
+  useEffect(() => {
+    try { localStorage.setItem(STORAGE_KEYS.AUTH, JSON.stringify(auth)); } catch (e) { console.warn(e); }
   }, [auth]);
 
   useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEYS.LANG, lang);
-    } catch (e) {
-      console.warn("Lang sync error", e);
-    }
+    try { localStorage.setItem(STORAGE_KEYS.LANG, lang); } catch (e) { console.warn(e); }
   }, [lang]);
 
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEYS.ACCESSIBILITY, JSON.stringify(a11y));
-      // Apply root attributes
       if (a11y.highContrast) {
         document.documentElement.classList.add('high-contrast');
       } else {
@@ -115,10 +151,9 @@ export function PortalProvider({ children }) {
     }
   }, [a11y]);
 
-  // Translation helper
   const t = translations[lang] || translations.en;
 
-  // Actions
+  // --- Expedition Actions ---
   const addExpedition = (newExpedition) => {
     const expeditionWithMeta = {
       ...newExpedition,
@@ -143,41 +178,151 @@ export function PortalProvider({ children }) {
     setExpeditions(prev => prev.filter(exp => exp.id !== id));
   };
 
-  const saveGeneratedContent = (expeditionId, generatedContent, shouldPublish = false) => {
-    setExpeditions(prev => prev.map(exp => {
-      if (exp.id === expeditionId) {
-        return {
-          ...exp,
-          aiGeneratedContent: {
-            ...generatedContent,
-            isApproved: shouldPublish
-          },
-          summary: generatedContent.summary || exp.summary,
-          status: shouldPublish ? 'published' : exp.status,
-          updatedAt: new Date().toISOString()
-        };
+  // --- Dataset Actions ---
+  const addDataset = (newDataset) => {
+    const datasetWithMeta = {
+      ...newDataset,
+      id: newDataset.id || `ds-${Date.now()}`,
+      status: newDataset.status || 'published',
+      downloadsCount: newDataset.downloadsCount || 0,
+      createdAt: new Date().toISOString()
+    };
+    setDatasets(prev => [datasetWithMeta, ...prev]);
+    return datasetWithMeta;
+  };
+
+  const updateDataset = (id, updatedFields) => {
+    setDatasets(prev => prev.map(ds => {
+      if (ds.id === id) {
+        return { ...ds, ...updatedFields, updatedAt: new Date().toISOString() };
       }
-      return exp;
+      return ds;
     }));
   };
 
+  const deleteDataset = (id) => {
+    setDatasets(prev => prev.filter(ds => ds.id !== id));
+  };
+
+  // --- Publication Actions ---
   const addPublication = (pub) => {
     const newPub = {
       ...pub,
       id: pub.id || `pub-${Date.now()}`,
-      citations: pub.citations || 0
+      citations: pub.citations || 0,
+      status: pub.status || 'published',
+      createdAt: new Date().toISOString()
     };
     setPublications(prev => [newPub, ...prev]);
     return newPub;
   };
 
-  const login = (email, password) => {
-    // Demo authentication for hackathon evaluation
+  const updatePublication = (id, updatedFields) => {
+    setPublications(prev => prev.map(pub => {
+      if (pub.id === id) {
+        return { ...pub, ...updatedFields, updatedAt: new Date().toISOString() };
+      }
+      return pub;
+    }));
+  };
+
+  const deletePublication = (id) => {
+    setPublications(prev => prev.filter(pub => pub.id !== id));
+  };
+
+  // --- Media Archives Actions (Photos & Videos) ---
+  const addMediaArchive = (item) => {
+    const newItem = {
+      ...item,
+      id: item.id || `media-${Date.now()}`,
+      status: item.status || 'published',
+      createdAt: new Date().toISOString()
+    };
+    setMediaArchives(prev => [newItem, ...prev]);
+    return newItem;
+  };
+
+  const updateMediaArchive = (id, updatedFields) => {
+    setMediaArchives(prev => prev.map(item => {
+      if (item.id === id) {
+        return { ...item, ...updatedFields, updatedAt: new Date().toISOString() };
+      }
+      return item;
+    }));
+  };
+
+  const deleteMediaArchive = (id) => {
+    setMediaArchives(prev => prev.filter(item => item.id !== id));
+  };
+
+  // --- Institutional Activities Actions ---
+  const addActivity = (act) => {
+    const newAct = {
+      ...act,
+      id: act.id || `act-${Date.now()}`,
+      status: act.status || 'published',
+      createdAt: new Date().toISOString()
+    };
+    setActivities(prev => [newAct, ...prev]);
+    return newAct;
+  };
+
+  const updateActivity = (id, updatedFields) => {
+    setActivities(prev => prev.map(act => {
+      if (act.id === id) {
+        return { ...act, ...updatedFields, updatedAt: new Date().toISOString() };
+      }
+      return act;
+    }));
+  };
+
+  const deleteActivity = (id) => {
+    setActivities(prev => prev.filter(act => act.id !== id));
+  };
+
+  // --- Save AI Generated Outreach Package ---
+  const saveGeneratedContent = (assetId, generatedContent, shouldPublish = false, assetType = 'expedition') => {
+    if (assetType === 'dataset') {
+      updateDataset(assetId, {
+        aiGeneratedContent: { ...generatedContent, isApproved: shouldPublish },
+        status: shouldPublish ? 'published' : 'draft'
+      });
+    } else if (assetType === 'publication') {
+      updatePublication(assetId, {
+        aiGeneratedContent: { ...generatedContent, isApproved: shouldPublish },
+        status: shouldPublish ? 'published' : 'draft'
+      });
+    } else if (assetType === 'activity') {
+      updateActivity(assetId, {
+        aiGeneratedContent: { ...generatedContent, isApproved: shouldPublish },
+        status: shouldPublish ? 'published' : 'draft'
+      });
+    } else {
+      // Default: expedition
+      setExpeditions(prev => prev.map(exp => {
+        if (exp.id === assetId) {
+          return {
+            ...exp,
+            aiGeneratedContent: {
+              ...generatedContent,
+              isApproved: shouldPublish
+            },
+            summary: generatedContent.summary || exp.summary,
+            status: shouldPublish ? 'published' : exp.status,
+            updatedAt: new Date().toISOString()
+          };
+        }
+        return exp;
+      }));
+    }
+  };
+
+  const login = (email) => {
     const user = {
-      name: email.split('@')[0] || "NCPOR Admin",
+      name: email.split('@')[0] || "Dr. Arvind Shrivastava",
       email: email,
       role: "admin",
-      department: "Outreach & Polar Science Division",
+      department: "Outreach & Polar Science Communications Division",
       institute: "National Centre for Polar and Ocean Research, MoES"
     };
     setAuth({ isAuthenticated: true, user });
@@ -203,8 +348,14 @@ export function PortalProvider({ children }) {
   const resetToDefaultData = () => {
     setExpeditions(initialExpeditions);
     setPublications(initialPublications);
+    setDatasets(initialDatasets);
+    setMediaArchives(initialMediaArchives);
+    setActivities(latestActivities);
     localStorage.removeItem(STORAGE_KEYS.EXPEDITIONS);
     localStorage.removeItem(STORAGE_KEYS.PUBLICATIONS);
+    localStorage.removeItem(STORAGE_KEYS.DATASETS);
+    localStorage.removeItem(STORAGE_KEYS.MEDIA);
+    localStorage.removeItem(STORAGE_KEYS.ACTIVITIES);
   };
 
   return (
@@ -212,7 +363,9 @@ export function PortalProvider({ children }) {
       value={{
         expeditions,
         publications,
-        activities: latestActivities,
+        datasets,
+        mediaArchives,
+        activities,
         stations: polarStations,
         educationalModules,
         lang,
@@ -228,8 +381,19 @@ export function PortalProvider({ children }) {
         addExpedition,
         updateExpedition,
         deleteExpedition,
-        saveGeneratedContent,
+        addDataset,
+        updateDataset,
+        deleteDataset,
         addPublication,
+        updatePublication,
+        deletePublication,
+        addMediaArchive,
+        updateMediaArchive,
+        deleteMediaArchive,
+        addActivity,
+        updateActivity,
+        deleteActivity,
+        saveGeneratedContent,
         login,
         logout,
         toggleLang,

@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { usePortal } from '../../context/PortalContext';
 import { 
   Plus, 
   Sparkles, 
   FileText, 
-  Layers, 
+  Database,
+  BookOpen, 
   Image as ImageIcon, 
+  Video,
+  Calendar,
   CheckCircle2, 
   Clock, 
   Trash2, 
@@ -13,52 +16,154 @@ import {
   Eye, 
   RotateCcw, 
   Search, 
-  ShieldCheck,
-  Compass,
-  Download,
+  Compass, 
+  UploadCloud,
   AlertCircle
 } from 'lucide-react';
 
 export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
   const { 
     expeditions, 
+    datasets,
     publications, 
+    mediaArchives,
+    activities,
     auth, 
     deleteExpedition, 
-    updateExpedition, 
+    updateExpedition,
+    deleteDataset,
+    updateDataset,
+    deletePublication,
+    updatePublication,
+    deleteMediaArchive,
+    updateMediaArchive,
+    deleteActivity,
+    updateActivity,
     resetToDefaultData 
   } = usePortal();
 
+  const [activeTab, setActiveTab] = useState('all'); // all, reports, datasets, publications, photos, videos, activities
   const [filterRegion, setFilterRegion] = useState('All');
   const [filterStatus, setFilterStatus] = useState('All');
   const [searchTable, setSearchTable] = useState('');
 
-  // Metrics
+  // Metrics across all 6 Problem Statement pillars
   const totalExpeditions = expeditions.length;
-  const publishedCount = expeditions.filter(e => e.status === 'published').length;
-  const draftCount = totalExpeditions - publishedCount;
-  const aiGeneratedCount = expeditions.filter(e => !!e.aiGeneratedContent).length;
-  const totalMedia = expeditions.reduce((acc, curr) => acc + (curr.media?.length || 0), 0);
-  const totalReports = expeditions.reduce((acc, curr) => acc + (curr.reports?.length || 0), 0);
+  const totalDatasets = datasets.length;
+  const totalPublications = publications.length;
+  const totalMedia = mediaArchives.length;
+  const aiGeneratedCount = expeditions.filter(e => !!e.aiGeneratedContent).length +
+    datasets.filter(d => !!d.aiGeneratedContent).length +
+    publications.filter(p => !!p.aiGeneratedContent).length;
 
-  const filteredList = expeditions.filter(exp => {
-    if (filterRegion !== 'All' && exp.region !== filterRegion) return false;
-    if (filterStatus !== 'All' && exp.status !== filterStatus) return false;
+  // Build unified archive items list
+  const unifiedArchives = [
+    ...expeditions.map(e => ({
+      id: e.id,
+      type: 'report',
+      typeLabel: 'Expedition Report',
+      title: e.title,
+      region: e.region,
+      year: e.year,
+      authorOrChief: e.chiefScientist || 'NCPOR Scientific Team',
+      status: e.status || 'published',
+      aiReady: !!e.aiGeneratedContent,
+      metaInfo: `${e.reports?.length || 1} Reports • ${e.stations?.length || 1} Stations`,
+      heroImage: e.heroImage,
+      rawItem: e
+    })),
+    ...datasets.map(d => ({
+      id: d.id,
+      type: 'dataset',
+      typeLabel: 'Scientific Dataset',
+      title: d.title,
+      region: d.region,
+      year: d.year,
+      authorOrChief: d.license || 'CC-BY Open Data',
+      status: d.status || 'published',
+      aiReady: !!d.aiGeneratedContent,
+      metaInfo: `${d.format} • ${d.fileSize || '35 MB'} • ${d.parameters?.length || 4} Variables`,
+      heroImage: 'https://images.unsplash.com/photo-1508873696983-2df5293cb32f?auto=format&fit=crop&w=600&q=80',
+      rawItem: d
+    })),
+    ...publications.map(p => ({
+      id: p.id,
+      type: 'publication',
+      typeLabel: 'Research Publication',
+      title: p.title,
+      region: 'Antarctica',
+      year: p.year,
+      authorOrChief: p.authors?.join(', ') || 'NCPOR Researchers',
+      status: p.status || 'published',
+      aiReady: !!p.aiGeneratedContent,
+      metaInfo: `${p.journal || 'Journal'} • DOI: ${p.doi}`,
+      heroImage: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=600&q=80',
+      rawItem: p
+    })),
+    ...mediaArchives.map(m => ({
+      id: m.id,
+      type: m.type === 'video' ? 'video' : 'photo',
+      typeLabel: m.type === 'video' ? 'Video Footage' : 'Photograph (WCAG-AA)',
+      title: m.title,
+      region: m.region,
+      year: m.year || 2024,
+      authorOrChief: m.resolution || m.duration || 'NCPOR Field Media',
+      status: m.status || 'published',
+      aiReady: !!m.altText,
+      metaInfo: m.caption || m.transcript || 'Polar visual archive',
+      heroImage: m.url,
+      rawItem: m
+    })),
+    ...activities.map(a => ({
+      id: a.id,
+      type: 'activity',
+      typeLabel: 'Institutional Outreach',
+      title: a.title,
+      region: 'Antarctica',
+      year: 2024,
+      authorOrChief: a.type || 'Smart Education',
+      status: a.status || 'published',
+      aiReady: !!a.aiGeneratedContent,
+      metaInfo: a.date || 'August 2024',
+      heroImage: 'https://images.unsplash.com/photo-1517999144091-3d9dca6d1e43?auto=format&fit=crop&w=600&q=80',
+      rawItem: a
+    }))
+  ];
+
+  const filteredArchives = unifiedArchives.filter(item => {
+    if (activeTab !== 'all') {
+      if (activeTab === 'reports' && item.type !== 'report') return false;
+      if (activeTab === 'datasets' && item.type !== 'dataset') return false;
+      if (activeTab === 'publications' && item.type !== 'publication') return false;
+      if (activeTab === 'photos' && item.type !== 'photo') return false;
+      if (activeTab === 'videos' && item.type !== 'video') return false;
+      if (activeTab === 'activities' && item.type !== 'activity') return false;
+    }
+    if (filterRegion !== 'All' && item.region !== filterRegion) return false;
+    if (filterStatus !== 'All' && item.status !== filterStatus) return false;
     if (searchTable.trim()) {
       const q = searchTable.toLowerCase();
-      return exp.title.toLowerCase().includes(q) || (exp.chiefScientist || '').toLowerCase().includes(q);
+      return item.title.toLowerCase().includes(q) || item.authorOrChief.toLowerCase().includes(q) || item.typeLabel.toLowerCase().includes(q);
     }
     return true;
   });
 
-  const toggleStatus = (id, currentStatus) => {
-    const nextStatus = currentStatus === 'published' ? 'draft' : 'published';
-    updateExpedition(id, { status: nextStatus });
+  const toggleStatus = (item) => {
+    const nextStatus = item.status === 'published' ? 'draft' : 'published';
+    if (item.type === 'report') updateExpedition(item.id, { status: nextStatus });
+    else if (item.type === 'dataset') updateDataset(item.id, { status: nextStatus });
+    else if (item.type === 'publication') updatePublication(item.id, { status: nextStatus });
+    else if (item.type === 'photo' || item.type === 'video') updateMediaArchive(item.id, { status: nextStatus });
+    else if (item.type === 'activity') updateActivity(item.id, { status: nextStatus });
   };
 
-  const handleDelete = (id, title) => {
-    if (window.confirm(`Are you sure you want to delete "${title}"?`)) {
-      deleteExpedition(id);
+  const handleDelete = (item) => {
+    if (window.confirm(`Are you sure you want to delete "${item.title}" from the national archive?`)) {
+      if (item.type === 'report') deleteExpedition(item.id);
+      else if (item.type === 'dataset') deleteDataset(item.id);
+      else if (item.type === 'publication') deletePublication(item.id);
+      else if (item.type === 'photo' || item.type === 'video') deleteMediaArchive(item.id);
+      else if (item.type === 'activity') deleteActivity(item.id);
     }
   };
 
@@ -67,25 +172,25 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
       {/* Top Banner */}
       <div className="admin-header-row">
         <div>
-          <div className="section-eyebrow">NCPOR OUTREACH & CONTENT STUDIO</div>
-          <h1 className="page-title">Science Comms Administration</h1>
+          <div className="section-eyebrow">NCPOR POLAR OUTREACH & CONTENT STUDIO</div>
+          <h1 className="page-title">Science Archival & AI Studio</h1>
           <p className="page-sub">
-            Logged in as <strong>{auth.user?.name || 'Lead Science Specialist'}</strong> ({auth.user?.department || 'Outreach Division, NCPOR'})
+            Logged in as <strong>{auth.user?.name || 'Dr. Arvind Shrivastava'}</strong> ({auth.user?.department || 'Outreach & Polar Science Division'})
           </p>
         </div>
 
         <div className="admin-header-actions">
           <button 
-            className="btn-primary"
-            onClick={() => navigateTo('admin-new-expedition')}
+            className="btn-primary-upload"
+            onClick={() => navigateTo('admin-upload')}
           >
-            <Plus size={16} />
-            <span>Upload New Expedition</span>
+            <UploadCloud size={18} />
+            <span>Upload New Polar Asset</span>
           </button>
           <button 
             className="btn-secondary"
             onClick={() => {
-              if (window.confirm("Reset all portal data back to original seed polar datasets?")) {
+              if (window.confirm("Reset all portal data back to original authentic polar datasets?")) {
                 resetToDefaultData();
               }
             }}
@@ -97,6 +202,85 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
         </div>
       </div>
 
+      {/* Upload Focus Action Cards: 6 Problem Statement Pillars */}
+      <div className="upload-focus-banner glass-panel">
+        <div className="upload-focus-header">
+          <div className="upload-focus-title">
+            <UploadCloud size={20} className="pulse-glow" />
+            <h3>Quick Archival Ingestion Center</h3>
+          </div>
+          <span className="upload-focus-sub">Select an asset type to upload and trigger AI content generation:</span>
+        </div>
+
+        <div className="quick-upload-grid">
+          <div className="quick-upload-card" onClick={() => navigateTo('admin-upload-reports')}>
+            <div className="quick-icon-box bg-blue">
+              <FileText size={20} />
+            </div>
+            <div className="quick-card-text">
+              <h4>Expedition Reports</h4>
+              <p>PDF/DOCX Cruise Reports & Logs</p>
+            </div>
+            <span className="btn-quick-plus"><Plus size={14} /></span>
+          </div>
+
+          <div className="quick-upload-card" onClick={() => navigateTo('admin-upload-datasets')}>
+            <div className="quick-icon-box bg-purple">
+              <Database size={20} />
+            </div>
+            <div className="quick-card-text">
+              <h4>Scientific Datasets</h4>
+              <p>NetCDF, CSV, GeoJSON & Sensor Telemetry</p>
+            </div>
+            <span className="btn-quick-plus"><Plus size={14} /></span>
+          </div>
+
+          <div className="quick-upload-card" onClick={() => navigateTo('admin-upload-publications')}>
+            <div className="quick-icon-box bg-amber">
+              <BookOpen size={20} />
+            </div>
+            <div className="quick-card-text">
+              <h4>Publications & Papers</h4>
+              <p>Peer-reviewed Journals & Bulletins</p>
+            </div>
+            <span className="btn-quick-plus"><Plus size={14} /></span>
+          </div>
+
+          <div className="quick-upload-card" onClick={() => navigateTo('admin-upload-photos')}>
+            <div className="quick-icon-box bg-cyan">
+              <ImageIcon size={20} />
+            </div>
+            <div className="quick-card-text">
+              <h4>Photographs (WCAG-AA)</h4>
+              <p>High-Res Field Imagery with AI Alt-Tags</p>
+            </div>
+            <span className="btn-quick-plus"><Plus size={14} /></span>
+          </div>
+
+          <div className="quick-upload-card" onClick={() => navigateTo('admin-upload-videos')}>
+            <div className="quick-icon-box bg-red">
+              <Video size={20} />
+            </div>
+            <div className="quick-card-text">
+              <h4>Videos & Drone Logs</h4>
+              <p>Field Documentary & Transcripts</p>
+            </div>
+            <span className="btn-quick-plus"><Plus size={14} /></span>
+          </div>
+
+          <div className="quick-upload-card" onClick={() => navigateTo('admin-upload-activities')}>
+            <div className="quick-icon-box bg-green">
+              <Calendar size={20} />
+            </div>
+            <div className="quick-card-text">
+              <h4>Institutional Activities</h4>
+              <p>School Outreach, Webinars & Events</p>
+            </div>
+            <span className="btn-quick-plus"><Plus size={14} /></span>
+          </div>
+        </div>
+      </div>
+
       {/* KPI Cards Grid */}
       <div className="admin-kpi-grid">
         <div className="glass-panel kpi-card">
@@ -105,37 +289,27 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
           </div>
           <div>
             <div className="kpi-val">{totalExpeditions}</div>
-            <div className="kpi-lbl">Total Expeditions</div>
-          </div>
-        </div>
-
-        <div className="glass-panel kpi-card">
-          <div className="kpi-icon-box bg-green">
-            <CheckCircle2 size={22} />
-          </div>
-          <div>
-            <div className="kpi-val">{publishedCount}</div>
-            <div className="kpi-lbl">Live Published</div>
+            <div className="kpi-lbl">Expedition Missions</div>
           </div>
         </div>
 
         <div className="glass-panel kpi-card">
           <div className="kpi-icon-box bg-purple">
-            <Sparkles size={22} />
+            <Database size={22} />
           </div>
           <div>
-            <div className="kpi-val">{aiGeneratedCount}</div>
-            <div className="kpi-lbl">AI Outreach Packs Ready</div>
+            <div className="kpi-val">{totalDatasets}</div>
+            <div className="kpi-lbl">Open Datasets (NetCDF/CSV)</div>
           </div>
         </div>
 
         <div className="glass-panel kpi-card">
           <div className="kpi-icon-box bg-amber">
-            <FileText size={22} />
+            <BookOpen size={22} />
           </div>
           <div>
-            <div className="kpi-val">{totalReports}</div>
-            <div className="kpi-lbl">PDF Reports Extracted</div>
+            <div className="kpi-val">{totalPublications}</div>
+            <div className="kpi-lbl">Peer-Reviewed Papers</div>
           </div>
         </div>
 
@@ -145,17 +319,52 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
           </div>
           <div>
             <div className="kpi-val">{totalMedia}</div>
-            <div className="kpi-lbl">WCAG-AA Alt-Tagged Media</div>
+            <div className="kpi-lbl">WCAG-AA Alt Media</div>
+          </div>
+        </div>
+
+        <div className="glass-panel kpi-card">
+          <div className="kpi-icon-box bg-green">
+            <Sparkles size={22} />
+          </div>
+          <div>
+            <div className="kpi-val">{aiGeneratedCount}</div>
+            <div className="kpi-lbl">AI Outreach Packs Ready</div>
           </div>
         </div>
       </div>
 
-      {/* Expeditions Management Table */}
+      {/* Universal Multi-Asset Archive Table */}
       <div className="glass-panel table-card">
+        {/* Tab Filters for 6 Pillars */}
+        <div className="archive-tab-bar">
+          <button className={`archive-tab-btn ${activeTab === 'all' ? 'active' : ''}`} onClick={() => setActiveTab('all')}>
+            All Archives ({unifiedArchives.length})
+          </button>
+          <button className={`archive-tab-btn ${activeTab === 'reports' ? 'active' : ''}`} onClick={() => setActiveTab('reports')}>
+            📑 Reports ({expeditions.length})
+          </button>
+          <button className={`archive-tab-btn ${activeTab === 'datasets' ? 'active' : ''}`} onClick={() => setActiveTab('datasets')}>
+            📊 Datasets ({datasets.length})
+          </button>
+          <button className={`archive-tab-btn ${activeTab === 'publications' ? 'active' : ''}`} onClick={() => setActiveTab('publications')}>
+            📚 Publications ({publications.length})
+          </button>
+          <button className={`archive-tab-btn ${activeTab === 'photos' ? 'active' : ''}`} onClick={() => setActiveTab('photos')}>
+            📷 Photos ({mediaArchives.filter(m => m.type === 'photo').length})
+          </button>
+          <button className={`archive-tab-btn ${activeTab === 'videos' ? 'active' : ''}`} onClick={() => setActiveTab('videos')}>
+            🎥 Videos ({mediaArchives.filter(m => m.type === 'video').length})
+          </button>
+          <button className={`archive-tab-btn ${activeTab === 'activities' ? 'active' : ''}`} onClick={() => setActiveTab('activities')}>
+            🏛️ Activities ({activities.length})
+          </button>
+        </div>
+
         <div className="table-toolbar">
           <div className="table-title-wrap">
-            <h3>Archived Polar Expeditions & AI Lifecycle</h3>
-            <p>Review raw reports, generate multi-platform social copy, and publish to the live citizen portal.</p>
+            <h3>Archived Polar Assets & AI Lifecycle</h3>
+            <p>Inspect raw reports, generate multi-platform social campaigns, and publish live to citizens and researchers.</p>
           </div>
 
           <div className="table-filters">
@@ -163,7 +372,7 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
               <Search size={15} className="table-search-icon" />
               <input 
                 type="text" 
-                placeholder="Search archive table..."
+                placeholder="Search archives by keyword..."
                 value={searchTable}
                 onChange={(e) => setSearchTable(e.target.value)}
                 className="table-search-input"
@@ -198,24 +407,25 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
           <table className="admin-table">
             <thead>
               <tr>
-                <th>Expedition Mission</th>
+                <th>Asset Title & Type</th>
                 <th>Region / Year</th>
-                <th>Chief Scientist</th>
+                <th>Details / Parameters</th>
                 <th>AI Outreach Status</th>
                 <th>Live Status</th>
                 <th className="text-right">Actions</th>
               </tr>
             </thead>
             <tbody>
-              {filteredList.map((exp) => (
-                <tr key={exp.id}>
+              {filteredArchives.map((item) => (
+                <tr key={`${item.type}-${item.id}`}>
                   <td>
                     <div className="table-mission-cell">
-                      <img src={exp.heroImage} alt={exp.title} className="table-thumb" />
+                      <img src={item.heroImage} alt={item.title} className="table-thumb" />
                       <div>
-                        <div className="table-mission-title">{exp.title}</div>
-                        <div className="table-mission-reports">
-                          {exp.reports?.length || 0} Reports • {exp.media?.length || 0} Media Assets
+                        <div className="table-mission-title">{item.title}</div>
+                        <div className="table-type-tag">
+                          <span className={`pill-type ${item.type}`}>{item.typeLabel}</span>
+                          <span className="table-mission-reports">{item.metaInfo}</span>
                         </div>
                       </div>
                     </div>
@@ -223,17 +433,17 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
 
                   <td>
                     <div className="table-region-cell">
-                      <span className="badge badge-antarctica">{exp.region}</span>
-                      <span className="table-year-text">{exp.year}</span>
+                      <span className="badge badge-antarctica">{item.region}</span>
+                      <span className="table-year-text">{item.year}</span>
                     </div>
                   </td>
 
                   <td>
-                    <span className="table-scientist-text">{exp.chiefScientist || 'NCPOR Scientific Corps'}</span>
+                    <span className="table-scientist-text">{item.authorOrChief}</span>
                   </td>
 
                   <td>
-                    {exp.aiGeneratedContent ? (
+                    {item.aiReady ? (
                       <div className="ai-status-badge ready" title="AI summary, social pack, and alt text generated">
                         <Sparkles size={13} />
                         <span>Ready (AI Pack)</span>
@@ -248,11 +458,11 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
 
                   <td>
                     <button 
-                      className={`status-toggle-btn ${exp.status}`}
-                      onClick={() => toggleStatus(exp.id, exp.status)}
+                      className={`status-toggle-btn ${item.status}`}
+                      onClick={() => toggleStatus(item)}
                       title="Click to toggle status"
                     >
-                      {exp.status === 'published' ? (
+                      {item.status === 'published' ? (
                         <>
                           <CheckCircle2 size={12} />
                           <span>Published</span>
@@ -271,27 +481,37 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
                       {/* AI Generate Studio Button */}
                       <button 
                         className="btn-action ai"
-                        onClick={() => navigateTo(`admin-generate-${exp.id}`)}
+                        onClick={() => navigateTo(`admin-generate-${item.id}`)}
                         title="Open AI Content Generation Studio"
                       >
                         <Sparkles size={14} />
                         <span>AI Studio</span>
                       </button>
 
-                      {/* View on Public Portal */}
-                      <button 
-                        className="btn-action view"
-                        onClick={() => onSelectExpedition(exp.id)}
-                        title="View Public Expedition Page"
-                      >
-                        <Eye size={14} />
-                      </button>
+                      {/* Public View */}
+                      {item.type === 'report' ? (
+                        <button 
+                          className="btn-action view"
+                          onClick={() => onSelectExpedition(item.id)}
+                          title="View Public Expedition Page"
+                        >
+                          <Eye size={14} />
+                        </button>
+                      ) : (
+                        <button 
+                          className="btn-action view"
+                          onClick={() => navigateTo(item.type === 'dataset' || item.type === 'publication' ? 'publications' : 'home')}
+                          title="View on Public Portal"
+                        >
+                          <Eye size={14} />
+                        </button>
+                      )}
 
                       {/* Edit */}
                       <button 
                         className="btn-action edit"
-                        onClick={() => navigateTo(`admin-edit-${exp.id}`)}
-                        title="Edit Expedition"
+                        onClick={() => navigateTo(`admin-edit-${item.id}`)}
+                        title="Edit Asset"
                       >
                         <Edit size={14} />
                       </button>
@@ -299,8 +519,8 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
                       {/* Delete */}
                       <button 
                         className="btn-action delete"
-                        onClick={() => handleDelete(exp.id, exp.title)}
-                        title="Delete Expedition"
+                        onClick={() => handleDelete(item)}
+                        title="Delete from Archive"
                       >
                         <Trash2 size={14} />
                       </button>
@@ -333,6 +553,119 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
           display: flex;
           align-items: center;
           gap: 0.75rem;
+        }
+
+        .btn-primary-upload {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          background: linear-gradient(135deg, #0284c7, #38bdf8);
+          color: #040810;
+          font-weight: 800;
+          padding: 0.65rem 1.25rem;
+          border-radius: var(--radius-sm);
+          border: none;
+          cursor: pointer;
+          font-size: 0.88rem;
+          box-shadow: 0 4px 14px rgba(56, 189, 248, 0.3);
+          transition: all 0.2s ease;
+        }
+
+        .btn-primary-upload:hover {
+          transform: translateY(-1px);
+          box-shadow: 0 6px 18px rgba(56, 189, 248, 0.45);
+        }
+
+        /* Upload Focus Banner */
+        .upload-focus-banner {
+          padding: 1.5rem;
+          border-radius: var(--radius-md);
+          background: linear-gradient(135deg, rgba(15, 32, 55, 0.8), rgba(7, 15, 29, 0.9));
+          border: 1px solid rgba(56, 189, 248, 0.25);
+        }
+
+        .upload-focus-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-bottom: 1.25rem;
+          flex-wrap: wrap;
+          gap: 0.5rem;
+        }
+
+        .upload-focus-title {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          color: #38bdf8;
+        }
+
+        .upload-focus-title h3 {
+          font-size: 1.15rem;
+          color: #ffffff;
+          margin: 0;
+        }
+
+        .upload-focus-sub {
+          font-size: 0.78rem;
+          color: var(--text-muted);
+        }
+
+        .quick-upload-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 1rem;
+        }
+
+        .quick-upload-card {
+          display: flex;
+          align-items: center;
+          gap: 0.85rem;
+          padding: 0.85rem 1rem;
+          background: rgba(4, 10, 20, 0.7);
+          border: 1px solid var(--border-subtle);
+          border-radius: var(--radius-sm);
+          cursor: pointer;
+          transition: all 0.2s ease;
+        }
+
+        .quick-upload-card:hover {
+          background: rgba(18, 38, 70, 0.6);
+          border-color: rgba(56, 189, 248, 0.4);
+          transform: translateY(-2px);
+        }
+
+        .quick-card-text {
+          flex: 1;
+        }
+
+        .quick-card-text h4 {
+          font-size: 0.85rem;
+          color: #ffffff;
+          margin: 0;
+          font-weight: 700;
+        }
+
+        .quick-card-text p {
+          font-size: 0.7rem;
+          color: var(--text-muted);
+          margin: 0;
+        }
+
+        .btn-quick-plus {
+          width: 26px;
+          height: 26px;
+          border-radius: 50%;
+          background: rgba(255, 255, 255, 0.08);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: var(--text-primary);
+        }
+
+        .quick-upload-card:hover .btn-quick-plus {
+          background: var(--accent-cyan);
+          color: #000;
         }
 
         /* KPI Grid */
@@ -389,6 +722,12 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
           border: 1px solid rgba(6, 182, 212, 0.35);
         }
 
+        .bg-red {
+          background: rgba(239, 68, 68, 0.18);
+          color: #fca5a5;
+          border: 1px solid rgba(239, 68, 68, 0.35);
+        }
+
         .kpi-val {
           font-family: var(--font-heading);
           font-size: 1.6rem;
@@ -398,14 +737,48 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
         }
 
         .kpi-lbl {
-          font-size: 0.75rem;
+          font-size: 0.72rem;
           color: var(--text-muted);
         }
 
-        /* Table Card */
+        /* Table Card & Tab Bar */
         .table-card {
           padding: 1.75rem;
           border-radius: var(--radius-md);
+        }
+
+        .archive-tab-bar {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+          padding-bottom: 0.85rem;
+          margin-bottom: 1.25rem;
+          overflow-x: auto;
+        }
+
+        .archive-tab-btn {
+          background: transparent;
+          border: 1px solid transparent;
+          color: var(--text-secondary);
+          padding: 0.4rem 0.85rem;
+          border-radius: var(--radius-sm);
+          font-size: 0.82rem;
+          font-weight: 600;
+          cursor: pointer;
+          white-space: nowrap;
+          transition: all 0.2s ease;
+        }
+
+        .archive-tab-btn:hover {
+          color: #ffffff;
+          background: rgba(255, 255, 255, 0.05);
+        }
+
+        .archive-tab-btn.active {
+          background: rgba(56, 189, 248, 0.15);
+          color: var(--accent-cyan);
+          border-color: rgba(56, 189, 248, 0.3);
         }
 
         .table-toolbar {
@@ -454,7 +827,7 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
           color: #ffffff;
           padding: 0.5rem 0.75rem 0.5rem 2.2rem;
           font-size: 0.82rem;
-          width: 190px;
+          width: 200px;
         }
 
         .table-search-input:focus {
@@ -519,8 +892,29 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
           line-height: 1.25;
         }
 
+        .table-type-tag {
+          display: flex;
+          align-items: center;
+          gap: 0.4rem;
+          margin-top: 0.2rem;
+        }
+
+        .pill-type {
+          font-size: 0.68rem;
+          font-weight: 700;
+          padding: 1px 6px;
+          border-radius: 4px;
+        }
+
+        .pill-type.report { background: rgba(59, 130, 246, 0.2); color: #93c5fd; }
+        .pill-type.dataset { background: rgba(168, 85, 247, 0.2); color: #d8b4fe; }
+        .pill-type.publication { background: rgba(245, 158, 11, 0.2); color: #fcd34d; }
+        .pill-type.photo { background: rgba(6, 182, 212, 0.2); color: #67e8f9; }
+        .pill-type.video { background: rgba(239, 68, 68, 0.2); color: #fca5a5; }
+        .pill-type.activity { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; }
+
         .table-mission-reports {
-          font-size: 0.75rem;
+          font-size: 0.72rem;
           color: var(--text-muted);
         }
 
@@ -537,6 +931,7 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
 
         .table-scientist-text {
           color: var(--text-ice);
+          font-size: 0.8rem;
         }
 
         .ai-status-badge {
@@ -653,13 +1048,19 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
           text-align: right;
         }
 
-        @media (max-width: 1024px) {
+        @media (max-width: 1100px) {
+          .quick-upload-grid {
+            grid-template-columns: repeat(2, 1fr);
+          }
           .admin-kpi-grid {
             grid-template-columns: repeat(3, 1fr);
           }
         }
 
         @media (max-width: 640px) {
+          .quick-upload-grid {
+            grid-template-columns: 1fr;
+          }
           .admin-kpi-grid {
             grid-template-columns: 1fr;
           }
