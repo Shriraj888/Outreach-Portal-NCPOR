@@ -39,8 +39,9 @@ const STATION_COORDS = [
 async function fetchOpenMeteo(stations) {
   const lats = stations.map(s => s.lat).join(',');
   const lngs = stations.map(s => s.lng).join(',');
+  const baseUrl = import.meta.env?.VITE_OPEN_METEO_API_URL || 'https://api.open-meteo.com/v1/forecast';
   const url = [
-    'https://api.open-meteo.com/v1/forecast',
+    baseUrl,
     `?latitude=${lats}`,
     `&longitude=${lngs}`,
     '&current=temperature_2m,wind_speed_10m,wind_direction_10m,surface_pressure,relative_humidity_2m,shortwave_radiation',
@@ -78,7 +79,7 @@ async function fetchOpenMeteo(stations) {
 // ── NOAA Space Weather — Planetary K-index ─────────────────────────────────
 // Real-time geomagnetic data. Same source used by aurora researchers.
 async function fetchNoaaKp() {
-  const url = 'https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json';
+  const url = import.meta.env?.VITE_NOAA_KP_API_URL || 'https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json';
   const res = await fetch(url);
   if (!res.ok) throw new Error(`NOAA Kp HTTP ${res.status}`);
   const rows = await res.json();
@@ -109,7 +110,8 @@ async function fetchNoaaKp() {
 // NCPOR publishes an RSS feed. We fetch & parse the latest headlines.
 async function fetchNcporNews() {
   const RSS_URL = 'https://ncpor.res.in/rssfeeds';
-  const PROXY = `https://corsproxy.io/?url=${encodeURIComponent(RSS_URL)}`;
+  const proxyBase = import.meta.env?.VITE_CORS_PROXY_URL || 'https://corsproxy.io/?url=';
+  const PROXY = `${proxyBase}${encodeURIComponent(RSS_URL)}`;
   try {
     const res = await fetch(PROXY);
     if (!res.ok) throw new Error('RSS fetch failed');
