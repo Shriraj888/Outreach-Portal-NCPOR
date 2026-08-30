@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useCallback, useState, useMemo } from 'react';
+import { useEffect, useRef, useCallback, useState, useMemo } from 'react';
 import * as d3geo from 'd3-geo';
 import * as topojson from 'topojson-client';
 import worldData from 'world-atlas/countries-110m.json';
@@ -117,6 +117,7 @@ export default function PolarGlobeMap({
   const satPosRef = useRef(null);            // real TLE position override
   const pulseRef = useRef(0);                // radar pulse phase
   const hovRef = useRef(null);               // hovered station item
+  const renderedStationsRef = useRef([]);    // rendered station geometry for hit-testing
   const rafRef = useRef(null);
   const layersRef = useRef(layers);
   const selStRef = useRef(selectedStation);
@@ -138,7 +139,7 @@ export default function PolarGlobeMap({
   // Preset Camera Angles
   const applyPreset = useCallback((preset) => {
     const map = {
-      antarctica:       { rot: [-45, 75, 0], scale: 280 },
+      antarctica:       { rot: [-45, 75, 0], scale: 290 },
       arctic:           { rot: [-12, -78, 0], scale: 290 },
       himalaya:         { rot: [-77.6, -32.4, 0], scale: 330 },
       'southern-ocean': { rot: [-55, 45, 0], scale: 260 },
@@ -153,7 +154,7 @@ export default function PolarGlobeMap({
   useEffect(() => {
     if (selectedStation?.lng != null && selectedStation?.lat != null) {
       targetRef.current = [-selectedStation.lng, -selectedStation.lat, 0];
-      targetScaleRef.current = 300;
+      targetScaleRef.current = 330;
     } else {
       applyPreset(activePreset);
     }
@@ -449,65 +450,220 @@ export default function PolarGlobeMap({
       }
     }
 
-    // 9. Polar Research Stations Markers & Pins
+    // 9. Polar Research Stations Markers & Pins with Collision Detection & Leader Lines
     const currentStations = stationsRef.current;
     const selStationId = selStRef.current?.id;
     const hovStationId = hovRef.current?.id;
 
+    // Collect all visible stations with projected screen coordinates
+    const visibleStations = [];
     currentStations.forEach((st) => {
       const facing = isCoordFacing(st.lng, st.lat, currentRot, pt);
-      if (!facing) return; // Don't draw station if occluded behind globe
-
+      if (!facing) return;
       const p2 = proj([st.lng, st.lat]);
       if (!p2) return;
+      visibleStations.push({
+        st,
+        x: p2[0],
+        y: p2[1],
+        isSel: st.id === selStationId,
+        isHov: st.id === hovStationId,
+      });
+    });
 
-      const isSel = st.id === selStationId;
-      const isHov = st.id === hovStationId;
-      const color = st.region === 'Antarctica' ? '#38bdf8'
+    // Detect clusters and layout non-overlapping labels
+    const layouts = [];
+    const processedIds = new Set();
+
+    visibleStations.forEach((item, i) => {
+      if (processedIds.has(item.st.id)) return;
+
+      const cluster = [item];
+      for (let j = 0; j < visibleStations.length; j++) {
+        if (i === j) continue;
+        const other = visibleStations[j];
+        if (Math.hypot(item.x - other.x, item.y - other.y) < 48) {
+          cluster.push(other);
+          processedIds.add(other.st.id);
+        }
+      }
+      processedIds.add(item.st.id);
+
+      if (cluster.length === 1) {
+        // Single isolated station
+        const { st, x, y, isSel, isHov } = item;
+        const labelText = (st.name || '').replace(' Station', '').replace(' Underwater Observatory', '');
+        ctx.font = `${isSel || isHov ? 'bold ' : '600 '}9.5px Inter, sans-serif`;
+        const textMetrics = ctx.measureText(labelText);
+        const tagW = textMetrics.width + 20;
+        const tagH = 19;
+        const tagX = x + 12;
+        const tagY = y - 9;
+
+        layouts.push({
+          st,
+          x,
+          y,
+          tagX,
+          tagY,
+          tagW,
+          tagH,
+          labelText,
+          isSel,
+          isHov,
+          hasLeader: false,
+          region: st.region,
+        });
+      } else {
+        // Clustered stations (e.g. Dakshin Gangotri & Maitri in Antarctica, or IndARC & Himadri in Arctic)
+        // Sort cluster so specific stations have deterministic and natural vertical slots
+        cluster.sort((a, b) => {
+          if (a.st.id === 'st-dg') return -1;
+          if (b.st.id === 'st-dg') return 1;
+          if (a.st.id === 'st-indarc') return -1;
+          if (b.st.id === 'st-indarc') return 1;
+          return a.y - b.y;
+        });
+
+        cluster.forEach((cItem, idx) => {
+          const { st, x, y, isSel, isHov } = cItem;
+          const labelText = (st.name || '').replace(' Station', '').replace(' Underwater Observatory', '');
+          ctx.font = `${isSel || isHov ? 'bold ' : '600 '}9.5px Inter, sans-serif`;
+          const textMetrics = ctx.measureText(labelText);
+          const tagW = textMetrics.width + 20;
+          const tagH = 19;
+
+          let tagX, tagY, elbowX, elbowY;
+          if (idx === 0) {
+            // First item placed top-right with angled leader line
+            tagX = x + 26;
+            tagY = y - 26;
+            elbowX = x + 14;
+            elbowY = y - 16;
+          } else {
+            // Second item placed bottom-right with angled leader line
+            tagX = x + 26;
+            tagY = y + 12;
+            elbowX = x + 14;
+            elbowY = y + 10;
+          }
+
+          layouts.push({
+            st,
+            x,
+            y,
+            tagX,
+            tagY,
+            tagW,
+            tagH,
+            elbowX,
+            elbowY,
+            labelText,
+            isSel,
+            isHov,
+            hasLeader: true,
+            region: st.region,
+          });
+        });
+      }
+    });
+
+    // Save for pointer hit-testing
+    renderedStationsRef.current = layouts.map((l) => ({
+      station: l.st,
+      pin: [l.x, l.y],
+      tagBounds: { x: l.tagX, y: l.tagY, w: l.tagW, h: l.tagH },
+      isSel: l.isSel,
+      isHov: l.isHov,
+    }));
+
+    // Sort draw order: non-selected/non-hovered first, hovered next, selected drawn on top
+    layouts.sort((a, b) => {
+      const scoreA = (a.isSel ? 2 : 0) + (a.isHov ? 1 : 0);
+      const scoreB = (b.isSel ? 2 : 0) + (b.isHov ? 1 : 0);
+      return scoreA - scoreB;
+    });
+
+    // Render each station marker, leader lines, and badge tooltip
+    layouts.forEach((item) => {
+      const { st, x, y, tagX, tagY, tagW, tagH, elbowX, elbowY, labelText, isSel, isHov, hasLeader } = item;
+
+      const isHeritage = st.id === 'st-dg';
+      const isUnderwater = st.id === 'st-indarc';
+      const isHimansh = st.id === 'st-himansh';
+
+      const color = isHeritage ? '#f59e0b'
+                  : isUnderwater ? '#06b6d4'
+                  : isHimansh ? '#fb923c'
+                  : st.region === 'Antarctica' ? '#38bdf8'
                   : st.region === 'Arctic'     ? '#34d399'
                   : '#f59e0b';
 
       const dotRadius = isSel ? 6.5 : isHov ? 6 : 4.5;
-      const pulseSize = isSel ? (14 + Math.sin(pulseRef.current * 4) * 5) : (isHov ? 13 : 9);
+      const pulseSize = isSel ? (15 + Math.sin(pulseRef.current * 4) * 5) : (isHov ? 13 : 9);
+
+      // Draw Leader Line connecting pin to offset badge tag
+      if (hasLeader) {
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(elbowX, elbowY);
+        ctx.lineTo(tagX, tagY + tagH / 2);
+        ctx.strokeStyle = isSel ? color : isHov ? '#ffffff' : hexToRgba(color, 0.75);
+        ctx.lineWidth = isSel || isHov ? 1.6 : 1.1;
+        ctx.stroke();
+
+        // Pin connector anchor node
+        ctx.beginPath();
+        ctx.arc(x, y, 2.5, 0, Math.PI * 2);
+        ctx.fillStyle = isSel ? '#ffffff' : color;
+        ctx.fill();
+      }
 
       // Radar Pulse Halo
       ctx.beginPath();
-      ctx.arc(p2[0], p2[1], pulseSize, 0, Math.PI * 2);
-      ctx.fillStyle = hexToRgba(color, isSel ? 0.35 : 0.2);
+      ctx.arc(x, y, pulseSize, 0, Math.PI * 2);
+      ctx.fillStyle = hexToRgba(color, isSel ? 0.35 : isHov ? 0.25 : 0.15);
       ctx.fill();
-      ctx.strokeStyle = hexToRgba(color, isSel ? 0.7 : 0.4);
+      ctx.strokeStyle = hexToRgba(color, isSel ? 0.8 : isHov ? 0.6 : 0.35);
       ctx.lineWidth = 1;
       ctx.stroke();
 
-      // Solid Center Marker
+      // Solid Center Marker Dot
       ctx.beginPath();
-      ctx.arc(p2[0], p2[1], dotRadius, 0, Math.PI * 2);
+      ctx.arc(x, y, dotRadius, 0, Math.PI * 2);
       ctx.fillStyle = color;
       ctx.fill();
-      ctx.strokeStyle = '#ffffff';
+      ctx.strokeStyle = isSel || isHov ? '#ffffff' : 'rgba(255,255,255,0.85)';
       ctx.lineWidth = isSel ? 2 : 1.5;
       ctx.stroke();
 
-      // Label Tag Box
-      const labelText = (st.name || '').replace(' Station', '').replace(' Underwater Observatory', '');
-      ctx.font = `${isSel ? 'bold ' : '600 '}9.5px Inter, sans-serif`;
-      const textMetrics = ctx.measureText(labelText);
-      const tagW = textMetrics.width + 12;
-      const tagH = 18;
-      const tagX = p2[0] + 10;
-      const tagY = p2[1] - 9;
+      // Badge Card Box
+      ctx.fillStyle = isSel ? 'rgba(7, 16, 30, 0.96)' : isHov ? 'rgba(12, 26, 48, 0.95)' : 'rgba(7, 16, 30, 0.88)';
+      ctx.strokeStyle = isSel ? color : isHov ? '#ffffff' : hexToRgba(color, 0.4);
+      ctx.lineWidth = isSel ? 1.6 : isHov ? 1.4 : 0.9;
 
-      ctx.fillStyle = isSel ? 'rgba(7, 16, 30, 0.95)' : 'rgba(7, 16, 30, 0.85)';
-      ctx.strokeStyle = isSel ? color : 'rgba(255, 255, 255, 0.2)';
-      ctx.lineWidth = isSel ? 1.5 : 0.8;
-      roundRect(ctx, tagX, tagY, tagW, tagH, 4);
+      if (isSel || isHov) {
+        ctx.shadowColor = hexToRgba(color, 0.6);
+        ctx.shadowBlur = 8;
+      }
+
+      roundRect(ctx, tagX, tagY, tagW, tagH, 5);
       ctx.fill();
       ctx.stroke();
+      ctx.shadowBlur = 0; // reset shadow blur
+
+      // Status indicator dot inside label box
+      const statusDotColor = isHeritage ? '#f59e0b' : '#34d399';
+      ctx.beginPath();
+      ctx.arc(tagX + 7, tagY + tagH / 2, 2.5, 0, Math.PI * 2);
+      ctx.fillStyle = statusDotColor;
+      ctx.fill();
 
       // Label text
-      ctx.fillStyle = isSel ? '#ffffff' : color;
+      ctx.font = `${isSel ? 'bold ' : isHov ? 'bold ' : '600 '}9.5px Inter, sans-serif`;
+      ctx.fillStyle = isSel ? '#ffffff' : isHov ? '#ffffff' : color;
       ctx.textAlign = 'left';
-      ctx.fillText(labelText, tagX + 6, tagY + 12.5);
+      ctx.fillText(labelText, tagX + 13, tagY + 13);
     });
 
     ctx.restore();
@@ -530,7 +686,7 @@ export default function PolarGlobeMap({
 
       // Tween rotation to target camera angle
       const target = targetRef.current;
-      const dragging = !!dragRef.current;
+      const dragging = !dragRef.current;
 
       if (target && !dragging) {
         const r = rotRef.current;
@@ -621,27 +777,72 @@ export default function PolarGlobeMap({
     targetRef.current = null;
     targetScaleRef.current = null;
     velRef.current = [0, 0];
+
+    // Immediate hit-testing on pointer down
+    const rect = canvas?.getBoundingClientRect();
+    if (canvas && rect) {
+      const mx = e.clientX - rect.left;
+      const my = e.clientY - rect.top;
+      const items = renderedStationsRef.current || [];
+      let foundStation = null;
+      let closestDist = Infinity;
+
+      for (const item of items) {
+        const b = item.tagBounds;
+        if (mx >= b.x - 4 && mx <= b.x + b.w + 4 && my >= b.y - 4 && my <= b.y + b.h + 4) {
+          foundStation = item.station;
+          closestDist = 0;
+          break;
+        }
+      }
+
+      if (!foundStation) {
+        for (const item of items) {
+          const d = Math.hypot(item.pin[0] - mx, item.pin[1] - my);
+          if (d < 22 && d < closestDist) {
+            closestDist = d;
+            foundStation = item.station;
+          }
+        }
+      }
+
+      if (foundStation) {
+        hovRef.current = foundStation;
+        setIsHoveringPin(true);
+      }
+    }
   }, []);
 
   const onPointerMove = useCallback((e) => {
-    // ── Hover hit-test (always runs, no globe movement) ──────────────────────
+    // ── Hover hit-test (checks both badge tag bounds and precision pin distance) ─
     const canvas = canvasRef.current;
     const rect = canvas?.getBoundingClientRect();
     if (canvas && rect) {
       const mx = e.clientX - rect.left;
       const my = e.clientY - rect.top;
-      const W = canvas.clientWidth;
-      const H = canvas.clientHeight;
-      const pt = projTypeRef.current;
-      const proj = createProjection(pt, scaleRef.current, rotRef.current, W, H);
 
+      const items = renderedStationsRef.current || [];
       let foundStation = null;
-      for (const st of stationsRef.current) {
-        if (!isCoordFacing(st.lng, st.lat, rotRef.current, pt)) continue;
-        const sp = proj([st.lng, st.lat]);
-        if (sp && Math.hypot(sp[0] - mx, sp[1] - my) < 18) {
-          foundStation = st;
+      let closestDist = Infinity;
+
+      // 1. Direct tag/tooltip box hover check (highest precision)
+      for (const item of items) {
+        const b = item.tagBounds;
+        if (mx >= b.x - 4 && mx <= b.x + b.w + 4 && my >= b.y - 4 && my <= b.y + b.h + 4) {
+          foundStation = item.station;
+          closestDist = 0;
           break;
+        }
+      }
+
+      // 2. Proximity check to pin marker center
+      if (!foundStation) {
+        for (const item of items) {
+          const d = Math.hypot(item.pin[0] - mx, item.pin[1] - my);
+          if (d < 22 && d < closestDist) {
+            closestDist = d;
+            foundStation = item.station;
+          }
         }
       }
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { usePortal } from '../context/PortalContext';
 import PolarGlobeMap from '../components/PolarGlobeMap';
 import { 
@@ -13,9 +13,7 @@ import {
   ShieldCheck,
   Navigation,
   Sparkles,
-  Satellite,
   Waves,
-  RotateCw,
   Gauge,
   Activity,
   Sun,
@@ -166,7 +164,7 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
               setSelectedStation(stations.find(s => s.id === 'st-bharati') || stations[0]);
             }}
           >
-            <span>🇦🇶 Antarctica (Bharati & Maitri)</span>
+            <span>🇦🇶 Antarctica (Bharati, Maitri & DG)</span>
           </button>
           <button 
             className={`map-view-btn ${activeRegionView === 'arctic' ? 'active' : ''}`}
@@ -523,6 +521,16 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
                       <div>
                         <strong>Schirmacher Oasis Geoscience Hub</strong>
                         <p>Longest continuous meteorological & ozone-hole time-series station in East Antarctica, housing cosmic ray and seismological detectors.</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {selectedStation.id === 'st-dg' && (
+                    <div className="specialized-info-box heritage-base">
+                      <ShieldCheck size={16} className="spec-icon" />
+                      <div>
+                        <strong>Historic Heritage & Auxiliary Supply Base (Est. 1983)</strong>
+                        <p>India's first permanent base on the Princess Astrid Coast ice shelf. Preserved as a historical site and strategic fuel & transit depot supporting field expeditions.</p>
                       </div>
                     </div>
                   )}
@@ -1206,6 +1214,12 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
           background: rgba(56, 189, 248, 0.12);
           border: 1px solid rgba(56, 189, 248, 0.3);
           color: #bae6fd;
+        }
+
+        .specialized-info-box.heritage-base {
+          background: rgba(245, 158, 11, 0.12);
+          border: 1px solid rgba(245, 158, 11, 0.35);
+          color: #fef08a;
         }
 
         .spec-icon {
