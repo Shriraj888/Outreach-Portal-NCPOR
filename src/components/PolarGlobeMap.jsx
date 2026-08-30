@@ -686,7 +686,7 @@ export default function PolarGlobeMap({
 
       // Tween rotation to target camera angle
       const target = targetRef.current;
-      const dragging = !dragRef.current;
+      const dragging = Boolean(dragRef.current);
 
       if (target && !dragging) {
         const r = rotRef.current;
@@ -765,7 +765,9 @@ export default function PolarGlobeMap({
   // ── Pointer & Mouse Drag Events ───────────────────────────────────────────
   const onPointerDown = useCallback((e) => {
     const canvas = canvasRef.current;
-    canvas?.setPointerCapture?.(e.pointerId);
+    if (canvas && typeof canvas.setPointerCapture === 'function') {
+      canvas.setPointerCapture(e.pointerId);
+    }
     dragRef.current = {
       startX: e.clientX,
       startY: e.clientY,
@@ -872,6 +874,10 @@ export default function PolarGlobeMap({
   }, []);
 
   const onPointerUp = useCallback((e) => {
+    const canvas = canvasRef.current;
+    if (canvas && typeof canvas.releasePointerCapture === 'function' && canvas.hasPointerCapture?.(e.pointerId)) {
+      canvas.releasePointerCapture(e.pointerId);
+    }
     if (!dragRef.current) return;
     const distMoved = Math.hypot(
       e.clientX - dragRef.current.startX,
