@@ -1,16 +1,66 @@
-# React + Vite
+# NCPOR Polar Science Outreach Portal 🧭
+### National Centre for Polar and Ocean Research (NCPOR)
+**Ministry of Earth Sciences, Government of India**
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+An integrated, high-performance web platform delivering interactive public outreach, 3D cryosphere geospatial intelligence, educational discovery, and multi-tier archive management for India's scientific expeditions across **Antarctica**, the **Arctic**, and the **Himalayas (Third Pole)**.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🚀 Quick Start (Local Development)
 
-## React Compiler
+```bash
+# 1. Install dependencies
+npm install
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+# 2. Start local Vite development server
+npm run dev
 
-## Expanding the ESLint configuration
+# 3. Build optimized production bundle
+npm run build
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+# 4. Preview local production build
+npm run preview
+```
+
+---
+
+## 🌐 Deploying to Vercel
+
+The project is pre-configured with [`vercel.json`](./vercel.json) for instantaneous zero-configuration deployment with SPA client-side route rewrites, immutable asset caching, and security headers.
+
+### Option 1: Deploy via Vercel Dashboard (Recommended)
+1. Push your repository to **GitHub** / **GitLab** / **Bitbucket**.
+2. Go to [Vercel Dashboard](https://vercel.com/dashboard) and click **"Add New Project"**.
+3. Import your `outreach-portal` repository.
+4. Vercel will automatically detect the **Vite** framework:
+   - **Build Command:** `npm run build` (or `vite build`)
+   - **Output Directory:** `dist`
+   - **Install Command:** `npm install`
+5. Click **Deploy**.
+
+### Option 2: Deploy via Vercel CLI
+```bash
+# Install Vercel CLI globally (if not already installed)
+npm install -g vercel
+
+# Log in and deploy
+vercel
+
+# Deploy directly to production
+vercel --prod
+```
+
+---
+
+## 🛠️ Tech Stack & Key Modules
+- **Framework:** React 19, Vite 8
+- **Styling:** Custom Balanced Matte Institutional Design System (CSS Custom Properties)
+- **Geospatial & 3D:** Three.js, D3-Geo, TopoJSON, React Simple Maps
+- **Icons:** Lucide React
+- **Live Real-time Data:** Open-Meteo API, NOAA Space Weather Prediction, NCPOR Open Data feeds
+- **Accessibility:** WCAG AA/AAA Compliant (Text Resizer, High Contrast Mode, Screen Reader Alt-Text)
+
+---
+
+## 📜 License
+Developed for National Centre for Polar and Ocean Research (NCPOR), Ministry of Earth Sciences, Government of India.
