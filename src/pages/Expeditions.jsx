@@ -2,12 +2,8 @@ import React, { useState } from 'react';
 import { usePortal } from '../context/PortalContext';
 import { 
   Search, 
-  Filter, 
-  MapPin, 
   Calendar, 
   Plus, 
-  Sparkles, 
-  Layers, 
   X,
   RotateCcw,
   SlidersHorizontal
@@ -23,8 +19,7 @@ export default function Expeditions({ onSelectExpedition, navigateTo }) {
     setSelectedRegion, 
     selectedYear, 
     setSelectedYear,
-    auth, 
-    t 
+    auth
   } = usePortal();
 
   const [contentTypeFilter, setContentTypeFilter] = useState('all'); // all, ai, reports, media
@@ -85,9 +80,9 @@ export default function Expeditions({ onSelectExpedition, navigateTo }) {
       <div className="page-header-row">
         <div>
           <div className="section-eyebrow">POLAR ARCHIVES & EXPEDITIONS</div>
-          <h1 className="page-title">Discover India's Polar Missions</h1>
+          <h1 className="page-title">Discover India's Polar Expeditions</h1>
           <p className="page-sub">
-            Browse scientific reports, high-resolution media galleries, and AI-generated outreach packages across Antarctica, Arctic, and Himalayas.
+            Browse scientific reports, high-resolution media galleries, and public outreach packages across Antarctica, Arctic, and Himalayas.
           </p>
         </div>
 
@@ -147,9 +142,9 @@ export default function Expeditions({ onSelectExpedition, navigateTo }) {
                 className="custom-select"
               >
                 <option value="all">All Content Types</option>
-                <option value="ai">✨ With AI Outreach Pack</option>
-                <option value="reports">📄 With Research Reports</option>
-                <option value="media">📸 With Media Galleries</option>
+                <option value="ai">Outreach Pack Ready</option>
+                <option value="reports">With Research Reports</option>
+                <option value="media">With Photo Galleries</option>
               </select>
             </div>
 
@@ -232,15 +227,15 @@ export default function Expeditions({ onSelectExpedition, navigateTo }) {
         }
 
         .page-title {
-          font-size: 2.4rem;
+          font-size: 2.2rem;
           font-weight: 800;
-          color: #ffffff;
+          color: var(--navy);
           margin-bottom: 0.5rem;
         }
 
         .page-sub {
           font-size: 1rem;
-          color: var(--text-ice);
+          color: var(--text-secondary);
           max-width: 780px;
         }
 
@@ -252,6 +247,9 @@ export default function Expeditions({ onSelectExpedition, navigateTo }) {
           display: flex;
           flex-direction: column;
           gap: 1.25rem;
+          background: #ffffff;
+          border: 1px solid var(--border-card);
+          box-shadow: var(--shadow-sm);
         }
 
         .search-bar-row {
@@ -277,20 +275,20 @@ export default function Expeditions({ onSelectExpedition, navigateTo }) {
 
         .search-input-field {
           width: 100%;
-          background: rgba(7, 13, 24, 0.7);
+          background: #f8fafc;
           border: 1px solid var(--border-subtle);
           border-radius: var(--radius-sm);
           padding: 0.75rem 2.2rem 0.75rem 2.6rem;
-          color: #ffffff;
+          color: var(--text-primary);
           font-size: 0.92rem;
           transition: all 0.2s ease;
         }
 
         .search-input-field:focus {
           outline: none;
-          border-color: var(--accent-ice);
-          background: rgba(7, 13, 24, 0.95);
-          box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+          border-color: var(--ice);
+          background: #ffffff;
+          box-shadow: 0 0 0 3px var(--ice-glow);
         }
 
         .clear-btn {
@@ -323,10 +321,10 @@ export default function Expeditions({ onSelectExpedition, navigateTo }) {
         }
 
         .custom-select {
-          background: rgba(7, 13, 24, 0.7);
+          background: #f8fafc;
           border: 1px solid var(--border-subtle);
           border-radius: var(--radius-sm);
-          color: #ffffff;
+          color: var(--text-primary);
           padding: 0.7rem 1.75rem 0.7rem 2.2rem;
           font-size: 0.85rem;
           cursor: pointer;
@@ -334,16 +332,16 @@ export default function Expeditions({ onSelectExpedition, navigateTo }) {
 
         .custom-select:focus {
           outline: none;
-          border-color: var(--accent-ice);
+          border-color: var(--ice);
         }
 
         .btn-reset-filters {
           display: flex;
           align-items: center;
           gap: 0.35rem;
-          background: rgba(239, 68, 68, 0.15);
-          color: #fca5a5;
-          border: 1px solid rgba(239, 68, 68, 0.3);
+          background: #fee2e2;
+          color: #b91c1c;
+          border: 1px solid #fecaca;
           padding: 0.65rem 0.9rem;
           border-radius: var(--radius-sm);
           font-size: 0.82rem;
@@ -357,7 +355,7 @@ export default function Expeditions({ onSelectExpedition, navigateTo }) {
           gap: 1rem;
           flex-wrap: wrap;
           padding-top: 0.75rem;
-          border-top: 1px solid rgba(255, 255, 255, 0.08);
+          border-top: 1px solid #f1f5f9;
         }
 
         .region-label {
@@ -374,7 +372,7 @@ export default function Expeditions({ onSelectExpedition, navigateTo }) {
         }
 
         .region-pill-btn {
-          background: rgba(255, 255, 255, 0.04);
+          background: #f8fafc;
           border: 1px solid var(--border-subtle);
           color: var(--text-secondary);
           padding: 0.4rem 0.9rem;
@@ -382,18 +380,18 @@ export default function Expeditions({ onSelectExpedition, navigateTo }) {
           font-size: 0.82rem;
           font-weight: 500;
           cursor: pointer;
-          transition: all 0.2s ease;
+          transition: all 0.15s ease;
         }
 
         .region-pill-btn:hover {
-          background: rgba(255, 255, 255, 0.1);
-          color: #ffffff;
+          background: #e2e8f0;
+          color: var(--navy);
         }
 
         .region-pill-btn.active {
-          background: rgba(56, 189, 248, 0.15);
-          border-color: var(--accent-ice);
-          color: var(--accent-ice);
+          background: var(--navy);
+          border-color: var(--navy);
+          color: #ffffff;
           font-weight: 600;
         }
 
@@ -407,9 +405,9 @@ export default function Expeditions({ onSelectExpedition, navigateTo }) {
         }
 
         .active-tag-badge {
-          background: rgba(56, 189, 248, 0.15);
-          border: 1px solid rgba(56, 189, 248, 0.3);
-          color: #7dd3fc;
+          background: #e0f2fe;
+          border: 1px solid #bae6fd;
+          color: #0369a1;
           font-size: 0.78rem;
           padding: 0.2rem 0.6rem;
           border-radius: 4px;
@@ -421,7 +419,7 @@ export default function Expeditions({ onSelectExpedition, navigateTo }) {
         .active-tag-badge button {
           background: none;
           border: none;
-          color: #7dd3fc;
+          color: #0369a1;
           font-weight: 700;
           cursor: pointer;
         }
@@ -433,22 +431,23 @@ export default function Expeditions({ onSelectExpedition, navigateTo }) {
           flex-direction: column;
           align-items: center;
           gap: 1rem;
+          background: #ffffff;
         }
 
         .empty-icon-wrap {
           width: 70px;
           height: 70px;
           border-radius: 50%;
-          background: rgba(56, 189, 248, 0.1);
+          background: #f1f5f9;
           display: flex;
           align-items: center;
           justify-content: center;
-          color: var(--accent-ice);
+          color: #64748b;
         }
 
         .empty-results-box h3 {
           font-size: 1.3rem;
-          color: #ffffff;
+          color: var(--navy);
         }
 
         .empty-results-box p {

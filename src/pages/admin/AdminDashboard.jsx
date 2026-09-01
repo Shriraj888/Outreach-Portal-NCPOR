@@ -559,29 +559,30 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
           display: flex;
           align-items: center;
           gap: 0.5rem;
-          background: linear-gradient(135deg, #0284c7, #38bdf8);
-          color: #040810;
-          font-weight: 800;
+          background: var(--navy);
+          color: #ffffff;
+          font-weight: 700;
           padding: 0.65rem 1.25rem;
           border-radius: var(--radius-sm);
           border: none;
           cursor: pointer;
           font-size: 0.88rem;
-          box-shadow: 0 4px 14px rgba(56, 189, 248, 0.3);
-          transition: all 0.2s ease;
+          box-shadow: var(--shadow-sm);
+          transition: all 0.15s ease;
         }
 
         .btn-primary-upload:hover {
+          background: #0d3153;
           transform: translateY(-1px);
-          box-shadow: 0 6px 18px rgba(56, 189, 248, 0.45);
         }
 
         /* Upload Focus Banner */
         .upload-focus-banner {
           padding: 1.5rem;
           border-radius: var(--radius-md);
-          background: linear-gradient(135deg, rgba(15, 32, 55, 0.8), rgba(7, 15, 29, 0.9));
-          border: 1px solid rgba(56, 189, 248, 0.25);
+          background: #ffffff;
+          border: 1px solid var(--border-card);
+          box-shadow: var(--shadow-sm);
         }
 
         .upload-focus-header {
@@ -597,13 +598,14 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
           display: flex;
           align-items: center;
           gap: 0.5rem;
-          color: #38bdf8;
+          color: var(--navy);
         }
 
         .upload-focus-title h3 {
           font-size: 1.15rem;
-          color: #ffffff;
+          color: var(--navy);
           margin: 0;
+          font-weight: 700;
         }
 
         .upload-focus-sub {
@@ -622,17 +624,18 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
           align-items: center;
           gap: 0.85rem;
           padding: 0.85rem 1rem;
-          background: rgba(4, 10, 20, 0.7);
+          background: #f8fafc;
           border: 1px solid var(--border-subtle);
           border-radius: var(--radius-sm);
           cursor: pointer;
-          transition: all 0.2s ease;
+          transition: all 0.15s ease;
         }
 
         .quick-upload-card:hover {
-          background: rgba(18, 38, 70, 0.6);
-          border-color: rgba(56, 189, 248, 0.4);
+          background: #ffffff;
+          border-color: #cbd5e1;
           transform: translateY(-2px);
+          box-shadow: var(--shadow-sm);
         }
 
         .quick-card-text {
@@ -641,7 +644,7 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
 
         .quick-card-text h4 {
           font-size: 0.85rem;
-          color: #ffffff;
+          color: var(--navy);
           margin: 0;
           font-weight: 700;
         }
@@ -656,16 +659,16 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
           width: 26px;
           height: 26px;
           border-radius: 50%;
-          background: rgba(255, 255, 255, 0.08);
+          background: #e2e8f0;
           display: flex;
           align-items: center;
           justify-content: center;
-          color: var(--text-primary);
+          color: var(--navy);
         }
 
         .quick-upload-card:hover .btn-quick-plus {
-          background: var(--accent-cyan);
-          color: #000;
+          background: var(--navy);
+          color: #ffffff;
         }
 
         /* KPI Grid */
@@ -680,6 +683,10 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
           display: flex;
           align-items: center;
           gap: 1rem;
+          background: #ffffff;
+          border: 1px solid var(--border-card);
+          box-shadow: var(--shadow-sm);
+          border-radius: var(--radius-md);
         }
 
         .kpi-icon-box {
@@ -693,65 +700,69 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
         }
 
         .bg-blue {
-          background: rgba(37, 99, 235, 0.18);
-          color: #60a5fa;
-          border: 1px solid rgba(37, 99, 235, 0.35);
+          background: #eff6ff;
+          color: #2563eb;
+          border: 1px solid #bfdbfe;
         }
 
         .bg-green {
-          background: rgba(16, 185, 129, 0.18);
-          color: #6ee7b7;
-          border: 1px solid rgba(16, 185, 129, 0.35);
+          background: #ecfdf5;
+          color: #059669;
+          border: 1px solid #a7f3d0;
         }
 
         .bg-purple {
-          background: rgba(168, 85, 247, 0.18);
-          color: #d8b4fe;
-          border: 1px solid rgba(168, 85, 247, 0.35);
+          background: #f5f3ff;
+          color: #7c3aed;
+          border: 1px solid #ddd6fe;
         }
 
         .bg-amber {
-          background: rgba(245, 158, 11, 0.18);
-          color: #fcd34d;
-          border: 1px solid rgba(245, 158, 11, 0.35);
+          background: #fffbeb;
+          color: #d97706;
+          border: 1px solid #fde68a;
         }
 
         .bg-cyan {
-          background: rgba(6, 182, 212, 0.18);
-          color: #67e8f9;
-          border: 1px solid rgba(6, 182, 212, 0.35);
+          background: #f0fdfa;
+          color: #0d9488;
+          border: 1px solid #99f6e4;
         }
 
         .bg-red {
-          background: rgba(239, 68, 68, 0.18);
-          color: #fca5a5;
-          border: 1px solid rgba(239, 68, 68, 0.35);
+          background: #fef2f2;
+          color: #dc2626;
+          border: 1px solid #fecaca;
         }
 
         .kpi-val {
           font-family: var(--font-heading);
           font-size: 1.6rem;
           font-weight: 800;
-          color: #ffffff;
+          color: var(--navy);
           line-height: 1.1;
         }
 
         .kpi-lbl {
           font-size: 0.72rem;
           color: var(--text-muted);
+          font-weight: 600;
         }
 
         /* Table Card & Tab Bar */
         .table-card {
           padding: 1.75rem;
           border-radius: var(--radius-md);
+          background: #ffffff;
+          border: 1px solid var(--border-card);
+          box-shadow: var(--shadow-sm);
         }
 
         .archive-tab-bar {
           display: flex;
           align-items: center;
           gap: 0.5rem;
-          border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+          border-bottom: 1px solid var(--border-subtle);
           padding-bottom: 0.85rem;
           margin-bottom: 1.25rem;
           overflow-x: auto;
@@ -767,18 +778,18 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
           font-weight: 600;
           cursor: pointer;
           white-space: nowrap;
-          transition: all 0.2s ease;
+          transition: all 0.15s ease;
         }
 
         .archive-tab-btn:hover {
-          color: #ffffff;
-          background: rgba(255, 255, 255, 0.05);
+          color: var(--navy);
+          background: #f1f5f9;
         }
 
         .archive-tab-btn.active {
-          background: rgba(56, 189, 248, 0.15);
-          color: var(--accent-cyan);
-          border-color: rgba(56, 189, 248, 0.3);
+          background: #eff6ff;
+          color: var(--navy);
+          border-color: #bfdbfe;
         }
 
         .table-toolbar {
@@ -792,8 +803,9 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
 
         .table-title-wrap h3 {
           font-size: 1.25rem;
-          color: #ffffff;
+          color: var(--navy);
           margin-bottom: 0.25rem;
+          font-weight: 700;
         }
 
         .table-title-wrap p {
@@ -821,10 +833,10 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
         }
 
         .table-search-input {
-          background: #040810;
+          background: #f8fafc;
           border: 1px solid var(--border-subtle);
           border-radius: var(--radius-sm);
-          color: #ffffff;
+          color: var(--text-primary);
           padding: 0.5rem 0.75rem 0.5rem 2.2rem;
           font-size: 0.82rem;
           width: 200px;
@@ -832,14 +844,15 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
 
         .table-search-input:focus {
           outline: none;
-          border-color: var(--accent-ice);
+          border-color: var(--ice);
+          background: #ffffff;
         }
 
         .table-select {
-          background: #040810;
+          background: #f8fafc;
           border: 1px solid var(--border-subtle);
           border-radius: var(--radius-sm);
-          color: #ffffff;
+          color: var(--text-secondary);
           padding: 0.5rem 0.75rem;
           font-size: 0.82rem;
           cursor: pointer;
@@ -863,12 +876,13 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
           text-transform: uppercase;
           font-size: 0.72rem;
           letter-spacing: 0.05em;
-          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+          border-bottom: 1px solid var(--border-subtle);
+          background: #f8fafc;
         }
 
         .admin-table td {
           padding: 1rem;
-          border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+          border-bottom: 1px solid var(--border-subtle);
           vertical-align: middle;
         }
 
@@ -884,11 +898,12 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
           border-radius: 8px;
           object-fit: cover;
           flex-shrink: 0;
+          background: #f1f5f9;
         }
 
         .table-mission-title {
           font-weight: 700;
-          color: #ffffff;
+          color: var(--navy);
           line-height: 1.25;
         }
 
@@ -906,12 +921,12 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
           border-radius: 4px;
         }
 
-        .pill-type.report { background: rgba(59, 130, 246, 0.2); color: #93c5fd; }
-        .pill-type.dataset { background: rgba(168, 85, 247, 0.2); color: #d8b4fe; }
-        .pill-type.publication { background: rgba(245, 158, 11, 0.2); color: #fcd34d; }
-        .pill-type.photo { background: rgba(6, 182, 212, 0.2); color: #67e8f9; }
-        .pill-type.video { background: rgba(239, 68, 68, 0.2); color: #fca5a5; }
-        .pill-type.activity { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; }
+        .pill-type.report { background: #eff6ff; color: #1d4ed8; }
+        .pill-type.dataset { background: #f5f3ff; color: #6d28d9; }
+        .pill-type.publication { background: #fffbeb; color: #b45309; }
+        .pill-type.photo { background: #f0fdfa; color: #0f766e; }
+        .pill-type.video { background: #fef2f2; color: #b91c1c; }
+        .pill-type.activity { background: #ecfdf5; color: #047857; }
 
         .table-mission-reports {
           font-size: 0.72rem;
@@ -930,7 +945,7 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
         }
 
         .table-scientist-text {
-          color: var(--text-ice);
+          color: var(--text-secondary);
           font-size: 0.8rem;
         }
 
@@ -945,15 +960,15 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
         }
 
         .ai-status-badge.ready {
-          background: rgba(168, 85, 247, 0.15);
-          color: #d8b4fe;
-          border: 1px solid rgba(168, 85, 247, 0.35);
+          background: #eff6ff;
+          color: #0284c7;
+          border: 1px solid #bfdbfe;
         }
 
         .ai-status-badge.pending {
-          background: rgba(245, 158, 11, 0.15);
-          color: #fcd34d;
-          border: 1px solid rgba(245, 158, 11, 0.35);
+          background: #fffbeb;
+          color: #b45309;
+          border: 1px solid #fde68a;
         }
 
         .status-toggle-btn {
@@ -966,19 +981,19 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
           font-weight: 600;
           cursor: pointer;
           border: none;
-          transition: all 0.2s ease;
+          transition: all 0.15s ease;
         }
 
         .status-toggle-btn.published {
-          background: rgba(16, 185, 129, 0.15);
-          color: #6ee7b7;
-          border: 1px solid rgba(16, 185, 129, 0.35);
+          background: #ecfdf5;
+          color: #047857;
+          border: 1px solid #a7f3d0;
         }
 
         .status-toggle-btn.draft {
-          background: rgba(245, 158, 11, 0.15);
-          color: #fcd34d;
-          border: 1px solid rgba(245, 158, 11, 0.35);
+          background: #fffbeb;
+          color: #b45309;
+          border: 1px solid #fde68a;
         }
 
         .action-buttons-group {
@@ -998,50 +1013,51 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
           font-weight: 600;
           cursor: pointer;
           border: 1px solid transparent;
-          transition: all 0.2s ease;
+          transition: all 0.15s ease;
         }
 
         .btn-action.ai {
-          background: linear-gradient(135deg, rgba(147, 51, 234, 0.25), rgba(217, 70, 239, 0.25));
-          border-color: rgba(217, 70, 239, 0.4);
-          color: #f0abfc;
+          background: #eff6ff;
+          border-color: #bfdbfe;
+          color: #0369a1;
         }
 
         .btn-action.ai:hover {
-          background: linear-gradient(135deg, #9333ea, #d946ef);
+          background: #0284c7;
           color: #ffffff;
         }
 
         .btn-action.view {
-          background: rgba(255, 255, 255, 0.06);
+          background: #f8fafc;
+          border: 1px solid var(--border-subtle);
           color: var(--text-secondary);
         }
 
         .btn-action.view:hover {
-          background: rgba(255, 255, 255, 0.15);
-          color: #ffffff;
+          background: #f1f5f9;
+          color: var(--navy);
         }
 
         .btn-action.edit {
-          background: rgba(56, 189, 248, 0.1);
-          color: #7dd3fc;
-          border-color: rgba(56, 189, 248, 0.25);
+          background: #e0f2fe;
+          color: #0369a1;
+          border-color: #bae6fd;
         }
 
         .btn-action.edit:hover {
-          background: rgba(56, 189, 248, 0.25);
-          color: #ffffff;
+          background: #bae6fd;
+          color: #0284c7;
         }
 
         .btn-action.delete {
-          background: rgba(239, 68, 68, 0.1);
-          color: #fca5a5;
-          border-color: rgba(239, 68, 68, 0.25);
+          background: #fef2f2;
+          color: #dc2626;
+          border-color: #fecaca;
         }
 
         .btn-action.delete:hover {
-          background: rgba(239, 68, 68, 0.3);
-          color: #ffffff;
+          background: #fee2e2;
+          color: #b91c1c;
         }
 
         .text-right {

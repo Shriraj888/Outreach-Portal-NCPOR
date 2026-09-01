@@ -4,13 +4,9 @@ import {
   Calendar, 
   MapPin, 
   User, 
-  Ship, 
-  Sparkles, 
   ArrowRight, 
-  Image as ImageIcon, 
-  FileText,
-  CheckCircle2,
-  AlertCircle
+  Image as ImageIcon,
+  Sparkles
 } from 'lucide-react';
 
 export default function ExpeditionCard({ expedition, onSelect }) {
@@ -38,7 +34,6 @@ export default function ExpeditionCard({ expedition, onSelect }) {
           className="card-hero-img" 
           loading="lazy"
         />
-        <div className="card-overlay-gradient"></div>
         
         {/* Top Badges */}
         <div className="card-top-badges">
@@ -56,12 +51,12 @@ export default function ExpeditionCard({ expedition, onSelect }) {
         <div className="card-bottom-badges">
           <div className="card-stat-pill">
             <ImageIcon size={12} />
-            <span>{expedition.media?.length || 0} Media</span>
+            <span>{expedition.media?.length || 0} Photos</span>
           </div>
           {expedition.aiGeneratedContent && (
-            <div className="card-ai-pill" title="AI Outreach Summary & Social Pack Generated">
+            <div className="card-ai-pill" title="Outreach Package Ready">
               <Sparkles size={12} />
-              <span>AI Outreach Ready</span>
+              <span>Outreach Pack</span>
             </div>
           )}
         </div>
@@ -116,39 +111,36 @@ export default function ExpeditionCard({ expedition, onSelect }) {
           overflow: hidden;
           display: flex;
           flex-direction: column;
-          transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.25s ease, box-shadow 0.25s ease;
+          background: #ffffff;
+          border: 1px solid var(--border-card);
           border-radius: var(--radius-md);
+          box-shadow: var(--shadow-card);
+          transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease, border-color 0.2s ease;
           position: relative;
         }
 
         .expedition-card:hover {
-          transform: translateY(-5px);
-          border-color: var(--accent-ice);
-          box-shadow: 0 16px 32px -8px rgba(0, 0, 0, 0.6), 0 0 20px rgba(56, 189, 248, 0.15);
+          transform: translateY(-4px);
+          border-color: #94a3b8;
+          box-shadow: var(--shadow-lg);
         }
 
         .card-image-wrap {
           position: relative;
           height: 200px;
           overflow: hidden;
-          background: #091322;
+          background: #f1f5f9;
         }
 
         .card-hero-img {
           width: 100%;
           height: 100%;
           object-fit: cover;
-          transition: transform 0.4s ease;
+          transition: transform 0.35s ease;
         }
 
         .expedition-card:hover .card-hero-img {
-          transform: scale(1.06);
-        }
-
-        .card-overlay-gradient {
-          position: absolute;
-          inset: 0;
-          background: linear-gradient(180deg, rgba(7, 13, 24, 0.2) 0%, rgba(7, 13, 24, 0.85) 100%);
+          transform: scale(1.04);
         }
 
         .card-top-badges {
@@ -162,11 +154,9 @@ export default function ExpeditionCard({ expedition, onSelect }) {
         }
 
         .card-year-badge {
-          background: rgba(7, 13, 24, 0.75);
-          backdrop-filter: blur(8px);
-          border: 1px solid rgba(255, 255, 255, 0.2);
+          background: rgba(15, 23, 42, 0.85);
           color: #ffffff;
-          padding: 0.25rem 0.6rem;
+          padding: 0.2rem 0.55rem;
           border-radius: var(--radius-full);
           font-size: 0.75rem;
           font-weight: 600;
@@ -186,20 +176,20 @@ export default function ExpeditionCard({ expedition, onSelect }) {
         }
 
         .card-stat-pill {
-          background: rgba(15, 23, 42, 0.85);
-          backdrop-filter: blur(8px);
-          color: var(--text-secondary);
+          background: rgba(255, 255, 255, 0.92);
+          color: #334155;
           padding: 0.2rem 0.55rem;
           border-radius: 6px;
           font-size: 0.72rem;
+          font-weight: 600;
           display: flex;
           align-items: center;
           gap: 0.35rem;
-          border: 1px solid rgba(255, 255, 255, 0.1);
+          box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
 
         .card-ai-pill {
-          background: linear-gradient(135deg, rgba(147, 51, 234, 0.9), rgba(217, 70, 239, 0.9));
+          background: #0284c7;
           color: #ffffff;
           padding: 0.2rem 0.6rem;
           border-radius: 6px;
@@ -208,7 +198,7 @@ export default function ExpeditionCard({ expedition, onSelect }) {
           display: flex;
           align-items: center;
           gap: 0.35rem;
-          box-shadow: 0 0 10px rgba(217, 70, 239, 0.4);
+          box-shadow: 0 1px 3px rgba(0,0,0,0.15);
         }
 
         .card-body {
@@ -216,12 +206,13 @@ export default function ExpeditionCard({ expedition, onSelect }) {
           display: flex;
           flex-direction: column;
           flex: 1;
+          background: #ffffff;
         }
 
         .card-title {
-          font-size: 1.12rem;
+          font-size: 1.1rem;
           font-weight: 700;
-          color: #ffffff;
+          color: var(--navy);
           line-height: 1.35;
           margin-bottom: 0.65rem;
         }
@@ -238,11 +229,11 @@ export default function ExpeditionCard({ expedition, onSelect }) {
           align-items: center;
           gap: 0.45rem;
           font-size: 0.78rem;
-          color: var(--text-ice);
+          color: #475569;
         }
 
         .meta-icon {
-          color: var(--accent-cyan);
+          color: #0284c7;
           flex-shrink: 0;
         }
 
@@ -254,8 +245,8 @@ export default function ExpeditionCard({ expedition, onSelect }) {
 
         .card-desc {
           font-size: 0.84rem;
-          color: var(--text-secondary);
-          line-height: 1.5;
+          color: #475569;
+          line-height: 1.55;
           margin-bottom: 1rem;
           display: -webkit-box;
           -webkit-line-clamp: 3;
@@ -272,11 +263,12 @@ export default function ExpeditionCard({ expedition, onSelect }) {
         }
 
         .mini-tag {
-          background: rgba(255, 255, 255, 0.05);
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          color: var(--text-muted);
-          font-size: 0.7rem;
-          padding: 0.15rem 0.5rem;
+          background: #f1f5f9;
+          border: 1px solid #e2e8f0;
+          color: #475569;
+          font-size: 0.72rem;
+          font-weight: 500;
+          padding: 0.2rem 0.55rem;
           border-radius: 4px;
         }
 
@@ -285,8 +277,8 @@ export default function ExpeditionCard({ expedition, onSelect }) {
           align-items: center;
           justify-content: space-between;
           padding-top: 0.85rem;
-          border-top: 1px solid rgba(255, 255, 255, 0.08);
-          color: var(--accent-ice);
+          border-top: 1px solid #f1f5f9;
+          color: #0284c7;
           font-size: 0.85rem;
           font-weight: 600;
         }
@@ -295,16 +287,16 @@ export default function ExpeditionCard({ expedition, onSelect }) {
           width: 28px;
           height: 28px;
           border-radius: 50%;
-          background: rgba(56, 189, 248, 0.1);
+          background: #e0f2fe;
           display: flex;
           align-items: center;
           justify-content: center;
-          transition: all 0.2s ease;
+          transition: all 0.15s ease;
         }
 
         .expedition-card:hover .action-arrow {
-          background: var(--accent-ice);
-          color: #000000;
+          background: #0284c7;
+          color: #ffffff;
           transform: translateX(3px);
         }
       `}</style>

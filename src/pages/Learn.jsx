@@ -3,7 +3,6 @@ import { usePortal } from '../context/PortalContext';
 import { quizQuestions } from '../data/mockData';
 import confetti from 'canvas-confetti';
 import { 
-  BookOpen, 
   Sparkles, 
   Layers, 
   Mountain, 
@@ -13,12 +12,10 @@ import {
   XCircle, 
   ArrowRight, 
   RotateCcw, 
-  Download, 
   Printer, 
   X, 
   Clock, 
-  Compass,
-  Check
+  Compass
 } from 'lucide-react';
 
 export default function Learn({ navigateTo }) {
@@ -395,14 +392,36 @@ export default function Learn({ navigateTo }) {
           display: inline-flex;
           align-items: center;
           gap: 0.45rem;
-          background: rgba(245, 158, 11, 0.15);
-          color: #fcd34d;
-          border: 1px solid rgba(245, 158, 11, 0.35);
+          background: #fffbeb;
+          color: #b45309;
+          border: 1px solid #fde68a;
           padding: 0.35rem 0.9rem;
           border-radius: var(--radius-full);
           font-size: 0.75rem;
           font-weight: 700;
           margin-bottom: 1.25rem;
+        }
+
+        .page-title {
+          font-size: 2.3rem;
+          font-weight: 800;
+          color: var(--navy);
+          margin-bottom: 0.5rem;
+        }
+
+        .page-sub {
+          font-size: 1rem;
+          color: var(--text-secondary);
+          line-height: 1.6;
+        }
+
+        .modules-count-badge {
+          background: #e0f2fe;
+          color: #0369a1;
+          font-size: 0.75rem;
+          font-weight: 600;
+          padding: 0.3rem 0.75rem;
+          border-radius: var(--radius-full);
         }
 
         /* Modules Grid */
@@ -417,38 +436,42 @@ export default function Learn({ navigateTo }) {
           overflow: hidden;
           display: flex;
           flex-direction: column;
-          transition: transform 0.25s ease, border-color 0.25s ease;
+          background: #ffffff;
+          border: 1px solid var(--border-card);
+          box-shadow: var(--shadow-sm);
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
 
         .module-card:hover {
-          transform: translateY(-5px);
-          border-color: var(--accent-ice);
+          transform: translateY(-4px);
+          box-shadow: var(--shadow-lg);
+          border-color: #cbd5e1;
         }
 
         .mod-img-wrap {
           position: relative;
           height: 170px;
           overflow: hidden;
+          background: #f1f5f9;
         }
 
         .mod-img {
           width: 100%;
           height: 100%;
           object-fit: cover;
-          transition: transform 0.4s ease;
+          transition: transform 0.35s ease;
         }
 
         .module-card:hover .mod-img {
-          transform: scale(1.06);
+          transform: scale(1.05);
         }
 
         .mod-badge {
           position: absolute;
           top: 0.75rem;
           left: 0.75rem;
-          background: rgba(7, 13, 24, 0.85);
-          backdrop-filter: blur(6px);
-          color: #7dd3fc;
+          background: rgba(15, 23, 42, 0.85);
+          color: #ffffff;
           font-size: 0.72rem;
           font-weight: 700;
           padding: 0.2rem 0.55rem;
@@ -459,15 +482,16 @@ export default function Learn({ navigateTo }) {
           position: absolute;
           bottom: 0.75rem;
           right: 0.75rem;
-          background: rgba(7, 13, 24, 0.85);
-          backdrop-filter: blur(6px);
-          color: #ffffff;
+          background: rgba(255, 255, 255, 0.9);
+          color: #334155;
           font-size: 0.7rem;
+          font-weight: 600;
           padding: 0.2rem 0.5rem;
           border-radius: 4px;
           display: flex;
           align-items: center;
           gap: 0.3rem;
+          box-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
 
         .mod-body {
@@ -485,14 +509,14 @@ export default function Learn({ navigateTo }) {
         }
 
         .mod-icon-box {
-          color: var(--accent-cyan);
+          color: #0284c7;
         }
 
         .mod-award-tag {
           font-size: 0.72rem;
-          color: #fbbf24;
-          background: rgba(251, 191, 36, 0.12);
-          border: 1px solid rgba(251, 191, 36, 0.3);
+          color: #b45309;
+          background: #fffbeb;
+          border: 1px solid #fde68a;
           padding: 2px 6px;
           border-radius: 4px;
           font-weight: 600;
@@ -500,14 +524,15 @@ export default function Learn({ navigateTo }) {
 
         .mod-title {
           font-size: 1.1rem;
-          color: #ffffff;
+          color: var(--navy);
           margin-bottom: 0.5rem;
+          font-weight: 700;
         }
 
         .mod-summary {
           font-size: 0.84rem;
           color: var(--text-secondary);
-          line-height: 1.5;
+          line-height: 1.55;
           margin-bottom: 1.25rem;
           flex: 1;
         }
@@ -517,8 +542,8 @@ export default function Learn({ navigateTo }) {
           align-items: center;
           justify-content: space-between;
           padding-top: 0.75rem;
-          border-top: 1px solid rgba(255, 255, 255, 0.08);
-          color: var(--accent-ice);
+          border-top: 1px solid #f1f5f9;
+          color: #0284c7;
           font-size: 0.82rem;
           font-weight: 600;
         }
@@ -529,8 +554,9 @@ export default function Learn({ navigateTo }) {
           margin: 0 auto;
           padding: 2.5rem;
           border-radius: var(--radius-lg);
-          border: 1px solid rgba(56, 189, 248, 0.3);
-          background: linear-gradient(180deg, rgba(15, 29, 53, 0.95) 0%, rgba(7, 13, 24, 0.98) 100%);
+          background: #ffffff;
+          border: 1px solid var(--border-card);
+          box-shadow: var(--shadow-md);
         }
 
         .quiz-card-header {
@@ -546,11 +572,11 @@ export default function Learn({ navigateTo }) {
           display: flex;
           align-items: center;
           gap: 0.45rem;
-          color: #fcd34d;
+          color: #b45309;
           font-size: 0.8rem;
           font-weight: 700;
-          background: rgba(245, 158, 11, 0.12);
-          border: 1px solid rgba(245, 158, 11, 0.3);
+          background: #fffbeb;
+          border: 1px solid #fde68a;
           padding: 0.35rem 0.85rem;
           border-radius: var(--radius-full);
         }
@@ -563,9 +589,10 @@ export default function Learn({ navigateTo }) {
 
         .quiz-question-text {
           font-size: 1.35rem;
-          color: #ffffff;
+          color: var(--navy);
           line-height: 1.4;
           margin-bottom: 1.75rem;
+          font-weight: 700;
         }
 
         .quiz-options-list {
@@ -580,43 +607,45 @@ export default function Learn({ navigateTo }) {
           align-items: center;
           gap: 1rem;
           padding: 1rem 1.25rem;
-          background: rgba(255, 255, 255, 0.04);
+          background: #f8fafc;
           border: 1px solid var(--border-subtle);
           border-radius: var(--radius-sm);
           color: var(--text-primary);
           font-size: 0.95rem;
           text-align: left;
           cursor: pointer;
-          transition: all 0.2s ease;
+          transition: all 0.15s ease;
         }
 
         .quiz-opt-btn:hover:not(:disabled) {
-          background: rgba(56, 189, 248, 0.1);
-          border-color: var(--accent-ice);
+          background: #f1f5f9;
+          border-color: #cbd5e1;
         }
 
         .quiz-opt-btn.selected {
-          border-color: var(--accent-cyan);
-          background: rgba(6, 182, 212, 0.15);
+          border-color: #0284c7;
+          background: #eff6ff;
         }
 
         .quiz-opt-btn.correct {
-          background: rgba(16, 185, 129, 0.2);
+          background: #ecfdf5;
           border-color: #10b981;
-          color: #6ee7b7;
+          color: #065f46;
+          font-weight: 600;
         }
 
         .quiz-opt-btn.incorrect {
-          background: rgba(239, 68, 68, 0.2);
+          background: #fef2f2;
           border-color: #ef4444;
-          color: #fca5a5;
+          color: #991b1b;
         }
 
         .opt-letter {
           width: 28px;
           height: 28px;
           border-radius: 50%;
-          background: rgba(255, 255, 255, 0.1);
+          background: #e2e8f0;
+          color: var(--navy);
           display: flex;
           align-items: center;
           justify-content: center;
@@ -630,16 +659,16 @@ export default function Learn({ navigateTo }) {
         }
 
         .opt-status-icon.success {
-          color: #10b981;
+          color: #059669;
         }
 
         .opt-status-icon.danger {
-          color: #ef4444;
+          color: #dc2626;
         }
 
         .quiz-explanation-box {
-          background: rgba(6, 182, 212, 0.1);
-          border: 1px solid rgba(6, 182, 212, 0.3);
+          background: #f0fdfa;
+          border: 1px solid #99f6e4;
           border-radius: var(--radius-sm);
           padding: 1.25rem;
           margin-bottom: 1.75rem;
@@ -651,13 +680,13 @@ export default function Learn({ navigateTo }) {
           gap: 0.4rem;
           font-size: 0.85rem;
           font-weight: 700;
-          color: var(--accent-cyan);
+          color: #0f766e;
           margin-bottom: 0.35rem;
         }
 
         .exp-text {
           font-size: 0.9rem;
-          color: #e2e8f0;
+          color: #134e4a;
           line-height: 1.5;
         }
 
@@ -680,22 +709,22 @@ export default function Learn({ navigateTo }) {
         }
 
         .award-trophy {
-          color: #fbbf24;
-          animation: pulseGlow 2s infinite;
+          color: #d97706;
         }
 
         .results-title {
           font-size: 2rem;
-          color: #ffffff;
+          color: var(--navy);
+          font-weight: 800;
         }
 
         .results-sub {
           font-size: 1.1rem;
-          color: var(--text-ice);
+          color: var(--text-secondary);
         }
 
         .certificate-form-box {
-          background: rgba(255, 255, 255, 0.04);
+          background: #f8fafc;
           border: 1px solid var(--border-subtle);
           border-radius: var(--radius-md);
           padding: 1.75rem;
@@ -705,7 +734,7 @@ export default function Learn({ navigateTo }) {
         }
 
         .certificate-form-box h4 {
-          color: #ffffff;
+          color: var(--navy);
           font-size: 1.15rem;
           margin-bottom: 0.35rem;
         }
@@ -725,31 +754,31 @@ export default function Learn({ navigateTo }) {
         .cert-name-input {
           flex: 1;
           min-width: 240px;
-          background: #040810;
+          background: #ffffff;
           border: 1px solid var(--border-subtle);
-          color: #ffffff;
+          color: var(--text-primary);
           padding: 0.65rem 1rem;
           border-radius: var(--radius-sm);
         }
 
         /* Certificate Styling */
         .printable-certificate {
-          background: #060d1b;
-          border: 2px solid #fbbf24;
+          background: #ffffff;
+          border: 2px solid #d97706;
           padding: 1.5rem;
           border-radius: var(--radius-md);
           width: 100%;
-          box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+          box-shadow: var(--shadow-lg);
           margin-top: 1rem;
         }
 
         .cert-border-outer {
-          border: 1px solid rgba(251, 191, 36, 0.5);
+          border: 1px solid rgba(217, 119, 6, 0.4);
           padding: 1rem;
         }
 
         .cert-border-inner {
-          border: 1px dashed rgba(251, 191, 36, 0.3);
+          border: 1px dashed rgba(217, 119, 6, 0.3);
           padding: 2rem 1.5rem;
           display: flex;
           flex-direction: column;
@@ -758,19 +787,20 @@ export default function Learn({ navigateTo }) {
 
         .cert-header h3 {
           font-size: 1.15rem;
-          color: #ffffff;
-          letter-spacing: 0.05em;
+          color: var(--navy);
+          letter-spacing: 0.04em;
+          font-weight: 800;
         }
 
         .cert-header p {
           font-size: 0.8rem;
-          color: var(--text-ice);
+          color: var(--text-secondary);
         }
 
         .cert-award-text {
           font-family: var(--font-mono);
           font-size: 0.85rem;
-          color: #fbbf24;
+          color: #b45309;
           font-weight: 700;
           letter-spacing: 0.1em;
         }
@@ -782,42 +812,46 @@ export default function Learn({ navigateTo }) {
 
         .cert-student-name {
           font-size: 2.2rem;
-          color: #38bdf8;
+          color: var(--navy);
           font-weight: 800;
           text-decoration: underline;
-          text-decoration-color: #fbbf24;
+          text-decoration-color: #d97706;
           margin: 0.5rem 0;
         }
 
         .cert-desc {
           font-size: 0.92rem;
-          color: #e2e8f0;
+          color: var(--text-secondary);
           max-width: 600px;
           margin: 0 auto;
-          line-height: 1.5;
+          line-height: 1.55;
         }
 
         .cert-footer {
           display: flex;
           justify-content: space-between;
           align-items: flex-end;
-          border-top: 1px solid rgba(255, 255, 255, 0.1);
+          border-top: 1px solid #e2e8f0;
           padding-top: 1.5rem;
           font-size: 0.75rem;
         }
 
         .cert-sign-line {
           font-weight: 700;
-          color: #ffffff;
-          border-top: 1px solid #ffffff;
+          color: var(--navy);
+          border-top: 1px solid var(--navy);
           padding-top: 4px;
+        }
+
+        .cert-sign-role {
+          color: var(--text-muted);
         }
 
         .cert-seal {
           display: flex;
           flex-direction: column;
           align-items: center;
-          color: #fbbf24;
+          color: #d97706;
           font-size: 0.65rem;
           font-weight: 800;
         }
@@ -837,7 +871,7 @@ export default function Learn({ navigateTo }) {
         .modal-backdrop {
           position: fixed;
           inset: 0;
-          background: rgba(0, 0, 0, 0.85);
+          background: rgba(15, 23, 42, 0.75);
           z-index: 200;
           display: flex;
           align-items: center;
@@ -849,11 +883,12 @@ export default function Learn({ navigateTo }) {
           max-width: 750px;
           max-height: 85vh;
           width: 100%;
-          background: #091322;
+          background: #ffffff;
           border-radius: var(--radius-md);
           display: flex;
           flex-direction: column;
           overflow: hidden;
+          box-shadow: var(--shadow-lg);
         }
 
         .modal-header {
@@ -899,12 +934,13 @@ export default function Learn({ navigateTo }) {
 
         .modal-title {
           font-size: 1.6rem;
-          color: #ffffff;
+          color: var(--navy);
+          font-weight: 800;
         }
 
         .modal-markdown-text {
           font-size: 0.95rem;
-          color: #cbd5e1;
+          color: var(--text-secondary);
           line-height: 1.65;
           display: flex;
           flex-direction: column;

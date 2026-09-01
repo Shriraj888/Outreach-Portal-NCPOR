@@ -2,8 +2,7 @@ import { usePortal } from '../context/PortalContext';
 import { 
   Compass, 
   MapPin, 
-  BookOpen,
-  Sparkles, 
+  BookOpen, 
   ArrowRight, 
   ThermometerSnowflake, 
   Wind, 
@@ -59,8 +58,8 @@ export default function Home({ navigateTo, onSelectExpedition }) {
         <div className="hero-bg-overlay"></div>
         <div className="container hero-content">
           <div className="hero-badge">
-            <span className="tricolor-badge">🇮🇳</span>
-            <span>NATIONAL OUTREACH PORTAL • SMART INDIA HACKATHON 2026</span>
+            <span className="tricolor-dot"></span>
+            <span>NATIONAL POLAR SCIENCE OUTREACH PORTAL • GOVT. OF INDIA</span>
           </div>
 
           <h1 className="hero-heading">
@@ -73,7 +72,7 @@ export default function Home({ navigateTo, onSelectExpedition }) {
 
           <div className="hero-cta-group">
             <button 
-              className="btn-primary hero-btn"
+              className="btn-saffron hero-btn"
               onClick={() => {
                 setSelectedRegion('All');
                 navigateTo('expeditions');
@@ -92,10 +91,10 @@ export default function Home({ navigateTo, onSelectExpedition }) {
             </button>
 
             <button 
-              className="btn-ai hero-btn"
+              className="btn-primary hero-btn"
               onClick={() => navigateTo('learn')}
             >
-              <Sparkles size={18} />
+              <BookOpen size={18} />
               <span>{t.hero.studentZone}</span>
             </button>
           </div>
@@ -108,15 +107,15 @@ export default function Home({ navigateTo, onSelectExpedition }) {
             </div>
             <div className="stat-card">
               <div className="stat-number">43+</div>
-              <div className="stat-label">Historic Antarctic Missions</div>
+              <div className="stat-label">Historic Antarctic Expeditions</div>
             </div>
             <div className="stat-card">
               <div className="stat-number">1,200+</div>
-              <div className="stat-label">Peer-Reviewed Polar Publications</div>
+              <div className="stat-label">Peer-Reviewed Publications</div>
             </div>
             <div className="stat-card">
               <div className="stat-number">100%</div>
-              <div className="stat-label">Open Public Outreach & Smart Education</div>
+              <div className="stat-label">Open Public Outreach & Education</div>
             </div>
           </div>
         </div>
@@ -129,7 +128,7 @@ export default function Home({ navigateTo, onSelectExpedition }) {
             <div className="section-eyebrow">EXPLORE BY FRONTIER</div>
             <h2 className="section-title">India's Three Poles of Scientific Exploration</h2>
             <p className="section-subtitle">
-              From the frozen southern continent to high Arctic fjords and the snowpack of the Himalayas.
+              From the frozen southern continent to high Arctic fjords and the glaciers of the Himalayas.
             </p>
           </div>
 
@@ -201,18 +200,17 @@ export default function Home({ navigateTo, onSelectExpedition }) {
                     className="spotlight-img"
                   />
                   <div className="spotlight-img-badge">
-                    <Sparkles size={14} />
-                    <span>Featured Mission Spotlight</span>
+                    <span>Featured Mission Archive</span>
                   </div>
                 </div>
 
                 <div className="spotlight-info">
                   <div className="spotlight-top-tags">
                     <span className="badge badge-antarctica">{featuredExpedition.region}</span>
-                    <span className="spotlight-year">{featuredExpedition.year}</span>
+                    <span className="spotlight-year">Season {featuredExpedition.year}</span>
                     {featuredExpedition.aiGeneratedContent && (
                       <span className="spotlight-ai-tag">
-                        <Sparkles size={12} /> AI Outreach Pack Ready
+                        Outreach Pack Ready
                       </span>
                     )}
                   </div>
@@ -232,7 +230,7 @@ export default function Home({ navigateTo, onSelectExpedition }) {
                     </div>
                     <div className="deliverable-item">
                       <CheckCircle2 size={16} className="deliv-icon" />
-                      <span>Zero-Waste Green Power Microgrid Tested</span>
+                      <span>Zero-Waste Green Power Microgrid Operational</span>
                     </div>
                     <div className="deliverable-item">
                       <CheckCircle2 size={16} className="deliv-icon" />
@@ -245,7 +243,7 @@ export default function Home({ navigateTo, onSelectExpedition }) {
                       className="btn-primary"
                       onClick={() => onSelectExpedition(featuredExpedition.id)}
                     >
-                      <span>Explore Full Expedition & Media</span>
+                      <span>Explore Full Expedition Archive</span>
                       <ArrowRight size={16} />
                     </button>
                     <button 
@@ -253,7 +251,7 @@ export default function Home({ navigateTo, onSelectExpedition }) {
                       onClick={() => navigateTo('map')}
                     >
                       <MapPin size={16} />
-                      <span>View on Station Map</span>
+                      <span>View Station Map</span>
                     </button>
                   </div>
                 </div>
@@ -302,17 +300,17 @@ export default function Home({ navigateTo, onSelectExpedition }) {
             <div className="smart-edu-text">
               <div className="smart-badge">
                 <Award size={16} />
-                <span>SMART INDIA HACKATHON 2026 • SMART EDUCATION THEME</span>
+                <span>SMART INDIA HACKATHON 2026 • SMART EDUCATION</span>
               </div>
               <h2 className="smart-title">
                 Polar Explorer Student Hub & Interactive Quiz
               </h2>
               <p className="smart-desc">
-                Simplified explainers on ancient ice cores, auroras, Himalayan glaciers, and Antarctic krill. Test your polar science knowledge, earn an official badge, and generate your certificate!
+                Simplified explainers on ancient ice cores, auroras, Himalayan glaciers, and Antarctic ecosystems. Test your polar science knowledge and earn your official Explorer Certificate!
               </p>
               <div className="smart-btns">
                 <button 
-                  className="btn-primary smart-btn"
+                  className="btn-saffron smart-btn"
                   onClick={() => navigateTo('learn')}
                 >
                   <BookOpen size={18} />
@@ -323,7 +321,7 @@ export default function Home({ navigateTo, onSelectExpedition }) {
                   onClick={() => navigateTo('publications')}
                 >
                   <FileText size={18} />
-                  <span>Browse Student-Friendly Papers</span>
+                  <span>Browse Open Science Papers</span>
                 </button>
               </div>
             </div>
@@ -367,10 +365,10 @@ export default function Home({ navigateTo, onSelectExpedition }) {
 
         /* Telemetry Bar */
         .telemetry-bar {
-          background: rgba(4, 8, 16, 0.95);
-          border-bottom: 1px solid var(--border-subtle);
-          padding: 0.45rem 0;
-          font-size: 0.78rem;
+          background: #dfe4ea;
+          border-bottom: 1px solid #cbd5e1;
+          padding: 0.5rem 0;
+          font-size: 0.8rem;
         }
 
         .telemetry-inner {
@@ -384,15 +382,11 @@ export default function Home({ navigateTo, onSelectExpedition }) {
         .telemetry-label {
           display: flex;
           align-items: center;
-          gap: 0.4rem;
-          color: var(--accent-cyan);
+          gap: 0.45rem;
+          color: #0369a1;
           font-weight: 700;
-          letter-spacing: 0.04em;
+          letter-spacing: 0.03em;
           flex-shrink: 0;
-        }
-
-        .telemetry-pulse-icon {
-          animation: pulseGlow 1.8s infinite;
         }
 
         .telemetry-stations {
@@ -405,23 +399,24 @@ export default function Home({ navigateTo, onSelectExpedition }) {
           display: flex;
           align-items: center;
           gap: 0.5rem;
-          color: var(--text-secondary);
+          color: #334155;
         }
 
         .st-name {
-          color: #ffffff;
+          color: #0f172a;
           font-weight: 600;
         }
 
         .st-temp {
-          color: #7dd3fc;
+          color: #0284c7;
+          font-weight: 600;
           display: flex;
           align-items: center;
           gap: 0.2rem;
         }
 
         .st-wind {
-          color: #94a3b8;
+          color: #64748b;
           display: flex;
           align-items: center;
           gap: 0.2rem;
@@ -430,18 +425,15 @@ export default function Home({ navigateTo, onSelectExpedition }) {
         /* Hero Section */
         .hero-section {
           position: relative;
-          padding: 5rem 0 3rem;
-          background: linear-gradient(180deg, rgba(7, 13, 24, 0.4) 0%, rgba(12, 23, 42, 0.8) 100%), 
-                      url('https://images.unsplash.com/photo-1517411032315-54ef2cb783bb?auto=format&fit=crop&w=1800&q=80');
-          background-size: cover;
-          background-position: center;
+          padding: 5rem 0 4rem;
+          background: linear-gradient(180deg, #eaedf2 0%, #dfe4eb 100%);
           border-bottom: 1px solid var(--border-subtle);
         }
 
         .hero-bg-overlay {
           position: absolute;
           inset: 0;
-          background: radial-gradient(circle at center, rgba(7, 13, 24, 0.75) 0%, rgba(7, 13, 24, 0.95) 100%);
+          background: radial-gradient(circle at 50% 20%, rgba(2, 132, 199, 0.06) 0%, transparent 70%);
         }
 
         .hero-content {
@@ -458,31 +450,39 @@ export default function Home({ navigateTo, onSelectExpedition }) {
           display: inline-flex;
           align-items: center;
           gap: 0.5rem;
-          background: rgba(245, 158, 11, 0.1);
-          border: 1px solid rgba(245, 158, 11, 0.35);
-          color: var(--saffron-light);
+          background: #ffffff;
+          border: 1px solid #cbd5e1;
+          color: #1e3a8a;
           padding: 0.35rem 1rem;
           border-radius: var(--radius-full);
-          font-size: 0.75rem;
+          font-size: 0.76rem;
           font-weight: 700;
-          letter-spacing: 0.04em;
+          letter-spacing: 0.03em;
           margin-bottom: 1.5rem;
+          box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .tricolor-dot {
+          width: 10px;
+          height: 10px;
+          border-radius: 50%;
+          background: linear-gradient(180deg, #ff9933 33%, #ffffff 33%, #ffffff 66%, #138808 66%);
+          box-shadow: 0 0 0 1px rgba(0,0,0,0.15);
         }
 
         .hero-heading {
           font-size: 3rem;
           font-weight: 800;
-          color: #ffffff;
-          line-height: 1.15;
+          color: var(--navy);
+          line-height: 1.2;
           margin-bottom: 1.25rem;
-          text-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
         }
 
         .hero-subtext {
           font-size: 1.15rem;
           color: var(--text-secondary);
           line-height: 1.6;
-          margin-bottom: 2rem;
+          margin-bottom: 2.25rem;
           max-width: 800px;
         }
 
@@ -508,33 +508,35 @@ export default function Home({ navigateTo, onSelectExpedition }) {
         }
 
         .stat-card {
-          background: rgba(15, 29, 53, 0.85);
-          backdrop-filter: blur(12px);
-          border: 1px solid var(--border-subtle);
+          background: #ffffff;
+          border: 1px solid var(--border-card);
           border-radius: var(--radius-md);
-          padding: 1.25rem 1rem;
+          padding: 1.5rem 1rem;
           text-align: center;
-          transition: transform 0.2s ease;
+          box-shadow: var(--shadow-sm);
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
 
         .stat-card:hover {
           transform: translateY(-3px);
-          border-color: rgba(245, 158, 11, 0.4);
+          box-shadow: var(--shadow-md);
+          border-color: #cbd5e1;
         }
 
         .stat-number {
           font-family: var(--font-heading);
           font-size: 2.2rem;
-          font-weight: 700;
-          color: var(--saffron);
+          font-weight: 800;
+          color: var(--navy);
           line-height: 1;
           margin-bottom: 0.35rem;
         }
 
         .stat-label {
           font-size: 0.78rem;
-          color: var(--text-secondary);
+          color: var(--text-muted);
           line-height: 1.35;
+          font-weight: 500;
         }
 
         /* Section Headings */
@@ -553,26 +555,6 @@ export default function Home({ navigateTo, onSelectExpedition }) {
           gap: 1rem;
         }
 
-        .section-eyebrow {
-          font-size: 0.74rem;
-          font-weight: 700;
-          letter-spacing: 0.1em;
-          color: var(--saffron);
-          margin-bottom: 0.35rem;
-        }
-
-        .section-title {
-          font-size: 2rem;
-          font-weight: 800;
-          color: #ffffff;
-          margin-bottom: 0.5rem;
-        }
-
-        .section-subtitle {
-          font-size: 0.95rem;
-          color: var(--text-secondary);
-        }
-
         /* 3 Pillars */
         .pillars-grid {
           display: grid;
@@ -587,14 +569,13 @@ export default function Home({ navigateTo, onSelectExpedition }) {
           overflow: hidden;
           cursor: pointer;
           border: 1px solid var(--border-subtle);
-          box-shadow: var(--shadow-card);
-          transition: all 0.3s ease;
+          box-shadow: var(--shadow-sm);
+          transition: all 0.25s ease;
         }
 
         .pillar-card:hover {
-          transform: translateY(-6px);
-          border-color: rgba(245, 158, 11, 0.4);
-          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7);
+          transform: translateY(-5px);
+          box-shadow: var(--shadow-lg);
         }
 
         .pillar-bg-img {
@@ -618,13 +599,13 @@ export default function Home({ navigateTo, onSelectExpedition }) {
         }
 
         .pillar-card:hover .pillar-bg-img {
-          transform: scale(1.08);
+          transform: scale(1.06);
         }
 
         .pillar-overlay {
           position: absolute;
           inset: 0;
-          background: linear-gradient(180deg, rgba(7, 13, 24, 0.3) 0%, rgba(7, 13, 24, 0.95) 100%);
+          background: linear-gradient(180deg, rgba(10, 25, 47, 0.2) 0%, rgba(10, 25, 47, 0.88) 100%);
         }
 
         .pillar-content {
@@ -638,7 +619,7 @@ export default function Home({ navigateTo, onSelectExpedition }) {
         }
 
         .pillar-title {
-          font-size: 1.4rem;
+          font-size: 1.35rem;
           font-weight: 800;
           color: #ffffff;
           margin: 0.75rem 0 0.5rem;
@@ -646,7 +627,7 @@ export default function Home({ navigateTo, onSelectExpedition }) {
 
         .pillar-desc {
           font-size: 0.85rem;
-          color: var(--text-secondary);
+          color: #e2e8f0;
           line-height: 1.5;
           margin-bottom: 1.25rem;
         }
@@ -655,16 +636,18 @@ export default function Home({ navigateTo, onSelectExpedition }) {
           display: flex;
           align-items: center;
           gap: 0.5rem;
-          color: var(--saffron-light);
+          color: #fbbf24;
           font-size: 0.85rem;
           font-weight: 700;
         }
 
         /* Spotlight */
         .spotlight-card {
-          padding: 2rem;
+          padding: 2.25rem;
           border-radius: var(--radius-lg);
-          border: 1px solid rgba(245, 158, 11, 0.2);
+          background: #ffffff;
+          border: 1px solid var(--border-card);
+          box-shadow: var(--shadow-md);
         }
 
         .spotlight-grid {
@@ -679,7 +662,7 @@ export default function Home({ navigateTo, onSelectExpedition }) {
           height: 360px;
           border-radius: var(--radius-md);
           overflow: hidden;
-          border: 1px solid rgba(255, 255, 255, 0.15);
+          border: 1px solid var(--border-subtle);
         }
 
         .spotlight-img {
@@ -692,17 +675,12 @@ export default function Home({ navigateTo, onSelectExpedition }) {
           position: absolute;
           top: 1rem;
           left: 1rem;
-          background: rgba(11, 24, 41, 0.88);
-          backdrop-filter: blur(8px);
-          border: 1px solid rgba(245, 158, 11, 0.4);
-          color: var(--saffron-light);
+          background: rgba(15, 23, 42, 0.85);
+          color: #ffffff;
           padding: 0.35rem 0.8rem;
           border-radius: var(--radius-full);
           font-size: 0.75rem;
           font-weight: 700;
-          display: flex;
-          align-items: center;
-          gap: 0.35rem;
         }
 
         .spotlight-top-tags {
@@ -720,22 +698,19 @@ export default function Home({ navigateTo, onSelectExpedition }) {
         }
 
         .spotlight-ai-tag {
-          background: rgba(29, 78, 216, 0.15);
-          color: var(--ice-light);
-          border: 1px solid rgba(96, 165, 250, 0.3);
+          background: #e0f2fe;
+          color: #0369a1;
+          border: 1px solid #bae6fd;
           padding: 0.2rem 0.55rem;
           border-radius: var(--radius-full);
           font-size: 0.72rem;
           font-weight: 600;
-          display: flex;
-          align-items: center;
-          gap: 0.3rem;
         }
 
         .spotlight-title {
           font-size: 1.6rem;
           font-weight: 800;
-          color: #ffffff;
+          color: var(--navy);
           line-height: 1.25;
           margin-bottom: 0.85rem;
         }
@@ -763,7 +738,7 @@ export default function Home({ navigateTo, onSelectExpedition }) {
         }
 
         .deliv-icon {
-          color: #10b981;
+          color: #059669;
           flex-shrink: 0;
         }
 
@@ -776,12 +751,12 @@ export default function Home({ navigateTo, onSelectExpedition }) {
 
         /* Smart Education Banner */
         .smart-edu-card {
-          background: linear-gradient(135deg, #0f2240 0%, #0d1f38 60%, #0c2535 100%);
-          border: 1px solid rgba(13, 148, 136, 0.35);
+          background: #0a2540;
+          border: 1px solid #1e3a8a;
           border-radius: var(--radius-lg);
-          padding: 3rem 2rem;
+          padding: 3.5rem 2rem;
           text-align: center;
-          box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+          box-shadow: var(--shadow-lg);
         }
 
         .smart-edu-text {
@@ -794,7 +769,7 @@ export default function Home({ navigateTo, onSelectExpedition }) {
           align-items: center;
           gap: 0.45rem;
           background: rgba(251, 191, 36, 0.15);
-          color: #fde68a;
+          color: #fbbf24;
           border: 1px solid rgba(251, 191, 36, 0.35);
           padding: 0.35rem 0.85rem;
           border-radius: var(--radius-full);
@@ -812,9 +787,9 @@ export default function Home({ navigateTo, onSelectExpedition }) {
 
         .smart-desc {
           font-size: 1rem;
-          color: #e2e8f0;
+          color: #cbd5e1;
           line-height: 1.6;
-          margin-bottom: 1.75rem;
+          margin-bottom: 2rem;
         }
 
         .smart-btns {
@@ -840,6 +815,7 @@ export default function Home({ navigateTo, onSelectExpedition }) {
           padding: 1.5rem;
           display: flex;
           flex-direction: column;
+          background: #ffffff;
         }
 
         .act-header {
@@ -850,8 +826,8 @@ export default function Home({ navigateTo, onSelectExpedition }) {
         }
 
         .act-badge {
-          background: rgba(13, 148, 136, 0.15);
-          color: #2dd4bf;
+          background: #e0f2fe;
+          color: #0369a1;
           font-size: 0.72rem;
           font-weight: 700;
           padding: 2px 8px;
@@ -868,7 +844,7 @@ export default function Home({ navigateTo, onSelectExpedition }) {
 
         .act-title {
           font-size: 1.05rem;
-          color: #ffffff;
+          color: var(--navy);
           font-weight: 700;
           line-height: 1.35;
           margin-bottom: 0.65rem;
@@ -877,7 +853,7 @@ export default function Home({ navigateTo, onSelectExpedition }) {
         .act-summary {
           font-size: 0.85rem;
           color: var(--text-secondary);
-          line-height: 1.5;
+          line-height: 1.55;
         }
 
         @media (max-width: 1024px) {

@@ -429,7 +429,8 @@ The voyage departed Cape Town with 48 scientists from MoES institutes, Survey of
 
         .form-top-bar h2 {
           font-size: 1.8rem;
-          color: #ffffff;
+          color: var(--navy);
+          font-weight: 800;
         }
 
         .expedition-main-form {
@@ -441,17 +442,21 @@ The voyage departed Cape Town with 48 scientists from MoES institutes, Survey of
         .form-section-card {
           padding: 1.75rem;
           border-radius: var(--radius-md);
+          background: #ffffff;
+          border: 1px solid var(--border-card);
+          box-shadow: var(--shadow-sm);
         }
 
         .section-title-tag {
           font-size: 1.15rem;
-          color: #ffffff;
+          color: var(--navy);
           display: flex;
           align-items: center;
           gap: 0.5rem;
           margin-bottom: 1.5rem;
-          border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+          border-bottom: 1px solid var(--border-subtle);
           padding-bottom: 0.75rem;
+          font-weight: 700;
         }
 
         .form-grid-2 {
@@ -473,14 +478,14 @@ The voyage departed Cape Town with 48 scientists from MoES institutes, Survey of
         .form-group label {
           font-size: 0.8rem;
           font-weight: 600;
-          color: var(--text-ice);
+          color: var(--navy);
         }
 
         .form-input, .form-textarea {
-          background: #040810;
+          background: #f8fafc;
           border: 1px solid var(--border-subtle);
           border-radius: var(--radius-sm);
-          color: #ffffff;
+          color: var(--text-primary);
           padding: 0.65rem 0.85rem;
           font-size: 0.9rem;
           width: 100%;
@@ -488,7 +493,8 @@ The voyage departed Cape Town with 48 scientists from MoES institutes, Survey of
 
         .form-input:focus, .form-textarea:focus {
           outline: none;
-          border-color: var(--accent-ice);
+          border-color: var(--ice);
+          background: #ffffff;
         }
 
         .font-mono {
@@ -509,21 +515,22 @@ The voyage departed Cape Town with 48 scientists from MoES institutes, Survey of
         }
 
         .station-badge {
-          background: rgba(56, 189, 248, 0.15);
-          border: 1px solid rgba(56, 189, 248, 0.35);
-          color: #7dd3fc;
+          background: #eff6ff;
+          border: 1px solid #bfdbfe;
+          color: #0369a1;
           font-size: 0.75rem;
           padding: 0.2rem 0.6rem;
           border-radius: var(--radius-full);
           display: flex;
           align-items: center;
           gap: 0.4rem;
+          font-weight: 600;
         }
 
         .station-badge button {
           background: none;
           border: none;
-          color: #7dd3fc;
+          color: #0369a1;
           font-weight: 700;
           cursor: pointer;
         }
@@ -550,7 +557,7 @@ The voyage departed Cape Town with 48 scientists from MoES institutes, Survey of
         .media-form-item {
           display: flex;
           gap: 1.25rem;
-          background: rgba(7, 13, 24, 0.7);
+          background: #f8fafc;
           border: 1px solid var(--border-subtle);
           border-radius: var(--radius-sm);
           padding: 1.25rem;
@@ -563,7 +570,7 @@ The voyage departed Cape Town with 48 scientists from MoES institutes, Survey of
           border-radius: var(--radius-sm);
           overflow: hidden;
           flex-shrink: 0;
-          background: #000;
+          background: #f1f5f9;
         }
 
         .media-form-thumb {
@@ -589,22 +596,27 @@ The voyage departed Cape Town with 48 scientists from MoES institutes, Survey of
           display: flex;
           align-items: center;
           gap: 0.3rem;
-          background: rgba(168, 85, 247, 0.15);
-          color: #d8b4fe;
-          border: 1px solid rgba(168, 85, 247, 0.3);
+          background: #eff6ff;
+          color: #0284c7;
+          border: 1px solid #bfdbfe;
           padding: 2px 7px;
           border-radius: 4px;
           font-size: 0.72rem;
           cursor: pointer;
+          font-weight: 600;
         }
 
         .btn-trash-media {
-          background: rgba(239, 68, 68, 0.15);
-          color: #fca5a5;
-          border: 1px solid rgba(239, 68, 68, 0.3);
+          background: #fef2f2;
+          color: #dc2626;
+          border: 1px solid #fecaca;
           border-radius: var(--radius-sm);
           padding: 0.5rem;
           cursor: pointer;
+        }
+
+        .btn-trash-media:hover {
+          background: #fee2e2;
         }
 
         .form-action-footer {
@@ -612,7 +624,7 @@ The voyage departed Cape Town with 48 scientists from MoES institutes, Survey of
           align-items: center;
           justify-content: space-between;
           padding-top: 1.5rem;
-          border-top: 1px solid rgba(255, 255, 255, 0.1);
+          border-top: 1px solid var(--border-subtle);
           flex-wrap: wrap;
           gap: 1rem;
         }

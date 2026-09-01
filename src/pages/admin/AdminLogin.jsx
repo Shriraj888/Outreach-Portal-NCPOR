@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { usePortal } from '../../context/PortalContext';
-import { Lock, Shield, ArrowRight, Compass, Sparkles, KeyRound, Mail } from 'lucide-react';
+import { Shield, ArrowRight, Compass, Sparkles, KeyRound, Mail } from 'lucide-react';
 
 export default function AdminLogin({ navigateTo }) {
   const { login } = usePortal();
@@ -25,14 +25,14 @@ export default function AdminLogin({ navigateTo }) {
 
   return (
     <div className="container admin-login-page">
-      <div className="glass-panel login-card">
+      <div className="login-card">
         <div className="login-header">
           <div className="login-logo-wrap">
-            <Compass size={28} className="login-compass pulse-glow" />
+            <Compass size={28} className="login-compass" />
           </div>
           <span className="login-gov-tag">MINISTRY OF EARTH SCIENCES • GOVT. OF INDIA</span>
           <h2>NCPOR Outreach & Science Comms Admin Studio</h2>
-          <p>Secure portal for polar science content archiving, metadata tagging, and AI-assisted outreach generation.</p>
+          <p>Secure portal for polar science content archiving, metadata tagging, and outreach generation.</p>
         </div>
 
         <form onSubmit={handleSubmit} className="login-form">
@@ -64,7 +64,7 @@ export default function AdminLogin({ navigateTo }) {
             </div>
           </div>
 
-          <button type="submit" className="btn-primary full-width" disabled={loading}>
+          <button type="submit" className="btn-login-submit full-width" disabled={loading}>
             <span>{loading ? 'Authenticating...' : 'Sign In to Admin Studio'}</span>
             <ArrowRight size={16} />
           </button>
@@ -76,10 +76,10 @@ export default function AdminLogin({ navigateTo }) {
             <Sparkles size={16} className="demo-sparkle" />
             <span>SIH 2026 Evaluator 1-Click Access</span>
           </div>
-          <p>Click below to instantly access the full Admin & AI Content Generation Studio with pre-seeded staff credentials.</p>
+          <p>Click below to instantly access the full Admin & Outreach Studio with pre-seeded staff credentials.</p>
           <button 
             type="button" 
-            className="btn-ai full-width"
+            className="btn-demo-fast full-width"
             onClick={handleQuickDemoLogin}
           >
             <Shield size={16} />
@@ -105,12 +105,12 @@ export default function AdminLogin({ navigateTo }) {
 
         .login-card {
           width: 100%;
-          max-width: 520px;
+          max-width: 500px;
           padding: 2.5rem;
           border-radius: var(--radius-lg);
-          border: 1px solid rgba(56, 189, 248, 0.35);
-          background: linear-gradient(180deg, rgba(15, 29, 53, 0.95) 0%, rgba(7, 13, 24, 0.98) 100%);
-          box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+          border: 1px solid var(--border-card);
+          background: #ffffff;
+          box-shadow: var(--shadow-md);
         }
 
         .login-header {
@@ -122,28 +122,29 @@ export default function AdminLogin({ navigateTo }) {
           width: 54px;
           height: 54px;
           border-radius: 14px;
-          background: linear-gradient(135deg, rgba(6, 182, 212, 0.25), rgba(37, 99, 235, 0.35));
-          border: 1px solid rgba(56, 189, 248, 0.4);
+          background: #0a2540;
           display: flex;
           align-items: center;
           justify-content: center;
           margin: 0 auto 1rem;
-          color: var(--accent-ice);
+          color: #d97706;
+          box-shadow: var(--shadow-sm);
         }
 
         .login-gov-tag {
           font-size: 0.7rem;
           font-weight: 700;
-          color: var(--accent-cyan);
+          color: #d97706;
           letter-spacing: 0.08em;
           display: block;
           margin-bottom: 0.35rem;
         }
 
         .login-header h2 {
-          font-size: 1.4rem;
-          color: #ffffff;
+          font-size: 1.35rem;
+          color: var(--navy);
           margin-bottom: 0.5rem;
+          font-weight: 800;
         }
 
         .login-header p {
@@ -168,7 +169,7 @@ export default function AdminLogin({ navigateTo }) {
         .form-group label {
           font-size: 0.8rem;
           font-weight: 600;
-          color: var(--text-ice);
+          color: var(--navy);
         }
 
         .input-wrap {
@@ -185,22 +186,45 @@ export default function AdminLogin({ navigateTo }) {
 
         .input-wrap input {
           width: 100%;
-          background: #040810;
+          background: #f8fafc;
           border: 1px solid var(--border-subtle);
           border-radius: var(--radius-sm);
           padding: 0.75rem 1rem 0.75rem 2.4rem;
-          color: #ffffff;
+          color: var(--text-primary);
           font-size: 0.9rem;
         }
 
         .input-wrap input:focus {
           outline: none;
-          border-color: var(--accent-ice);
+          border-color: var(--ice);
+          background: #ffffff;
+          box-shadow: 0 0 0 3px var(--ice-glow);
+        }
+
+        .btn-login-submit {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.5rem;
+          background: var(--navy);
+          color: #ffffff;
+          font-weight: 700;
+          padding: 0.8rem;
+          border-radius: var(--radius-sm);
+          border: none;
+          cursor: pointer;
+          font-size: 0.92rem;
+          box-shadow: var(--shadow-sm);
+          transition: all 0.15s ease;
+        }
+
+        .btn-login-submit:hover:not(:disabled) {
+          background: #0d3153;
         }
 
         .demo-access-box {
-          background: rgba(147, 51, 234, 0.12);
-          border: 1px dashed rgba(168, 85, 247, 0.4);
+          background: #eff6ff;
+          border: 1px dashed #93c5fd;
           border-radius: var(--radius-sm);
           padding: 1.25rem;
           text-align: center;
@@ -214,14 +238,43 @@ export default function AdminLogin({ navigateTo }) {
           gap: 0.4rem;
           font-size: 0.82rem;
           font-weight: 700;
-          color: #d8b4fe;
+          color: var(--navy);
           margin-bottom: 0.35rem;
+        }
+
+        .demo-sparkle {
+          color: #d97706;
         }
 
         .demo-access-box p {
           font-size: 0.78rem;
           color: var(--text-secondary);
           margin-bottom: 0.85rem;
+        }
+
+        .btn-demo-fast {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.4rem;
+          background: #ffffff;
+          border: 1px solid #bfdbfe;
+          color: var(--navy);
+          font-weight: 700;
+          padding: 0.65rem;
+          border-radius: var(--radius-sm);
+          cursor: pointer;
+          font-size: 0.85rem;
+          transition: all 0.15s ease;
+        }
+
+        .btn-demo-fast:hover {
+          background: #dbeafe;
+          border-color: #93c5fd;
+        }
+
+        .full-width {
+          width: 100%;
         }
 
         .login-footer {
@@ -234,11 +287,11 @@ export default function AdminLogin({ navigateTo }) {
           color: var(--text-muted);
           font-size: 0.82rem;
           cursor: pointer;
-          transition: color 0.2s ease;
+          transition: color 0.15s ease;
         }
 
         .btn-back-home:hover {
-          color: var(--accent-ice);
+          color: var(--navy);
         }
       `}</style>
     </div>

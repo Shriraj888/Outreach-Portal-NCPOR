@@ -379,23 +379,24 @@ export default function Publications({ navigateTo }) {
           display: flex;
           align-items: center;
           gap: 0.4rem;
-          background: linear-gradient(135deg, #0284c7, #38bdf8);
-          color: #040810;
-          font-weight: 800;
-          padding: 0.6rem 1.1rem;
+          background: var(--navy);
+          color: #ffffff;
+          font-weight: 600;
+          padding: 0.65rem 1.2rem;
           border-radius: var(--radius-sm);
           font-size: 0.85rem;
           border: none;
           cursor: pointer;
+          box-shadow: var(--shadow-sm);
         }
 
         .download-toast-box {
           display: flex;
           align-items: center;
           gap: 0.5rem;
-          background: rgba(56, 189, 248, 0.15);
-          border: 1px solid rgba(56, 189, 248, 0.4);
-          color: #7dd3fc;
+          background: #ecfdf5;
+          border: 1px solid #a7f3d0;
+          color: #047857;
           padding: 0.75rem 1.25rem;
           border-radius: var(--radius-sm);
           font-size: 0.85rem;
@@ -406,7 +407,7 @@ export default function Publications({ navigateTo }) {
           display: flex;
           align-items: center;
           gap: 0.5rem;
-          border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+          border-bottom: 1px solid var(--border-subtle);
           padding-bottom: 0.5rem;
         }
 
@@ -422,18 +423,18 @@ export default function Publications({ navigateTo }) {
           font-size: 0.85rem;
           font-weight: 600;
           cursor: pointer;
-          transition: all 0.2s ease;
+          transition: all 0.15s ease;
         }
 
         .mode-tab:hover {
-          color: #ffffff;
-          background: rgba(255, 255, 255, 0.05);
+          color: var(--navy);
+          background: #f1f5f9;
         }
 
         .mode-tab.active {
-          background: rgba(56, 189, 248, 0.15);
-          border-color: rgba(56, 189, 248, 0.35);
-          color: #38bdf8;
+          background: #eff6ff;
+          border-color: #bfdbfe;
+          color: var(--navy);
         }
 
         .section-block {
@@ -444,13 +445,13 @@ export default function Publications({ navigateTo }) {
           display: flex;
           align-items: center;
           gap: 0.5rem;
-          font-size: 1.1rem;
+          font-size: 1.15rem;
           font-weight: 700;
-          color: #ffffff;
+          color: var(--navy);
         }
 
-        .icon-cyan { color: #38bdf8; }
-        .icon-amber { color: #f59e0b; }
+        .icon-cyan { color: #0284c7; }
+        .icon-amber { color: #d97706; }
 
         .filter-box {
           padding: 1.25rem 1.5rem;
@@ -458,6 +459,9 @@ export default function Publications({ navigateTo }) {
           display: flex;
           flex-direction: column;
           gap: 1rem;
+          background: #ffffff;
+          border: 1px solid var(--border-card);
+          box-shadow: var(--shadow-sm);
         }
 
         .search-input-wrap {
@@ -475,17 +479,19 @@ export default function Publications({ navigateTo }) {
 
         .search-field {
           width: 100%;
-          background: #040810;
+          background: #f8fafc;
           border: 1px solid var(--border-subtle);
           border-radius: var(--radius-sm);
           padding: 0.75rem 1rem 0.75rem 2.75rem;
-          color: #ffffff;
+          color: var(--text-primary);
           font-size: 0.95rem;
         }
 
         .search-field:focus {
           outline: none;
-          border-color: var(--accent-ice);
+          border-color: var(--ice);
+          background: #ffffff;
+          box-shadow: 0 0 0 3px var(--ice-glow);
         }
 
         .category-pills {
@@ -495,25 +501,25 @@ export default function Publications({ navigateTo }) {
         }
 
         .category-btn {
-          background: rgba(255, 255, 255, 0.05);
+          background: #f8fafc;
           border: 1px solid var(--border-subtle);
           color: var(--text-secondary);
           padding: 0.35rem 0.85rem;
           border-radius: var(--radius-full);
           font-size: 0.8rem;
           cursor: pointer;
-          transition: all 0.2s ease;
+          transition: all 0.15s ease;
         }
 
         .category-btn:hover {
-          color: #ffffff;
-          background: rgba(255, 255, 255, 0.1);
+          color: var(--navy);
+          background: #e2e8f0;
         }
 
         .category-btn.active {
-          background: rgba(56, 189, 248, 0.2);
-          border-color: var(--accent-ice);
-          color: var(--accent-ice);
+          background: var(--navy);
+          border-color: var(--navy);
+          color: #ffffff;
           font-weight: 600;
         }
 
@@ -541,10 +547,13 @@ export default function Publications({ navigateTo }) {
           display: flex;
           flex-direction: column;
           gap: 1rem;
+          background: #ffffff;
+          border: 1px solid var(--border-card);
+          box-shadow: var(--shadow-sm);
         }
 
         .dataset-card-accent {
-          border-left: 3px solid #38bdf8;
+          border-left: 3px solid #0284c7;
         }
 
         .pub-badge-line {
@@ -556,9 +565,9 @@ export default function Publications({ navigateTo }) {
         }
 
         .pub-discipline-badge {
-          background: rgba(56, 189, 248, 0.15);
-          color: #7dd3fc;
-          border: 1px solid rgba(56, 189, 248, 0.3);
+          background: #e0f2fe;
+          color: #0369a1;
+          border: 1px solid #bae6fd;
           font-size: 0.75rem;
           font-weight: 600;
           padding: 0.2rem 0.6rem;
@@ -566,15 +575,15 @@ export default function Publications({ navigateTo }) {
         }
 
         .dataset-badge {
-          background: rgba(168, 85, 247, 0.15);
-          color: #d8b4fe;
-          border-color: rgba(168, 85, 247, 0.3);
+          background: #f0fdf4;
+          color: #047857;
+          border: 1px solid #bbf7d0;
         }
 
         .pub-format-badge {
-          background: rgba(16, 185, 129, 0.15);
-          color: #6ee7b7;
-          border: 1px solid rgba(16, 185, 129, 0.3);
+          background: #f1f5f9;
+          color: #475569;
+          border: 1px solid #e2e8f0;
           font-size: 0.72rem;
           font-weight: 700;
           padding: 0.15rem 0.55rem;
@@ -599,15 +608,17 @@ export default function Publications({ navigateTo }) {
 
         .citation-pill {
           font-size: 0.72rem;
-          color: var(--text-muted);
-          background: rgba(255, 255, 255, 0.05);
+          color: #b45309;
+          background: #fffbeb;
+          border: 1px solid #fde68a;
           padding: 0.15rem 0.5rem;
           border-radius: 4px;
+          font-weight: 600;
         }
 
         .pub-title-text {
           font-size: 1.15rem;
-          color: #ffffff;
+          color: var(--navy);
           font-weight: 700;
           line-height: 1.35;
           margin: 0.3rem 0;
@@ -618,7 +629,7 @@ export default function Publications({ navigateTo }) {
           align-items: center;
           gap: 1.25rem;
           font-size: 0.8rem;
-          color: var(--text-ice);
+          color: var(--text-secondary);
           flex-wrap: wrap;
           margin-top: 0.3rem;
         }
@@ -644,9 +655,9 @@ export default function Publications({ navigateTo }) {
         }
 
         .param-chip {
-          background: rgba(255, 255, 255, 0.06);
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          color: #ffffff;
+          background: #f1f5f9;
+          border: 1px solid #e2e8f0;
+          color: var(--text-secondary);
           font-size: 0.72rem;
           padding: 0.15rem 0.5rem;
           border-radius: 4px;
@@ -657,16 +668,16 @@ export default function Publications({ navigateTo }) {
           align-items: center;
           gap: 0.4rem;
           font-size: 0.85rem;
-          color: var(--text-ice);
+          color: var(--text-secondary);
         }
 
         .author-icon {
-          color: var(--accent-cyan);
+          color: #0284c7;
         }
 
         .pub-journal-line {
           font-size: 0.82rem;
-          color: var(--text-secondary);
+          color: var(--text-muted);
         }
 
         .doi-text {
@@ -683,44 +694,46 @@ export default function Publications({ navigateTo }) {
 
         .mini-tag {
           font-size: 0.72rem;
-          background: rgba(255, 255, 255, 0.04);
+          background: #f8fafc;
+          border: 1px solid #e2e8f0;
           color: var(--text-muted);
           padding: 0.1rem 0.45rem;
           border-radius: 3px;
         }
 
         .abstract-expanded-box {
-          background: rgba(0, 0, 0, 0.3);
+          background: #f8fafc;
           border-radius: var(--radius-sm);
           padding: 1rem;
-          border-left: 2px solid var(--accent-cyan);
+          border-left: 3px solid #0284c7;
         }
 
         .abstract-title {
           font-size: 0.8rem;
-          color: var(--accent-cyan);
+          color: #0284c7;
           text-transform: uppercase;
           letter-spacing: 0.05em;
           margin-bottom: 0.4rem;
+          font-weight: 700;
         }
 
         .abstract-body {
           font-size: 0.85rem;
-          line-height: 1.5;
+          line-height: 1.55;
           color: var(--text-secondary);
         }
 
         .doi-direct-row {
           margin-top: 0.6rem;
           font-size: 0.78rem;
-          color: var(--text-ice);
+          color: var(--text-muted);
         }
 
         .pub-card-actions {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          border-top: 1px solid rgba(255, 255, 255, 0.06);
+          border-top: 1px solid #f1f5f9;
           padding-top: 0.85rem;
           flex-wrap: wrap;
           gap: 0.75rem;
@@ -732,7 +745,7 @@ export default function Publications({ navigateTo }) {
           gap: 0.3rem;
           background: transparent;
           border: none;
-          color: var(--accent-ice);
+          color: #0284c7;
           font-size: 0.82rem;
           font-weight: 600;
           cursor: pointer;
@@ -748,7 +761,7 @@ export default function Publications({ navigateTo }) {
           display: flex;
           align-items: center;
           gap: 0.35rem;
-          background: rgba(255, 255, 255, 0.06);
+          background: #ffffff;
           border: 1px solid var(--border-subtle);
           color: var(--text-secondary);
           padding: 0.35rem 0.75rem;
@@ -757,33 +770,34 @@ export default function Publications({ navigateTo }) {
           font-weight: 600;
           cursor: pointer;
           text-decoration: none;
-          transition: all 0.2s ease;
+          transition: all 0.15s ease;
         }
 
         .btn-action-pill:hover {
-          background: rgba(255, 255, 255, 0.12);
-          color: #ffffff;
+          background: #f8fafc;
+          color: var(--navy);
+          border-color: #cbd5e1;
         }
 
         .btn-action-pill.download {
-          background: rgba(56, 189, 248, 0.15);
-          color: #38bdf8;
-          border-color: rgba(56, 189, 248, 0.35);
+          background: #e0f2fe;
+          color: #0369a1;
+          border-color: #bae6fd;
         }
 
         .btn-action-pill.download:hover {
-          background: rgba(56, 189, 248, 0.3);
-          color: #ffffff;
+          background: #bae6fd;
+          color: #0284c7;
         }
 
         .btn-action-pill.copied {
-          background: rgba(16, 185, 129, 0.2);
-          color: #6ee7b7;
-          border-color: rgba(16, 185, 129, 0.4);
+          background: #ecfdf5;
+          color: #047857;
+          border-color: #a7f3d0;
         }
 
         .doi-link {
-          color: #60a5fa;
+          color: #0284c7;
         }
       `}</style>
     </div>

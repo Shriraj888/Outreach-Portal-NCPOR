@@ -1,21 +1,19 @@
 import React from 'react';
 import { usePortal } from '../context/PortalContext';
-import { Compass, Shield, Award, ExternalLink, Mail, Phone, MapPin, Radio, Heart } from 'lucide-react';
+import { Compass, ExternalLink, Mail, Phone, MapPin, Award } from 'lucide-react';
 
 export default function Footer({ navigateTo }) {
-  const { lang, t } = usePortal();
+  const { lang } = usePortal();
 
   return (
     <footer className="site-footer">
-      <div className="footer-top-wave"></div>
-      
       <div className="container footer-content">
         <div className="footer-grid">
           {/* Column 1: Institute Info */}
           <div className="footer-col brand-col">
             <div className="footer-brand">
               <div className="footer-logo-badge">
-                <Compass size={24} className="footer-compass" />
+                <Compass size={22} className="footer-compass" />
               </div>
               <div>
                 <h4 className="footer-brand-title">
@@ -28,7 +26,7 @@ export default function Footer({ navigateTo }) {
             </div>
             
             <p className="footer-desc">
-              India's premier nodal agency for planning, promoting, coordinating and executing the entire gamut of polar and Southern Ocean scientific research.
+              India's premier nodal agency for planning, promoting, coordinating and executing polar and Southern Ocean scientific research.
             </p>
 
             <div className="polar-status-badge">
@@ -61,7 +59,7 @@ export default function Footer({ navigateTo }) {
 
           {/* Column 3: Smart Education & Media */}
           <div className="footer-col">
-            <h5 className="footer-heading">Smart Education & Outreach</h5>
+            <h5 className="footer-heading">Education & Outreach</h5>
             <ul className="footer-links">
               <li>
                 <button onClick={() => navigateTo('learn')}>
@@ -75,7 +73,7 @@ export default function Footer({ navigateTo }) {
                 <button onClick={() => navigateTo('expeditions')}>Media Press Kits & Galleries</button>
               </li>
               <li>
-                <button onClick={() => navigateTo('admin-login')}>NCPOR AI Content Studio</button>
+                <button onClick={() => navigateTo('admin-login')}>NCPOR Staff Content Studio</button>
               </li>
               <li>
                 <a href="https://ncpor.res.in" target="_blank" rel="noopener noreferrer" className="external-link">
@@ -88,7 +86,7 @@ export default function Footer({ navigateTo }) {
 
           {/* Column 4: Contact & Hackathon Badge */}
           <div className="footer-col">
-            <h5 className="footer-heading">Institutional Headquarters</h5>
+            <h5 className="footer-heading">Headquarters</h5>
             <div className="footer-contact">
               <div className="contact-item">
                 <MapPin size={15} className="contact-icon" />
@@ -127,16 +125,16 @@ export default function Footer({ navigateTo }) {
             <span>•</span>
             <span>WCAG 2.1 AA Compliant</span>
             <span>•</span>
-            <span>Zero Plastic & Antarctic Environmental Protocol</span>
+            <span>Antarctic Environmental Protocol Certified</span>
           </div>
         </div>
       </div>
 
       <style>{`
         .site-footer {
-          background: #040810;
-          color: var(--text-secondary);
-          border-top: 1px solid var(--border-subtle);
+          background: #0a192f;
+          color: #94a3b8;
+          border-top: 1px solid #1e293b;
           position: relative;
           margin-top: 4rem;
         }
@@ -161,17 +159,17 @@ export default function Footer({ navigateTo }) {
         .footer-logo-badge {
           width: 38px;
           height: 38px;
-          border-radius: 10px;
-          background: rgba(56, 189, 248, 0.15);
-          border: 1px solid rgba(56, 189, 248, 0.3);
+          border-radius: 8px;
+          background: #1e3a8a;
+          border: 1px solid #2563eb;
           display: flex;
           align-items: center;
           justify-content: center;
-          color: var(--accent-ice);
+          color: #fbbf24;
         }
 
         .footer-brand-title {
-          font-size: 1.05rem;
+          font-size: 1.1rem;
           color: #ffffff;
           font-weight: 700;
           line-height: 1.2;
@@ -179,13 +177,13 @@ export default function Footer({ navigateTo }) {
 
         .footer-brand-sub {
           font-size: 0.75rem;
-          color: var(--text-ice);
+          color: #94a3b8;
         }
 
         .footer-desc {
           font-size: 0.82rem;
-          line-height: 1.5;
-          color: var(--text-muted);
+          line-height: 1.6;
+          color: #cbd5e1;
           margin-bottom: 1.25rem;
         }
 
@@ -193,9 +191,9 @@ export default function Footer({ navigateTo }) {
           display: inline-flex;
           align-items: center;
           gap: 0.5rem;
-          background: rgba(16, 185, 129, 0.1);
+          background: rgba(16, 185, 129, 0.12);
           border: 1px solid rgba(16, 185, 129, 0.3);
-          color: #6ee7b7;
+          color: #34d399;
           font-size: 0.75rem;
           padding: 0.35rem 0.75rem;
           border-radius: var(--radius-full);
@@ -206,8 +204,7 @@ export default function Footer({ navigateTo }) {
           height: 7px;
           background: #10b981;
           border-radius: 50%;
-          box-shadow: 0 0 8px #10b981;
-          animation: pulseGlow 1.5s infinite;
+          display: inline-block;
         }
 
         .footer-heading {
@@ -215,7 +212,6 @@ export default function Footer({ navigateTo }) {
           font-weight: 700;
           color: #ffffff;
           margin-bottom: 1.2rem;
-          letter-spacing: -0.01em;
         }
 
         .footer-links {
@@ -228,11 +224,11 @@ export default function Footer({ navigateTo }) {
         .footer-links button, .footer-links a {
           background: none;
           border: none;
-          color: var(--text-secondary);
+          color: #cbd5e1;
           font-size: 0.84rem;
           text-align: left;
           cursor: pointer;
-          transition: all 0.2s ease;
+          transition: all 0.15s ease;
           display: inline-flex;
           align-items: center;
           gap: 0.35rem;
@@ -240,12 +236,12 @@ export default function Footer({ navigateTo }) {
         }
 
         .footer-links button:hover, .footer-links a:hover {
-          color: var(--accent-ice);
-          transform: translateX(3px);
+          color: #38bdf8;
+          transform: translateX(2px);
         }
 
         .footer-highlight {
-          color: #fcd34d;
+          color: #fbbf24;
           font-weight: 600;
         }
 
@@ -260,7 +256,7 @@ export default function Footer({ navigateTo }) {
           flex-direction: column;
           gap: 0.75rem;
           font-size: 0.8rem;
-          color: var(--text-secondary);
+          color: #cbd5e1;
           margin-bottom: 1.25rem;
         }
 
@@ -271,14 +267,14 @@ export default function Footer({ navigateTo }) {
         }
 
         .contact-icon {
-          color: var(--accent-cyan);
+          color: #38bdf8;
           flex-shrink: 0;
           margin-top: 2px;
         }
 
         .sih-badge-card {
-          background: linear-gradient(135deg, rgba(245, 158, 11, 0.12) 0%, rgba(239, 68, 68, 0.12) 100%);
-          border: 1px solid rgba(245, 158, 11, 0.3);
+          background: rgba(217, 119, 6, 0.12);
+          border: 1px solid rgba(217, 119, 6, 0.3);
           border-radius: var(--radius-sm);
           padding: 0.75rem;
           display: flex;
@@ -293,17 +289,17 @@ export default function Footer({ navigateTo }) {
         .sih-title {
           font-size: 0.8rem;
           font-weight: 700;
-          color: #fcd34d;
+          color: #fbbf24;
         }
 
         .sih-subtitle {
           font-size: 0.7rem;
-          color: var(--text-muted);
+          color: #94a3b8;
         }
 
         .footer-divider {
           height: 1px;
-          background: rgba(255, 255, 255, 0.08);
+          background: #1e293b;
           margin: 2.5rem 0 1.5rem 0;
         }
 
@@ -314,7 +310,7 @@ export default function Footer({ navigateTo }) {
           flex-wrap: wrap;
           gap: 1rem;
           font-size: 0.75rem;
-          color: var(--text-muted);
+          color: #64748b;
         }
 
         .footer-meta-links {

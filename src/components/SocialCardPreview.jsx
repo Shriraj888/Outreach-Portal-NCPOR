@@ -248,32 +248,36 @@ export default function SocialCardPreview({ aiContent, expeditionTitle, region, 
           <div className="mock-card mock-facts">
             <div className="facts-header">
               <Award size={20} className="facts-icon" />
-              <h4>Bite-Sized Educational Fact Cards (Smart Education)</h4>
+              <h4>Classroom Polar Fact Cards</h4>
             </div>
-            
+
             <div className="facts-grid">
-              {factCards.map((fact, idx) => (
-                <div key={idx} className="fact-card-item">
-                  <div className="fact-num">0{idx + 1}</div>
-                  <p className="fact-content">{fact}</p>
-                </div>
-              ))}
+              {factCards.length > 0 ? (
+                factCards.map((fc, idx) => (
+                  <div key={idx} className="fact-card-item">
+                    <div className="fact-num">0{idx + 1}</div>
+                    <div className="fact-content">{fc}</div>
+                  </div>
+                ))
+              ) : (
+                <p className="empty-facts">No structured fact cards generated for this mission.</p>
+              )}
             </div>
 
             <div className="copy-action-bar">
               <button 
                 className="btn-copy-caption"
-                onClick={() => handleCopy(factCards.join('\n• '), 'facts')}
+                onClick={() => handleCopy(factCards.join('\n\n'), 'facts')}
               >
                 {copiedKey === 'facts' ? (
                   <>
                     <Check size={14} className="check-icon" />
-                    <span>Copied Fact Cards!</span>
+                    <span>Copied All Fact Cards!</span>
                   </>
                 ) : (
                   <>
                     <Copy size={14} />
-                    <span>Copy All Fact Bullets</span>
+                    <span>Copy All Classroom Fact Cards</span>
                   </>
                 )}
               </button>
@@ -284,91 +288,74 @@ export default function SocialCardPreview({ aiContent, expeditionTitle, region, 
 
       <style>{`
         .social-studio-container {
-          background: rgba(11, 22, 40, 0.9);
-          border: 1px solid var(--border-subtle);
+          background: #ffffff;
+          border: 1px solid var(--border-card);
           border-radius: var(--radius-md);
           overflow: hidden;
+          box-shadow: var(--shadow-sm);
         }
 
         .platform-tab-bar {
           display: flex;
-          background: rgba(7, 13, 24, 0.8);
+          background: #f8fafc;
           border-bottom: 1px solid var(--border-subtle);
           overflow-x: auto;
         }
 
         .platform-btn {
-          flex: 1;
           display: flex;
           align-items: center;
-          justify-content: center;
           gap: 0.5rem;
-          padding: 0.85rem 1rem;
+          padding: 0.85rem 1.25rem;
           background: transparent;
           border: none;
+          border-bottom: 2px solid transparent;
           color: var(--text-secondary);
           font-size: 0.85rem;
           font-weight: 600;
           cursor: pointer;
-          transition: all 0.2s ease;
-          border-bottom: 2px solid transparent;
+          transition: all 0.15s ease;
           white-space: nowrap;
         }
 
         .platform-btn:hover {
-          color: #ffffff;
-          background: rgba(255, 255, 255, 0.04);
+          color: var(--navy);
+          background: #f1f5f9;
         }
 
-        .platform-btn.active.twitter {
-          color: #38bdf8;
-          border-bottom-color: #38bdf8;
-          background: rgba(56, 189, 248, 0.08);
-        }
-
-        .platform-btn.active.instagram {
-          color: #f43f5e;
-          border-bottom-color: #f43f5e;
-          background: rgba(244, 63, 94, 0.08);
-        }
-
-        .platform-btn.active.linkedin {
-          color: #60a5fa;
-          border-bottom-color: #60a5fa;
-          background: rgba(96, 165, 250, 0.08);
-        }
-
-        .platform-btn.active.factcards {
-          color: #fbbf24;
-          border-bottom-color: #fbbf24;
-          background: rgba(251, 191, 36, 0.08);
+        .platform-btn.active {
+          color: var(--navy);
+          background: #ffffff;
+          border-bottom-color: var(--navy);
         }
 
         .char-badge {
           font-size: 0.7rem;
-          background: rgba(255, 255, 255, 0.1);
+          background: #e2e8f0;
+          color: var(--text-muted);
           padding: 1px 6px;
           border-radius: 4px;
         }
 
         .platform-card-wrapper {
-          padding: 1.5rem;
+          padding: 2rem 1.5rem;
           display: flex;
           justify-content: center;
+          background: #f8fafc;
         }
 
         .mock-card {
           width: 100%;
           max-width: 580px;
           border-radius: var(--radius-sm);
-          background: #000000;
-          border: 1px solid rgba(255, 255, 255, 0.15);
+          background: #ffffff;
+          border: 1px solid #e2e8f0;
           overflow: hidden;
-          box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+          box-shadow: var(--shadow-md);
         }
 
         .mock-twitter {
-          padding: 1rem;
+          padding: 1.25rem;
         }
 
         .mock-header {
@@ -381,7 +368,7 @@ export default function SocialCardPreview({ aiContent, expeditionTitle, region, 
           width: 40px;
           height: 40px;
           border-radius: 50%;
-          background: linear-gradient(135deg, #0284c7, #0369a1);
+          background: var(--navy);
           display: flex;
           align-items: center;
           justify-content: center;
@@ -395,12 +382,12 @@ export default function SocialCardPreview({ aiContent, expeditionTitle, region, 
           align-items: center;
           gap: 0.35rem;
           font-size: 0.88rem;
-          color: #ffffff;
+          color: var(--navy);
         }
 
         .gov-verified-badge {
-          background: #38bdf8;
-          color: #000;
+          background: #0284c7;
+          color: #ffffff;
           font-size: 0.65rem;
           font-weight: 900;
           width: 14px;
@@ -418,17 +405,17 @@ export default function SocialCardPreview({ aiContent, expeditionTitle, region, 
 
         .tweet-text {
           font-size: 0.92rem;
-          line-height: 1.5;
-          color: #e2e8f0;
+          line-height: 1.55;
+          color: var(--text-primary);
           white-space: pre-line;
           margin-bottom: 0.85rem;
         }
 
         .mock-media-container {
-          border-radius: 12px;
+          border-radius: 8px;
           overflow: hidden;
           margin-bottom: 0.85rem;
-          border: 1px solid rgba(255, 255, 255, 0.1);
+          border: 1px solid #e2e8f0;
         }
 
         .mock-post-img {
@@ -444,7 +431,7 @@ export default function SocialCardPreview({ aiContent, expeditionTitle, region, 
           padding: 0.5rem 0.5rem 0;
           color: var(--text-muted);
           font-size: 0.8rem;
-          border-top: 1px solid rgba(255, 255, 255, 0.08);
+          border-top: 1px solid #f1f5f9;
         }
 
         .twitter-actions span {
@@ -455,7 +442,7 @@ export default function SocialCardPreview({ aiContent, expeditionTitle, region, 
 
         /* Instagram */
         .mock-instagram {
-          background: #121212;
+          background: #ffffff;
         }
 
         .insta-top-bar {
@@ -463,6 +450,7 @@ export default function SocialCardPreview({ aiContent, expeditionTitle, region, 
           align-items: center;
           justify-content: space-between;
           padding: 0.75rem 1rem;
+          border-bottom: 1px solid #f1f5f9;
         }
 
         .insta-user {
@@ -498,7 +486,7 @@ export default function SocialCardPreview({ aiContent, expeditionTitle, region, 
           display: flex;
           justify-content: space-between;
           padding: 0.75rem 1rem 0.5rem;
-          color: #ffffff;
+          color: #0f172a;
         }
 
         .left-icons {
@@ -510,28 +498,30 @@ export default function SocialCardPreview({ aiContent, expeditionTitle, region, 
           padding: 0 1rem;
           font-size: 0.82rem;
           margin-bottom: 0.5rem;
+          color: var(--text-primary);
         }
 
         .insta-caption-box {
           padding: 0 1rem 1rem;
           font-size: 0.85rem;
-          line-height: 1.45;
+          line-height: 1.5;
         }
 
         .caption-handle {
           font-weight: 700;
           margin-right: 0.5rem;
+          color: var(--navy);
         }
 
         .insta-caption-text {
           white-space: pre-line;
           display: inline;
-          color: #cbd5e1;
+          color: var(--text-secondary);
         }
 
         /* LinkedIn */
         .mock-linkedin {
-          background: #1b1f23;
+          background: #ffffff;
           padding: 1.25rem;
         }
 
@@ -545,6 +535,7 @@ export default function SocialCardPreview({ aiContent, expeditionTitle, region, 
           display: flex;
           flex-direction: column;
           font-size: 0.85rem;
+          color: var(--navy);
         }
 
         .li-followers {
@@ -555,7 +546,7 @@ export default function SocialCardPreview({ aiContent, expeditionTitle, region, 
         .li-text {
           font-size: 0.88rem;
           line-height: 1.55;
-          color: #e2e8f0;
+          color: var(--text-primary);
           white-space: pre-line;
           margin-bottom: 1rem;
         }
@@ -573,7 +564,7 @@ export default function SocialCardPreview({ aiContent, expeditionTitle, region, 
           padding: 0.75rem 0 0.5rem;
           font-size: 0.75rem;
           color: var(--text-muted);
-          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+          border-bottom: 1px solid #f1f5f9;
         }
 
         .li-action-bar {
@@ -594,16 +585,25 @@ export default function SocialCardPreview({ aiContent, expeditionTitle, region, 
 
         /* Facts */
         .mock-facts {
-          background: rgba(15, 29, 53, 0.95);
-          padding: 1.25rem;
+          background: #ffffff;
+          padding: 1.5rem;
         }
 
         .facts-header {
           display: flex;
           align-items: center;
           gap: 0.5rem;
-          color: #fbbf24;
+          color: var(--navy);
           margin-bottom: 1rem;
+        }
+
+        .facts-header h4 {
+          font-size: 1.1rem;
+          font-weight: 700;
+        }
+
+        .facts-icon {
+          color: #d97706;
         }
 
         .facts-grid {
@@ -617,8 +617,8 @@ export default function SocialCardPreview({ aiContent, expeditionTitle, region, 
           display: flex;
           gap: 0.85rem;
           align-items: flex-start;
-          background: rgba(255, 255, 255, 0.05);
-          border: 1px solid rgba(251, 191, 36, 0.2);
+          background: #f8fafc;
+          border: 1px solid #e2e8f0;
           border-radius: var(--radius-sm);
           padding: 0.85rem;
         }
@@ -626,8 +626,9 @@ export default function SocialCardPreview({ aiContent, expeditionTitle, region, 
         .fact-num {
           font-family: var(--font-mono);
           font-weight: 800;
-          color: #fbbf24;
-          background: rgba(251, 191, 36, 0.15);
+          color: #b45309;
+          background: #fffbeb;
+          border: 1px solid #fde68a;
           padding: 2px 6px;
           border-radius: 4px;
           font-size: 0.78rem;
@@ -635,8 +636,8 @@ export default function SocialCardPreview({ aiContent, expeditionTitle, region, 
 
         .fact-content {
           font-size: 0.85rem;
-          color: #f1f5f9;
-          line-height: 1.45;
+          color: var(--text-secondary);
+          line-height: 1.5;
         }
 
         .copy-action-bar {
@@ -644,31 +645,30 @@ export default function SocialCardPreview({ aiContent, expeditionTitle, region, 
           display: flex;
           justify-content: flex-end;
           padding-top: 0.75rem;
-          border-top: 1px solid rgba(255, 255, 255, 0.1);
+          border-top: 1px solid #f1f5f9;
         }
 
         .btn-copy-caption {
           display: inline-flex;
           align-items: center;
           gap: 0.45rem;
-          background: rgba(56, 189, 248, 0.15);
-          border: 1px solid rgba(56, 189, 248, 0.35);
-          color: #7dd3fc;
-          padding: 0.45rem 0.9rem;
+          background: #ffffff;
+          border: 1px solid #cbd5e1;
+          color: var(--navy);
+          padding: 0.5rem 1rem;
           border-radius: var(--radius-sm);
-          font-size: 0.8rem;
+          font-size: 0.82rem;
           font-weight: 600;
           cursor: pointer;
-          transition: all 0.2s ease;
+          transition: all 0.15s ease;
         }
 
         .btn-copy-caption:hover {
-          background: rgba(56, 189, 248, 0.25);
-          color: #ffffff;
+          background: #f1f5f9;
         }
 
         .check-icon {
-          color: #4ade80;
+          color: #059669;
         }
 
         .empty-social-box {
@@ -682,7 +682,7 @@ export default function SocialCardPreview({ aiContent, expeditionTitle, region, 
         }
 
         .empty-sparkle {
-          color: #a855f7;
+          color: #0284c7;
         }
       `}</style>
     </div>

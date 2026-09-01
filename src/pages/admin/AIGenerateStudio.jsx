@@ -474,9 +474,9 @@ export default function AIGenerateStudio({ expeditionId, onBack, onSelectExpedit
           display: flex;
           align-items: center;
           gap: 0.45rem;
-          background: linear-gradient(135deg, rgba(147, 51, 234, 0.25), rgba(217, 70, 239, 0.25));
-          border: 1px solid rgba(217, 70, 239, 0.4);
-          color: #f0abfc;
+          background: #eff6ff;
+          border: 1px solid #bfdbfe;
+          color: #0369a1;
           padding: 0.35rem 1rem;
           border-radius: var(--radius-full);
           font-size: 0.78rem;
@@ -485,7 +485,7 @@ export default function AIGenerateStudio({ expeditionId, onBack, onSelectExpedit
         }
 
         .studio-sparkle {
-          color: #d946ef;
+          color: #0284c7;
         }
 
         /* Mission Bar */
@@ -495,7 +495,9 @@ export default function AIGenerateStudio({ expeditionId, onBack, onSelectExpedit
           align-items: center;
           justify-content: space-between;
           border-radius: var(--radius-md);
-          border: 1px solid rgba(56, 189, 248, 0.3);
+          background: #ffffff;
+          border: 1px solid var(--border-card);
+          box-shadow: var(--shadow-sm);
           flex-wrap: wrap;
           gap: 1.25rem;
         }
@@ -511,18 +513,20 @@ export default function AIGenerateStudio({ expeditionId, onBack, onSelectExpedit
           height: 56px;
           border-radius: 10px;
           object-fit: cover;
-          border: 1px solid rgba(255, 255, 255, 0.2);
+          border: 1px solid var(--border-subtle);
+          background: #f1f5f9;
         }
 
         .mission-bar-tag {
           font-size: 0.75rem;
-          color: var(--accent-cyan);
+          color: #0284c7;
           font-weight: 700;
         }
 
         .mission-bar-title {
           font-size: 1.25rem;
-          color: #ffffff;
+          color: var(--navy);
+          font-weight: 700;
         }
 
         .mission-bar-right {
@@ -541,13 +545,14 @@ export default function AIGenerateStudio({ expeditionId, onBack, onSelectExpedit
         .tone-label {
           font-size: 0.78rem;
           color: var(--text-muted);
+          font-weight: 600;
         }
 
         .tone-select-field {
-          background: #040810;
+          background: #f8fafc;
           border: 1px solid var(--border-subtle);
           border-radius: var(--radius-sm);
-          color: #ffffff;
+          color: var(--text-secondary);
           padding: 0.5rem 0.85rem;
           font-size: 0.82rem;
           cursor: pointer;
@@ -564,16 +569,18 @@ export default function AIGenerateStudio({ expeditionId, onBack, onSelectExpedit
         /* Prompt Inspector */
         .prompt-inspector-card {
           padding: 1.5rem;
-          background: #040810;
-          border: 1px solid rgba(56, 189, 248, 0.3);
+          background: #f8fafc;
+          border: 1px solid var(--border-subtle);
+          border-radius: var(--radius-md);
         }
 
         .prompt-header {
           display: flex;
           align-items: center;
           gap: 0.5rem;
-          color: var(--accent-cyan);
+          color: var(--navy);
           margin-bottom: 1rem;
+          font-weight: 700;
         }
 
         .prompt-grid {
@@ -590,13 +597,13 @@ export default function AIGenerateStudio({ expeditionId, onBack, onSelectExpedit
         }
 
         .prompt-code-block {
-          background: #091322;
-          border: 1px solid rgba(255, 255, 255, 0.08);
+          background: #ffffff;
+          border: 1px solid var(--border-subtle);
           border-radius: var(--radius-sm);
           padding: 1rem;
           font-family: var(--font-mono);
           font-size: 0.75rem;
-          color: #94a3b8;
+          color: var(--text-secondary);
           white-space: pre-wrap;
           line-height: 1.45;
           max-height: 200px;
@@ -605,8 +612,8 @@ export default function AIGenerateStudio({ expeditionId, onBack, onSelectExpedit
 
         /* Publish Success Alert */
         .publish-success-alert {
-          background: rgba(16, 185, 129, 0.15);
-          border: 1px solid rgba(16, 185, 129, 0.4);
+          background: #ecfdf5;
+          border: 1px solid #a7f3d0;
           padding: 1.25rem 1.5rem;
           display: flex;
           align-items: center;
@@ -622,19 +629,20 @@ export default function AIGenerateStudio({ expeditionId, onBack, onSelectExpedit
         }
 
         .alert-icon {
-          color: #10b981;
+          color: #059669;
           flex-shrink: 0;
         }
 
         .publish-success-alert h4 {
-          color: #ffffff;
+          color: #065f46;
           font-size: 1.05rem;
           margin-bottom: 0.2rem;
+          font-weight: 700;
         }
 
         .publish-success-alert p {
           font-size: 0.82rem;
-          color: #6ee7b7;
+          color: #047857;
         }
 
         /* Studio Tabs */
@@ -649,31 +657,36 @@ export default function AIGenerateStudio({ expeditionId, onBack, onSelectExpedit
           align-items: center;
           gap: 0.45rem;
           padding: 0.65rem 1.25rem;
-          background: rgba(255, 255, 255, 0.04);
-          border: 1px solid var(--border-subtle);
+          background: #ffffff;
+          border: 1px solid var(--border-card);
           border-radius: var(--radius-sm);
           color: var(--text-secondary);
           font-size: 0.85rem;
           font-weight: 600;
           cursor: pointer;
-          transition: all 0.2s ease;
+          transition: all 0.15s ease;
           white-space: nowrap;
+          box-shadow: var(--shadow-xs);
         }
 
         .studio-tab:hover {
-          color: #ffffff;
-          background: rgba(255, 255, 255, 0.08);
+          color: var(--navy);
+          background: #f8fafc;
         }
 
         .studio-tab.active {
-          background: rgba(147, 51, 234, 0.2);
-          border-color: #c084fc;
-          color: #f0abfc;
+          background: #eff6ff;
+          border-color: #bfdbfe;
+          color: var(--navy);
         }
 
         /* Editor Card */
         .studio-editor-card {
           padding: 2rem;
+          background: #ffffff;
+          border: 1px solid var(--border-card);
+          box-shadow: var(--shadow-sm);
+          border-radius: var(--radius-md);
         }
 
         .editor-card-header {
@@ -685,8 +698,9 @@ export default function AIGenerateStudio({ expeditionId, onBack, onSelectExpedit
 
         .editor-card-header h3 {
           font-size: 1.25rem;
-          color: #ffffff;
+          color: var(--navy);
           margin-bottom: 0.25rem;
+          font-weight: 700;
         }
 
         .editor-card-header p {
@@ -702,10 +716,10 @@ export default function AIGenerateStudio({ expeditionId, onBack, onSelectExpedit
 
         .studio-textarea {
           width: 100%;
-          background: #040810;
+          background: #f8fafc;
           border: 1px solid var(--border-subtle);
           border-radius: var(--radius-sm);
-          color: #ffffff;
+          color: var(--text-primary);
           padding: 1rem;
           font-size: 0.95rem;
           line-height: 1.6;
@@ -713,7 +727,8 @@ export default function AIGenerateStudio({ expeditionId, onBack, onSelectExpedit
 
         .studio-textarea:focus {
           outline: none;
-          border-color: var(--accent-ice);
+          border-color: var(--ice);
+          background: #ffffff;
         }
 
         .summary-field {
@@ -723,8 +738,9 @@ export default function AIGenerateStudio({ expeditionId, onBack, onSelectExpedit
 
         .fact-cards-editor-section h4 {
           font-size: 1rem;
-          color: #fbbf24;
+          color: #b45309;
           margin-bottom: 1rem;
+          font-weight: 700;
         }
 
         .fact-cards-inputs {
@@ -741,7 +757,7 @@ export default function AIGenerateStudio({ expeditionId, onBack, onSelectExpedit
 
         .fact-idx {
           font-family: var(--font-mono);
-          color: #fbbf24;
+          color: #b45309;
           font-weight: 700;
           font-size: 0.85rem;
         }
@@ -758,6 +774,10 @@ export default function AIGenerateStudio({ expeditionId, onBack, onSelectExpedit
           display: flex;
           flex-direction: column;
           gap: 1.25rem;
+          background: #ffffff;
+          border: 1px solid var(--border-card);
+          box-shadow: var(--shadow-sm);
+          border-radius: var(--radius-md);
         }
 
         .social-edit-group {
@@ -780,13 +800,17 @@ export default function AIGenerateStudio({ expeditionId, onBack, onSelectExpedit
           gap: 0.35rem;
         }
 
-        .platform-tag.twitter { color: #38bdf8; }
-        .platform-tag.instagram { color: #f43f5e; }
-        .platform-tag.linkedin { color: #60a5fa; }
+        .platform-tag.twitter { color: #0284c7; }
+        .platform-tag.instagram { color: #e11d48; }
+        .platform-tag.linkedin { color: #2563eb; }
 
         /* Alt-Text Studio */
         .alt-text-studio-card {
           padding: 2rem;
+          background: #ffffff;
+          border: 1px solid var(--border-card);
+          box-shadow: var(--shadow-sm);
+          border-radius: var(--radius-md);
         }
 
         .alt-text-grid {
@@ -798,7 +822,7 @@ export default function AIGenerateStudio({ expeditionId, onBack, onSelectExpedit
         .alt-item-card {
           display: flex;
           gap: 1rem;
-          background: rgba(7, 13, 24, 0.7);
+          background: #f8fafc;
           border: 1px solid var(--border-subtle);
           border-radius: var(--radius-sm);
           padding: 1rem;
@@ -821,12 +845,13 @@ export default function AIGenerateStudio({ expeditionId, onBack, onSelectExpedit
 
         .alt-item-caption {
           font-size: 0.82rem;
-          color: #ffffff;
+          color: var(--navy);
+          font-weight: 600;
         }
 
         .alt-field-label {
           font-size: 0.72rem;
-          color: var(--accent-cyan);
+          color: #0284c7;
           font-weight: 600;
         }
 
@@ -841,25 +866,30 @@ export default function AIGenerateStudio({ expeditionId, onBack, onSelectExpedit
           padding: 1.75rem;
           display: flex;
           flex-direction: column;
+          background: #ffffff;
+          border: 1px solid var(--border-card);
+          box-shadow: var(--shadow-sm);
+          border-radius: var(--radius-md);
         }
 
         .compare-pane-header {
           display: flex;
           align-items: center;
           gap: 0.5rem;
-          color: #ffffff;
+          color: var(--navy);
           margin-bottom: 1rem;
-          border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+          border-bottom: 1px solid var(--border-subtle);
           padding-bottom: 0.75rem;
+          font-weight: 700;
         }
 
         .compare-raw-box {
-          background: #040810;
-          border: 1px solid rgba(255, 255, 255, 0.08);
+          background: #f8fafc;
+          border: 1px solid var(--border-subtle);
           border-radius: var(--radius-sm);
           padding: 1.25rem;
           font-size: 0.78rem;
-          color: #94a3b8;
+          color: var(--text-secondary);
           white-space: pre-wrap;
           line-height: 1.5;
           max-height: 400px;
@@ -870,19 +900,19 @@ export default function AIGenerateStudio({ expeditionId, onBack, onSelectExpedit
         .compare-ai-box {
           font-size: 0.95rem;
           line-height: 1.65;
-          color: #f1f5f9;
+          color: var(--text-primary);
           display: flex;
           flex-direction: column;
           gap: 1.25rem;
         }
 
         .compare-social-snippets {
-          background: rgba(147, 51, 234, 0.1);
-          border: 1px solid rgba(168, 85, 247, 0.3);
+          background: #eff6ff;
+          border: 1px solid #bfdbfe;
           border-radius: var(--radius-sm);
           padding: 1rem;
           font-size: 0.85rem;
-          color: #e2e8f0;
+          color: var(--navy);
         }
 
         /* Studio Footer */
@@ -892,8 +922,9 @@ export default function AIGenerateStudio({ expeditionId, onBack, onSelectExpedit
           align-items: center;
           justify-content: space-between;
           border-radius: var(--radius-md);
-          border: 1px solid rgba(168, 85, 247, 0.4);
-          background: linear-gradient(180deg, rgba(24, 18, 48, 0.9) 0%, rgba(15, 29, 53, 0.95) 100%);
+          border: 1px solid var(--border-card);
+          background: #ffffff;
+          box-shadow: var(--shadow-sm);
           flex-wrap: wrap;
           gap: 1rem;
         }
@@ -902,7 +933,7 @@ export default function AIGenerateStudio({ expeditionId, onBack, onSelectExpedit
           display: flex;
           align-items: center;
           gap: 0.5rem;
-          color: #6ee7b7;
+          color: #047857;
           font-size: 0.85rem;
           font-weight: 600;
         }

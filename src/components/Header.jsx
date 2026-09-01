@@ -50,7 +50,7 @@ export default function Header({ currentRoute, navigateTo }) {
       <div className="gov-strip">
         <div className="container gov-strip-content">
           <div className="gov-title">
-            <span className="tricolor-dot"></span>
+            <span className="tricolor-badge"></span>
             <span className="gov-text">
               भारत सरकार | <strong>GOVERNMENT OF INDIA</strong> • MINISTRY OF EARTH SCIENCES
             </span>
@@ -106,7 +106,7 @@ export default function Header({ currentRoute, navigateTo }) {
           <div className="brand-lockup" onClick={() => handleNav('home')} role="button" tabIndex={0}>
             <div className="brand-logo-container">
               <div className="brand-emblem-badge">
-                <Compass className="brand-icon pulse-glow" size={28} />
+                <Compass className="brand-icon" size={24} />
               </div>
             </div>
             <div className="brand-text">
@@ -117,7 +117,7 @@ export default function Header({ currentRoute, navigateTo }) {
                 {lang === 'hi' ? 'पृथ्वी विज्ञान मंत्रालय' : 'National Centre for Polar and Ocean Research'}
               </div>
               <div className="brand-tagline">
-                MoES • Smart Polar Science Outreach Portal
+                Ministry of Earth Sciences, Govt. of India • Polar Science Outreach
               </div>
             </div>
           </div>
@@ -130,12 +130,12 @@ export default function Header({ currentRoute, navigateTo }) {
               return (
                 <button
                   key={item.id}
-                  className={`nav-link ${isActive ? 'active' : ''} ${item.highlight ? 'nav-highlight' : ''}`}
+                  className={`nav-link ${isActive ? 'active' : ''}`}
                   onClick={() => handleNav(item.id)}
                 >
                   <Icon size={16} />
                   <span>{item.label}</span>
-                  {item.highlight && <span className="learn-badge">SIH '26</span>}
+                  {item.highlight && <span className="learn-badge">Student Hub</span>}
                 </button>
               );
             })}
@@ -145,10 +145,10 @@ export default function Header({ currentRoute, navigateTo }) {
           <div className="nav-actions">
             {/* Quick Search */}
             <div className="search-input-wrapper">
-              <Search size={16} className="search-icon" />
+              <Search size={15} className="search-icon" />
               <input
                 type="text"
-                placeholder={lang === 'hi' ? "खोजें..." : "Search missions, ice..."}
+                placeholder={lang === 'hi' ? "खोजें..." : "Search missions, stations..."}
                 value={searchQuery}
                 onChange={(e) => {
                   setSearchQuery(e.target.value);
@@ -265,18 +265,17 @@ export default function Header({ currentRoute, navigateTo }) {
           position: sticky;
           top: 0;
           z-index: 100;
-          background: rgba(11, 24, 41, 0.94);
-          backdrop-filter: blur(16px);
-          -webkit-backdrop-filter: blur(16px);
-          border-bottom: 1px solid rgba(141, 164, 190, 0.12);
+          background: #ffffff;
+          border-bottom: 1px solid var(--border-subtle);
+          box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
         }
 
         .gov-strip {
-          background: #060e1c;
-          border-bottom: 1px solid rgba(141, 164, 190, 0.1);
+          background: #1e293b;
+          border-bottom: 1px solid #0f172a;
           font-size: 0.75rem;
-          color: var(--text-secondary);
-          padding: 0.35rem 0;
+          color: #cbd5e1;
+          padding: 0.4rem 0;
         }
 
         .gov-strip-content {
@@ -291,43 +290,46 @@ export default function Header({ currentRoute, navigateTo }) {
           display: flex;
           align-items: center;
           gap: 0.5rem;
-          font-size: 0.72rem;
-          letter-spacing: 0.03em;
+          font-size: 0.74rem;
+          letter-spacing: 0.02em;
+          color: #f1f5f9;
         }
 
-        .tricolor-dot {
-          width: 8px;
-          height: 8px;
-          border-radius: 50%;
-          background: linear-gradient(180deg, #ff9933 33%, #ffffff 33%, #ffffff 66%, #138808 66%);
+        .tricolor-badge {
+          width: 14px;
+          height: 10px;
+          border-radius: 2px;
           display: inline-block;
+          background: linear-gradient(180deg, #ff9933 33%, #ffffff 33%, #ffffff 66%, #138808 66%);
+          box-shadow: 0 0 0 1px rgba(0,0,0,0.2);
         }
 
         .a11y-toolbar {
           display: flex;
           align-items: center;
-          gap: 0.75rem;
+          gap: 0.65rem;
         }
 
         .a11y-group {
           display: flex;
           align-items: center;
           gap: 0.2rem;
-          background: rgba(255, 255, 255, 0.05);
+          background: rgba(255, 255, 255, 0.1);
+          border: 1px solid rgba(255, 255, 255, 0.15);
           padding: 2px 6px;
           border-radius: 4px;
         }
 
         .a11y-label {
-          font-size: 0.68rem;
-          color: var(--text-muted);
+          font-size: 0.7rem;
+          color: #94a3b8;
           margin-right: 2px;
         }
 
         .a11y-btn {
           background: transparent;
           border: none;
-          color: var(--text-secondary);
+          color: #cbd5e1;
           padding: 1px 5px;
           font-size: 0.72rem;
           font-weight: 600;
@@ -336,37 +338,42 @@ export default function Header({ currentRoute, navigateTo }) {
         }
 
         .a11y-btn.active, .a11y-btn:hover {
-          background: var(--accent-cyan);
-          color: #000;
+          background: #ffffff;
+          color: #0f172a;
         }
 
         .a11y-toggle, .lang-toggle-btn {
           display: flex;
           align-items: center;
           gap: 0.35rem;
-          background: rgba(255, 255, 255, 0.06);
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          color: var(--text-primary);
+          background: rgba(255, 255, 255, 0.1);
+          border: 1px solid rgba(255, 255, 255, 0.15);
+          color: #e2e8f0;
           padding: 2px 8px;
           border-radius: 4px;
-          font-size: 0.72rem;
+          font-size: 0.74rem;
+          font-weight: 500;
           cursor: pointer;
-          transition: all 0.2s ease;
+          transition: all 0.15s ease;
         }
 
         .a11y-toggle:hover, .lang-toggle-btn:hover {
-          background: rgba(56, 189, 248, 0.2);
-          border-color: var(--accent-ice);
+          background: rgba(255, 255, 255, 0.2);
+          border-color: rgba(255, 255, 255, 0.3);
+          color: #ffffff;
         }
 
         .a11y-toggle.active {
-          background: #ffff00;
-          color: #000;
+          background: #d97706;
+          color: #ffffff;
           font-weight: 700;
+          border-color: #d97706;
         }
 
         .main-nav-bar {
           padding: 0.75rem 0;
+          background: #ffffff;
+          border-bottom: 1px solid #cbd5e1;
         }
 
         .nav-container {
@@ -385,16 +392,16 @@ export default function Header({ currentRoute, navigateTo }) {
         }
 
         .brand-emblem-badge {
-          width: 44px;
-          height: 44px;
-          border-radius: 10px;
-          background: linear-gradient(135deg, rgba(21, 41, 66, 0.9) 0%, rgba(30, 58, 100, 0.95) 100%);
-          border: 1px solid rgba(245, 158, 11, 0.35);
+          width: 42px;
+          height: 42px;
+          border-radius: 8px;
+          background: var(--navy);
+          border: 1px solid #0f2b5c;
           display: flex;
           align-items: center;
           justify-content: center;
-          color: var(--saffron);
-          box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+          color: #fbbf24;
+          box-shadow: 0 2px 5px rgba(10, 37, 64, 0.15);
         }
 
         .brand-text {
@@ -403,29 +410,29 @@ export default function Header({ currentRoute, navigateTo }) {
         }
 
         .brand-primary {
-          font-size: 1.15rem;
+          font-size: 1.18rem;
           font-weight: 800;
-          letter-spacing: 0.04em;
-          color: #ffffff;
-          line-height: 1.1;
+          letter-spacing: -0.01em;
+          color: var(--navy);
+          line-height: 1.15;
         }
 
         .brand-secondary {
           font-size: 0.78rem;
           color: var(--text-secondary);
-          font-weight: 400;
+          font-weight: 500;
           line-height: 1.2;
         }
 
         .brand-tagline {
-          font-size: 0.68rem;
+          font-size: 0.7rem;
           color: var(--text-muted);
         }
 
         .desktop-nav {
           display: flex;
           align-items: center;
-          gap: 0.4rem;
+          gap: 0.35rem;
         }
 
         .nav-link {
@@ -440,28 +447,24 @@ export default function Header({ currentRoute, navigateTo }) {
           background: transparent;
           border: 1px solid transparent;
           cursor: pointer;
-          transition: all 0.2s ease;
+          transition: all 0.15s ease;
           position: relative;
         }
 
         .nav-link:hover {
-          color: #ffffff;
-          background: rgba(255, 255, 255, 0.05);
+          color: var(--navy);
+          background: #f1f5f9;
         }
 
         .nav-link.active {
-          color: var(--saffron-light);
-          background: rgba(245, 158, 11, 0.1);
-          border-color: rgba(245, 158, 11, 0.28);
+          color: var(--navy);
+          background: #eff6ff;
+          border-color: #bfdbfe;
           font-weight: 600;
         }
 
-        .nav-highlight {
-          color: #fcd34d !important;
-        }
-
         .learn-badge {
-          background: linear-gradient(135deg, #f59e0b, #ef4444);
+          background: #0284c7;
           color: #ffffff;
           font-size: 0.65rem;
           font-weight: 700;
@@ -490,22 +493,22 @@ export default function Header({ currentRoute, navigateTo }) {
         }
 
         .header-search-input {
-          background: rgba(15, 32, 55, 0.9);
-          border: 1px solid rgba(141, 164, 190, 0.2);
+          background: #f8fafc;
+          border: 1px solid var(--border-subtle);
           border-radius: var(--radius-full);
           padding: 0.45rem 1.8rem 0.45rem 2.2rem;
-          color: #ffffff;
+          color: var(--text-primary);
           font-size: 0.82rem;
-          width: 180px;
-          transition: all 0.25s ease;
+          width: 190px;
+          transition: all 0.2s ease;
         }
 
         .header-search-input:focus {
           outline: none;
-          border-color: var(--saffron);
+          border-color: var(--ice);
           width: 240px;
-          background: rgba(15, 32, 55, 1);
-          box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.12);
+          background: #ffffff;
+          box-shadow: 0 0 0 3px var(--ice-glow);
         }
 
         .clear-search-btn {
@@ -522,20 +525,20 @@ export default function Header({ currentRoute, navigateTo }) {
           display: flex;
           align-items: center;
           gap: 0.4rem;
-          background: rgba(245, 158, 11, 0.1);
-          color: var(--saffron-light);
-          border: 1px solid rgba(245, 158, 11, 0.3);
-          padding: 0.45rem 0.9rem;
+          background: #f1f5f9;
+          color: var(--navy);
+          border: 1px solid #cbd5e1;
+          padding: 0.45rem 0.85rem;
           border-radius: var(--radius-sm);
           font-size: 0.82rem;
           font-weight: 600;
           cursor: pointer;
-          transition: all 0.2s ease;
+          transition: all 0.15s ease;
         }
 
         .btn-admin:hover, .btn-admin.active {
-          background: rgba(245, 158, 11, 0.2);
-          border-color: var(--saffron);
+          background: var(--navy);
+          border-color: var(--navy);
           color: #ffffff;
         }
 
@@ -546,30 +549,31 @@ export default function Header({ currentRoute, navigateTo }) {
         }
 
         .btn-logout {
-          background: rgba(239, 68, 68, 0.15);
-          color: #fca5a5;
-          border: 1px solid rgba(239, 68, 68, 0.3);
+          background: #fee2e2;
+          color: #b91c1c;
+          border: 1px solid #fecaca;
           padding: 0.45rem 0.7rem;
           border-radius: var(--radius-sm);
           font-size: 0.75rem;
+          font-weight: 600;
           cursor: pointer;
         }
 
         .btn-logout:hover {
-          background: rgba(239, 68, 68, 0.25);
+          background: #fca5a5;
         }
 
         .mobile-menu-toggle {
           display: none;
           background: transparent;
           border: none;
-          color: #ffffff;
+          color: var(--navy);
           cursor: pointer;
           padding: 0.25rem;
         }
 
         .mobile-drawer {
-          background: var(--bg-deep);
+          background: #ffffff;
           border-top: 1px solid var(--border-subtle);
           padding: 1rem;
         }
@@ -586,19 +590,20 @@ export default function Header({ currentRoute, navigateTo }) {
           gap: 0.75rem;
           padding: 0.75rem 1rem;
           border-radius: var(--radius-sm);
-          background: rgba(255, 255, 255, 0.04);
+          background: #f8fafc;
           border: 1px solid var(--border-subtle);
           color: var(--text-primary);
-          font-size: 0.95rem;
+          font-size: 0.92rem;
           font-weight: 500;
           text-align: left;
           cursor: pointer;
         }
 
         .mobile-nav-item.active {
-          background: rgba(245, 158, 11, 0.12);
-          border-color: rgba(245, 158, 11, 0.3);
-          color: var(--saffron-light);
+          background: #eff6ff;
+          border-color: #bfdbfe;
+          color: var(--navy);
+          font-weight: 600;
         }
 
         .mobile-divider {

@@ -201,7 +201,7 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
           <span className="status-label">SATCOM LINK:</span>
           <span className="status-value">
             SARAL-AltiKa / Oceansat-3
-            {satPos && <span style={{color:'#38bdf8'}}> @ {satPos.lat.toFixed(1)}°, {satPos.lng.toFixed(1)}°</span>}
+            {satPos && <span style={{color:'#0284c7', fontWeight: 600}}> @ {satPos.lat.toFixed(1)}°, {satPos.lng.toFixed(1)}°</span>}
           </span>
         </div>
         <div className="status-item">
@@ -216,8 +216,8 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
           <span className="status-label">DATA SOURCE:</span>
           <span className="status-value">
             {lastUpdated
-              ? <><span style={{color:'#34d399'}}>● LIVE</span> NOAA / Open-Meteo · {lastUpdated.toLocaleTimeString()}</>
-              : <span style={{color:'#94a3b8'}}>Connecting to NOAA…</span>}
+              ? <><span style={{color:'#059669', fontWeight: 600}}>● LIVE</span> NOAA / Open-Meteo · {lastUpdated.toLocaleTimeString()}</>
+              : <span style={{color:'#64748b'}}>Connecting to NOAA…</span>}
           </span>
         </div>
         <div className="status-item">
@@ -227,9 +227,9 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
         <button
           onClick={refetch}
           title="Refresh live data"
-          style={{ marginLeft: 'auto', background: 'none', border: '1px solid rgba(56,189,248,0.3)', borderRadius: 6, color: '#7dd3fc', padding: '2px 8px', cursor: 'pointer', display:'flex', alignItems:'center', gap:4, fontSize:'0.72rem' }}
+          style={{ marginLeft: 'auto', background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: 6, color: '#0f172a', padding: '3px 10px', cursor: 'pointer', display:'flex', alignItems:'center', gap:4, fontSize:'0.75rem', fontWeight: 600 }}
         >
-          <RefreshCw size={11} /> Refresh
+          <RefreshCw size={12} /> Refresh
         </button>
       </div>
 
@@ -408,7 +408,7 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
                             <div>
                               <div className="telem-lbl">
                                 Ambient Temp
-                                {live.isLive && <span style={{color:'#34d399',fontSize:'0.65rem',marginLeft:4}}>● LIVE</span>}
+                                {live.isLive && <span style={{color:'#059669',fontSize:'0.65rem',marginLeft:4,fontWeight:700}}>● LIVE</span>}
                               </div>
                               <div className="telem-val highlight-temp">{live.temp}</div>
                             </div>
@@ -419,7 +419,7 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
                             <div>
                               <div className="telem-lbl">
                                 Wind Vector
-                                {live.isLive && <span style={{color:'#34d399',fontSize:'0.65rem',marginLeft:4}}>● LIVE</span>}
+                                {live.isLive && <span style={{color:'#059669',fontSize:'0.65rem',marginLeft:4,fontWeight:700}}>● LIVE</span>}
                               </div>
                               <div className="telem-val">{live.wind} {live.windDir}</div>
                             </div>
@@ -437,7 +437,7 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
                             <Radio size={18} className="telem-icon telem-green" />
                             <div>
                               <div className="telem-lbl">Telemetry Uplink</div>
-                              <div className="telem-val">Active (GSAT-7A / Inmarsat)</div>
+                              <div className="telem-val">Active (GSAT-7A)</div>
                             </div>
                           </div>
                         </>
@@ -455,7 +455,7 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
                             <div>
                               <div className="telem-lbl">
                                 Solar Radiation
-                                {live.isLive && <span style={{color:'#34d399',fontSize:'0.65rem',marginLeft:4}}>● LIVE</span>}
+                                {live.isLive && <span style={{color:'#059669',fontSize:'0.65rem',marginLeft:4,fontWeight:700}}>● LIVE</span>}
                               </div>
                               <div className="telem-val">{live.solar || '— W/m²'}</div>
                             </div>
@@ -466,7 +466,7 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
                             <div>
                               <div className="telem-lbl">
                                 Baro Pressure
-                                {live.isLive && <span style={{color:'#34d399',fontSize:'0.65rem',marginLeft:4}}>● LIVE</span>}
+                                {live.isLive && <span style={{color:'#059669',fontSize:'0.65rem',marginLeft:4,fontWeight:700}}>● LIVE</span>}
                               </div>
                               <div className="telem-val">{live.pressure || '— hPa'}</div>
                             </div>
@@ -477,7 +477,7 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
                             <div>
                               <div className="telem-lbl">
                                 Rel. Humidity
-                                {live.isLive && <span style={{color:'#34d399',fontSize:'0.65rem',marginLeft:4}}>● LIVE</span>}
+                                {live.isLive && <span style={{color:'#059669',fontSize:'0.65rem',marginLeft:4,fontWeight:700}}>● LIVE</span>}
                               </div>
                               <div className="telem-val">{live.humidity || '—'}</div>
                             </div>
@@ -485,12 +485,6 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
                         </>
                       );
                     })()}
-                  </div>
-
-                  {/* Data source attribution */}
-                  <div style={{ marginTop: '0.6rem', padding: '0.4rem 0.7rem', background: 'rgba(56,189,248,0.06)', borderRadius: 6, fontSize: '0.67rem', color: '#64748b', borderLeft: '2px solid rgba(56,189,248,0.3)' }}>
-                    📡 Weather data: <a href="https://data.ncpor.res.in" target="_blank" rel="noreferrer" style={{color:'#7dd3fc'}}>NCPOR MET Portal</a> coords via Open-Meteo ·
-                    Aurora: <a href="https://www.swpc.noaa.gov" target="_blank" rel="noreferrer" style={{color:'#7dd3fc'}}>NOAA Space Weather</a>
                   </div>
 
                   {/* Specialized Station Callout */}
@@ -737,27 +731,19 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
         }
 
         .eyebrow-icon {
-          color: #38bdf8;
-        }
-
-        .eyebrow-icon.pulse {
-          animation: radarPing 2s infinite;
-        }
-
-        @keyframes radarPing {
-          0%, 100% { opacity: 1; transform: scale(1); }
-          50% { opacity: 0.5; transform: scale(1.15); }
+          color: #0284c7;
         }
 
         /* View Mode Switcher */
         .view-mode-toggle-group {
           display: flex;
           align-items: center;
-          background: rgba(7, 16, 30, 0.8);
-          border: 1px solid var(--border-subtle);
+          background: #ffffff;
+          border: 1px solid var(--border-card);
           padding: 0.25rem;
           border-radius: var(--radius-full);
           gap: 0.25rem;
+          box-shadow: var(--shadow-xs);
         }
 
         .mode-toggle-btn {
@@ -765,24 +751,25 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
           align-items: center;
           gap: 0.45rem;
           background: transparent;
-          border: none;
+          border: 1px solid transparent;
           color: var(--text-secondary);
           padding: 0.45rem 0.9rem;
           border-radius: var(--radius-full);
           font-size: 0.8rem;
           font-weight: 600;
           cursor: pointer;
-          transition: all 0.2s ease;
+          transition: all 0.15s ease;
         }
 
         .mode-toggle-btn:hover {
-          color: #ffffff;
+          color: var(--navy);
+          background: #f1f5f9;
         }
 
         .mode-toggle-btn.active {
-          background: rgba(56, 189, 248, 0.2);
-          color: var(--accent-ice);
-          border: 1px solid rgba(56, 189, 248, 0.4);
+          background: var(--navy);
+          color: #ffffff;
+          border-color: var(--navy);
         }
 
         /* Region Presets Bar */
@@ -800,7 +787,7 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
           gap: 0.35rem;
           font-size: 0.8rem;
           font-weight: 700;
-          color: var(--text-muted);
+          color: var(--navy);
           text-transform: uppercase;
           letter-spacing: 0.05em;
         }
@@ -816,28 +803,29 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
           display: flex;
           align-items: center;
           gap: 0.4rem;
-          background: rgba(255, 255, 255, 0.04);
-          border: 1px solid var(--border-subtle);
-          color: var(--text-secondary);
+          background: #ffffff;
+          border: 1px solid var(--border-card);
+          color: var(--text-primary);
           padding: 0.45rem 0.85rem;
           border-radius: var(--radius-full);
           font-size: 0.8rem;
           font-weight: 600;
           cursor: pointer;
-          transition: all 0.2s ease;
+          transition: all 0.15s ease;
+          box-shadow: var(--shadow-xs);
         }
 
         .map-view-btn:hover {
-          background: rgba(255, 255, 255, 0.08);
-          color: #ffffff;
-          border-color: rgba(255, 255, 255, 0.2);
+          background: #f8fafc;
+          color: var(--navy);
+          border-color: #94a3b8;
         }
 
         .map-view-btn.active {
-          background: rgba(56, 189, 248, 0.15);
-          border-color: var(--accent-ice);
-          color: var(--accent-ice);
-          box-shadow: 0 0 14px rgba(56, 189, 248, 0.25);
+          background: #ffffff;
+          border-color: var(--navy);
+          color: var(--navy);
+          box-shadow: 0 0 0 1px var(--navy);
         }
 
         /* Telemetry Status Bar */
@@ -845,14 +833,15 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          background: rgba(7, 16, 30, 0.85);
-          border: 1px solid rgba(56, 189, 248, 0.15);
-          padding: 0.6rem 1.25rem;
+          background: #ffffff;
+          border: 1px solid var(--border-card);
+          padding: 0.65rem 1.25rem;
           border-radius: var(--radius-sm);
           margin-bottom: 1.5rem;
-          font-size: 0.76rem;
+          font-size: 0.78rem;
           flex-wrap: wrap;
           gap: 0.75rem;
+          box-shadow: var(--shadow-xs);
         }
 
         .status-item {
@@ -867,10 +856,9 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
           border-radius: 50%;
         }
 
-        .dot-green {
-          background: #34d399;
-          box-shadow: 0 0 6px #34d399;
-        }
+        .dot-green { background: #10b981; }
+        .dot-orange { background: #f59e0b; }
+        .dot-red { background: #ef4444; }
 
         .status-label {
           color: var(--text-muted);
@@ -878,12 +866,12 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
         }
 
         .status-value {
-          color: #ffffff;
-          font-weight: 600;
+          color: var(--navy);
+          font-weight: 700;
         }
 
         .status-value.highlight-cyan {
-          color: #38bdf8;
+          color: #0284c7;
         }
 
         /* Main Grid Layout */
@@ -895,12 +883,13 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
         }
 
         .map-viewport-card {
-          padding: 1rem;
+          padding: 1.25rem;
           display: flex;
           flex-direction: column;
-          background: rgba(11, 24, 41, 0.85);
-          border: 1px solid rgba(56, 189, 248, 0.2);
+          background: #ffffff;
+          border: 1px solid var(--border-card);
           overflow: hidden;
+          box-shadow: var(--shadow-sm);
         }
 
         /* Viewport Layers Toolbar */
@@ -919,7 +908,7 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
           gap: 0.4rem;
           font-size: 0.78rem;
           font-weight: 700;
-          color: var(--text-muted);
+          color: var(--navy);
           text-transform: uppercase;
         }
 
@@ -931,26 +920,27 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
         }
 
         .layer-chip {
-          background: rgba(255, 255, 255, 0.04);
+          background: #f1f5f9;
           border: 1px solid var(--border-subtle);
-          color: var(--text-secondary);
+          color: var(--text-primary);
           padding: 0.3rem 0.65rem;
           border-radius: var(--radius-full);
           font-size: 0.72rem;
           font-weight: 600;
           cursor: pointer;
-          transition: all 0.2s ease;
+          transition: all 0.15s ease;
         }
 
         .layer-chip:hover {
-          color: #ffffff;
-          background: rgba(255, 255, 255, 0.08);
+          color: var(--navy);
+          background: #e2e8f0;
         }
 
         .layer-chip.active {
-          background: rgba(56, 189, 248, 0.18);
-          border-color: rgba(56, 189, 248, 0.5);
-          color: #7dd3fc;
+          background: #eff6ff;
+          border-color: #bfdbfe;
+          color: #0369a1;
+          font-weight: 700;
         }
 
         .viewport-stage {
@@ -958,6 +948,7 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
           min-height: 520px;
           border-radius: var(--radius-sm);
           overflow: hidden;
+          background: #07152b;
         }
 
         .viewport-footer-bar {
@@ -966,7 +957,7 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
           justify-content: space-between;
           margin-top: 1rem;
           padding-top: 0.85rem;
-          border-top: 1px solid rgba(255, 255, 255, 0.08);
+          border-top: 1px solid var(--border-subtle);
           font-size: 0.76rem;
           color: var(--text-secondary);
           flex-wrap: wrap;
@@ -980,8 +971,8 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
         }
 
         .tip-badge {
-          background: rgba(245, 158, 11, 0.15);
-          color: #f59e0b;
+          background: #fffbeb;
+          color: #b45309;
           font-weight: 700;
           font-size: 0.65rem;
           padding: 1px 6px;
@@ -1006,17 +997,18 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
           border-radius: 50%;
         }
 
-        .antarctica-dot { background: #38bdf8; box-shadow: 0 0 6px #38bdf8; }
-        .arctic-dot { background: #10b981; box-shadow: 0 0 6px #10b981; }
-        .himalaya-dot { background: #f59e0b; box-shadow: 0 0 6px #f59e0b; }
+        .antarctica-dot { background: #0284c7; }
+        .arctic-dot { background: #059669; }
+        .himalaya-dot { background: #d97706; }
 
         /* Station Inspect Card (Right Column) */
         .station-inspect-card {
           padding: 1.25rem;
           display: flex;
           flex-direction: column;
-          background: rgba(11, 24, 41, 0.85);
-          border: 1px solid rgba(56, 189, 248, 0.2);
+          background: #ffffff;
+          border: 1px solid var(--border-card);
+          box-shadow: var(--shadow-sm);
         }
 
         .station-thumb-wrap {
@@ -1025,6 +1017,7 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
           border-radius: var(--radius-sm);
           overflow: hidden;
           margin-bottom: 1rem;
+          background: #f1f5f9;
         }
 
         .station-thumb {
@@ -1036,7 +1029,7 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
         .station-thumb-overlay {
           position: absolute;
           inset: 0;
-          background: linear-gradient(180deg, rgba(7, 13, 24, 0.1) 0%, rgba(7, 13, 24, 0.95) 100%);
+          background: linear-gradient(180deg, rgba(15, 23, 42, 0.1) 0%, rgba(15, 23, 42, 0.75) 100%);
         }
 
         .station-badge-group {
@@ -1053,30 +1046,24 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
           display: flex;
           align-items: center;
           gap: 0.35rem;
-          background: rgba(7, 13, 24, 0.85);
-          backdrop-filter: blur(8px);
+          background: rgba(255, 255, 255, 0.95);
           padding: 0.25rem 0.6rem;
           border-radius: var(--radius-full);
           font-size: 0.72rem;
           font-weight: 700;
-          border: 1px solid rgba(255, 255, 255, 0.1);
+          color: var(--navy);
         }
-
-        .station-region-tag.antarctica { color: #38bdf8; border-color: rgba(56, 189, 248, 0.4); }
-        .station-region-tag.arctic { color: #34d399; border-color: rgba(52, 211, 153, 0.4); }
-        .station-region-tag.himalaya { color: #fcd34d; border-color: rgba(245, 158, 11, 0.4); }
 
         .station-status-pill {
           display: flex;
           align-items: center;
           gap: 0.35rem;
-          background: rgba(7, 13, 24, 0.85);
-          backdrop-filter: blur(8px);
+          background: rgba(255, 255, 255, 0.95);
           padding: 0.25rem 0.6rem;
           border-radius: var(--radius-full);
           font-size: 0.7rem;
-          color: #34d399;
-          font-weight: 600;
+          color: #047857;
+          font-weight: 700;
         }
 
         .station-image-footer {
@@ -1088,8 +1075,9 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
           justify-content: space-between;
           align-items: center;
           font-size: 0.72rem;
-          color: var(--text-muted);
+          color: #ffffff;
           font-family: var(--font-mono);
+          font-weight: 600;
         }
 
         .station-header-info {
@@ -1098,14 +1086,15 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
 
         .station-title {
           font-size: 1.45rem;
-          color: #ffffff;
+          color: var(--navy);
           margin-bottom: 0.4rem;
+          font-weight: 800;
         }
 
         .station-summary {
           font-size: 0.84rem;
           color: var(--text-secondary);
-          line-height: 1.45;
+          line-height: 1.5;
         }
 
         /* Tabs Nav */
@@ -1113,7 +1102,7 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
           display: flex;
           align-items: center;
           gap: 0.35rem;
-          background: rgba(7, 16, 30, 0.75);
+          background: #f1f5f9;
           border: 1px solid var(--border-subtle);
           padding: 0.25rem;
           border-radius: var(--radius-sm);
@@ -1134,17 +1123,18 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
           font-size: 0.75rem;
           font-weight: 600;
           cursor: pointer;
-          transition: all 0.2s ease;
+          transition: all 0.15s ease;
         }
 
         .tab-nav-btn:hover {
-          color: #ffffff;
+          color: var(--navy);
         }
 
         .tab-nav-btn.active {
-          background: rgba(56, 189, 248, 0.2);
-          color: #38bdf8;
-          border: 1px solid rgba(56, 189, 248, 0.3);
+          background: #ffffff;
+          color: var(--navy);
+          font-weight: 700;
+          box-shadow: var(--shadow-xs);
         }
 
         .tab-content-pane {
@@ -1166,7 +1156,7 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
         }
 
         .telem-box {
-          background: rgba(7, 16, 30, 0.8);
+          background: #f8fafc;
           border: 1px solid var(--border-subtle);
           border-radius: var(--radius-sm);
           padding: 0.65rem 0.75rem;
@@ -1175,26 +1165,27 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
           gap: 0.6rem;
         }
 
-        .telem-icon.telem-cyan { color: #38bdf8; }
-        .telem-icon.telem-blue { color: #60a5fa; }
-        .telem-icon.telem-orange { color: #f59e0b; }
-        .telem-icon.telem-green { color: #34d399; }
+        .telem-icon.telem-cyan { color: #0284c7; }
+        .telem-icon.telem-blue { color: #2563eb; }
+        .telem-icon.telem-orange { color: #d97706; }
+        .telem-icon.telem-green { color: #059669; }
 
         .telem-lbl {
-          font-size: 0.65rem;
+          font-size: 0.68rem;
           color: var(--text-muted);
           text-transform: uppercase;
           letter-spacing: 0.04em;
-        }
-
-        .telem-val {
-          font-size: 0.85rem;
-          color: #ffffff;
           font-weight: 700;
         }
 
+        .telem-val {
+          font-size: 0.88rem;
+          color: var(--navy);
+          font-weight: 800;
+        }
+
         .highlight-temp {
-          color: #38bdf8;
+          color: #0284c7;
         }
 
         .specialized-info-box {
@@ -1208,27 +1199,27 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
         }
 
         .specialized-info-box.fjord-ocean {
-          background: rgba(6, 182, 212, 0.12);
-          border: 1px solid rgba(6, 182, 212, 0.3);
-          color: #a5f3fc;
+          background: #eff6ff;
+          border: 1px solid #bfdbfe;
+          color: #1e40af;
         }
 
         .specialized-info-box.himalaya-glacier {
-          background: rgba(245, 158, 11, 0.12);
-          border: 1px solid rgba(245, 158, 11, 0.3);
-          color: #fde68a;
+          background: #fffbeb;
+          border: 1px solid #fde68a;
+          color: #92400e;
         }
 
         .specialized-info-box.green-habitat {
-          background: rgba(56, 189, 248, 0.12);
-          border: 1px solid rgba(56, 189, 248, 0.3);
-          color: #bae6fd;
+          background: #ecfdf5;
+          border: 1px solid #a7f3d0;
+          color: #065f46;
         }
 
         .specialized-info-box.heritage-base {
-          background: rgba(245, 158, 11, 0.12);
-          border: 1px solid rgba(245, 158, 11, 0.35);
-          color: #fef08a;
+          background: #fff7ed;
+          border: 1px solid #fed7aa;
+          color: #9a3412;
         }
 
         .spec-icon {
@@ -1244,10 +1235,10 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
         }
 
         .instrument-card {
-          background: rgba(7, 16, 30, 0.75);
+          background: #f8fafc;
           border: 1px solid var(--border-subtle);
           border-radius: var(--radius-sm);
-          padding: 0.65rem 0.8rem;
+          padding: 0.75rem 0.85rem;
         }
 
         .inst-header {
@@ -1259,20 +1250,21 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
 
         .inst-tag {
           font-size: 0.65rem;
-          color: #f59e0b;
+          color: #d97706;
           font-weight: 700;
           text-transform: uppercase;
         }
 
         .instrument-card h4 {
-          font-size: 0.82rem;
-          color: #ffffff;
+          font-size: 0.85rem;
+          color: var(--navy);
+          font-weight: 700;
         }
 
         .instrument-card p {
-          font-size: 0.75rem;
+          font-size: 0.78rem;
           color: var(--text-secondary);
-          line-height: 1.35;
+          line-height: 1.4;
         }
 
         /* Expeditions Tab */
@@ -1285,17 +1277,18 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
         .mini-expedition-item {
           display: flex;
           gap: 0.75rem;
-          background: rgba(7, 16, 30, 0.75);
+          background: #f8fafc;
           border: 1px solid var(--border-subtle);
           border-radius: var(--radius-sm);
           padding: 0.5rem;
           cursor: pointer;
-          transition: all 0.2s ease;
+          transition: all 0.15s ease;
         }
 
         .mini-expedition-item:hover {
-          border-color: var(--accent-ice);
-          background: rgba(14, 165, 233, 0.15);
+          border-color: #94a3b8;
+          background: #ffffff;
+          box-shadow: var(--shadow-sm);
         }
 
         .mini-exp-img-wrap {
@@ -1319,17 +1312,18 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
         }
 
         .mini-exp-year {
-          font-size: 0.65rem;
-          color: #38bdf8;
+          font-size: 0.68rem;
+          color: #0284c7;
           font-weight: 700;
           text-transform: uppercase;
         }
 
         .mini-exp-title {
-          font-size: 0.78rem;
-          color: #ffffff;
+          font-size: 0.82rem;
+          color: var(--navy);
           line-height: 1.25;
           margin: 0.15rem 0;
+          font-weight: 700;
         }
 
         .mini-exp-action {
@@ -1337,8 +1331,8 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
           align-items: center;
           gap: 0.25rem;
           font-size: 0.7rem;
-          color: #f59e0b;
-          font-weight: 600;
+          color: #d97706;
+          font-weight: 700;
         }
 
         .empty-inspect {
@@ -1352,14 +1346,14 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
         }
 
         .empty-icon {
-          color: #38bdf8;
+          color: #0284c7;
           margin-bottom: 1rem;
-          opacity: 0.8;
         }
 
         .empty-inspect h3 {
-          color: #ffffff;
+          color: var(--navy);
           margin-bottom: 0.5rem;
+          font-weight: 700;
         }
 
         .empty-inspect p {
@@ -1367,6 +1361,7 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
           line-height: 1.5;
           max-width: 340px;
           margin-bottom: 1.25rem;
+          color: var(--text-muted);
         }
 
         .empty-station-chips {
@@ -1381,19 +1376,19 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
           display: flex;
           align-items: center;
           gap: 0.6rem;
-          background: rgba(7, 16, 30, 0.85);
-          border: 1px solid rgba(56, 189, 248, 0.2);
+          background: #f8fafc;
+          border: 1px solid var(--border-subtle);
           border-radius: var(--radius-xs, 6px);
           padding: 0.55rem 0.75rem;
-          color: #e2e8f0;
+          color: var(--text-primary);
           cursor: pointer;
-          transition: all 0.2s ease;
+          transition: all 0.15s ease;
           text-align: left;
         }
 
         .empty-station-chip:hover {
-          border-color: #38bdf8;
-          background: rgba(56, 189, 248, 0.12);
+          border-color: #0284c7;
+          background: #eff6ff;
           transform: translateY(-1px);
         }
 
@@ -1403,25 +1398,24 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
           border-radius: 50%;
           flex-shrink: 0;
         }
-        .chip-dot.antarctica { background: #38bdf8; box-shadow: 0 0 6px #38bdf8; }
-        .chip-dot.arctic     { background: #10b981; box-shadow: 0 0 6px #10b981; }
-        .chip-dot.himalaya   { background: #f59e0b; box-shadow: 0 0 6px #f59e0b; }
-        .chip-dot.southern-ocean { background: #6366f1; box-shadow: 0 0 6px #6366f1; }
+        .chip-dot.antarctica { background: #0284c7; }
+        .chip-dot.arctic     { background: #059669; }
+        .chip-dot.himalaya   { background: #d97706; }
+        .chip-dot.southern-ocean { background: #2563eb; }
 
         .chip-name {
           font-size: 0.82rem;
           font-weight: 700;
-          color: #ffffff;
+          color: var(--navy);
           flex: 1;
         }
 
         .chip-region {
           font-size: 0.68rem;
-          color: #94a3b8;
-          font-weight: 500;
+          color: var(--text-muted);
+          font-weight: 600;
           text-transform: uppercase;
         }
-
 
         /* Facility Directory */
         .stations-directory-section {
@@ -1436,13 +1430,13 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
         }
 
         .facility-count-badge {
-          background: rgba(56, 189, 248, 0.15);
-          color: #7dd3fc;
+          background: #eff6ff;
+          color: #0369a1;
           font-size: 0.75rem;
           font-weight: 700;
           padding: 0.3rem 0.75rem;
           border-radius: var(--radius-full);
-          border: 1px solid rgba(56, 189, 248, 0.3);
+          border: 1px solid #bfdbfe;
         }
 
         .stations-grid {
@@ -1454,18 +1448,19 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
         .station-mini-card {
           padding: 1.15rem;
           cursor: pointer;
-          transition: all 0.25s ease;
+          transition: all 0.2s ease;
           display: flex;
           flex-direction: column;
           justify-content: space-between;
-          border: 1px solid var(--border-subtle);
+          background: #ffffff;
+          border: 1px solid var(--border-card);
+          box-shadow: var(--shadow-sm);
         }
 
         .station-mini-card:hover, .station-mini-card.active-station {
-          border-color: var(--accent-ice);
-          background: rgba(17, 34, 54, 0.95);
-          transform: translateY(-4px);
-          box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5), 0 0 20px rgba(56, 189, 248, 0.15);
+          border-color: #94a3b8;
+          transform: translateY(-3px);
+          box-shadow: var(--shadow-md);
         }
 
         .mini-card-top {
@@ -1481,6 +1476,7 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
           border-radius: var(--radius-xs);
           overflow: hidden;
           flex-shrink: 0;
+          background: #f1f5f9;
         }
 
         .mini-card-img {
@@ -1499,29 +1495,31 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
           font-weight: 700;
           padding: 1px 2px;
           border-radius: 2px;
-          background: rgba(7, 13, 24, 0.85);
+          background: rgba(255, 255, 255, 0.95);
         }
 
-        .mini-region-badge.antarctica { color: #38bdf8; }
-        .mini-region-badge.arctic { color: #34d399; }
-        .mini-region-badge.himalaya { color: #fcd34d; }
+        .mini-region-badge.antarctica { color: #0284c7; }
+        .mini-region-badge.arctic { color: #059669; }
+        .mini-region-badge.himalaya { color: #d97706; }
 
         .mini-card-header h4 {
           font-size: 0.98rem;
-          color: #ffffff;
+          color: var(--navy);
           margin-bottom: 0.2rem;
+          font-weight: 700;
         }
 
         .mini-status-text {
           display: flex;
           align-items: center;
           gap: 0.35rem;
-          font-size: 0.7rem;
-          color: var(--text-muted);
+          font-size: 0.72rem;
+          color: var(--text-secondary);
+          font-weight: 600;
         }
 
         .mini-desc {
-          font-size: 0.8rem;
+          font-size: 0.82rem;
           color: var(--text-secondary);
           line-height: 1.45;
           margin-bottom: 0.85rem;
@@ -1543,26 +1541,26 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
           display: flex;
           align-items: center;
           gap: 0.25rem;
-          background: rgba(7, 16, 30, 0.8);
+          background: #f1f5f9;
           border: 1px solid var(--border-subtle);
           padding: 0.25rem 0.5rem;
           border-radius: var(--radius-xs);
           font-size: 0.72rem;
-          color: #ffffff;
-          font-weight: 600;
+          color: var(--navy);
+          font-weight: 700;
         }
 
         .stat-pill.coords {
           font-family: var(--font-mono);
-          color: var(--text-muted);
+          color: var(--text-secondary);
         }
 
         .pill-icon {
-          color: #38bdf8;
+          color: #0284c7;
         }
 
         .mini-card-action-bar {
-          border-top: 1px solid rgba(255, 255, 255, 0.08);
+          border-top: 1px solid #f1f5f9;
           padding-top: 0.6rem;
         }
 
@@ -1572,7 +1570,7 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
           justify-content: flex-end;
           gap: 0.35rem;
           font-size: 0.75rem;
-          color: #38bdf8;
+          color: #0284c7;
           font-weight: 700;
         }
 
@@ -1590,12 +1588,13 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
           display: flex;
           align-items: center;
           gap: 0.75rem;
-          background: rgba(7, 16, 30, 0.85);
-          border: 1px solid rgba(56, 189, 248, 0.2);
+          background: #ffffff;
+          border: 1px solid var(--border-card);
           border-radius: var(--radius-sm, 8px);
           padding: 0.5rem 0.85rem;
           margin-bottom: 1.25rem;
           overflow: hidden;
+          box-shadow: var(--shadow-xs);
         }
 
         .news-banner-label {
@@ -1605,10 +1604,10 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
           font-size: 0.68rem;
           font-weight: 800;
           letter-spacing: 0.08em;
-          color: #38bdf8;
+          color: #0284c7;
           white-space: nowrap;
           padding-right: 0.6rem;
-          border-right: 1px solid rgba(56, 189, 248, 0.25);
+          border-right: 1px solid var(--border-subtle);
         }
 
         .news-ticker-track {
@@ -1623,20 +1622,20 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
           display: flex;
           align-items: center;
           gap: 0.4rem;
-          font-size: 0.73rem;
-          color: #94a3b8;
+          font-size: 0.75rem;
+          color: var(--text-primary);
+          font-weight: 600;
           text-decoration: none;
           white-space: nowrap;
           transition: color 0.15s;
         }
-        .news-ticker-item:hover { color: #e2e8f0; }
-        .news-sep { color: #38bdf8; font-size: 0.65rem; }
+        .news-ticker-item:hover { color: #0284c7; }
+        .news-sep { color: #0284c7; font-size: 0.65rem; }
 
         /* Aurora severity highlight classes */
-        .highlight-red   { color: #f87171 !important; }
-        .highlight-orange { color: #fb923c !important; }
+        .highlight-red   { color: #dc2626 !important; }
+        .highlight-orange { color: #ea580c !important; }
       `}</style>
-
     </div>
   );
 }

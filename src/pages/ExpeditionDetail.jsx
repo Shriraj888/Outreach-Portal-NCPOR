@@ -15,18 +15,16 @@ import {
   ExternalLink, 
   Copy, 
   Check, 
-  Eye, 
   Layers, 
   ShieldCheck,
   Edit,
-  Globe2,
   Maximize2,
   X
 } from 'lucide-react';
 import SocialCardPreview from '../components/SocialCardPreview';
 
 export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
-  const { expeditions, publications, auth, lang, t } = usePortal();
+  const { expeditions, publications, auth, lang } = usePortal();
   const [activeTab, setActiveTab] = useState('overview'); // overview, reports, media, publications, social
   const [lightboxImg, setLightboxImg] = useState(null);
   const [copiedSummary, setCopiedSummary] = useState(false);
@@ -103,9 +101,6 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
 
       {/* Hero Header */}
       <div className="detail-hero">
-        <div className="hero-backdrop-img" style={{ backgroundImage: `url(${expedition.heroImage})` }}></div>
-        <div className="hero-backdrop-overlay"></div>
-        
         <div className="container detail-hero-content">
           <div className="detail-tags-row">
             <span className="badge badge-antarctica">{expedition.region}</span>
@@ -114,8 +109,7 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
             </span>
             {expedition.aiGeneratedContent && (
               <span className="badge-ai-ready">
-                <Sparkles size={12} />
-                <span>AI Outreach Ready</span>
+                <span>Outreach Pack Ready</span>
               </span>
             )}
           </div>
@@ -165,7 +159,7 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
               onClick={() => setActiveTab('overview')}
             >
               <FileText size={16} />
-              <span>Overview & AI Summary</span>
+              <span>Overview & Outreach Summary</span>
             </button>
 
             <button 
@@ -197,7 +191,7 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
               onClick={() => setActiveTab('social')}
             >
               <Sparkles size={16} />
-              <span>Outreach & Social Media Pack</span>
+              <span>Social Outreach Pack</span>
             </button>
           </div>
         </div>
@@ -208,9 +202,9 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
         {/* Tab 1: Overview */}
         {activeTab === 'overview' && (
           <div className="tab-pane-grid">
-            {/* Left Column: Plain Language AI Summary & Scientific Abstract */}
+            {/* Left Column: Plain Language Summary & Scientific Abstract */}
             <div className="detail-main-col">
-              {/* AI Plain Language Summary Card */}
+              {/* Plain Language Summary Card */}
               {expedition.aiGeneratedContent ? (
                 <div className="glass-panel ai-summary-highlight-card">
                   <div className="ai-card-header">
@@ -219,7 +213,7 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
                         <Sparkles size={18} />
                       </div>
                       <div>
-                        <h3>AI-Generated Plain-Language Outreach Summary</h3>
+                        <h3>Public Outreach Plain-Language Summary</h3>
                         <p>Translated for the general public, students, and media</p>
                       </div>
                     </div>
@@ -373,7 +367,7 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
                   {rep.rawText && (
                     <div className="raw-text-preview-box">
                       <div className="raw-text-label">
-                        <span>Extracted Text Stream (Input to LLM Summarization):</span>
+                        <span>Extracted Text Stream (Input to Summarization Engine):</span>
                       </div>
                       <pre className="raw-text-content">{rep.rawText}</pre>
                     </div>
@@ -508,10 +502,11 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
       <style>{`
         .expedition-detail-page {
           min-height: 100vh;
+          background: #f8fafc;
         }
 
         .detail-top-bar {
-          background: rgba(7, 13, 24, 0.9);
+          background: #ffffff;
           border-bottom: 1px solid var(--border-subtle);
           padding: 0.75rem 0;
         }
@@ -534,11 +529,11 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
           font-size: 0.88rem;
           font-weight: 600;
           cursor: pointer;
-          transition: color 0.2s ease;
+          transition: color 0.15s ease;
         }
 
         .btn-back:hover {
-          color: var(--accent-ice);
+          color: var(--navy);
         }
 
         .detail-actions-right {
@@ -551,9 +546,9 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
           display: flex;
           align-items: center;
           gap: 0.35rem;
-          background: rgba(168, 85, 247, 0.15);
-          color: #d8b4fe;
-          border: 1px solid rgba(168, 85, 247, 0.4);
+          background: #e0f2fe;
+          color: #0369a1;
+          border: 1px solid #bae6fd;
           padding: 0.35rem 0.8rem;
           border-radius: var(--radius-sm);
           font-size: 0.8rem;
@@ -565,9 +560,9 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
           display: flex;
           align-items: center;
           gap: 0.35rem;
-          background: rgba(255, 255, 255, 0.08);
-          color: #ffffff;
-          border: 1px solid rgba(255, 255, 255, 0.2);
+          background: #f1f5f9;
+          color: var(--navy);
+          border: 1px solid #cbd5e1;
           padding: 0.35rem 0.8rem;
           border-radius: var(--radius-sm);
           font-size: 0.8rem;
@@ -585,39 +580,23 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
         }
 
         .status-pill.published {
-          background: rgba(16, 185, 129, 0.15);
-          color: #6ee7b7;
-          border: 1px solid rgba(16, 185, 129, 0.3);
+          background: #ecfdf5;
+          color: #047857;
+          border: 1px solid #a7f3d0;
         }
 
         .status-pill.draft {
-          background: rgba(245, 158, 11, 0.15);
-          color: #fcd34d;
-          border: 1px solid rgba(245, 158, 11, 0.3);
+          background: #fffbeb;
+          color: #b45309;
+          border: 1px solid #fde68a;
         }
 
         /* Detail Hero */
         .detail-hero {
           position: relative;
-          padding: 4rem 0 3rem;
+          padding: 3.5rem 0 2.5rem;
+          background: #ffffff;
           border-bottom: 1px solid var(--border-subtle);
-          overflow: hidden;
-        }
-
-        .hero-backdrop-img {
-          position: absolute;
-          inset: 0;
-          background-size: cover;
-          background-position: center;
-          filter: blur(8px);
-          transform: scale(1.08);
-          opacity: 0.35;
-        }
-
-        .hero-backdrop-overlay {
-          position: absolute;
-          inset: 0;
-          background: linear-gradient(180deg, rgba(7, 13, 24, 0.7) 0%, rgba(7, 13, 24, 0.96) 100%);
         }
 
         .detail-hero-content {
@@ -643,23 +622,20 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
         }
 
         .badge-ai-ready {
-          background: linear-gradient(135deg, #9333ea, #d946ef);
-          color: #ffffff;
-          padding: 0.25rem 0.75rem;
+          background: #e0f2fe;
+          color: #0369a1;
+          border: 1px solid #bae6fd;
+          padding: 0.2rem 0.65rem;
           border-radius: var(--radius-full);
           font-size: 0.75rem;
-          font-weight: 700;
-          display: flex;
-          align-items: center;
-          gap: 0.35rem;
-          box-shadow: 0 0 12px rgba(217, 70, 239, 0.35);
+          font-weight: 600;
         }
 
         .detail-hero-title {
-          font-size: 2.5rem;
+          font-size: 2.3rem;
           font-weight: 800;
-          color: #ffffff;
-          line-height: 1.2;
+          color: var(--navy);
+          line-height: 1.25;
           margin-bottom: 1.75rem;
           max-width: 950px;
         }
@@ -672,18 +648,17 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
         }
 
         .meta-card {
-          background: rgba(15, 29, 53, 0.85);
-          backdrop-filter: blur(10px);
-          border: 1px solid var(--border-subtle);
+          background: #f8fafc;
+          border: 1px solid var(--border-card);
           border-radius: var(--radius-sm);
-          padding: 0.85rem 1rem;
+          padding: 0.9rem 1rem;
           display: flex;
           align-items: flex-start;
           gap: 0.75rem;
         }
 
         .meta-card-icon {
-          color: var(--accent-ice);
+          color: #0284c7;
           margin-top: 2px;
           flex-shrink: 0;
         }
@@ -693,11 +668,12 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
           color: var(--text-muted);
           text-transform: uppercase;
           letter-spacing: 0.03em;
+          font-weight: 600;
         }
 
         .meta-card-val {
           font-size: 0.88rem;
-          color: #ffffff;
+          color: var(--navy);
           font-weight: 600;
         }
 
@@ -706,9 +682,9 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
           position: sticky;
           top: 69px;
           z-index: 50;
-          background: rgba(7, 13, 24, 0.95);
-          backdrop-filter: blur(16px);
+          background: #ffffff;
           border-bottom: 1px solid var(--border-subtle);
+          box-shadow: 0 1px 2px rgba(0,0,0,0.03);
         }
 
         .detail-nav-tabs {
@@ -724,31 +700,25 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
           gap: 0.5rem;
           padding: 0.75rem 1.25rem;
           background: transparent;
-          border: none;
+          border: 1px solid transparent;
           color: var(--text-secondary);
           font-size: 0.88rem;
           font-weight: 600;
           cursor: pointer;
           border-radius: var(--radius-sm);
-          transition: all 0.2s ease;
+          transition: all 0.15s ease;
           white-space: nowrap;
         }
 
         .detail-tab:hover {
-          color: #ffffff;
-          background: rgba(255, 255, 255, 0.05);
+          color: var(--navy);
+          background: #f1f5f9;
         }
 
         .detail-tab.active {
-          color: var(--accent-ice);
-          background: rgba(56, 189, 248, 0.12);
-          border: 1px solid rgba(56, 189, 248, 0.3);
-        }
-
-        .detail-tab.tab-social.active {
-          color: #d8b4fe;
-          background: rgba(168, 85, 247, 0.15);
-          border-color: rgba(168, 85, 247, 0.4);
+          color: var(--navy);
+          background: #eff6ff;
+          border-color: #bfdbfe;
         }
 
         /* Detail Body */
@@ -770,8 +740,8 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
 
         .ai-summary-highlight-card {
           padding: 1.75rem;
-          border: 1px solid rgba(168, 85, 247, 0.35);
-          background: linear-gradient(180deg, rgba(24, 18, 48, 0.85) 0%, rgba(15, 29, 53, 0.85) 100%);
+          border: 1px solid #bfdbfe;
+          background: #f0f7ff;
         }
 
         .ai-card-header {
@@ -790,44 +760,44 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
         }
 
         .ai-icon-circle {
-          width: 38px;
-          height: 38px;
+          width: 36px;
+          height: 36px;
           border-radius: 50%;
-          background: linear-gradient(135deg, #9333ea, #d946ef);
+          background: #0284c7;
           display: flex;
           align-items: center;
           justify-content: center;
           color: #ffffff;
-          box-shadow: 0 0 15px rgba(217, 70, 239, 0.4);
         }
 
         .ai-header-title h3 {
-          font-size: 1.15rem;
-          color: #ffffff;
+          font-size: 1.1rem;
+          color: var(--navy);
         }
 
         .ai-header-title p {
-          font-size: 0.75rem;
-          color: #d8b4fe;
+          font-size: 0.78rem;
+          color: #0369a1;
         }
 
         .btn-copy-summary {
           display: flex;
           align-items: center;
           gap: 0.35rem;
-          background: rgba(255, 255, 255, 0.08);
-          border: 1px solid rgba(255, 255, 255, 0.2);
-          color: #ffffff;
+          background: #ffffff;
+          border: 1px solid #cbd5e1;
+          color: var(--text-primary);
           padding: 0.4rem 0.8rem;
           border-radius: var(--radius-sm);
           font-size: 0.78rem;
+          font-weight: 600;
           cursor: pointer;
         }
 
         .ai-summary-text {
-          font-size: 1.05rem;
+          font-size: 1rem;
           line-height: 1.7;
-          color: #f1f5f9;
+          color: var(--text-primary);
           margin-bottom: 1.25rem;
         }
 
@@ -836,7 +806,7 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
           align-items: center;
           justify-content: space-between;
           padding-top: 1rem;
-          border-top: 1px solid rgba(255, 255, 255, 0.1);
+          border-top: 1px solid #dbeafe;
           font-size: 0.78rem;
           flex-wrap: wrap;
           gap: 0.75rem;
@@ -846,7 +816,8 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
           display: flex;
           align-items: center;
           gap: 0.4rem;
-          color: #6ee7b7;
+          color: #047857;
+          font-weight: 600;
         }
 
         .btn-view-social-link {
@@ -855,18 +826,19 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
           gap: 0.35rem;
           background: none;
           border: none;
-          color: #d8b4fe;
+          color: #0284c7;
           font-weight: 600;
           cursor: pointer;
         }
 
         .text-content-card {
           padding: 1.75rem;
+          background: #ffffff;
         }
 
         .section-card-title {
-          font-size: 1.2rem;
-          color: #ffffff;
+          font-size: 1.15rem;
+          color: var(--navy);
           display: flex;
           align-items: center;
           gap: 0.5rem;
@@ -874,17 +846,17 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
         }
 
         .title-icon {
-          color: var(--accent-cyan);
+          color: #0284c7;
         }
 
         .icon-success {
-          color: #10b981;
+          color: #059669;
         }
 
         .abstract-text {
           font-size: 0.95rem;
           line-height: 1.65;
-          color: #cbd5e1;
+          color: var(--text-secondary);
         }
 
         .findings-list {
@@ -899,12 +871,12 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
           align-items: flex-start;
           gap: 0.6rem;
           font-size: 0.92rem;
-          color: #e2e8f0;
-          line-height: 1.5;
+          color: var(--text-secondary);
+          line-height: 1.55;
         }
 
         .finding-bullet {
-          color: #10b981;
+          color: #059669;
           font-size: 1.2rem;
           line-height: 1;
         }
@@ -918,11 +890,12 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
 
         .sidebar-card {
           padding: 1.5rem;
+          background: #ffffff;
         }
 
         .sidebar-title {
           font-size: 1rem;
-          color: #ffffff;
+          color: var(--navy);
           margin-bottom: 1rem;
         }
 
@@ -938,7 +911,7 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
           align-items: center;
           font-size: 0.82rem;
           padding-bottom: 0.5rem;
-          border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+          border-bottom: 1px solid #f1f5f9;
         }
 
         .fact-label {
@@ -946,7 +919,7 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
         }
 
         .fact-val {
-          color: #ffffff;
+          color: var(--navy);
           font-weight: 600;
         }
 
@@ -957,35 +930,36 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
         }
 
         .discipline-tag {
-          background: rgba(56, 189, 248, 0.1);
-          border: 1px solid rgba(56, 189, 248, 0.25);
-          color: #7dd3fc;
+          background: #f1f5f9;
+          border: 1px solid #e2e8f0;
+          color: #334155;
           font-size: 0.78rem;
+          font-weight: 500;
           padding: 0.25rem 0.65rem;
           border-radius: 4px;
         }
 
         .press-action-card {
           padding: 1.5rem;
-          background: linear-gradient(135deg, rgba(30, 58, 138, 0.4) 0%, rgba(88, 28, 135, 0.4) 100%);
-          border: 1px solid rgba(168, 85, 247, 0.3);
+          background: #f0fdf4;
+          border: 1px solid #bbf7d0;
           text-align: center;
         }
 
         .press-sparkle {
-          color: #d8b4fe;
+          color: #059669;
           margin-bottom: 0.5rem;
         }
 
         .press-action-card h4 {
-          color: #ffffff;
+          color: #065f46;
           font-size: 1.05rem;
           margin-bottom: 0.4rem;
         }
 
         .press-action-card p {
-          font-size: 0.8rem;
-          color: #cbd5e1;
+          font-size: 0.82rem;
+          color: #047857;
           margin-bottom: 1rem;
         }
 
@@ -1000,7 +974,7 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
 
         .section-intro h3 {
           font-size: 1.4rem;
-          color: #ffffff;
+          color: var(--navy);
           margin-bottom: 0.35rem;
         }
 
@@ -1017,6 +991,7 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
 
         .report-item-card {
           padding: 1.5rem;
+          background: #ffffff;
         }
 
         .report-header {
@@ -1035,7 +1010,7 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
         }
 
         .report-icon {
-          color: var(--accent-cyan);
+          color: #0284c7;
         }
 
         .report-size {
@@ -1044,8 +1019,8 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
         }
 
         .raw-text-preview-box {
-          background: #040810;
-          border: 1px solid rgba(255, 255, 255, 0.1);
+          background: #f8fafc;
+          border: 1px solid #e2e8f0;
           border-radius: var(--radius-sm);
           padding: 1rem;
         }
@@ -1053,14 +1028,15 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
         .raw-text-label {
           font-size: 0.75rem;
           font-family: var(--font-mono);
-          color: var(--accent-cyan);
+          color: #0284c7;
+          font-weight: 600;
           margin-bottom: 0.5rem;
         }
 
         .raw-text-content {
           font-family: var(--font-mono);
           font-size: 0.78rem;
-          color: #94a3b8;
+          color: #334155;
           white-space: pre-wrap;
           line-height: 1.5;
           max-height: 240px;
@@ -1081,9 +1057,9 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
           display: inline-flex;
           align-items: center;
           gap: 0.4rem;
-          background: rgba(16, 185, 129, 0.15);
-          border: 1px solid rgba(16, 185, 129, 0.35);
-          color: #6ee7b7;
+          background: #ecfdf5;
+          border: 1px solid #a7f3d0;
+          color: #047857;
           padding: 0.4rem 0.85rem;
           border-radius: var(--radius-full);
           font-size: 0.78rem;
@@ -1100,6 +1076,7 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
           overflow: hidden;
           display: flex;
           flex-direction: column;
+          background: #ffffff;
         }
 
         .media-img-wrap {
@@ -1123,7 +1100,7 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
         .media-zoom-overlay {
           position: absolute;
           inset: 0;
-          background: rgba(0, 0, 0, 0.4);
+          background: rgba(0, 0, 0, 0.3);
           display: flex;
           align-items: center;
           justify-content: center;
@@ -1145,13 +1122,13 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
 
         .media-caption {
           font-size: 0.88rem;
-          color: #ffffff;
+          color: var(--navy);
           font-weight: 600;
         }
 
         .alt-text-box {
-          background: rgba(7, 13, 24, 0.8);
-          border: 1px solid rgba(56, 189, 248, 0.2);
+          background: #f8fafc;
+          border: 1px solid #e2e8f0;
           border-radius: var(--radius-sm);
           padding: 0.75rem;
         }
@@ -1162,13 +1139,13 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
           gap: 0.3rem;
           font-size: 0.7rem;
           font-weight: 700;
-          color: var(--accent-cyan);
+          color: #0284c7;
           margin-bottom: 0.35rem;
         }
 
         .alt-text-val {
           font-size: 0.78rem;
-          color: #94a3b8;
+          color: #475569;
           line-height: 1.4;
         }
 
@@ -1181,12 +1158,13 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
 
         .pub-item-card {
           padding: 1.5rem;
+          background: #ffffff;
         }
 
         .pub-cat-badge {
           display: inline-block;
-          background: rgba(56, 189, 248, 0.15);
-          color: #7dd3fc;
+          background: #eff6ff;
+          color: #1d4ed8;
           font-size: 0.72rem;
           font-weight: 700;
           padding: 2px 8px;
@@ -1196,25 +1174,25 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
 
         .pub-title {
           font-size: 1.15rem;
-          color: #ffffff;
+          color: var(--navy);
           margin-bottom: 0.35rem;
         }
 
         .pub-authors {
           font-size: 0.85rem;
-          color: #cbd5e1;
+          color: var(--text-secondary);
           margin-bottom: 0.2rem;
         }
 
         .pub-journal {
           font-size: 0.8rem;
-          color: var(--accent-ice);
+          color: #0284c7;
           margin-bottom: 0.75rem;
         }
 
         .pub-abstract {
           font-size: 0.85rem;
-          color: var(--text-secondary);
+          color: var(--text-muted);
           line-height: 1.55;
           margin-bottom: 1rem;
         }
@@ -1223,13 +1201,13 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          border-top: 1px solid rgba(255, 255, 255, 0.08);
+          border-top: 1px solid #f1f5f9;
           padding-top: 0.75rem;
           font-size: 0.8rem;
         }
 
         .citation-count {
-          color: #fbbf24;
+          color: #d97706;
           font-weight: 600;
         }
 
@@ -1237,7 +1215,7 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
         .lightbox-backdrop {
           position: fixed;
           inset: 0;
-          background: rgba(0, 0, 0, 0.9);
+          background: rgba(15, 23, 42, 0.85);
           z-index: 200;
           display: flex;
           align-items: center;
@@ -1249,19 +1227,19 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
           position: relative;
           max-width: 900px;
           max-height: 90vh;
-          background: #091322;
-          border: 1px solid var(--border-subtle);
+          background: #ffffff;
           border-radius: var(--radius-md);
           overflow: hidden;
           display: flex;
           flex-direction: column;
+          box-shadow: var(--shadow-lg);
         }
 
         .lightbox-close {
           position: absolute;
           top: 1rem;
           right: 1rem;
-          background: rgba(0, 0, 0, 0.7);
+          background: rgba(15, 23, 42, 0.8);
           border: none;
           color: #ffffff;
           cursor: pointer;
@@ -1273,16 +1251,16 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
         .lightbox-full-img {
           max-height: 65vh;
           object-fit: contain;
-          background: #000;
+          background: #f1f5f9;
         }
 
         .lightbox-caption {
           padding: 1.25rem;
-          background: #070d18;
+          background: #ffffff;
         }
 
         .lightbox-caption h4 {
-          color: #ffffff;
+          color: var(--navy);
           margin-bottom: 0.35rem;
         }
 

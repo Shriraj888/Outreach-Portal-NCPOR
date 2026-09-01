@@ -1133,34 +1133,29 @@ export default function PolarGlobeMap({
           pointer-events: none;
         }
 
-        .pg-badge {
+        .pg-live-badge {
           display: flex;
           align-items: center;
           gap: 0.45rem;
-          background: rgba(7, 16, 30, 0.88);
-          border: 1px solid rgba(56, 189, 248, 0.3);
-          backdrop-filter: blur(10px);
+          background: rgba(255, 255, 255, 0.92);
+          border: 1px solid #cbd5e1;
+          backdrop-filter: blur(8px);
           padding: 0.35rem 0.8rem;
           border-radius: 999px;
           font-size: 0.72rem;
           font-weight: 700;
-          letter-spacing: 0.06em;
-          color: #7dd3fc;
+          letter-spacing: 0.04em;
+          color: #0f172a;
           pointer-events: auto;
+          box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
 
         .pg-live-dot {
           width: 7px;
           height: 7px;
           border-radius: 50%;
-          background: #34d399;
-          box-shadow: 0 0 6px #34d399;
-          animation: pgBlink 1.4s infinite;
-        }
-
-        @keyframes pgBlink {
-          0%, 100% { opacity: 1; transform: scale(1); }
-          50% { opacity: 0.3; transform: scale(0.85); }
+          background: #10b981;
+          box-shadow: 0 0 6px #10b981;
         }
 
         .pg-ctrl-row {
@@ -1174,22 +1169,23 @@ export default function PolarGlobeMap({
           display: flex;
           align-items: center;
           gap: 0.3rem;
-          background: rgba(7, 16, 30, 0.88);
-          border: 1px solid rgba(255, 255, 255, 0.14);
-          backdrop-filter: blur(10px);
-          color: #94a3b8;
+          background: rgba(255, 255, 255, 0.92);
+          border: 1px solid #cbd5e1;
+          backdrop-filter: blur(8px);
+          color: #334155;
           padding: 0.35rem 0.7rem;
           border-radius: 6px;
           font-size: 0.75rem;
           font-weight: 600;
           cursor: pointer;
-          transition: all 0.18s ease;
+          transition: all 0.15s ease;
+          box-shadow: 0 1px 2px rgba(0,0,0,0.06);
         }
 
         .pg-btn:hover {
-          color: #ffffff;
-          border-color: #38bdf8;
-          background: rgba(56, 189, 248, 0.18);
+          color: #0a2540;
+          border-color: #94a3b8;
+          background: #ffffff;
         }
 
         .pg-hud-bottom {
@@ -1211,12 +1207,12 @@ export default function PolarGlobeMap({
           display: flex;
           align-items: center;
           gap: 0.5rem;
-          background: rgba(7, 16, 30, 0.88);
-          border: 1px solid rgba(56, 189, 248, 0.2);
+          background: rgba(255, 255, 255, 0.92);
+          border: 1px solid #cbd5e1;
           backdrop-filter: blur(8px);
           padding: 0.3rem 0.65rem;
           border-radius: 6px;
-          color: #7dd3fc;
+          color: #0284c7;
           font-family: monospace;
           pointer-events: auto;
         }
