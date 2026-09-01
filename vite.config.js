@@ -14,7 +14,7 @@ export default defineConfig({
             if (id.includes('three')) {
               return 'vendor-three'
             }
-            if (id.includes('d3-geo') || id.includes('topojson-client') || id.includes('world-atlas') || id.includes('react-simple-maps')) {
+            if (id.includes('d3-geo') || id.includes('topojson-client') || id.includes('world-atlas')) {
               return 'vendor-geo'
             }
             if (id.includes('react') || id.includes('react-dom')) {
