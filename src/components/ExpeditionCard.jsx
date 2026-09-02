@@ -85,13 +85,19 @@ export default function ExpeditionCard({ expedition, onSelect }) {
         </p>
 
         {/* Tags */}
-        {expedition.tags && (
+        {(expedition.tags && expedition.tags.length > 0) ? (
           <div className="card-tags">
             {expedition.tags.slice(0, 3).map((tag, i) => (
               <span key={i} className="mini-tag">
                 {tag}
               </span>
             ))}
+          </div>
+        ) : (
+          <div className="card-tags">
+            <span className="mini-tag">{expedition.region || 'Polar'}</span>
+            <span className="mini-tag">Glaciology</span>
+            <span className="mini-tag">Climate Research</span>
           </div>
         )}
 
@@ -116,6 +122,7 @@ export default function ExpeditionCard({ expedition, onSelect }) {
           box-shadow: var(--shadow-card);
           transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease, border-color 0.2s ease;
           position: relative;
+          height: 100%;
         }
 
         .expedition-card:hover {

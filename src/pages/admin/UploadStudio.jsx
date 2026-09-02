@@ -211,6 +211,7 @@ The voyage departed Cape Town with 48 scientists from MoES institutes, Survey of
         stations: stationLogs,
         heroImage,
         summary,
+        tags: ['Glaciology', 'Aerosol Physics', 'Green Microgrid', 'Autonomous Buoys'],
         scientificAbstract: reportRawText,
         keyFindings: [
           'High-latitude baseline telemetry validated.',
@@ -228,13 +229,31 @@ The voyage departed Cape Town with 48 scientists from MoES institutes, Survey of
         ],
         media: [
           {
-            id: `m-${Date.now()}`,
+            id: `m-${Date.now()}-1`,
             type: 'photo',
             url: heroImage,
             caption: title,
-            altText: autoGenerateImageAlt(title, region)
+            altText: autoGenerateImageAlt(title, region),
+            tags: ['Fieldwork', 'Antarctica']
+          },
+          {
+            id: `m-${Date.now()}-2`,
+            type: 'photo',
+            url: 'https://images.unsplash.com/photo-1508873696983-2df5293cb32f?auto=format&fit=crop&w=1200&q=80',
+            caption: 'Glaciologist preparing electromechanical drill at Dronning Maud Land margin.',
+            altText: 'Scientist in polar parka assembling drill apparatus on snow field.',
+            tags: ['Glaciology', 'Fieldwork']
+          },
+          {
+            id: `m-${Date.now()}-3`,
+            type: 'photo',
+            url: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80',
+            caption: 'Schirmacher Oasis nunataks surrounding India\'s Maitri research station.',
+            altText: 'Rugged rocky hills jutting above surrounding continental ice sheet under clear sky.',
+            tags: ['Maitri', 'Landscape']
           }
-        ]
+        ],
+        publications: ['pub-101', 'pub-104']
       });
       savedTargetId = newExp.id;
     } else if (activeCategory === 'datasets') {

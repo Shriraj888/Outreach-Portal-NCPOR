@@ -94,6 +94,86 @@ Major Scientific Deliverables:
     }
   },
   {
+    id: "isea-44",
+    title: "44th Indian Scientific Expedition to Antarctica (ISEA) Preliminary Cruise Dossier",
+    titleHi: "अंटार्कटिका के लिए 44वां भारतीय वैज्ञानिक अभियान (आईएसईए) प्रारंभिक क्रूज डोजियर",
+    region: "Antarctica",
+    year: 2024,
+    status: "published",
+    chiefScientist: "Dr. Rahul Sengupta (Senior Scientist, NCPOR)",
+    vessel: "MV Vasiliy Golovnin (Chartered Ice-Class Vessel)",
+    stations: ["Maitri Station", "Bharati Station", "Dome C Margin"],
+    coordinates: { lat: -70.7667, lng: 11.7333, label: "Maitri Station, Schirmacher Oasis" },
+    startDate: "November 2024",
+    endDate: "April 2025",
+    heroImage: "https://images.unsplash.com/photo-1517411032315-54ef2cb783bb?auto=format&fit=crop&w=1600&q=80",
+    tags: ["Glaciology", "Aerosol Physics", "Green Microgrid", "Autonomous Buoys"],
+    summary: "Preliminary technical and scientific expedition log covering deep glaciological drilling, aerosol sampling, and green microgrid trials.",
+    summaryHi: "मैत्री और भारती स्टेशनों पर गहरे हिमनद ड्रिलिंग, एरोसोल नमूनाकरण और ग्रीन माइक्रोग्रिड परीक्षणों को कवर करने वाला प्रारंभिक तकनीकी और वैज्ञानिक अभियान।",
+    scientificAbstract: "The 44th ISEA deployed 48 scientists from premier MoES institutions, Survey of India, and IITs. Core mission deliverables encompass ultra-high resolution aerosol optical depth measurements at Bharati, permafrost geothermal gradient logging at Maitri, deep ice drilling at Dome C margin, and testing cold-hardened autonomous glaciology buoys on ice shelves.",
+    keyFindings: [
+      "Inaugurated automated glaciological probe arrays on Dronning Maud Land ice shelf.",
+      "Achieved 24/7 continuous aerosol spectroscopy recording baseline pristine polar atmospheres.",
+      "Successfully completed polar winter stress-testing of green lithium-phosphate battery banks.",
+      "Validated high-frequency satellite telemetry link connecting field stations directly to NCPOR headquarters."
+    ],
+    reports: [
+      {
+        id: "rep-44-1",
+        title: "Official Preliminary Cruise Dossier: 44th ISEA",
+        fileUrl: "#",
+        fileSize: "15.5 MB",
+        rawText: `NATIONAL CENTRE FOR POLAR AND OCEAN RESEARCH (NCPOR)
+Ministry of Earth Sciences, Govt. of India
+REPORT ON THE 44TH INDIAN SCIENTIFIC EXPEDITION TO ANTARCTICA (2024)
+
+Executive Summary:
+The voyage departed Cape Town onboard chartered ice-class vessel MV Vasiliy Golovnin with 48 scientists from MoES institutes, Survey of India, and IITs. Core missions include high-resolution aerosol monitoring at Bharati, permafrost temperature logging at Maitri, and testing cold-hardened autonomous glaciology buoys.`
+      }
+    ],
+    media: [
+      {
+        id: "m-44-1",
+        type: "photo",
+        url: "https://images.unsplash.com/photo-1517411032315-54ef2cb783bb?auto=format&fit=crop&w=1200&q=80",
+        caption: "Bharati Station green microgrid array under midnight sun.",
+        altText: "Modern elevated Antarctic base Bharati under clear blue skies with solar arrays.",
+        tags: ["Station", "Bharati", "Clean Energy"]
+      },
+      {
+        id: "m-44-2",
+        type: "photo",
+        url: "https://images.unsplash.com/photo-1508873696983-2df5293cb32f?auto=format&fit=crop&w=1200&q=80",
+        caption: "Glaciologist preparing electromechanical ice core drill at Dronning Maud Land margin.",
+        altText: "Scientist in polar parka assembling drill apparatus on snow field.",
+        tags: ["Glaciology", "Ice Core", "Fieldwork"]
+      },
+      {
+        id: "m-44-3",
+        type: "photo",
+        url: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80",
+        caption: "Schirmacher Oasis nunataks surrounding India's Maitri research station.",
+        altText: "Rugged rocky hills jutting above surrounding continental ice sheet under clear sky.",
+        tags: ["Maitri", "Landscape", "Geology"]
+      }
+    ],
+    publications: ["pub-101", "pub-104", "pub-108"],
+    aiGeneratedContent: {
+      summary: "The 44th Indian Scientific Expedition to Antarctica represents India's next frontier in polar exploration! 48 researchers embarked on the ice-class vessel MV Vasiliy Golovnin to conduct crucial climate studies. The mission successfully established clean green microgrids at Bharati, monitored atmospheric particles to understand global air quality, and deployed autonomous glaciology buoys that beam real-time ice shelf data directly back to India.",
+      socialCaptions: {
+        twitter: "❄️ Setting sail for scientific discovery! The 44th Indian Scientific Expedition to Antarctica #ISEA44 by @NCPOR_MoES has launched vital glaciological drilling & green microgrid operations at Maitri & Bharati! 🇮🇳🇦🇶 #PolarScience #MoES #CleanEnergy",
+        instagram: "Into the White Wilderness! 🇦🇶✨\n\nThe 44th Indian Scientific Expedition to Antarctica is officially under way! From installing autonomous polar weather buoys to advancing zero-emission energy systems at Bharati Station, Indian researchers continue pushing the frontiers of Earth science.\n\n#Antarctica #NCPOR #ISEA44 #PolarExploration #ClimateScience #IndiaInAntarctica",
+        linkedin: "The National Centre for Polar and Ocean Research (NCPOR), Ministry of Earth Sciences, presents the preliminary scientific dossier for the 44th Indian Scientific Expedition to Antarctica (ISEA).\n\nKey Milestones:\n🔹 Launch of autonomous glaciological sensor networks.\n🔹 Field validation of high-capacity green microgrids at Bharati Station.\n🔹 Long-range aerosol and cryospheric monitoring across East Antarctica."
+      },
+      factCards: [
+        "48 scientists from MoES, Survey of India, and premier IITs participate in the 44th ISEA.",
+        "Autonomous glaciological buoys transmit ice deformation metrics via satellite in real time.",
+        "Clean hybrid microgrids reduce polar station fuel requirements by over 30%."
+      ],
+      isApproved: true
+    }
+  },
+  {
     id: "arctic-2024",
     title: "Indian Arctic Expedition (Himadri & Kongsfjorden)",
     titleHi: "भारतीय आर्कटिक अभियान (हिमाद्रि एवं कोंग्सफजॉर्डन)",

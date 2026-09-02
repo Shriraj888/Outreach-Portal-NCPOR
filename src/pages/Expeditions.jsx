@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { usePortal } from '../context/PortalContext';
 import { 
   Search, 
@@ -455,6 +455,19 @@ export default function Expeditions({ onSelectExpedition, navigateTo }) {
           font-size: 0.95rem;
           max-width: 500px;
           margin-bottom: 0.5rem;
+        }
+
+        .grid-cards {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+          gap: 1.75rem;
+        }
+
+        @media (max-width: 768px) {
+          .grid-cards {
+            grid-template-columns: 1fr;
+            gap: 1.25rem;
+          }
         }
       `}</style>
     </div>

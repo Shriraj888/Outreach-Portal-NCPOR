@@ -27,7 +27,30 @@ export function PortalProvider({ children }) {
   const [expeditions, setExpeditions] = useState(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.EXPEDITIONS);
-      return saved ? JSON.parse(saved) : initialExpeditions;
+      if (saved) {
+        let parsed = JSON.parse(saved);
+        const isea44Official = initialExpeditions.find(e => e.id === 'isea-44');
+        
+        // Find if user has a 44th expedition entry (either isea-44 or with 44th in title)
+        let found44Index = parsed.findIndex(e => e.id === 'isea-44' || (e.title && e.title.includes('44th Indian Scientific')));
+        if (found44Index >= 0 && isea44Official) {
+          // Merge rich demo data if missing tags, media, or AI content
+          parsed[found44Index] = {
+            ...isea44Official,
+            ...parsed[found44Index],
+            tags: (parsed[found44Index].tags && parsed[found44Index].tags.length > 0) ? parsed[found44Index].tags : isea44Official.tags,
+            media: (parsed[found44Index].media && parsed[found44Index].media.length > 1) ? parsed[found44Index].media : isea44Official.media,
+            aiGeneratedContent: parsed[found44Index].aiGeneratedContent || isea44Official.aiGeneratedContent,
+            keyFindings: (parsed[found44Index].keyFindings && parsed[found44Index].keyFindings.length > 0) ? parsed[found44Index].keyFindings : isea44Official.keyFindings,
+            reports: (parsed[found44Index].reports && parsed[found44Index].reports.length > 0) ? parsed[found44Index].reports : isea44Official.reports,
+            publications: (parsed[found44Index].publications && parsed[found44Index].publications.length > 0) ? parsed[found44Index].publications : isea44Official.publications
+          };
+        } else if (isea44Official && !parsed.some(e => e.id === 'isea-44')) {
+          parsed.unshift(isea44Official);
+        }
+        return parsed;
+      }
+      return initialExpeditions;
     } catch {
       return initialExpeditions;
     }

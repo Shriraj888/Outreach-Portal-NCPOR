@@ -389,3 +389,17 @@ button, input, select, textarea {
 .skip-link:focus {
   top: 1rem;
 }
+
+/* Multi-Column Card Grids */
+.grid-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1.75rem;
+}
+
+@media (max-width: 768px) {
+  .grid-cards {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+}
