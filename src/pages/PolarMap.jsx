@@ -189,7 +189,7 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
             className={`map-view-btn ${activeRegionView === 'southern-ocean' ? 'active' : ''}`}
             onClick={() => setActiveRegionView('southern-ocean')}
           >
-            <span>🌊 Southern Ocean Cruise Transect</span>
+            <span>🌊 Southern Ocean</span>
           </button>
         </div>
       </div>
@@ -227,9 +227,10 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
         <button
           onClick={refetch}
           title="Refresh live data"
-          style={{ marginLeft: 'auto', background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: 6, color: '#0f172a', padding: '3px 10px', cursor: 'pointer', display:'flex', alignItems:'center', gap:4, fontSize:'0.75rem', fontWeight: 600 }}
+          className="telemetry-refresh-btn"
         >
-          <RefreshCw size={12} /> Refresh
+          <RefreshCw size={12} className={dataLoading ? 'spin' : ''} />
+          <span>Refresh</span>
         </button>
       </div>
 
@@ -734,9 +735,18 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
           color: #0284c7;
         }
 
+        .page-header-row {
+          display: flex;
+          align-items: flex-end;
+          justify-content: space-between;
+          margin-bottom: 1.25rem;
+          flex-wrap: wrap;
+          gap: 1.25rem;
+        }
+
         /* View Mode Switcher */
         .view-mode-toggle-group {
-          display: flex;
+          display: inline-flex;
           align-items: center;
           background: #ffffff;
           border: 1px solid var(--border-card);
@@ -744,6 +754,7 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
           border-radius: var(--radius-full);
           gap: 0.25rem;
           box-shadow: var(--shadow-xs);
+          flex-shrink: 0;
         }
 
         .mode-toggle-btn {
@@ -777,55 +788,77 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
           display: flex;
           align-items: center;
           gap: 0.75rem;
-          margin-bottom: 1rem;
-          flex-wrap: wrap;
+          margin-bottom: 0.85rem;
+          padding: 0.45rem 0.85rem;
+          background: #ffffff;
+          border: 1px solid var(--border-card);
+          border-radius: var(--radius-md);
+          box-shadow: var(--shadow-xs);
+          overflow-x: auto;
+          scrollbar-width: none;
+        }
+
+        .map-view-pills-bar::-webkit-scrollbar {
+          display: none;
         }
 
         .pills-label {
-          display: flex;
+          display: inline-flex;
           align-items: center;
           gap: 0.35rem;
-          font-size: 0.8rem;
+          font-size: 0.75rem;
           font-weight: 700;
           color: var(--navy);
           text-transform: uppercase;
           letter-spacing: 0.05em;
+          flex-shrink: 0;
+          padding-right: 0.75rem;
+          border-right: 1px solid var(--border-subtle);
+          white-space: nowrap;
         }
 
         .pills-scroll {
           display: flex;
           align-items: center;
-          gap: 0.5rem;
-          flex-wrap: wrap;
+          gap: 0.4rem;
+          flex-wrap: nowrap;
+          flex: 1;
+          overflow-x: auto;
+          scrollbar-width: none;
+        }
+
+        .pills-scroll::-webkit-scrollbar {
+          display: none;
         }
 
         .map-view-btn {
-          display: flex;
+          display: inline-flex;
           align-items: center;
-          gap: 0.4rem;
-          background: #ffffff;
-          border: 1px solid var(--border-card);
-          color: var(--text-primary);
-          padding: 0.45rem 0.85rem;
+          gap: 0.35rem;
+          background: #f8fafc;
+          border: 1px solid var(--border-subtle);
+          color: var(--text-secondary);
+          padding: 0.35rem 0.75rem;
           border-radius: var(--radius-full);
-          font-size: 0.8rem;
+          font-size: 0.76rem;
           font-weight: 600;
           cursor: pointer;
           transition: all 0.15s ease;
-          box-shadow: var(--shadow-xs);
+          white-space: nowrap;
+          flex-shrink: 0;
         }
 
         .map-view-btn:hover {
-          background: #f8fafc;
+          background: #e2e8f0;
           color: var(--navy);
           border-color: #94a3b8;
         }
 
         .map-view-btn.active {
-          background: #ffffff;
+          background: var(--navy);
           border-color: var(--navy);
-          color: var(--navy);
-          box-shadow: 0 0 0 1px var(--navy);
+          color: #ffffff;
+          box-shadow: var(--shadow-xs);
         }
 
         /* Telemetry Status Bar */
@@ -835,19 +868,27 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
           justify-content: space-between;
           background: #ffffff;
           border: 1px solid var(--border-card);
-          padding: 0.65rem 1.25rem;
-          border-radius: var(--radius-sm);
-          margin-bottom: 1.5rem;
-          font-size: 0.78rem;
-          flex-wrap: wrap;
+          padding: 0.55rem 1rem;
+          border-radius: var(--radius-md);
+          margin-bottom: 1.25rem;
+          font-size: 0.75rem;
           gap: 0.75rem;
           box-shadow: var(--shadow-xs);
+          flex-wrap: nowrap;
+          overflow-x: auto;
+          scrollbar-width: none;
+        }
+
+        .telemetry-statusbar::-webkit-scrollbar {
+          display: none;
         }
 
         .status-item {
-          display: flex;
+          display: inline-flex;
           align-items: center;
-          gap: 0.4rem;
+          gap: 0.35rem;
+          white-space: nowrap;
+          flex-shrink: 0;
         }
 
         .dot {
@@ -872,6 +913,38 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
 
         .status-value.highlight-cyan {
           color: #0284c7;
+        }
+
+        .telemetry-refresh-btn {
+          margin-left: auto;
+          background: #f8fafc;
+          border: 1px solid var(--border-subtle);
+          border-radius: var(--radius-sm);
+          color: var(--navy);
+          padding: 0.25rem 0.65rem;
+          cursor: pointer;
+          display: inline-flex;
+          align-items: center;
+          gap: 0.35rem;
+          font-size: 0.75rem;
+          font-weight: 600;
+          white-space: nowrap;
+          flex-shrink: 0;
+          transition: all 0.15s ease;
+        }
+
+        .telemetry-refresh-btn:hover {
+          background: #e2e8f0;
+          border-color: #94a3b8;
+        }
+
+        .spin {
+          animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
         }
 
         /* Main Grid Layout */
