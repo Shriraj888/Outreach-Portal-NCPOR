@@ -378,6 +378,12 @@ export default function Home({ navigateTo, onSelectExpedition }) {
           gap: 1.5rem;
           overflow-x: auto;
           white-space: nowrap;
+          scrollbar-width: none;
+          -ms-overflow-style: none;
+        }
+
+        .telemetry-inner::-webkit-scrollbar {
+          display: none;
         }
 
         .telemetry-label {
