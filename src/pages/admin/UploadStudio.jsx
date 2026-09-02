@@ -198,11 +198,9 @@ The voyage departed Cape Town with 48 scientists from MoES institutes, Survey of
     setPhotoAltText(generated);
   };
 
-  const handleSave = (andLaunchAI = false) => {
-    let savedTargetId = null;
-
+  const handleSave = () => {
     if (activeCategory === 'reports') {
-      const newExp = addExpedition({
+      addExpedition({
         title: title || 'Polar Scientific Mission Report',
         region,
         year: Number(year),
@@ -255,9 +253,8 @@ The voyage departed Cape Town with 48 scientists from MoES institutes, Survey of
         ],
         publications: ['pub-101', 'pub-104']
       });
-      savedTargetId = newExp.id;
     } else if (activeCategory === 'datasets') {
-      const newDs = addDataset({
+      addDataset({
         title: title || 'Polar Scientific Dataset',
         region,
         year: Number(year),
@@ -272,9 +269,8 @@ The voyage departed Cape Town with 48 scientists from MoES institutes, Survey of
         temporalCoverage,
         summary: summary || 'Comprehensive verified polar dataset collected by NCPOR researchers.'
       });
-      savedTargetId = newDs.id;
     } else if (activeCategory === 'publications') {
-      const newPub = addPublication({
+      addPublication({
         title: title || 'Polar Science Publication',
         authors,
         journal,
@@ -285,9 +281,8 @@ The voyage departed Cape Town with 48 scientists from MoES institutes, Survey of
         abstract: summary || 'Peer-reviewed research detailing high-latitude scientific observations.',
         citations: Number(citations) || 0
       });
-      savedTargetId = newPub.id;
     } else if (activeCategory === 'photos' || activeCategory === 'videos') {
-      const newMedia = addMediaArchive({
+      addMediaArchive({
         type: activeCategory === 'videos' ? 'video' : 'photo',
         title: title || 'Polar Media Archive',
         region,
@@ -303,23 +298,17 @@ The voyage departed Cape Town with 48 scientists from MoES institutes, Survey of
         resolution,
         transcript
       });
-      savedTargetId = newMedia.id;
     } else if (activeCategory === 'activities') {
-      const newAct = addActivity({
+      addActivity({
         title: title || 'Institutional Outreach Activity',
         date: `${eventDate} ${year}`,
         type: activityType,
         badge: badgeText,
         summary: summary || 'MoES-NCPOR polar science outreach and education campaign.'
       });
-      savedTargetId = newAct.id;
     }
 
-    if (andLaunchAI) {
-      navigateTo(`admin-generate-${savedTargetId || 'isea-43'}`);
-    } else {
-      navigateTo('admin-dashboard');
-    }
+    navigateTo('admin-dashboard');
   };
 
   const categories = [
@@ -886,20 +875,11 @@ The voyage departed Cape Town with 48 scientists from MoES institutes, Survey of
                 <div className="meta-actions-right">
                   <button 
                     type="button" 
-                    className="btn-secondary"
-                    onClick={() => handleSave(false)}
+                    className="btn-saffron"
+                    onClick={() => handleSave()}
                   >
-                    <Save size={15} />
+                    <Save size={16} />
                     <span>Save to Archive Repository</span>
-                  </button>
-
-                  <button 
-                    type="button" 
-                    className="btn-ai"
-                    onClick={() => handleSave(true)}
-                  >
-                    <Sparkles size={16} />
-                    <span>Save & Launch AI Outreach Generator</span>
                   </button>
                 </div>
               </div>

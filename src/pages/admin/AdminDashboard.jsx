@@ -18,7 +18,8 @@ import {
   Search, 
   Compass, 
   UploadCloud,
-  AlertCircle
+  AlertCircle,
+  Layers
 } from 'lucide-react';
 
 export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
@@ -180,6 +181,14 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
         </div>
 
         <div className="admin-header-actions">
+          <button 
+            className="btn-selective-ai-header"
+            onClick={() => navigateTo('admin-selective-ai')}
+            title="Synthesize targeted outreach releases from selected data chunks"
+          >
+            <Layers size={16} />
+            <span>Selective AI Studio</span>
+          </button>
           <button 
             className="btn-primary-upload"
             onClick={() => navigateTo('admin-upload')}
@@ -488,6 +497,16 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
                         <span>AI Studio</span>
                       </button>
 
+                      {/* Selective Chunk AI Button */}
+                      <button 
+                        className="btn-action selective-ai"
+                        onClick={() => navigateTo(`admin-selective-ai-${item.id}`)}
+                        title="Synthesize targeted output from selected chunks"
+                      >
+                        <Layers size={13} />
+                        <span>Chunk AI</span>
+                      </button>
+
                       {/* Public View */}
                       {item.type === 'report' ? (
                         <button 
@@ -553,6 +572,29 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
           display: flex;
           align-items: center;
           gap: 0.75rem;
+        }
+
+        .btn-selective-ai-header {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          background: #ecfdf5;
+          color: #047857;
+          border: 1px solid #a7f3d0;
+          font-weight: 700;
+          padding: 0.65rem 1.15rem;
+          border-radius: var(--radius-sm);
+          cursor: pointer;
+          font-size: 0.88rem;
+          box-shadow: var(--shadow-sm);
+          transition: all 0.15s ease;
+        }
+
+        .btn-selective-ai-header:hover {
+          background: #d1fae5;
+          color: #065f46;
+          border-color: #6ee7b7;
+          transform: translateY(-1px);
         }
 
         .btn-primary-upload {
@@ -1025,6 +1067,18 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
         .btn-action.ai:hover {
           background: #0284c7;
           color: #ffffff;
+        }
+
+        .btn-action.selective-ai {
+          background: #ecfdf5;
+          border-color: #a7f3d0;
+          color: #047857;
+        }
+
+        .btn-action.selective-ai:hover {
+          background: #059669;
+          color: #ffffff;
+          border-color: #059669;
         }
 
         .btn-action.view {

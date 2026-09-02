@@ -240,28 +240,60 @@ button, input, select, textarea {
 }
 
 /* Primary Button (Saffron CTA) */
-.btn-primary {
+.btn-primary, .btn-saffron {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
   background: var(--saffron);
-  color: var(--text-on-saffron);
+  color: #ffffff;
   padding: 0.65rem 1.4rem;
   border-radius: var(--radius-sm);
   font-weight: 700;
   font-size: 0.88rem;
-  border: none;
+  border: 1px solid var(--saffron-deep);
   cursor: pointer;
   transition: all 180ms var(--ease);
   box-shadow: var(--shadow-sm);
   text-decoration: none;
 }
 
-.btn-primary:hover {
+.btn-primary:hover, .btn-saffron:hover {
   background: var(--saffron-deep);
   transform: translateY(-1px);
   box-shadow: var(--shadow-md);
+}
+
+.btn-primary:disabled, .btn-saffron:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Back Navigation Button */
+.btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #ffffff;
+  border: 1px solid var(--border-card);
+  color: var(--navy);
+  font-size: 0.84rem;
+  font-weight: 600;
+  padding: 0.5rem 0.95rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 180ms var(--ease);
+  box-shadow: var(--shadow-xs);
+  text-decoration: none;
+}
+
+.btn-back:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
+  color: var(--navy);
+  transform: translateX(-2px);
+  box-shadow: var(--shadow-sm);
 }
 
 /* Secondary Button */

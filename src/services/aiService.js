@@ -184,3 +184,214 @@ export async function generateOutreachPackage({ expedition, asset, assetType = "
 export function autoGenerateImageAlt(imageTitle, region, context = "") {
   return `Official NCPOR polar photograph showing ${imageTitle || 'scientific operation'} in the ${region} region. Features crisp high-contrast terrain, scientific research gear, and polar environmental conditions. ${context}`;
 }
+
+// Automatically breaks raw text into titled chunks / logical sections
+export function chunkDocumentText(rawText) {
+  if (!rawText || !rawText.trim()) return [];
+
+  // Split by double newlines or headers
+  const paragraphs = rawText.split(/\n\s*\n/).map(p => p.trim()).filter(Boolean);
+  
+  const chunks = [];
+  let currentTitle = 'Section 1: Overview & Background';
+  let currentContent = [];
+
+  paragraphs.forEach((p, idx) => {
+    const firstLine = p.split('\n')[0].trim();
+    const isHeader = /^(\d+\.|\bExecutive Summary\b|\bDeliverables\b|\bMajor Scientific\b|\bScientific Objectives\b|\bKey Findings\b|\bMethodology\b|\bAbstract\b|\bBackground\b|\bConclusion\b|[A-Z\s]{4,}:)/i.test(firstLine);
+
+    if (isHeader && currentContent.length > 0) {
+      chunks.push({
+        id: `chunk-${chunks.length + 1}`,
+        title: currentTitle,
+        content: currentContent.join('\n\n'),
+        wordCount: currentContent.join(' ').split(/\s+/).length
+      });
+      currentTitle = firstLine.length < 60 ? firstLine : `Section ${chunks.length + 2}`;
+      currentContent = [p];
+    } else {
+      if (idx === 0 && isHeader) {
+        currentTitle = firstLine;
+      }
+      currentContent.push(p);
+    }
+  });
+
+  if (currentContent.length > 0) {
+    chunks.push({
+      id: `chunk-${chunks.length + 1}`,
+      title: currentTitle,
+      content: currentContent.join('\n\n'),
+      wordCount: currentContent.join(' ').split(/\s+/).length
+    });
+  }
+
+  // If only 1 huge chunk resulted, slice by paragraph blocks
+  if (chunks.length <= 1 && paragraphs.length > 1) {
+    return paragraphs.map((p, i) => {
+      const words = p.split(/\s+/);
+      const firstLine = p.split('\n')[0].trim();
+      const title = firstLine.length > 50 ? `${firstLine.slice(0, 50)}...` : firstLine;
+      return {
+        id: `chunk-${i + 1}`,
+        title: title || `Excerpt ${i + 1}`,
+        content: p,
+        wordCount: words.length
+      };
+    });
+  }
+
+  return chunks;
+}
+
+export async function generateFromSelectedChunks({ asset, selectedChunks = [], customFocus = '', audience = 'general' }) {
+  await new Promise(resolve => setTimeout(resolve, 800));
+
+  const target = asset || {};
+  const region = target.region || "Antarctica";
+  const title = target.title || "Polar Science Archive";
+  const chunkCombinedText = selectedChunks.map(c => c.content).join('\n\n');
+  const chunkTitles = selectedChunks.map(c => c.title).join(', ');
+
+  const hasIce = /ice|glaci|core|drilling|melt/i.test(chunkCombinedText);
+  const hasAerosol = /aerosol|atmosphere|air|ozone|black carbon/i.test(chunkCombinedText);
+  const hasEnergy = /microgrid|solar|power|battery|hybrid|clean energy/i.test(chunkCombinedText);
+  const hasOcean = /ocean|fjord|water|ctd|salinity|current/i.test(chunkCombinedText);
+
+  let focusSnippet = "";
+  if (customFocus.trim()) {
+    focusSnippet = ` Specifically focusing on ${customFocus.trim()},`;
+  }
+
+  let summary, twitter, instagram, linkedin;
+
+  if (audience === 'student') {
+    summary = `Focused insights from ${title} (${region})!${focusSnippet} Indian polar scientists analyzed key areas including ${chunkTitles}. Students can discover how researchers braved freezing conditions to gather critical data on ${hasIce ? 'ancient ice layers, ' : ''}${hasAerosol ? 'polar air quality, ' : ''}${hasEnergy ? 'clean renewable energy systems, ' : ''}${hasOcean ? 'ocean water dynamics, ' : ''}proving how polar science directly influences global climate stability.`;
+    twitter = `🧊 Focused Polar Discovery: Insights from ${title} (${region})!${focusSnippet} Exploring ${chunkTitles.slice(0, 60)}... 🇮🇳🔬 #SmartEducation #NCPOR #ScienceForYouth #MoES`;
+    instagram = `Did you know polar researchers test futuristic clean energy and study ancient ice? 🧊⚡\n\nDeep-dive into selected findings from "${title}":\n\n🔍 Focus Topics: ${chunkTitles}\n📍 Location: ${region}\n\n${selectedChunks[0]?.content?.slice(0, 180) || ''}...\n\n#PolarScience #NCPOR #YouthInStem #IndiaScience #ClimateAction`;
+    linkedin = `Translating specific technical milestones from the ${title} (${region}).${focusSnippet}\n\nKey Focus Areas: ${chunkTitles}.\n\nHighlights Indian advancements in extreme-environment scientific observation, open research methodologies, and sustainable infrastructure under the Ministry of Earth Sciences.\n\n#NCPOR #MoES #OpenScience #PolarResearch #StrategicScience`;
+  } else if (audience === 'press') {
+    summary = `NEW DELHI / GOA — Dedicated scientific evaluation of prioritized mission deliverables from "${title}" in ${region}.${focusSnippet} Based on authenticated expedition records (${chunkTitles}), Indian researchers validated critical findings across high-latitude observation and environmental stewardship under the Antarctic Treaty System.`;
+    twitter = `📰 TARGETED BRIEFING: Key milestones from ${title} (${region}) published by @NCPOR_MoES.${focusSnippet} Full data: ${chunkTitles.slice(0, 50)}... 📊🇮🇳 #MoES #PressRelease`;
+    instagram = `OFFICIAL BRIEFING: Selected scientific deliverables from "${title}" 🇮🇳📊\n\nTargeted focus on ${chunkTitles}.\n\nResearchers reported milestone achievements in in-situ polar data recording and baseline validation in ${region}.\n\n#NCPOR #MoES #PressBriefing #PolarObservation #ClimateLeadership`;
+    linkedin = `FOR IMMEDIATE RELEASE: Ministry of Earth Sciences (MoES) & NCPOR highlight prioritized deliverables from ${title}.${focusSnippet}\n\nKey Technical Modules Evaluated: ${chunkTitles}.\n\nDemonstrating continued operational excellence and deep-field scientific capabilities across the Polar and Cryospheric realms.\n\n#MoES #GovOfIndia #PressRelease #StrategicResearch #PolarScience`;
+  } else {
+    summary = `Direct from the field: Targeted scientific highlights from "${title}" in ${region}!${focusSnippet} By examining focused logs on ${chunkTitles}, we learn how Indian scientists successfully tackled extreme cold to collect vital evidence on our changing planet.`;
+    twitter = `❄️ Polar Highlights: Key updates from ${title}!${focusSnippet} Discover discoveries across ${chunkTitles.slice(0, 70)}... 🇮🇳🇦🇶 #PolarScience #NCPOR #ClimateAction`;
+    instagram = `Highlights from the Ends of the Earth! ❄️✨\n\nWe extracted key highlights from "${title}":\n\n📌 Evaluated Sections: ${chunkTitles}\n\n${selectedChunks[0]?.content?.slice(0, 200) || ''}...\n\nEvery finding brings us closer to understanding global climate connections! 👉 Read more on our portal.\n\n#Antarctica #PolarScience #NCPOR #EarthScience #IndiaInAntarctica`;
+    linkedin = `Selected scientific highlights from the ${title} (${region}) are now curated for public outreach.${focusSnippet}\n\nPrimary Focus: ${chunkTitles}.\n\nNCPOR and the Ministry of Earth Sciences continue to foster transparent, high-impact science communications for researchers, educators, and global citizens.\n\n#NCPOR #MoES #PolarScience #ScienceOutreach #OpenGovernment`;
+  }
+
+  let factCards = selectedChunks.slice(0, 3).map((chunk) => {
+    const firstSentence = chunk.content.split(/\.|\n/)[0].trim();
+    return `${chunk.title}: ${firstSentence.slice(0, 110)}...`;
+  });
+
+  if (factCards.length === 0) {
+    factCards = [
+      `Synthesized from ${selectedChunks.length} targeted data chunks.`,
+      `Validated against official NCPOR polar archives.`,
+      `Curated for ${audience} audience accessibility.`
+    ];
+  }
+
+  // 1. Full Scientific Blog / Feature Article Generation
+  const article = {
+    title: `Frontiers of Polar Research: Unveiling ${title}`,
+    subtitle: `How Indian scientists decoded ${chunkTitles.slice(0, 80)} in extreme ${region} conditions`,
+    readTime: `${Math.max(3, Math.ceil(chunkCombinedText.split(/\s+/).length / 70))} min read`,
+    category: hasIce ? 'Glaciology & Cryosphere' : hasEnergy ? 'Green Engineering & Operations' : hasOcean ? 'Oceanography' : 'Atmospheric Science',
+    publishedDate: new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
+    author: "NCPOR Polar Science Communications Team",
+    lead: `In the vast frozen landscapes of ${region}, Indian researchers push the boundaries of extreme-environment exploration. Through the archival of ${title}, recently verified by the National Centre for Polar and Ocean Research (NCPOR), deep-field observations are opening unprecedented windows into how high-latitude changes impact our planet.`,
+    sections: selectedChunks.map((chunk, idx) => ({
+      heading: `${idx + 1}. ${chunk.title.replace(/^Section\s*\d+:\s*/i, '')}`,
+      body: `Field teams focused intensely on ${chunk.title.toLowerCase()}. As documented in the mission records: "${chunk.content.slice(0, 300)}...". These validated records represent crucial milestones for Indian scientific sovereignty and international polar cryosphere databases.`
+    })),
+    climateImpact: `What happens at the poles directly shapes the Indian subcontinent. Changes in ${region} cryospheric mass and circulation drive deep teleconnections with the Indian Summer Monsoon, sea level along our 7,500 km coastline, and the third-pole water towers of the Himalayas.`,
+    takeaways: [
+      `High-fidelity observation in ${region} calibrated against rigorous Antarctic Treaty protocols.`,
+      `Critical baseline telemetry archived under MoES open science data mandate.`,
+      `Multi-institutional teamwork demonstrating state-of-the-art logistics and scientific ingenuity.`
+    ]
+  };
+
+  // 2. AI Image Generation Prompts & Visual Asset
+  let matchingImageUrl = "https://images.unsplash.com/photo-1517411032315-54ef2cb783bb?auto=format&fit=crop&w=1400&q=80";
+  let promptStyle = "Photorealistic National Geographic style, Hasselblad 50MP, natural polar lighting";
+
+  if (hasIce) {
+    matchingImageUrl = "https://images.unsplash.com/photo-1508873696983-2df5293cb32f?auto=format&fit=crop&w=1400&q=80";
+    promptStyle = "Detailed documentary photograph, Indian glaciologists extracting blue ice core in Larsemann Hills Antarctica, blizzard wind crystals, high-contrast survival suits, 8k resolution";
+  } else if (hasOcean) {
+    matchingImageUrl = "https://images.unsplash.com/photo-1517999144091-3d9dca6d1e43?auto=format&fit=crop&w=1400&q=80";
+    promptStyle = "Oceanographic research vessel cutting through pack ice in Southern Ocean, hydraulic winch lowering titanium CTD rosette into deep Antarctic waters, cinematic cold mist, dramatic lighting";
+  } else if (hasEnergy) {
+    matchingImageUrl = "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1400&q=80";
+    promptStyle = "Pioneering renewable microgrid polar installation, solar arrays and vertical-axis wind turbines standing resilient amidst Antarctic snowdrift, Maitri station in background, sharp focus, ultra-detailed";
+  }
+
+  const imageGen = {
+    prompt: `A high-resolution scientific visualization of ${title} (${region}). Focus on ${chunkTitles.slice(0, 80)}. ${promptStyle}. Crisp focus, realistic scientific instruments, authentic cold atmospheric haze.`,
+    negativePrompt: "blurry, oversaturated, low quality, CGI cartoon, extra limbs, incorrect equipment, text artifacts",
+    aspectRatio: "16:9",
+    imageUrl: target.heroImage || matchingImageUrl,
+    suggestedAlt: `AI-generated photo visualization depicting ${chunkTitles.slice(0, 70)} during ${title} in ${region}. Shows authentic scientific gear and extreme polar conditions.`
+  };
+
+  // 3. AI Video Script, Storyboard & Clip
+  const videoGen = {
+    title: `60-Second Polar Shorts: Exploring ${title}`,
+    targetDuration: "50-60 seconds",
+    aspectRatio: "9:16 (Vertical Short) & 16:9 (Landscape)",
+    videoUrl: "https://images.unsplash.com/photo-1517999144091-3d9dca6d1e43?auto=format&fit=crop&w=1600&q=80",
+    storyboard: [
+      {
+        scene: 1,
+        timestamp: "0:00 - 0:10",
+        visual: `Breathtaking aerial drone sweep over vast polar ice sheets in ${region}. Indian research base emerges through morning mist.`,
+        narration: `At the frozen edge of the planet, temperatures plummet below minus thirty. But inside India's polar observatories, science never sleeps.`,
+        onScreenText: `📍 ${region} • ${title}`,
+        soundFx: "Rumbling polar wind, subtle ambient synth crescendo"
+      },
+      {
+        scene: 2,
+        timestamp: "0:10 - 0:25",
+        visual: `Close-up of scientists assembling specialized instrumentation. Focus: ${chunkTitles.slice(0, 60)}.`,
+        narration: `During this mission, researchers deployed precision tools to capture critical data from ${selectedChunks[0]?.title || 'deep field surveys'}.`,
+        onScreenText: `🔬 FOCUS: ${selectedChunks[0]?.title || 'Polar Investigation'}`,
+        soundFx: "Mechanical drill hum, wind howling against survival fabric"
+      },
+      {
+        scene: 3,
+        timestamp: "0:25 - 0:45",
+        visual: `Split screen: Sensor telemetry diagrams on rugged laptop screens alongside physical ice/ocean samples.`,
+        narration: `Every sample tells a story—linking high-latitude environmental shifts directly to global climate patterns and the monsoon rains back home.`,
+        onScreenText: `📊 ${factCards[0] || 'In-situ baseline telemetry validated'}`,
+        soundFx: "Telemetry beep sequence, heartbeat bass pulse"
+      },
+      {
+        scene: 4,
+        timestamp: "0:45 - 0:60",
+        visual: `Tricolor Indian flag fluttering crisply against azure Antarctic sky. MoES and NCPOR emblem transitions into view.`,
+        narration: `India's polar legacy continues. Explore open datasets and mission dossiers on the NCPOR National Outreach Portal.`,
+        onScreenText: `🇮🇳 Ministry of Earth Sciences • NCPOR Goa\nExplore Open Science Portal`,
+        soundFx: "Inspirational orchestral resolve, clean fade out"
+      }
+    ]
+  };
+
+  return {
+    summary,
+    socialCaptions: { twitter, instagram, linkedin },
+    factCards,
+    article,
+    imageGen,
+    videoGen,
+    selectedChunkIds: selectedChunks.map(c => c.id),
+    chunkCount: selectedChunks.length,
+    audience,
+    customFocus,
+    generatedAt: new Date().toISOString()
+  };
+}

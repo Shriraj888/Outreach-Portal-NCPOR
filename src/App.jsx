@@ -12,6 +12,7 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import UploadStudio from './pages/admin/UploadStudio';
 import ExpeditionForm from './pages/admin/ExpeditionForm';
 import AIGenerateStudio from './pages/admin/AIGenerateStudio';
+import SelectiveAIStudio from './pages/admin/SelectiveAIStudio';
 import './App.css';
 
 function MainApp() {
@@ -96,6 +97,19 @@ function MainApp() {
           onBack={() => navigateTo('admin-dashboard')} 
           navigateTo={navigateTo}
           onSelectExpedition={handleSelectExpedition}
+        />
+      );
+    }
+
+    if (currentRoute === 'admin-selective-ai' || currentRoute.startsWith('admin-selective-ai-')) {
+      const assetId = currentRoute.startsWith('admin-selective-ai-')
+        ? currentRoute.replace('admin-selective-ai-', '')
+        : null;
+      return (
+        <SelectiveAIStudio 
+          initialAssetId={assetId}
+          onBack={() => navigateTo('admin-dashboard')}
+          navigateTo={navigateTo}
         />
       );
     }
