@@ -5,7 +5,6 @@ import {
   Search, 
   Globe2, 
   Layers, 
-  BookOpen, 
   MapPin, 
   FileText, 
   Lock, 
@@ -35,7 +34,6 @@ export default function Header({ currentRoute, navigateTo }) {
     { id: 'home', label: t.nav.home, icon: Compass },
     { id: 'expeditions', label: t.nav.expeditions, icon: Layers },
     { id: 'map', label: t.nav.map, icon: MapPin },
-    { id: 'learn', label: t.nav.learn, icon: BookOpen, highlight: true },
     { id: 'publications', label: t.nav.publications, icon: FileText }
   ];
 
@@ -135,7 +133,6 @@ export default function Header({ currentRoute, navigateTo }) {
                 >
                   <Icon size={16} />
                   <span>{item.label}</span>
-                  {item.highlight && <span className="learn-badge">Student Hub</span>}
                 </button>
               );
             })}
@@ -461,16 +458,6 @@ export default function Header({ currentRoute, navigateTo }) {
           background: #eff6ff;
           border-color: #bfdbfe;
           font-weight: 600;
-        }
-
-        .learn-badge {
-          background: #0284c7;
-          color: #ffffff;
-          font-size: 0.65rem;
-          font-weight: 700;
-          padding: 1px 5px;
-          border-radius: 4px;
-          margin-left: 2px;
         }
 
         .nav-actions {

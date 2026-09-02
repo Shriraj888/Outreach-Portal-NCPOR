@@ -2,13 +2,10 @@ import { usePortal } from '../context/PortalContext';
 import { 
   Compass, 
   MapPin, 
-  BookOpen, 
   ArrowRight, 
   ThermometerSnowflake, 
   Wind, 
   Radio, 
-  FileText, 
-  Award,
   Calendar,
   CheckCircle2
 } from 'lucide-react';
@@ -88,14 +85,6 @@ export default function Home({ navigateTo, onSelectExpedition }) {
             >
               <MapPin size={18} />
               <span>{t.hero.interactiveMap}</span>
-            </button>
-
-            <button 
-              className="btn-primary hero-btn"
-              onClick={() => navigateTo('learn')}
-            >
-              <BookOpen size={18} />
-              <span>{t.hero.studentZone}</span>
             </button>
           </div>
 
@@ -293,41 +282,7 @@ export default function Home({ navigateTo, onSelectExpedition }) {
         </div>
       </section>
 
-      {/* Smart Education Callout Banner */}
-      <section className="smart-edu-banner-section">
-        <div className="container">
-          <div className="smart-edu-card">
-            <div className="smart-edu-text">
-              <div className="smart-badge">
-                <Award size={16} />
-                <span>SMART INDIA HACKATHON 2026 • SMART EDUCATION</span>
-              </div>
-              <h2 className="smart-title">
-                Polar Explorer Student Hub & Interactive Quiz
-              </h2>
-              <p className="smart-desc">
-                Simplified explainers on ancient ice cores, auroras, Himalayan glaciers, and Antarctic ecosystems. Test your polar science knowledge and earn your official Explorer Certificate!
-              </p>
-              <div className="smart-btns">
-                <button 
-                  className="btn-saffron smart-btn"
-                  onClick={() => navigateTo('learn')}
-                >
-                  <BookOpen size={18} />
-                  <span>Start Learning & Take the Quiz</span>
-                </button>
-                <button 
-                  className="btn-secondary smart-btn"
-                  onClick={() => navigateTo('publications')}
-                >
-                  <FileText size={18} />
-                  <span>Browse Open Science Papers</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+
 
       {/* Latest Institutional News & Activities */}
       <section className="news-section">
@@ -747,61 +702,6 @@ export default function Home({ navigateTo, onSelectExpedition }) {
           align-items: center;
           gap: 1rem;
           flex-wrap: wrap;
-        }
-
-        /* Smart Education Banner */
-        .smart-edu-card {
-          background: #0a2540;
-          border: 1px solid #1e3a8a;
-          border-radius: var(--radius-lg);
-          padding: 3.5rem 2rem;
-          text-align: center;
-          box-shadow: var(--shadow-lg);
-        }
-
-        .smart-edu-text {
-          max-width: 800px;
-          margin: 0 auto;
-        }
-
-        .smart-badge {
-          display: inline-flex;
-          align-items: center;
-          gap: 0.45rem;
-          background: rgba(251, 191, 36, 0.15);
-          color: #fbbf24;
-          border: 1px solid rgba(251, 191, 36, 0.35);
-          padding: 0.35rem 0.85rem;
-          border-radius: var(--radius-full);
-          font-size: 0.75rem;
-          font-weight: 700;
-          margin-bottom: 1rem;
-        }
-
-        .smart-title {
-          font-size: 2.2rem;
-          font-weight: 800;
-          color: #ffffff;
-          margin-bottom: 0.85rem;
-        }
-
-        .smart-desc {
-          font-size: 1rem;
-          color: #cbd5e1;
-          line-height: 1.6;
-          margin-bottom: 2rem;
-        }
-
-        .smart-btns {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 1rem;
-          flex-wrap: wrap;
-        }
-
-        .smart-btn {
-          padding: 0.75rem 1.5rem;
         }
 
         /* Activities */

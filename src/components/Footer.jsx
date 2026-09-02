@@ -1,4 +1,3 @@
-import React from 'react';
 import { usePortal } from '../context/PortalContext';
 import { Compass, ExternalLink, Mail, Phone, MapPin, Award } from 'lucide-react';
 
@@ -61,11 +60,6 @@ export default function Footer({ navigateTo }) {
           <div className="footer-col">
             <h5 className="footer-heading">Education & Outreach</h5>
             <ul className="footer-links">
-              <li>
-                <button onClick={() => navigateTo('learn')}>
-                  <span className="footer-highlight">Student Learn Zone & Quiz</span>
-                </button>
-              </li>
               <li>
                 <button onClick={() => navigateTo('publications')}>Open Science Publications</button>
               </li>

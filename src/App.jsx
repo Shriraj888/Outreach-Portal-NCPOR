@@ -6,7 +6,6 @@ import Home from './pages/Home';
 import Expeditions from './pages/Expeditions';
 import ExpeditionDetail from './pages/ExpeditionDetail';
 import PolarMap from './pages/PolarMap';
-import Learn from './pages/Learn';
 import Publications from './pages/Publications';
 import AdminLogin from './pages/admin/AdminLogin';
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -117,8 +116,6 @@ function MainApp() {
             navigateTo={navigateTo} 
           />
         );
-      case 'learn':
-        return <Learn navigateTo={navigateTo} />;
       case 'publications':
         return <Publications navigateTo={navigateTo} />;
       case 'home':

@@ -5,8 +5,7 @@ import {
   initialDatasets, 
   initialMediaArchives, 
   latestActivities, 
-  polarStations, 
-  educationalModules 
+  polarStations 
 } from '../data/mockData';
 import { translations } from '../data/translations';
 
@@ -367,7 +366,6 @@ export function PortalProvider({ children }) {
         mediaArchives,
         activities,
         stations: polarStations,
-        educationalModules,
         lang,
         t,
         auth,

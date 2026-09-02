@@ -4,7 +4,6 @@ export const translations = {
       home: "Home",
       expeditions: "Expeditions",
       map: "Polar Map",
-      learn: "Learn & Quiz",
       publications: "Publications",
       admin: "Admin Studio",
       portalTitle: "National Centre for Polar and Ocean Research",
@@ -16,7 +15,6 @@ export const translations = {
       subtitle: "Discover India's scientific expeditions across Antarctica, the Arctic, the Southern Ocean, and the Himalayan Third Pole.",
       exploreExpeditions: "Explore Expeditions",
       interactiveMap: "Interactive Polar Map",
-      studentZone: "Student Learn Zone",
       stats: {
         stations: "Active Polar Bases",
         expeditions: "Antarctic Expeditions",
@@ -59,7 +57,6 @@ export const translations = {
       home: "मुख्य पृष्ठ",
       expeditions: "अभियान",
       map: "ध्रुवीय मानचित्र",
-      learn: "सीखें और प्रश्नोत्तरी",
       publications: "प्रकाशन",
       admin: "एडमिन स्टूडियो",
       portalTitle: "राष्ट्रीय ध्रुवीय एवं महासागर अनुसंधान केंद्र",
@@ -71,7 +68,6 @@ export const translations = {
       subtitle: "अंटार्कटिका, आर्कटिक, दक्षिणी महासागर और हिमालयी तीसरे ध्रुव में भारत के ऐतिहासिक वैज्ञानिक अभियानों को जानें।",
       exploreExpeditions: "अभियान देखें",
       interactiveMap: "इंटरैक्टिव ध्रुवीय नक्शा",
-      studentZone: "विद्यार्थी लर्निंग ज़ोन",
       stats: {
         stations: "सक्रिय ध्रुवीय स्टेशन",
         expeditions: "अंटार्कटिक अभियान",
