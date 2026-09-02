@@ -1,4 +1,3 @@
-import React from 'react';
 import { usePortal } from '../context/PortalContext';
 import { 
   Calendar, 
@@ -189,7 +188,7 @@ export default function ExpeditionCard({ expedition, onSelect }) {
         }
 
         .card-ai-pill {
-          background: #0284c7;
+          background: #059669;
           color: #ffffff;
           padding: 0.2rem 0.6rem;
           border-radius: 6px;
@@ -219,17 +218,17 @@ export default function ExpeditionCard({ expedition, onSelect }) {
 
         .card-meta {
           display: flex;
-          flex-direction: column;
-          gap: 0.3rem;
+          align-items: center;
+          gap: 1rem;
+          color: #64748b;
+          font-size: 0.78rem;
           margin-bottom: 0.85rem;
         }
 
-        .meta-row {
+        .meta-item {
           display: flex;
           align-items: center;
-          gap: 0.45rem;
-          font-size: 0.78rem;
-          color: #475569;
+          gap: 0.35rem;
         }
 
         .meta-icon {
@@ -278,7 +277,7 @@ export default function ExpeditionCard({ expedition, onSelect }) {
           justify-content: space-between;
           padding-top: 0.85rem;
           border-top: 1px solid #f1f5f9;
-          color: #0284c7;
+          color: #059669;
           font-size: 0.85rem;
           font-weight: 600;
         }
@@ -287,15 +286,16 @@ export default function ExpeditionCard({ expedition, onSelect }) {
           width: 28px;
           height: 28px;
           border-radius: 50%;
-          background: #e0f2fe;
+          background: #ecfdf5;
           display: flex;
           align-items: center;
           justify-content: center;
+          color: #059669;
           transition: all 0.15s ease;
         }
 
         .expedition-card:hover .action-arrow {
-          background: #0284c7;
+          background: #059669;
           color: #ffffff;
           transform: translateX(3px);
         }

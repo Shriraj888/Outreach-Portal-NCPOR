@@ -26,8 +26,8 @@
   /* Borders: Defined, crisp, physical edges */
   --border-subtle:  #cbd5e1;
   --border-card:    #cbd5e1;
-  --border-active:  #0284c7;
-  --border-focus:   #0284c7;
+  --border-active:  #059669;
+  --border-focus:   #059669;
 
   /* Primary Brand: Authoritative Charcoal/Slate & Indian Saffron/Amber */
   --navy:           #0f172a;
@@ -39,21 +39,27 @@
   --saffron-light:  #fef3c7;
   --saffron-glow:   rgba(217, 119, 6, 0.12);
 
-  /* Polar Oceanic Accents */
-  --ice:            #0284c7;
-  --ice-deep:       #0369a1;
-  --ice-light:      #e0f2fe;
-  --ice-glow:       rgba(2, 132, 199, 0.1);
+  /* Polar Aurora Emerald & Jade Accents (Non-Blue) */
+  --ice:            #059669;
+  --ice-deep:       #047857;
+  --ice-light:      #ecfdf5;
+  --ice-glow:       rgba(5, 150, 105, 0.12);
+
+  --emerald:        #059669;
+  --emerald-deep:   #047857;
+  --emerald-light:  #ecfdf5;
+  --emerald-glow:   rgba(5, 150, 105, 0.12);
+  --aurora-mint:    #10b981;
 
   /* Region Accents */
-  --accent-antarctica: #0e7490;
+  --accent-antarctica: #047857;
   --accent-arctic:     #059669;
   --accent-himalaya:   #d97706;
-  --accent-ocean:      #0284c7;
+  --accent-ocean:      #0f766e;
 
-  --accent-cyan:    #0e7490;
-  --accent-ice:     #0284c7;
-  --accent-blue:    #0284c7;
+  --accent-cyan:    #0f766e;
+  --accent-ice:     #059669;
+  --accent-blue:    #059669;
   --accent-saffron: #d97706;
   --accent-emerald: #059669;
   --accent-gold:    #d97706;
@@ -179,15 +185,15 @@ button, input, select, textarea {
 }
 
 .badge-antarctica {
-  background: #ecfeff;
-  color: #0e7490;
-  border: 1px solid #cffafe;
-}
-
-.badge-arctic {
   background: #ecfdf5;
   color: #047857;
   border: 1px solid #a7f3d0;
+}
+
+.badge-arctic {
+  background: #f0fdf4;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
 }
 
 .badge-himalaya {
@@ -197,9 +203,9 @@ button, input, select, textarea {
 }
 
 .badge-ocean {
-  background: #eff6ff;
-  color: #0284c7;
-  border: 1px solid #bfdbfe;
+  background: #f0fdfa;
+  color: #0f766e;
+  border: 1px solid #99f6e4;
 }
 
 /* Section Header Structure */
@@ -314,9 +320,9 @@ button, input, select, textarea {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  background: #0284c7;
+  background: #059669;
   color: #ffffff;
-  border: 1px solid #0369a1;
+  border: 1px solid #047857;
   padding: 0.65rem 1.25rem;
   border-radius: var(--radius-sm);
   font-weight: 600;
@@ -328,7 +334,7 @@ button, input, select, textarea {
 }
 
 .btn-ai:hover {
-  background: #0369a1;
+  background: #047857;
   transform: translateY(-1px);
   box-shadow: var(--shadow-md);
 }

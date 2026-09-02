@@ -618,7 +618,7 @@ export const polarStations = [
     elevation: "117 m",
     temp: "-18°C",
     wind: "35 km/h SE",
-    description: "Located on the rocky rocky oasis of Schirmacher Hills, conducting atmospheric, meteorological, and geological studies.",
+    description: "Located on the rocky oasis of Schirmacher Hills, conducting atmospheric, meteorological, and geological studies.",
     image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=600&q=80"
   },
   {

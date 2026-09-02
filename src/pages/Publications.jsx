@@ -450,7 +450,7 @@ export default function Publications({ navigateTo }) {
           color: var(--navy);
         }
 
-        .icon-cyan { color: #0284c7; }
+        .icon-cyan { color: #059669; }
         .icon-amber { color: #d97706; }
 
         .filter-box {
@@ -553,7 +553,7 @@ export default function Publications({ navigateTo }) {
         }
 
         .dataset-card-accent {
-          border-left: 3px solid #0284c7;
+          border-left: 3px solid #059669;
         }
 
         .pub-badge-line {
@@ -565,9 +565,9 @@ export default function Publications({ navigateTo }) {
         }
 
         .pub-discipline-badge {
-          background: #e0f2fe;
-          color: #0369a1;
-          border: 1px solid #bae6fd;
+          background: #ecfdf5;
+          color: #047857;
+          border: 1px solid #a7f3d0;
           font-size: 0.75rem;
           font-weight: 600;
           padding: 0.2rem 0.6rem;
@@ -705,12 +705,12 @@ export default function Publications({ navigateTo }) {
           background: #f8fafc;
           border-radius: var(--radius-sm);
           padding: 1rem;
-          border-left: 3px solid #0284c7;
+          border-left: 3px solid #059669;
         }
 
         .abstract-title {
           font-size: 0.8rem;
-          color: #0284c7;
+          color: #059669;
           text-transform: uppercase;
           letter-spacing: 0.05em;
           margin-bottom: 0.4rem;
@@ -745,7 +745,7 @@ export default function Publications({ navigateTo }) {
           gap: 0.3rem;
           background: transparent;
           border: none;
-          color: #0284c7;
+          color: #059669;
           font-size: 0.82rem;
           font-weight: 600;
           cursor: pointer;
@@ -780,14 +780,14 @@ export default function Publications({ navigateTo }) {
         }
 
         .btn-action-pill.download {
-          background: #e0f2fe;
-          color: #0369a1;
-          border-color: #bae6fd;
+          background: #ecfdf5;
+          color: #047857;
+          border-color: #a7f3d0;
         }
 
         .btn-action-pill.download:hover {
-          background: #bae6fd;
-          color: #0284c7;
+          background: #a7f3d0;
+          color: #065f46;
         }
 
         .btn-action-pill.copied {
@@ -797,7 +797,7 @@ export default function Publications({ navigateTo }) {
         }
 
         .doi-link {
-          color: #0284c7;
+          color: #059669;
         }
       `}</style>
     </div>

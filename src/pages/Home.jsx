@@ -88,23 +88,68 @@ export default function Home({ navigateTo, onSelectExpedition }) {
             </button>
           </div>
 
-          {/* Key Stat Cards */}
-          <div className="hero-stats-row">
-            <div className="stat-card">
-              <div className="stat-number">5</div>
-              <div className="stat-label">Permanent Bases (Bharati, Maitri, Himadri, Himansh, IndARC)</div>
+          {/* India's Polar Research Stations */}
+          <div className="hero-stations-hub">
+            <div className="stations-hub-banner">
+              <div className="hub-banner-pill">
+                <span>India's Polar Research Stations</span>
+              </div>
             </div>
-            <div className="stat-card">
-              <div className="stat-number">43+</div>
-              <div className="stat-label">Historic Antarctic Expeditions</div>
-            </div>
-            <div className="stat-card">
-              <div className="stat-number">1,200+</div>
-              <div className="stat-label">Peer-Reviewed Publications</div>
-            </div>
-            <div className="stat-card">
-              <div className="stat-number">100%</div>
-              <div className="stat-label">Open Public Outreach & Education</div>
+
+            <div className="hero-stations-grid">
+              {stations
+                .filter((st) => ['st-bharati', 'st-maitri', 'st-himadri', 'st-himansh'].includes(st.id))
+                .map((st) => (
+                  <div 
+                    key={st.id} 
+                    className="station-ops-card"
+                    onClick={() => navigateTo('map')}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        navigateTo('map');
+                      }
+                    }}
+                  >
+                    <div className="station-card-top-row">
+                      <span className={`station-region-pill pill-${st.region.toLowerCase()}`}>
+                        <MapPin size={10} />
+                        <span>{st.region}</span>
+                      </span>
+                      <span className="station-live-badge">
+                        <span className="live-status-dot"></span>
+                        <span>LIVE</span>
+                      </span>
+                    </div>
+
+                    <div className="station-card-info">
+                      <h3 className="station-card-name">{st.name}</h3>
+                      <span className="station-coords-badge">
+                        {Math.abs(st.lat).toFixed(1)}°{st.lat < 0 ? 'S' : 'N'}, {Math.abs(st.lng).toFixed(1)}°{st.lng < 0 ? 'W' : 'E'}
+                        {st.elevation && <span className="st-elev"> • {st.elevation}</span>}
+                      </span>
+                    </div>
+
+                    <div className="station-telemetry-row">
+                      <div className="telemetry-chips-wrap">
+                        <span className="telemetry-pill temp-pill">
+                          <ThermometerSnowflake size={11} className="temp-color" />
+                          <strong>{st.temp}</strong>
+                        </span>
+                        <span className="telemetry-pill wind-pill">
+                          <Wind size={11} className="wind-color" />
+                          <span>{st.wind}</span>
+                        </span>
+                      </div>
+                      <span className="station-map-link">
+                        <span>3D Map</span>
+                        <ArrowRight size={11} className="arrow-hover" />
+                      </span>
+                    </div>
+                  </div>
+                ))}
             </div>
           </div>
         </div>
@@ -324,6 +369,7 @@ export default function Home({ navigateTo, onSelectExpedition }) {
           border-bottom: 1px solid #cbd5e1;
           padding: 0.5rem 0;
           font-size: 0.8rem;
+          margin-bottom: -4rem;
         }
 
         .telemetry-inner {
@@ -363,7 +409,7 @@ export default function Home({ navigateTo, onSelectExpedition }) {
         }
 
         .st-temp {
-          color: #0284c7;
+          color: #059669;
           font-weight: 600;
           display: flex;
           align-items: center;
@@ -380,15 +426,19 @@ export default function Home({ navigateTo, onSelectExpedition }) {
         /* Hero Section */
         .hero-section {
           position: relative;
-          padding: 5rem 0 4rem;
-          background: linear-gradient(180deg, #eaedf2 0%, #dfe4eb 100%);
-          border-bottom: 1px solid var(--border-subtle);
+          padding: 3rem 0 2.25rem;
+          background: 
+            linear-gradient(180deg, rgba(15, 23, 42, 0.82) 0%, rgba(15, 23, 42, 0.68) 45%, rgba(15, 23, 42, 0.92) 100%),
+            url('https://images.unsplash.com/photo-1517411032315-54ef2cb783bb?auto=format&fit=crop&w=1920&q=85') center 35% / cover no-repeat;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+          overflow: hidden;
         }
 
         .hero-bg-overlay {
           position: absolute;
           inset: 0;
-          background: radial-gradient(circle at 50% 20%, rgba(2, 132, 199, 0.06) 0%, transparent 70%);
+          background: radial-gradient(circle at 50% 25%, rgba(16, 185, 129, 0.15) 0%, transparent 70%);
+          pointer-events: none;
         }
 
         .hero-content {
@@ -398,100 +448,284 @@ export default function Home({ navigateTo, onSelectExpedition }) {
           flex-direction: column;
           align-items: center;
           text-align: center;
-          max-width: 960px;
+          max-width: 1040px;
         }
 
         .hero-badge {
           display: inline-flex;
           align-items: center;
           gap: 0.5rem;
-          background: #ffffff;
-          border: 1px solid #cbd5e1;
-          color: #1e3a8a;
-          padding: 0.35rem 1rem;
+          background: rgba(255, 255, 255, 0.12);
+          border: 1px solid rgba(255, 255, 255, 0.22);
+          color: #f8fafc;
+          padding: 0.28rem 0.95rem;
           border-radius: var(--radius-full);
-          font-size: 0.76rem;
+          font-size: 0.72rem;
           font-weight: 700;
-          letter-spacing: 0.03em;
-          margin-bottom: 1.5rem;
-          box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+          letter-spacing: 0.04em;
+          margin-bottom: 0.75rem;
+          backdrop-filter: blur(8px);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
 
         .tricolor-dot {
-          width: 10px;
-          height: 10px;
+          width: 9px;
+          height: 9px;
           border-radius: 50%;
           background: linear-gradient(180deg, #ff9933 33%, #ffffff 33%, #ffffff 66%, #138808 66%);
           box-shadow: 0 0 0 1px rgba(0,0,0,0.15);
         }
 
         .hero-heading {
-          font-size: 3rem;
+          font-size: 2.45rem;
           font-weight: 800;
-          color: var(--navy);
+          color: #ffffff;
           line-height: 1.2;
-          margin-bottom: 1.25rem;
+          margin-bottom: 0.75rem;
+          text-shadow: 0 2px 14px rgba(0, 0, 0, 0.4);
         }
 
         .hero-subtext {
-          font-size: 1.15rem;
-          color: var(--text-secondary);
-          line-height: 1.6;
-          margin-bottom: 2.25rem;
-          max-width: 800px;
+          font-size: 1.05rem;
+          color: #e2e8f0;
+          line-height: 1.55;
+          margin-bottom: 1.35rem;
+          max-width: 760px;
+          text-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
         }
 
         .hero-cta-group {
           display: flex;
           align-items: center;
           justify-content: center;
-          gap: 1rem;
+          gap: 0.75rem;
           flex-wrap: wrap;
-          margin-bottom: 3.5rem;
+          margin-bottom: 1.5rem;
+        }
+
+        .hero-cta-group .btn-secondary {
+          background: rgba(255, 255, 255, 0.12);
+          border: 1px solid rgba(255, 255, 255, 0.3);
+          color: #ffffff;
+          backdrop-filter: blur(8px);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .hero-cta-group .btn-secondary:hover {
+          background: rgba(255, 255, 255, 0.22);
+          border-color: rgba(255, 255, 255, 0.5);
+          color: #ffffff;
+          transform: translateY(-2px);
         }
 
         .hero-btn {
-          padding: 0.85rem 1.75rem;
-          font-size: 0.95rem;
+          padding: 0.65rem 1.4rem;
+          font-size: 0.9rem;
         }
 
-        .hero-stats-row {
+        /* Live Polar Stations & Field Ops Cards */
+        .hero-stations-hub {
+          width: 100%;
+          margin-top: 0.5rem;
+        }
+
+        .stations-hub-banner {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 0.85rem;
+        }
+
+        .hub-banner-pill {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          background: rgba(255, 255, 255, 0.14);
+          border: 1px solid rgba(255, 255, 255, 0.25);
+          color: #f8fafc;
+          padding: 0.32rem 1.15rem;
+          border-radius: var(--radius-full);
+          font-size: 0.72rem;
+          font-weight: 700;
+          letter-spacing: 0.06em;
+          text-transform: uppercase;
+          backdrop-filter: blur(8px);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .hero-stations-grid {
           display: grid;
           grid-template-columns: repeat(4, 1fr);
-          gap: 1.5rem;
+          gap: 0.85rem;
           width: 100%;
         }
 
-        .stat-card {
-          background: #ffffff;
-          border: 1px solid var(--border-card);
-          border-radius: var(--radius-md);
-          padding: 1.5rem 1rem;
-          text-align: center;
-          box-shadow: var(--shadow-sm);
-          transition: transform 0.2s ease, box-shadow 0.2s ease;
+        .station-ops-card {
+          background: rgba(255, 255, 255, 0.96);
+          border: 1px solid rgba(255, 255, 255, 0.7);
+          border-radius: 12px;
+          padding: 0.85rem 0.95rem;
+          text-align: left;
+          box-shadow: 0 4px 18px rgba(0, 0, 0, 0.2);
+          transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+          cursor: pointer;
+          display: flex;
+          flex-direction: column;
+          gap: 0.55rem;
+          position: relative;
+          backdrop-filter: blur(12px);
         }
 
-        .stat-card:hover {
+        .station-ops-card:hover {
           transform: translateY(-3px);
-          box-shadow: var(--shadow-md);
-          border-color: #cbd5e1;
+          box-shadow: 0 12px 28px rgba(0, 0, 0, 0.28), 0 0 0 1px #10b981;
+          border-color: #34d399;
         }
 
-        .stat-number {
+        .station-card-top-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        }
+
+        .station-region-pill {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.25rem;
+          font-size: 0.65rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.04em;
+          padding: 0.15rem 0.45rem;
+          border-radius: 9999px;
+        }
+
+        .pill-antarctica {
+          background: #ecfdf5;
+          color: #047857;
+          border: 1px solid #a7f3d0;
+        }
+
+        .pill-arctic {
+          background: #f0fdf4;
+          color: #15803d;
+          border: 1px solid #bbf7d0;
+        }
+
+        .pill-himalaya {
+          background: #fffbeb;
+          color: #b45309;
+          border: 1px solid #fde68a;
+        }
+
+        .station-live-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.3rem;
+          font-size: 0.62rem;
+          font-weight: 700;
+          color: #16a34a;
+          background: rgba(22, 163, 74, 0.08);
+          border: 1px solid rgba(22, 163, 74, 0.2);
+          padding: 0.12rem 0.4rem;
+          border-radius: 9999px;
+        }
+
+        .live-status-dot {
+          width: 6px;
+          height: 6px;
+          border-radius: 50%;
+          background: #16a34a;
+        }
+
+        .station-card-info {
+          display: flex;
+          flex-direction: column;
+          gap: 0.15rem;
+        }
+
+        .station-card-name {
           font-family: var(--font-heading);
-          font-size: 2.2rem;
+          font-size: 1.05rem;
           font-weight: 800;
           color: var(--navy);
-          line-height: 1;
-          margin-bottom: 0.35rem;
+          line-height: 1.25;
         }
 
-        .stat-label {
-          font-size: 0.78rem;
-          color: var(--text-muted);
-          line-height: 1.35;
-          font-weight: 500;
+        .station-coords-badge {
+          font-size: 0.7rem;
+          color: #64748b;
+          font-family: monospace;
+          font-weight: 600;
+        }
+
+        .st-elev {
+          color: #94a3b8;
+          font-family: var(--font-body);
+        }
+
+        /* Telemetry & Action Row */
+        .station-telemetry-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 0.4rem;
+          background: #f8fafc;
+          border: 1px solid #e2e8f0;
+          border-radius: 6px;
+          padding: 0.35rem 0.55rem;
+        }
+
+        .telemetry-chips-wrap {
+          display: flex;
+          align-items: center;
+          gap: 0.45rem;
+        }
+
+        .telemetry-pill {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.25rem;
+          font-size: 0.74rem;
+          font-weight: 600;
+        }
+
+        .temp-pill {
+          color: #047857;
+        }
+
+        .wind-pill {
+          color: #334155;
+        }
+
+        .temp-color {
+          color: #059669;
+        }
+
+        .wind-color {
+          color: #64748b;
+        }
+
+        .station-map-link {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.2rem;
+          font-size: 0.72rem;
+          font-weight: 700;
+          color: #059669;
+          transition: all 0.15s ease;
+          padding: 0.15rem 0.4rem;
+          border-radius: 4px;
+          background: #ecfdf5;
+        }
+
+        .station-ops-card:hover .station-map-link {
+          background: #059669;
+          color: #ffffff;
+        }
+
+        .station-ops-card:hover .arrow-hover {
+          transform: translateX(3px);
         }
 
         /* Section Headings */
@@ -757,7 +991,7 @@ export default function Home({ navigateTo, onSelectExpedition }) {
         }
 
         @media (max-width: 1024px) {
-          .hero-stats-row {
+          .hero-stations-grid {
             grid-template-columns: repeat(2, 1fr);
           }
           .pillars-grid {
@@ -778,7 +1012,7 @@ export default function Home({ navigateTo, onSelectExpedition }) {
           .hero-heading {
             font-size: 2rem;
           }
-          .hero-stats-row {
+          .hero-stations-grid {
             grid-template-columns: 1fr;
           }
         }

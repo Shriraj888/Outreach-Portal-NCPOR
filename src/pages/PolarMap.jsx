@@ -201,7 +201,7 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
           <span className="status-label">SATCOM LINK:</span>
           <span className="status-value">
             SARAL-AltiKa / Oceansat-3
-            {satPos && <span style={{color:'#0284c7', fontWeight: 600}}> @ {satPos.lat.toFixed(1)}°, {satPos.lng.toFixed(1)}°</span>}
+            {satPos && <span style={{color:'#059669', fontWeight: 600}}> @ {satPos.lat.toFixed(1)}°, {satPos.lng.toFixed(1)}°</span>}
           </span>
         </div>
         <div className="status-item">
@@ -997,7 +997,7 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
           border-radius: 50%;
         }
 
-        .antarctica-dot { background: #0284c7; }
+        .antarctica-dot { background: #047857; }
         .arctic-dot { background: #059669; }
         .himalaya-dot { background: #d97706; }
 
@@ -1387,8 +1387,8 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
         }
 
         .empty-station-chip:hover {
-          border-color: #0284c7;
-          background: #eff6ff;
+          border-color: #059669;
+          background: #ecfdf5;
           transform: translateY(-1px);
         }
 
@@ -1398,10 +1398,10 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
           border-radius: 50%;
           flex-shrink: 0;
         }
-        .chip-dot.antarctica { background: #0284c7; }
+        .chip-dot.antarctica { background: #047857; }
         .chip-dot.arctic     { background: #059669; }
         .chip-dot.himalaya   { background: #d97706; }
-        .chip-dot.southern-ocean { background: #2563eb; }
+        .chip-dot.southern-ocean { background: #0f766e; }
 
         .chip-name {
           font-size: 0.82rem;
@@ -1498,7 +1498,7 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
           background: rgba(255, 255, 255, 0.95);
         }
 
-        .mini-region-badge.antarctica { color: #0284c7; }
+        .mini-region-badge.antarctica { color: #047857; }
         .mini-region-badge.arctic { color: #059669; }
         .mini-region-badge.himalaya { color: #d97706; }
 

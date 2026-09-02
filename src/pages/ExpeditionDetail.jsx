@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { usePortal } from '../context/PortalContext';
 import { 
   ArrowLeft, 
@@ -658,7 +658,7 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
         }
 
         .meta-card-icon {
-          color: #0284c7;
+          color: #059669;
           margin-top: 2px;
           flex-shrink: 0;
         }
@@ -763,7 +763,7 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
           width: 36px;
           height: 36px;
           border-radius: 50%;
-          background: #0284c7;
+          background: #059669;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -777,7 +777,7 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
 
         .ai-header-title p {
           font-size: 0.78rem;
-          color: #0369a1;
+          color: #047857;
         }
 
         .btn-copy-summary {
@@ -826,7 +826,7 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
           gap: 0.35rem;
           background: none;
           border: none;
-          color: #0284c7;
+          color: #059669;
           font-weight: 600;
           cursor: pointer;
         }
@@ -846,7 +846,7 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
         }
 
         .title-icon {
-          color: #0284c7;
+          color: #059669;
         }
 
         .icon-success {
@@ -1010,7 +1010,7 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
         }
 
         .report-icon {
-          color: #0284c7;
+          color: #059669;
         }
 
         .report-size {
@@ -1028,7 +1028,7 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
         .raw-text-label {
           font-size: 0.75rem;
           font-family: var(--font-mono);
-          color: #0284c7;
+          color: #059669;
           font-weight: 600;
           margin-bottom: 0.5rem;
         }
@@ -1139,7 +1139,7 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
           gap: 0.3rem;
           font-size: 0.7rem;
           font-weight: 700;
-          color: #0284c7;
+          color: #059669;
           margin-bottom: 0.35rem;
         }
 
@@ -1163,8 +1163,8 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
 
         .pub-cat-badge {
           display: inline-block;
-          background: #eff6ff;
-          color: #1d4ed8;
+          background: #ecfdf5;
+          color: #047857;
           font-size: 0.72rem;
           font-weight: 700;
           padding: 2px 8px;
@@ -1186,7 +1186,7 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
 
         .pub-journal {
           font-size: 0.8rem;
-          color: #0284c7;
+          color: #059669;
           margin-bottom: 0.75rem;
         }
 

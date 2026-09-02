@@ -454,9 +454,9 @@ export default function Header({ currentRoute, navigateTo }) {
         }
 
         .nav-link.active {
-          color: var(--navy);
-          background: #eff6ff;
-          border-color: #bfdbfe;
+          color: #065f46;
+          background: #ecfdf5;
+          border-color: #a7f3d0;
           font-weight: 600;
         }
 
