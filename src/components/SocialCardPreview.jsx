@@ -8,8 +8,7 @@ import {
   Heart, 
   Repeat, 
   Bookmark, 
-  ThumbsUp, 
-  Award 
+  ThumbsUp 
 } from 'lucide-react';
 import { TwitterIcon, InstagramIcon, LinkedinIcon } from './SocialIcons';
 
@@ -27,7 +26,6 @@ export default function SocialCardPreview({ aiContent, expeditionTitle, region, 
   }
 
   const { twitter, instagram, linkedin } = aiContent.socialCaptions;
-  const factCards = aiContent.factCards || [];
 
   const handleCopy = (text, key) => {
     navigator.clipboard.writeText(text);
@@ -62,14 +60,6 @@ export default function SocialCardPreview({ aiContent, expeditionTitle, region, 
         >
           <LinkedinIcon size={15} />
           <span>LinkedIn</span>
-        </button>
-
-        <button
-          className={`platform-btn factcards ${activePlatform === 'factcards' ? 'active' : ''}`}
-          onClick={() => setActivePlatform('factcards')}
-        >
-          <Award size={15} />
-          <span>Classroom Fact Cards</span>
         </button>
       </div>
 
@@ -236,48 +226,6 @@ export default function SocialCardPreview({ aiContent, expeditionTitle, region, 
                   <>
                     <Copy size={14} />
                     <span>Copy Executive LinkedIn Update</span>
-                  </>
-                )}
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Fact Cards */}
-        {activePlatform === 'factcards' && (
-          <div className="mock-card mock-facts">
-            <div className="facts-header">
-              <Award size={20} className="facts-icon" />
-              <h4>Classroom Polar Fact Cards</h4>
-            </div>
-
-            <div className="facts-grid">
-              {factCards.length > 0 ? (
-                factCards.map((fc, idx) => (
-                  <div key={idx} className="fact-card-item">
-                    <div className="fact-num">0{idx + 1}</div>
-                    <div className="fact-content">{fc}</div>
-                  </div>
-                ))
-              ) : (
-                <p className="empty-facts">No structured fact cards generated for this mission.</p>
-              )}
-            </div>
-
-            <div className="copy-action-bar">
-              <button 
-                className="btn-copy-caption"
-                onClick={() => handleCopy(factCards.join('\n\n'), 'facts')}
-              >
-                {copiedKey === 'facts' ? (
-                  <>
-                    <Check size={14} className="check-icon" />
-                    <span>Copied All Fact Cards!</span>
-                  </>
-                ) : (
-                  <>
-                    <Copy size={14} />
-                    <span>Copy All Classroom Fact Cards</span>
                   </>
                 )}
               </button>
@@ -589,62 +537,6 @@ export default function SocialCardPreview({ aiContent, expeditionTitle, region, 
           cursor: pointer;
         }
 
-        /* Facts */
-        .mock-facts {
-          background: #ffffff;
-          padding: 1.5rem;
-        }
-
-        .facts-header {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          color: var(--navy);
-          margin-bottom: 1rem;
-        }
-
-        .facts-header h4 {
-          font-size: 1.1rem;
-          font-weight: 700;
-        }
-
-        .facts-icon {
-          color: #d97706;
-        }
-
-        .facts-grid {
-          display: flex;
-          flex-direction: column;
-          gap: 0.75rem;
-          margin-bottom: 1.25rem;
-        }
-
-        .fact-card-item {
-          display: flex;
-          gap: 0.85rem;
-          align-items: flex-start;
-          background: #f8fafc;
-          border: 1px solid #e2e8f0;
-          border-radius: var(--radius-sm);
-          padding: 0.85rem;
-        }
-
-        .fact-num {
-          font-family: var(--font-mono);
-          font-weight: 800;
-          color: #b45309;
-          background: #fffbeb;
-          border: 1px solid #fde68a;
-          padding: 2px 6px;
-          border-radius: 4px;
-          font-size: 0.78rem;
-        }
-
-        .fact-content {
-          font-size: 0.85rem;
-          color: var(--text-secondary);
-          line-height: 1.5;
-        }
 
         .copy-action-bar {
           margin-top: 1rem;

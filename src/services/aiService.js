@@ -51,13 +51,12 @@ export async function generateOutreachPackage({ expedition, asset, assetType = "
 
   const region = target.region || "Antarctica";
   const title = target.title || "Polar Science Archive";
-  const year = target.year || 2024;
   const stationList = Array.isArray(target.stations) ? target.stations.join(", ") : (target.station || target.spatialCoverage || "Indian Polar Base");
 
-  let summary = `Archive records for ${title} (${year}).`;
-  let twitter = "";
-  let instagram = "";
-  let linkedin = "";
+  let summary;
+  let twitter;
+  let instagram;
+  let linkedin;
   let factCards = [];
 
   if (assetType === "dataset") {
@@ -122,32 +121,17 @@ export async function generateOutreachPackage({ expedition, asset, assetType = "
       twitter = `🧊 Did you know polar ice traps ancient bubbles of air from thousands of years ago? Indian scientists on the ${title} are decoding climate history at ${region}! 🇮🇳❄️ #SmartEducation #NCPOR #ScienceForStudents #IndiaInPolar`;
       instagram = `Calling all future polar explorers! ❄️🐧\n\nEver wondered what it's like to live at the edge of the world? During the ${title}, Indian researchers braved freezing blizzards to study ice, auroras, and polar wildlife!\n\n💡 Cool Fact: Ice cores drilled by our scientists act like ancient frozen history books!\n\nWhat would YOU research if you visited ${region}? Tell us in the comments! 👇\n\n#PolarScience #NCPOR #SmartEducation #FutureScientists #IndianResearch`;
       linkedin = `Empowering the next generation of climate leaders through polar science! 🇮🇳\n\nNCPOR's outreach team is proud to share educational milestones from the ${title}. Through open-access data and classroom explainers, we are inspiring young Indian students to explore careers in oceanography, glaciology, and climate stewardship.\n\n#SmartIndia #NCPOR #MoES #StemEducation #PolarResearch`;
-      factCards = [
-        `Expedition operated in extreme polar conditions across ${stationList}.`,
-        `Ice cores extracted serve as natural climate time capsules.`,
-        `Research supports global understanding of weather systems and monsoons.`
-      ];
     } else if (audience === "press") {
       summary = `NEW DELHI / GOA — The National Centre for Polar and Ocean Research (NCPOR), an autonomous institute under the Ministry of Earth Sciences (MoES), has unveiled key findings from the ${title}. Operating across ${stationList}, the mission achieved significant breakthroughs in cryospheric monitoring, atmospheric baseline measurements, and environmental stewardship, reinforcing India's strategic standing in polar scientific governance.`;
       twitter = `📰 PRESS RELEASE: @NCPOR_MoES announces major scientific milestones from the ${title} (${region}). High-precision cryospheric datasets and climate records now archived. 🇮🇳📊 #MoES #PressRelease #PolarResearch #IndiaScience`;
       instagram = `MEDIA HIGHLIGHT: India's Polar Research Milestones 🇮🇳📰\n\nKey scientific outcomes from the ${title} have been published by NCPOR / Ministry of Earth Sciences.\n\nFrom high-latitude observations to crucial atmospheric modeling, this mission represents a strategic leap in India's global polar footprint.\n\n🔗 Press kit and high-res media available at NCPOR Outreach Portal.\n\n#PressUpdate #NCPOR #MoES #NationalScience #India`;
       linkedin = `FOR IMMEDIATE RELEASE: Ministry of Earth Sciences (MoES) & NCPOR announce comprehensive deliverables from the ${title}.\n\nOperating in ${region}, the scientific corps successfully completed advanced telemetry deployments, environmental audits, and interdisciplinary data gathering. High-resolution press kits and open datasets are now accessible via the National Outreach Portal.\n\n#GovOfIndia #MoES #PressRelease #PolarScience #StrategicResearch`;
-      factCards = [
-        `Official scientific mission conducted under MoES mandate.`,
-        `Delivered high-resolution open datasets and peer-reviewed outputs.`,
-        `Validated zero-waste ecological standards under the Antarctic/Arctic treaty guidelines.`
-      ];
     } else {
       // General Public
       summary = `From the icy frontiers of ${region}, the ${title} brings home extraordinary scientific discoveries! Stationed at ${stationList}, Indian researchers braved extreme sub-zero weather to track how melting polar ice and shifting ocean currents directly connect to global weather patterns and India's seasonal monsoons. This expedition showcases the remarkable dedication of Indian scientists who live and work at the ends of the Earth to safeguard our climate future.`;
       twitter = `❄️ Breakthroughs from the frontier! The ${title} by @NCPOR_MoES has concluded with vital discoveries on climate resilience and polar ocean dynamics. 🇮🇳🧊 #PolarScience #NCPOR #IndiaIn${region.replace(/\s+/g, '')} #MoES`;
       instagram = `Journey to Earth's Most Extreme Frontier! 🧊✨\n\nMeet the incredible Indian scientists of the ${title} who lived and worked across ${stationList}.\n\nFrom extracting ancient ice records to monitoring polar ecosystems, their research helps us understand global climate changes that impact our everyday lives.\n\n👉 Explore the full expedition gallery and report at the link in bio!\n\n#NCPOR #PolarExploration #MoES #IndiaScience #ClimateAction #${region.replace(/\s+/g, '')}`;
       linkedin = `The National Centre for Polar and Ocean Research (NCPOR), Ministry of Earth Sciences, is pleased to highlight key scientific achievements from the ${title} (${region}).\n\nConducted across ${stationList}, this mission delivered vital observations in cryospheric dynamics, boundary-layer atmospheric physics, and ocean carbon fluxes.\n\nIndia continues to uphold highest scientific excellence and environmental stewardship in polar exploration.\n\n#NCPOR #MoES #PolarScience #ClimateLeadership #GovernmentOfIndia`;
-      factCards = [
-        `Mission conducted by multi-institutional Indian scientific team.`,
-        `Deep observations link polar teleconnections with tropical climate systems.`,
-        `Continuous zero-emission green energy tests deployed at polar research bases.`
-      ];
     }
   }
 

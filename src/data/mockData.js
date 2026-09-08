@@ -85,11 +85,6 @@ Major Scientific Deliverables:
         instagram: "Journey to the end of the Earth! 🧊✨\n\nIndia's 43rd Scientific Expedition to Antarctica has concluded with historic milestones! From drilling 122 meters deep into ancient ice to testing zero-carbon solar stations, our scientists are uncovering the planet's climate past to protect our future.\n\n Swipe to see life at Bharati & Maitri stations! 👉\n\n#Antarctica #NCPOR #ScienceOutreach #PolarExploration #IndiaScience",
         linkedin: "The Ministry of Earth Sciences (MoES) and National Centre for Polar and Ocean Research (NCPOR) are pleased to announce the successful completion of the 43rd Indian Scientific Expedition to Antarctica (ISEA).\n\nKey Highlights:\n🔹 Recovery of a 122.4m paleoclimatic ice core sequence.\n🔹 Advanced aerosol-cloud interaction monitoring at Bharati Station.\n🔹 Validation of hybrid green energy microgrids for polar habitats.\n\nIndia continues its steadfast commitment to peaceful polar scientific research and environmental stewardship under the Antarctic Treaty System."
       },
-      factCards: [
-        "122m Ice Core = 8,000 years of global climate history captured.",
-        "Bharati Station is one of the world's most energy-efficient green polar research stations.",
-        "14 new cold-adapted microbial strains discovered."
-      ],
       isApproved: true
     }
   },
@@ -165,11 +160,6 @@ The voyage departed Cape Town onboard chartered ice-class vessel MV Vasiliy Golo
         instagram: "Into the White Wilderness! 🇦🇶✨\n\nThe 44th Indian Scientific Expedition to Antarctica is officially under way! From installing autonomous polar weather buoys to advancing zero-emission energy systems at Bharati Station, Indian researchers continue pushing the frontiers of Earth science.\n\n#Antarctica #NCPOR #ISEA44 #PolarExploration #ClimateScience #IndiaInAntarctica",
         linkedin: "The National Centre for Polar and Ocean Research (NCPOR), Ministry of Earth Sciences, presents the preliminary scientific dossier for the 44th Indian Scientific Expedition to Antarctica (ISEA).\n\nKey Milestones:\n🔹 Launch of autonomous glaciological sensor networks.\n🔹 Field validation of high-capacity green microgrids at Bharati Station.\n🔹 Long-range aerosol and cryospheric monitoring across East Antarctica."
       },
-      factCards: [
-        "48 scientists from MoES, Survey of India, and premier IITs participate in the 44th ISEA.",
-        "Autonomous glaciological buoys transmit ice deformation metrics via satellite in real time.",
-        "Clean hybrid microgrids reduce polar station fuel requirements by over 30%."
-      ],
       isApproved: true
     }
   },
@@ -245,11 +235,6 @@ India's scientific presence at 78°55'N in Ny-Ålesund has transitioned into yea
         instagram: "Hello from the Top of the World! 🧭🐻‍❄️\n\nAt Himadri Station in Svalbard, Norway, Indian researchers work alongside international scientists studying the rapidly changing Arctic.\n\nWhy does it matter to India? Because changes in Arctic climate create ripple effects that alter our monsoons and ocean currents!\n\n#Arctic #Himadri #NCPOR #IndiaScience #ClimateChange #PolarResearch",
         linkedin: "NCPOR's Arctic research initiative at Himadri Station (Ny-Ålesund, Norway) highlights the vital scientific link between high-latitude cryosphere dynamics and tropical monsoon systems. Year-round multidisciplinary observations provide critical datasets for global climate resilience."
       },
-      factCards: [
-        "Himadri is located at 78°55' N, just 1,230 km from the Geographic North Pole.",
-        "India's IndARC is the first multi-sensor moored observatory deployed by a developing nation in Kongsfjorden.",
-        "Arctic warming is happening nearly 4 times faster than the global average ('Arctic Amplification')."
-      ],
       isApproved: true
     }
   },
@@ -325,11 +310,6 @@ The Third Pole holds the largest reserve of frozen freshwater outside the polar 
         instagram: "Life at 13,400 feet! 🏔️❄️\n\nMeet the brave glaciologists of NCPOR stationed at 'Himansh' in Spiti Valley. They brave sub-zero winds and treacherous crevasses to study glacier melt and protect downstream rivers.\n\nEvery meter of ice they measure helps India predict flood risks and plan future water resources.\n\n#Himalayas #Himansh #NCPOR #ScienceExploration #ThirdPole #GlacierResearch",
         linkedin: "The Himalayan Cryosphere is vital to South Asia's hydrological stability. Through the Himansh High-Altitude Observatory, NCPOR / Ministry of Earth Sciences delivers benchmark glaciological data, GLOF early warning assessments, and long-term runoff projections."
       },
-      factCards: [
-        "Himansh is situated at 4,080 meters (13,400 ft) above sea level in Spiti, Himachal Pradesh.",
-        "The Himalayas are known as the 'Third Pole' and 'Water Towers of Asia'.",
-        "Over 1 billion people in Asia depend directly on Himalayan glacial meltwater."
-      ],
       isApproved: true
     }
   },
@@ -396,11 +376,6 @@ The expedition sailed from Port Louis, Mauritius to the Antarctic ice edge and b
         instagram: "To the stormiest seas on Earth! 🌊🚢\n\nDid you know the Southern Ocean absorbs about 40% of all human-made carbon dioxide taken up by the world's oceans? Indian oceanographers sailed deep into polar waters to study this incredible marine ecosystem!\n\n#SouthernOcean #NCPOR #MarineScience #OceanConservation #IndiaScience",
         linkedin: "The Southern Ocean is a cornerstone of global thermohaline circulation and carbon sequestration. NCPOR's 12th Southern Ocean Expedition highlights India's leading role in polar oceanography, generating vital data for international ocean-climate frameworks."
       },
-      factCards: [
-        "The Southern Ocean absorbs ~40% of all ocean-absorbed human carbon emissions.",
-        "Antarctic Krill represents one of the largest animal biomasses on the planet.",
-        "Winds in the 'Furious Fifties' latitude routinely exceed 100 km/h."
-      ],
       isApproved: true
     }
   }

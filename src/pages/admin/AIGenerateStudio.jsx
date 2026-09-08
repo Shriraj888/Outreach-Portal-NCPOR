@@ -54,11 +54,6 @@ export default function AIGenerateStudio({ expeditionId, onBack, onSelectExpedit
   const [draftTwitter, setDraftTwitter] = useState(asset.aiGeneratedContent?.socialCaptions?.twitter || '');
   const [draftInstagram, setDraftInstagram] = useState(asset.aiGeneratedContent?.socialCaptions?.instagram || '');
   const [draftLinkedin, setDraftLinkedin] = useState(asset.aiGeneratedContent?.socialCaptions?.linkedin || '');
-  const [draftFactCards, setDraftFactCards] = useState(asset.aiGeneratedContent?.factCards || [
-    "Verified in-situ observation data archived at NCPOR Goa.",
-    "Promotes open science and climate research accessibility.",
-    "Integrated into the National Polar Outreach Portal."
-  ]);
   const [altTextMap, setAltTextMap] = useState({});
   const [publishSuccess, setPublishSuccess] = useState(false);
 
@@ -80,7 +75,6 @@ export default function AIGenerateStudio({ expeditionId, onBack, onSelectExpedit
       setDraftTwitter(result.socialCaptions.twitter);
       setDraftInstagram(result.socialCaptions.instagram);
       setDraftLinkedin(result.socialCaptions.linkedin);
-      setDraftFactCards(result.factCards);
 
       // Map Alt texts
       const newAltMap = {};
@@ -103,7 +97,6 @@ export default function AIGenerateStudio({ expeditionId, onBack, onSelectExpedit
         instagram: draftInstagram,
         linkedin: draftLinkedin
       },
-      factCards: draftFactCards,
       isApproved: true,
       approvedAt: new Date().toISOString()
     };
@@ -279,28 +272,6 @@ export default function AIGenerateStudio({ expeditionId, onBack, onSelectExpedit
               className="studio-textarea summary-field"
               placeholder="Click 'Generate All Outreach Content' above or type draft summary..."
             />
-
-            {/* Fact Cards / Bullets Editor */}
-            <div className="fact-cards-editor-section">
-              <h4>Classroom Fact Cards & Slide Bullets</h4>
-              <div className="fact-cards-inputs">
-                {draftFactCards.map((fact, idx) => (
-                  <div key={idx} className="fact-input-row">
-                    <span className="fact-idx">0{idx + 1}</span>
-                    <input 
-                      type="text"
-                      value={fact}
-                      onChange={(e) => {
-                        const updated = [...draftFactCards];
-                        updated[idx] = e.target.value;
-                        setDraftFactCards(updated);
-                      }}
-                      className="form-input"
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
           </div>
         )}
 
@@ -357,8 +328,7 @@ export default function AIGenerateStudio({ expeditionId, onBack, onSelectExpedit
                     twitter: draftTwitter,
                     instagram: draftInstagram,
                     linkedin: draftLinkedin
-                  },
-                  factCards: draftFactCards
+                  }
                 }}
                 expeditionTitle={expedition.title}
                 region={expedition.region}
@@ -734,32 +704,6 @@ export default function AIGenerateStudio({ expeditionId, onBack, onSelectExpedit
         .summary-field {
           font-size: 1.05rem;
           margin-bottom: 2rem;
-        }
-
-        .fact-cards-editor-section h4 {
-          font-size: 1rem;
-          color: #b45309;
-          margin-bottom: 1rem;
-          font-weight: 700;
-        }
-
-        .fact-cards-inputs {
-          display: flex;
-          flex-direction: column;
-          gap: 0.75rem;
-        }
-
-        .fact-input-row {
-          display: flex;
-          align-items: center;
-          gap: 0.75rem;
-        }
-
-        .fact-idx {
-          font-family: var(--font-mono);
-          color: #b45309;
-          font-weight: 700;
-          font-size: 0.85rem;
         }
 
         /* Social Layout */
