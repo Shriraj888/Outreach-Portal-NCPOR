@@ -949,6 +949,33 @@ export default function AIGenerateStudio({ expeditionId, onBack, onSelectExpedit
             grid-template-columns: 1fr;
           }
         }
+
+        @media (max-width: 768px) {
+          .ai-studio-page {
+            padding: 1.5rem 0 3.5rem;
+          }
+          .alt-item-card {
+            flex-direction: column;
+          }
+          .alt-item-thumb {
+            width: 100%;
+            height: 160px;
+          }
+          .studio-footer-bar {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0.85rem;
+          }
+          .footer-action-btns {
+            flex-direction: column;
+            width: 100%;
+          }
+          .footer-action-btns button {
+            width: 100%;
+            justify-content: center;
+            min-height: 40px;
+          }
+        }
       `}</style>
     </div>
   );

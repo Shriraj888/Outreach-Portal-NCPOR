@@ -158,6 +158,18 @@ button, input, select, textarea {
   padding: 0 1.5rem;
 }
 
+@media (max-width: 640px) {
+  .container {
+    padding: 0 1rem;
+  }
+}
+
+@media (max-width: 380px) {
+  .container {
+    padding: 0 0.75rem;
+  }
+}
+
 /* Card Surface - Crisp, clean, authentic */
 .glass-panel {
   background: var(--bg-card);
@@ -226,14 +238,14 @@ button, input, select, textarea {
 }
 
 .section-title {
-  font-size: 2rem;
+  font-size: clamp(1.45rem, 3.2vw + 0.5rem, 2rem);
   font-weight: 800;
   color: var(--navy);
   margin-bottom: 0.5rem;
 }
 
 .section-subtitle {
-  font-size: 1rem;
+  font-size: clamp(0.88rem, 1.2vw + 0.5rem, 1rem);
   color: var(--text-secondary);
   max-width: 680px;
   line-height: 1.55;
@@ -391,14 +403,15 @@ button, input, select, textarea {
 
 /* Page Headers */
 .page-title {
-  font-size: 2.25rem;
+  font-size: clamp(1.65rem, 4vw + 0.5rem, 2.25rem);
   font-weight: 800;
   color: var(--navy);
   margin-bottom: 0.4rem;
+  line-height: 1.2;
 }
 
 .page-sub {
-  font-size: 1.05rem;
+  font-size: clamp(0.92rem, 1.5vw + 0.5rem, 1.05rem);
   color: var(--text-secondary);
   max-width: 760px;
   line-height: 1.55;
@@ -425,7 +438,7 @@ button, input, select, textarea {
 /* Multi-Column Card Grids */
 .grid-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
   gap: 1.75rem;
 }
 
@@ -433,5 +446,21 @@ button, input, select, textarea {
   .grid-cards {
     grid-template-columns: 1fr;
     gap: 1.25rem;
+  }
+}
+
+/* Global Mobile Scroll & Touch Target Utilities */
+.touch-scroll-x {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.touch-scroll-x::-webkit-scrollbar {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .btn-primary, .btn-secondary, .btn-navy, .btn-ai, .btn-saffron {
+    min-height: 42px;
   }
 }

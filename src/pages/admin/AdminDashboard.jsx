@@ -808,6 +808,12 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
           padding-bottom: 0.85rem;
           margin-bottom: 1.25rem;
           overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+          scrollbar-width: none;
+        }
+
+        .archive-tab-bar::-webkit-scrollbar {
+          display: none;
         }
 
         .archive-tab-btn {
@@ -1127,12 +1133,65 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
           }
         }
 
-        @media (max-width: 640px) {
+        @media (max-width: 768px) {
+          .admin-dashboard-page {
+            padding-top: 1.5rem;
+            padding-bottom: 3.5rem;
+          }
+          .page-header-row {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+          }
+          .header-actions {
+            width: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+          }
+          .header-actions button {
+            flex: 1;
+            min-height: 40px;
+            justify-content: center;
+          }
+          .admin-kpi-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+          }
+          .kpi-card {
+            padding: 1rem;
+          }
+          .kpi-val {
+            font-size: 1.5rem;
+          }
+          .table-toolbar {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.85rem;
+          }
+          .table-filters {
+            width: 100%;
+          }
+          .table-search-wrap {
+            width: 100%;
+          }
+          .table-search-input {
+            width: 100%;
+          }
+          .table-select {
+            flex: 1;
+          }
+        }
+
+        @media (max-width: 480px) {
           .quick-upload-grid {
             grid-template-columns: 1fr;
           }
           .admin-kpi-grid {
             grid-template-columns: 1fr;
+          }
+          .header-actions button {
+            flex: 1 1 100%;
           }
         }
       `}</style>

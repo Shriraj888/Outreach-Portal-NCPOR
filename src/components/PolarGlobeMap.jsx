@@ -233,7 +233,12 @@ export default function PolarGlobeMap({
     ctx.clearRect(0, 0, W, H);
 
     const pt = projTypeRef.current;
-    const currentScale = scaleRef.current;
+    const baseScale = scaleRef.current;
+    // Adapt scale on mobile screens so 3D globe fits comfortably without clipping
+    const maxGlobeR = Math.min(W * 0.44, H * 0.44);
+    const currentScale = (W < 640 && pt !== 'geoEqualEarth') 
+      ? Math.min(baseScale, maxGlobeR) 
+      : (W < 640 && pt === 'geoEqualEarth' ? baseScale * Math.min(1, W / 600) : baseScale);
     const currentRot = rotRef.current;
     const proj = createProjection(pt, currentScale, currentRot, W, H);
     const path = d3geo.geoPath(proj, ctx);
@@ -862,7 +867,9 @@ export default function PolarGlobeMap({
       if (!canvas || !container) return;
 
       const w = container.clientWidth;
-      const h = Math.max(540, Math.round(w * 0.62));
+      const h = w < 640 
+        ? Math.max(320, Math.min(460, Math.round(w * 0.95))) 
+        : Math.max(480, Math.min(640, Math.round(w * 0.62)));
       const dpr = window.devicePixelRatio || 1;
 
       canvas.width = w * dpr;

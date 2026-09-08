@@ -300,6 +300,12 @@ export default function SocialCardPreview({ aiContent, expeditionTitle, region, 
           background: #f8fafc;
           border-bottom: 1px solid var(--border-subtle);
           overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+          scrollbar-width: none;
+        }
+
+        .platform-tab-bar::-webkit-scrollbar {
+          display: none;
         }
 
         .platform-btn {
@@ -683,6 +689,27 @@ export default function SocialCardPreview({ aiContent, expeditionTitle, region, 
 
         .empty-sparkle {
           color: #0284c7;
+        }
+
+        @media (max-width: 640px) {
+          .platform-card-wrapper {
+            padding: 1rem 0.65rem;
+          }
+          .platform-btn {
+            padding: 0.65rem 0.95rem;
+            font-size: 0.8rem;
+          }
+          .btn-copy-caption {
+            width: 100%;
+            justify-content: center;
+            min-height: 40px;
+          }
+          .mock-facts {
+            padding: 1rem;
+          }
+          .mock-twitter, .mock-instagram, .mock-linkedin {
+            padding: 1rem;
+          }
         }
       `}</style>
     </div>

@@ -23,11 +23,9 @@ import {
   Video,
   Play,
   Pause,
-  RotateCcw,
   Newspaper,
   Wand2,
   Share2,
-  ExternalLink,
   Volume2
 } from 'lucide-react';
 import { TwitterIcon, InstagramIcon, LinkedinIcon } from '../../components/SocialIcons';
@@ -2096,6 +2094,58 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
           }
           .video-studio-grid {
             grid-template-columns: 1fr;
+          }
+        }
+
+        @media (max-width: 768px) {
+          .selective-ai-page {
+            padding: 1.5rem 0 3.5rem;
+          }
+          .input-row-2 {
+            grid-template-columns: 1fr;
+          }
+          .content-meta-bar {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+          }
+          .output-actions-bar {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0.5rem;
+          }
+          .output-actions-bar button {
+            width: 100%;
+            justify-content: center;
+            min-height: 40px;
+          }
+          .article-preview-container {
+            max-height: 400px;
+            padding: 1rem;
+          }
+          .article-title {
+            font-size: 1.15rem;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .page-top-bar {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+          }
+          .card-header-bar {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+          }
+          .input-mode-pills {
+            width: 100%;
+            justify-content: space-between;
+          }
+          .mode-pill {
+            flex: 1;
+            text-align: center;
           }
         }
       `}</style>

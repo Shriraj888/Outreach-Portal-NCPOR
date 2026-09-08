@@ -632,11 +632,11 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
         }
 
         .detail-hero-title {
-          font-size: 2.3rem;
+          font-size: clamp(1.45rem, 4.5vw + 0.2rem, 2.3rem);
           font-weight: 800;
           color: var(--navy);
           line-height: 1.25;
-          margin-bottom: 1.75rem;
+          margin-bottom: 1.5rem;
           max-width: 950px;
         }
 
@@ -691,7 +691,13 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
           display: flex;
           gap: 0.5rem;
           overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+          scrollbar-width: none;
           padding: 0.5rem 0;
+        }
+
+        .detail-nav-tabs::-webkit-scrollbar {
+          display: none;
         }
 
         .detail-tab {
@@ -1068,7 +1074,7 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
 
         .media-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+          grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
           gap: 1.5rem;
         }
 
@@ -1274,7 +1280,49 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
             grid-template-columns: 1fr;
           }
           .detail-meta-grid {
+            grid-template-columns: repeat(2, 1fr);
+          }
+        }
+
+        @media (max-width: 768px) {
+          .detail-top-inner {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.75rem;
+          }
+          .detail-actions-right {
+            width: 100%;
+            justify-content: space-between;
+          }
+          .detail-hero {
+            padding: 2.25rem 0 1.75rem;
+          }
+          .detail-content-body {
+            padding: 1.5rem 0 3.5rem;
+          }
+        }
+
+        @media (max-width: 640px) {
+          .detail-meta-grid {
             grid-template-columns: 1fr;
+            gap: 0.75rem;
+          }
+          .lightbox-backdrop {
+            padding: 0.75rem;
+          }
+          .lightbox-full-img {
+            max-height: 48vh;
+          }
+          .lightbox-caption {
+            padding: 1rem;
+          }
+          .ai-card-header {
+            flex-direction: column;
+            align-items: flex-start;
+          }
+          .btn-copy-summary {
+            width: 100%;
+            justify-content: center;
           }
         }
       `}</style>

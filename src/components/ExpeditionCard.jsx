@@ -306,6 +306,23 @@ export default function ExpeditionCard({ expedition, onSelect }) {
           color: #ffffff;
           transform: translateX(3px);
         }
+
+        @media (max-width: 640px) {
+          .card-image-wrap {
+            height: 180px;
+          }
+          .card-body {
+            padding: 1rem;
+          }
+          .card-title {
+            font-size: 1.02rem;
+          }
+          .card-meta {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.35rem;
+          }
+        }
       `}</style>
     </div>
   );

@@ -293,6 +293,23 @@ export default function AdminLogin({ navigateTo }) {
         .btn-back-home:hover {
           color: var(--navy);
         }
+
+        @media (max-width: 640px) {
+          .admin-login-page {
+            padding: 2rem 0;
+            min-height: auto;
+          }
+          .login-card {
+            padding: 1.5rem 1rem;
+            border-radius: var(--radius-md);
+          }
+          .login-header h2 {
+            font-size: 1.15rem;
+          }
+          .btn-login-submit, .btn-demo-fast {
+            min-height: 44px;
+          }
+        }
       `}</style>
     </div>
   );

@@ -49,8 +49,11 @@ export default function Header({ currentRoute, navigateTo }) {
         <div className="container gov-strip-content">
           <div className="gov-title">
             <span className="tricolor-badge"></span>
-            <span className="gov-text">
+            <span className="gov-text gov-text-full">
               भारत सरकार | <strong>GOVERNMENT OF INDIA</strong> • MINISTRY OF EARTH SCIENCES
+            </span>
+            <span className="gov-text gov-text-short">
+              भारत सरकार | <strong>GOVT. OF INDIA</strong> • MoES
             </span>
           </div>
 
@@ -209,6 +212,32 @@ export default function Header({ currentRoute, navigateTo }) {
       {mobileMenuOpen && (
         <div className="mobile-drawer">
           <div className="mobile-drawer-content">
+            {/* Mobile Search Bar */}
+            <div className="mobile-search-row">
+              <Search size={16} className="mobile-search-icon" />
+              <input
+                type="text"
+                placeholder={lang === 'hi' ? "मिशन या स्टेशन खोजें..." : "Search missions, stations..."}
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  if (currentRoute !== 'expeditions' && e.target.value.length > 0) {
+                    handleNav('expeditions');
+                  }
+                }}
+                className="mobile-search-input"
+              />
+              {searchQuery && (
+                <button 
+                  className="mobile-clear-btn"
+                  onClick={() => setSearchQuery('')}
+                  aria-label="Clear search"
+                >
+                  <X size={14} />
+                </button>
+              )}
+            </div>
+
             <div className="mobile-nav-list">
               {navItems.map((item) => {
                 const Icon = item.icon;
@@ -290,6 +319,10 @@ export default function Header({ currentRoute, navigateTo }) {
           font-size: 0.74rem;
           letter-spacing: 0.02em;
           color: #f1f5f9;
+        }
+
+        .gov-text-short {
+          display: none;
         }
 
         .tricolor-badge {
@@ -563,6 +596,51 @@ export default function Header({ currentRoute, navigateTo }) {
           background: #ffffff;
           border-top: 1px solid var(--border-subtle);
           padding: 1rem;
+          box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .mobile-search-row {
+          position: relative;
+          display: flex;
+          align-items: center;
+          margin-bottom: 0.85rem;
+        }
+
+        .mobile-search-icon {
+          position: absolute;
+          left: 0.85rem;
+          color: var(--text-muted);
+          pointer-events: none;
+        }
+
+        .mobile-search-input {
+          width: 100%;
+          background: #f8fafc;
+          border: 1px solid var(--border-subtle);
+          border-radius: var(--radius-sm);
+          padding: 0.65rem 2.2rem 0.65rem 2.5rem;
+          font-size: 0.9rem;
+          color: var(--text-primary);
+        }
+
+        .mobile-search-input:focus {
+          outline: none;
+          border-color: var(--ice);
+          background: #ffffff;
+          box-shadow: 0 0 0 3px var(--ice-glow);
+        }
+
+        .mobile-clear-btn {
+          position: absolute;
+          right: 0.75rem;
+          background: none;
+          border: none;
+          color: var(--text-muted);
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 4px;
         }
 
         .mobile-nav-list {
@@ -575,7 +653,7 @@ export default function Header({ currentRoute, navigateTo }) {
           display: flex;
           align-items: center;
           gap: 0.75rem;
-          padding: 0.75rem 1rem;
+          padding: 0.8rem 1rem;
           border-radius: var(--radius-sm);
           background: #f8fafc;
           border: 1px solid var(--border-subtle);
@@ -584,6 +662,7 @@ export default function Header({ currentRoute, navigateTo }) {
           font-weight: 500;
           text-align: left;
           cursor: pointer;
+          min-height: 46px;
         }
 
         .mobile-nav-item.active {
@@ -591,6 +670,13 @@ export default function Header({ currentRoute, navigateTo }) {
           border-color: #bfdbfe;
           color: var(--navy);
           font-weight: 600;
+        }
+
+        .mobile-nav-item.admin-active {
+          background: #ecfdf5;
+          border-color: #a7f3d0;
+          color: #047857;
+          font-weight: 700;
         }
 
         .mobile-divider {
@@ -604,7 +690,11 @@ export default function Header({ currentRoute, navigateTo }) {
             display: none;
           }
           .mobile-menu-toggle {
-            display: block;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 40px;
+            min-height: 40px;
           }
           .header-search-input {
             width: 140px;
@@ -614,15 +704,61 @@ export default function Header({ currentRoute, navigateTo }) {
           }
         }
 
-        @media (max-width: 640px) {
-          .header-search-input {
+        @media (max-width: 860px) {
+          .search-input-wrapper {
             display: none;
-          }
-          .gov-title {
-            font-size: 0.65rem;
           }
           .brand-secondary, .brand-tagline {
             display: none;
+          }
+        }
+
+        @media (max-width: 640px) {
+          .gov-text-full {
+            display: none;
+          }
+          .gov-text-short {
+            display: inline;
+          }
+          .gov-title {
+            font-size: 0.7rem;
+          }
+          .brand-primary {
+            font-size: 1.05rem;
+          }
+          .brand-emblem-badge {
+            width: 36px;
+            height: 36px;
+          }
+          .a11y-label {
+            display: none;
+          }
+          .a11y-toolbar {
+            gap: 0.35rem;
+          }
+          .a11y-toggle span {
+            display: none;
+          }
+          .a11y-toggle {
+            padding: 4px 6px;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .nav-container {
+            gap: 0.75rem;
+          }
+          .btn-admin span {
+            display: none;
+          }
+          .btn-admin {
+            padding: 0.45rem 0.55rem;
+          }
+          .admin-logged-group .btn-admin span {
+            display: none;
+          }
+          .btn-logout {
+            padding: 0.45rem 0.55rem;
           }
         }
       `}</style>

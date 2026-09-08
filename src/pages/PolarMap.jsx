@@ -1652,7 +1652,58 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
             grid-template-columns: 1fr;
           }
           .viewport-stage {
-            min-height: 460px;
+            min-height: 440px;
+          }
+        }
+
+        @media (max-width: 768px) {
+          .polar-map-page {
+            padding: 1.5rem 0 3.5rem;
+          }
+          .page-header-row {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+          }
+          .view-mode-toggle-group {
+            width: 100%;
+            display: flex;
+          }
+          .mode-toggle-btn {
+            flex: 1;
+            justify-content: center;
+            padding: 0.45rem 0.4rem;
+            font-size: 0.75rem;
+          }
+          .viewport-stage {
+            min-height: 320px;
+          }
+          .map-viewport-card {
+            padding: 0.85rem;
+          }
+          .layer-chip-buttons {
+            gap: 0.3rem;
+          }
+          .layer-chip {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.7rem;
+          }
+          .stations-grid {
+            grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+            gap: 0.85rem;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .mode-toggle-btn span {
+            font-size: 0.72rem;
+          }
+          .telemetry-statusbar {
+            padding: 0.5rem 0.65rem;
+            gap: 0.5rem;
+          }
+          .station-telemetry-grid {
+            grid-template-columns: 1fr;
           }
         }
 

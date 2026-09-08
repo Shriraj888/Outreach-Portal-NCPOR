@@ -459,14 +459,62 @@ export default function Expeditions({ onSelectExpedition, navigateTo }) {
 
         .grid-cards {
           display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+          grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
           gap: 1.75rem;
         }
 
         @media (max-width: 768px) {
+          .expeditions-page-container {
+            padding-top: 1.5rem;
+            padding-bottom: 3.5rem;
+          }
+          .page-header-row {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+          }
+          .filter-toolbar {
+            padding: 1.15rem;
+            gap: 1rem;
+          }
+          .main-search-input-wrap {
+            min-width: 100%;
+          }
+          .filter-controls-group {
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.65rem;
+          }
+          .filter-controls-group .select-wrapper {
+            width: 100%;
+          }
+          .filter-controls-group .custom-select {
+            width: 100%;
+          }
+          .btn-reset-filters {
+            grid-column: span 2;
+            justify-content: center;
+          }
           .grid-cards {
             grid-template-columns: 1fr;
             gap: 1.25rem;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .filter-controls-group {
+            grid-template-columns: 1fr;
+          }
+          .btn-reset-filters {
+            grid-column: span 1;
+          }
+          .region-pills {
+            gap: 0.35rem;
+          }
+          .region-pill-btn {
+            font-size: 0.76rem;
+            padding: 0.35rem 0.7rem;
           }
         }
       `}</style>

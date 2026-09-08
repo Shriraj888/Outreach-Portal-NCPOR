@@ -637,6 +637,15 @@ The voyage departed Cape Town with 48 scientists from MoES institutes, Survey of
         }
 
         @media (max-width: 768px) {
+          .expedition-form-page {
+            padding: 1.5rem 0 3.5rem;
+          }
+          .form-section-card {
+            padding: 1.15rem;
+          }
+          .form-top-bar h2 {
+            font-size: 1.4rem;
+          }
           .form-grid-2 {
             grid-template-columns: 1fr;
           }
@@ -649,6 +658,20 @@ The voyage departed Cape Town with 48 scientists from MoES institutes, Survey of
           .media-preview-box {
             width: 100%;
             height: 160px;
+          }
+          .form-action-footer {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0.75rem;
+          }
+          .submit-btns-right {
+            flex-direction: column;
+            width: 100%;
+          }
+          .submit-btns-right button {
+            width: 100%;
+            justify-content: center;
+            min-height: 40px;
           }
         }
       `}</style>

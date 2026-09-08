@@ -997,6 +997,12 @@ export default function Home({ navigateTo, onSelectExpedition }) {
         }
 
         @media (max-width: 1024px) {
+          .home-page-container {
+            gap: 3rem;
+          }
+          .telemetry-bar {
+            margin-bottom: -3rem;
+          }
           .hero-stations-grid {
             grid-template-columns: repeat(2, 1fr);
           }
@@ -1008,6 +1014,7 @@ export default function Home({ navigateTo, onSelectExpedition }) {
           }
           .spotlight-grid {
             grid-template-columns: 1fr;
+            gap: 1.5rem;
           }
           .activities-grid {
             grid-template-columns: 1fr;
@@ -1015,11 +1022,58 @@ export default function Home({ navigateTo, onSelectExpedition }) {
         }
 
         @media (max-width: 640px) {
+          .home-page-container {
+            gap: 2.25rem;
+          }
+          .telemetry-bar {
+            margin-bottom: -2.25rem;
+          }
+          .hero-section {
+            padding: 2.25rem 0 1.75rem;
+          }
           .hero-heading {
-            font-size: 2rem;
+            font-size: clamp(1.65rem, 5.5vw + 0.2rem, 2.1rem);
+          }
+          .hero-subtext {
+            font-size: 0.95rem;
+            margin-bottom: 1.15rem;
           }
           .hero-stations-grid {
             grid-template-columns: 1fr;
+          }
+          .pillar-card {
+            height: 240px;
+          }
+          .spotlight-card {
+            padding: 1.25rem;
+          }
+          .spotlight-media {
+            height: 200px;
+          }
+          .spotlight-title {
+            font-size: 1.35rem;
+          }
+          .activity-card {
+            padding: 1.15rem;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .hero-cta-group {
+            flex-direction: column;
+            width: 100%;
+          }
+          .hero-cta-group .hero-btn {
+            width: 100%;
+          }
+          .spotlight-actions {
+            flex-direction: column;
+            align-items: stretch;
+          }
+          .spotlight-actions .btn-saffron,
+          .spotlight-actions .btn-secondary {
+            width: 100%;
+            text-align: center;
           }
         }
       `}</style>

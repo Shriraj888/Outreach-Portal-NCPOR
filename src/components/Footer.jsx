@@ -320,12 +320,21 @@ export default function Footer({ navigateTo }) {
         }
 
         @media (max-width: 640px) {
+          .footer-content {
+            padding: 2.25rem 0.5rem 1.25rem;
+          }
           .footer-grid {
             grid-template-columns: 1fr;
+            gap: 1.75rem;
           }
           .footer-bottom {
             flex-direction: column;
             align-items: flex-start;
+            gap: 0.75rem;
+          }
+          .footer-meta-links {
+            flex-wrap: wrap;
+            gap: 0.35rem;
           }
         }
       `}</style>

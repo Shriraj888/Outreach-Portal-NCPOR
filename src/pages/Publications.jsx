@@ -799,6 +799,77 @@ export default function Publications({ navigateTo }) {
         .doi-link {
           color: #059669;
         }
+
+        @media (max-width: 768px) {
+          .publications-page-container {
+            padding-top: 1.5rem;
+            padding-bottom: 3.5rem;
+          }
+          .page-header-row {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+          }
+          .header-action-upload {
+            width: 100%;
+          }
+          .btn-upload-hub {
+            width: 100%;
+            justify-content: center;
+          }
+          .view-mode-tabs {
+            display: flex;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            gap: 0.4rem;
+            padding-bottom: 4px;
+          }
+          .view-mode-tabs::-webkit-scrollbar {
+            display: none;
+          }
+          .mode-tab {
+            white-space: nowrap;
+            padding: 0.6rem 0.9rem;
+            font-size: 0.8rem;
+          }
+          .filter-box {
+            padding: 1rem;
+          }
+          .pub-record-card {
+            padding: 1.15rem;
+          }
+          .pub-card-actions {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.75rem;
+          }
+          .pub-right-actions {
+            width: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.45rem;
+          }
+          .btn-action-pill {
+            flex: 1;
+            justify-content: center;
+            min-height: 38px;
+            white-space: nowrap;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .category-pills {
+            gap: 0.35rem;
+          }
+          .category-btn {
+            font-size: 0.74rem;
+            padding: 0.3rem 0.65rem;
+          }
+          .btn-action-pill {
+            flex: 1 1 100%;
+          }
+        }
       `}</style>
     </div>
   );
