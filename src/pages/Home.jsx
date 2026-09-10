@@ -514,9 +514,10 @@ export default function Home({ navigateTo, onSelectExpedition }) {
 
       <style>{`
         .home-page-container {
+          --home-section-gap: 4rem;
           display: flex;
           flex-direction: column;
-          gap: 4rem;
+          gap: var(--home-section-gap);
         }
 
         /* Telemetry Bar */
@@ -525,7 +526,7 @@ export default function Home({ navigateTo, onSelectExpedition }) {
           border-bottom: 1px solid #cbd5e1;
           padding: 0.5rem 0;
           font-size: 0.84rem;
-          margin-bottom: -4rem;
+          margin-bottom: calc(-1 * var(--home-section-gap));
         }
 
         .telemetry-inner {
@@ -1770,10 +1771,10 @@ export default function Home({ navigateTo, onSelectExpedition }) {
 
         @media (max-width: 1024px) {
           .home-page-container {
-            gap: 3rem;
+            --home-section-gap: 3rem;
           }
           .telemetry-bar {
-            margin-bottom: -2rem;
+            margin-bottom: calc(-1 * var(--home-section-gap));
           }
           .hero-stations-hub {
             max-width: 100%;
@@ -1825,10 +1826,10 @@ export default function Home({ navigateTo, onSelectExpedition }) {
 
         @media (max-width: 640px) {
           .home-page-container {
-            gap: 2.25rem;
+            --home-section-gap: 2.25rem;
           }
           .telemetry-bar {
-            margin-bottom: 0;
+            margin-bottom: calc(-1 * var(--home-section-gap));
             padding: 0.45rem 0;
           }
           .telemetry-inner {
