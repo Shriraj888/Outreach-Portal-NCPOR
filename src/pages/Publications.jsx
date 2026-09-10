@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { usePortal } from '../context/PortalContext';
 import { 
   FileText, 
@@ -16,7 +16,15 @@ import {
   MapPin,
   Clock,
   Plus,
-  ShieldCheck
+  ShieldCheck,
+  Filter,
+  X,
+  Sparkles,
+  ArrowUpDown,
+  Share2,
+  Tag,
+  Layers,
+  FileCode
 } from 'lucide-react';
 
 export default function Publications({ navigateTo }) {
@@ -24,8 +32,10 @@ export default function Publications({ navigateTo }) {
   const [viewTab, setViewTab] = useState('all'); // all, publications, datasets
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
+  const [sortBy, setSortBy] = useState('newest'); // newest, citations, title
   const [expandedId, setExpandedId] = useState(null);
   const [copiedId, setCopiedId] = useState(null);
+  const [copiedDoiId, setCopiedDoiId] = useState(null);
   const [downloadToast, setDownloadToast] = useState(null);
 
   const categories = [
@@ -37,34 +47,82 @@ export default function Publications({ navigateTo }) {
     'Polar Biology'
   ];
 
-  const filteredPubs = publications.filter(pub => {
-    if (selectedCategory !== 'All' && pub.category !== selectedCategory) {
-      return false;
+  // Category Color Accent Helper
+  const getCategoryColor = (cat) => {
+    switch (cat) {
+      case 'Glaciology & Paleoclimate':
+        return { bg: '#ecfdf5', text: '#047857', border: '#a7f3d0', dot: '#10b981' };
+      case 'Oceanography':
+        return { bg: '#f0fdfa', text: '#0f766e', border: '#99f6e4', dot: '#14b8a6' };
+      case 'Himalayan Cryosphere':
+        return { bg: '#fffbeb', text: '#b45309', border: '#fde68a', dot: '#f59e0b' };
+      case 'Atmospheric Sciences':
+        return { bg: '#f5f3ff', text: '#6d28d9', border: '#ddd6fe', dot: '#8b5cf6' };
+      case 'Polar Biology':
+        return { bg: '#f0fdf4', text: '#15803d', border: '#bbf7d0', dot: '#22c55e' };
+      default:
+        return { bg: '#f1f5f9', text: '#475569', border: '#cbd5e1', dot: '#64748b' };
     }
-    if (searchTerm.trim() !== '') {
-      const q = searchTerm.toLowerCase();
-      const titleMatch = pub.title.toLowerCase().includes(q);
-      const authorMatch = pub.authors.some(a => a.toLowerCase().includes(q));
-      const journalMatch = (pub.journal || '').toLowerCase().includes(q);
-      const tagMatch = (pub.tags || []).some(t => t.toLowerCase().includes(q));
-      return titleMatch || authorMatch || journalMatch || tagMatch;
-    }
-    return true;
-  });
+  };
 
-  const filteredDatasets = datasets.filter(ds => {
-    if (selectedCategory !== 'All' && ds.category !== selectedCategory) {
-      return false;
+  // Filtered & Sorted Publications
+  const filteredPubs = useMemo(() => {
+    let result = publications.filter(pub => {
+      if (selectedCategory !== 'All' && pub.category !== selectedCategory) {
+        return false;
+      }
+      if (searchTerm.trim() !== '') {
+        const q = searchTerm.toLowerCase();
+        const titleMatch = pub.title.toLowerCase().includes(q);
+        const authorMatch = pub.authors.some(a => a.toLowerCase().includes(q));
+        const journalMatch = (pub.journal || '').toLowerCase().includes(q);
+        const tagMatch = (pub.tags || []).some(t => t.toLowerCase().includes(q));
+        return titleMatch || authorMatch || journalMatch || tagMatch;
+      }
+      return true;
+    });
+
+    if (sortBy === 'newest') {
+      result.sort((a, b) => b.year - a.year);
+    } else if (sortBy === 'citations') {
+      result.sort((a, b) => (b.citations || 0) - (a.citations || 0));
+    } else if (sortBy === 'title') {
+      result.sort((a, b) => a.title.localeCompare(b.title));
     }
-    if (searchTerm.trim() !== '') {
-      const q = searchTerm.toLowerCase();
-      const titleMatch = ds.title.toLowerCase().includes(q);
-      const regionMatch = (ds.region || '').toLowerCase().includes(q);
-      const paramMatch = (ds.parameters || []).some(p => p.toLowerCase().includes(q));
-      return titleMatch || regionMatch || paramMatch;
+
+    return result;
+  }, [publications, selectedCategory, searchTerm, sortBy]);
+
+  // Filtered & Sorted Datasets
+  const filteredDatasets = useMemo(() => {
+    let result = datasets.filter(ds => {
+      if (selectedCategory !== 'All' && ds.category !== selectedCategory) {
+        return false;
+      }
+      if (searchTerm.trim() !== '') {
+        const q = searchTerm.toLowerCase();
+        const titleMatch = ds.title.toLowerCase().includes(q);
+        const regionMatch = (ds.region || '').toLowerCase().includes(q);
+        const paramMatch = (ds.parameters || []).some(p => p.toLowerCase().includes(q));
+        const doiMatch = (ds.doi || '').toLowerCase().includes(q);
+        return titleMatch || regionMatch || paramMatch || doiMatch;
+      }
+      return true;
+    });
+
+    if (sortBy === 'newest') {
+      result.sort((a, b) => b.year - a.year);
+    } else if (sortBy === 'citations') {
+      result.sort((a, b) => (b.downloadsCount || 0) - (a.downloadsCount || 0));
+    } else if (sortBy === 'title') {
+      result.sort((a, b) => a.title.localeCompare(b.title));
     }
-    return true;
-  });
+
+    return result;
+  }, [datasets, selectedCategory, searchTerm, sortBy]);
+
+  const totalAssetsCount = publications.length + datasets.length;
+  const currentTotalFiltered = (viewTab === 'all' ? filteredPubs.length + filteredDatasets.length : viewTab === 'publications' ? filteredPubs.length : filteredDatasets.length);
 
   const toggleExpand = (id) => {
     setExpandedId(expandedId === id ? null : id);
@@ -74,16 +132,47 @@ export default function Publications({ navigateTo }) {
     const citation = `${pub.authors.join(', ')} (${pub.year}). ${pub.title}. ${pub.journal}. https://doi.org/${pub.doi}`;
     navigator.clipboard.writeText(citation);
     setCopiedId(pub.id);
-    setTimeout(() => setCopiedId(null), 2500);
+    setDownloadToast(`Copied APA citation for "${pub.title.substring(0, 40)}..."`);
+    setTimeout(() => {
+      setCopiedId(null);
+      setDownloadToast(null);
+    }, 3000);
+  };
+
+  const copyDoi = (doi, id) => {
+    navigator.clipboard.writeText(`https://doi.org/${doi}`);
+    setCopiedDoiId(id);
+    setDownloadToast(`DOI link copied to clipboard: https://doi.org/${doi}`);
+    setTimeout(() => {
+      setCopiedDoiId(null);
+      setDownloadToast(null);
+    }, 3000);
   };
 
   const handleDownload = (ds) => {
-    setDownloadToast(`Initiated direct open-access download for "${ds.title}" (${ds.format})`);
+    setDownloadToast(`Initiated open-access download for "${ds.title.substring(0, 45)}..." (${ds.format})`);
     setTimeout(() => setDownloadToast(null), 3500);
+  };
+
+  const resetFilters = () => {
+    setSearchTerm('');
+    setSelectedCategory('All');
+    setSortBy('newest');
   };
 
   return (
     <div className="container publications-page-container">
+      {/* Toast Notification Alert */}
+      {downloadToast && (
+        <div className="download-toast-box">
+          <Check size={16} className="toast-icon" />
+          <span>{downloadToast}</span>
+          <button className="toast-close-btn" onClick={() => setDownloadToast(null)}>
+            <X size={14} />
+          </button>
+        </div>
+      )}
+
       {/* Header */}
       <div className="page-header-row">
         <div>
@@ -107,62 +196,107 @@ export default function Publications({ navigateTo }) {
         )}
       </div>
 
-      {downloadToast && (
-        <div className="download-toast-box">
-          <Download size={16} />
-          <span>{downloadToast}</span>
+      {/* View Mode Navigation Tabs */}
+      <div className="view-mode-tabs-container">
+        <div className="view-mode-tabs">
+          <button 
+            className={`mode-tab ${viewTab === 'all' ? 'active' : ''}`}
+            onClick={() => setViewTab('all')}
+          >
+            <Layers size={16} />
+            <span>All Open Assets</span>
+            <span className="tab-count-badge">{totalAssetsCount}</span>
+          </button>
+          <button 
+            className={`mode-tab ${viewTab === 'publications' ? 'active' : ''}`}
+            onClick={() => setViewTab('publications')}
+          >
+            <BookOpen size={16} />
+            <span>Peer-Reviewed Papers</span>
+            <span className="tab-count-badge">{publications.length}</span>
+          </button>
+          <button 
+            className={`mode-tab ${viewTab === 'datasets' ? 'active' : ''}`}
+            onClick={() => setViewTab('datasets')}
+          >
+            <Database size={16} />
+            <span>Scientific Datasets</span>
+            <span className="tab-count-badge">{datasets.length}</span>
+          </button>
         </div>
-      )}
-
-      {/* Main Mode Tabs */}
-      <div className="view-mode-tabs">
-        <button 
-          className={`mode-tab ${viewTab === 'all' ? 'active' : ''}`}
-          onClick={() => setViewTab('all')}
-        >
-          <span>All Open Assets ({publications.length + datasets.length})</span>
-        </button>
-        <button 
-          className={`mode-tab ${viewTab === 'publications' ? 'active' : ''}`}
-          onClick={() => setViewTab('publications')}
-        >
-          <BookOpen size={16} />
-          <span>Peer-Reviewed Papers ({publications.length})</span>
-        </button>
-        <button 
-          className={`mode-tab ${viewTab === 'datasets' ? 'active' : ''}`}
-          onClick={() => setViewTab('datasets')}
-        >
-          <Database size={16} />
-          <span>Scientific Datasets ({datasets.length})</span>
-        </button>
       </div>
 
-      {/* Filter & Search Bar */}
-      <div className="glass-panel filter-box">
-        <div className="search-row">
-          <div className="search-input-wrap">
-            <Search size={18} className="search-icon" />
+      {/* Filter & Search Bar Hub */}
+      <div className="glass-panel filter-hub-card">
+        <div className="search-sort-row">
+          <div className="search-input-wrapper">
+            <Search size={18} className="search-icon-left" />
             <input 
               type="text" 
-              placeholder="Search by title, author, parameter, DOI, or keyword..."
+              placeholder="Search by title, author, parameter (e.g. δ18O, aerosol), DOI, or keyword..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="search-field"
+              className="pub-search-input"
             />
+            {searchTerm && (
+              <button 
+                className="search-clear-btn" 
+                onClick={() => setSearchTerm('')}
+                title="Clear search"
+              >
+                <X size={15} />
+              </button>
+            )}
+          </div>
+
+          <div className="sort-dropdown-wrap">
+            <ArrowUpDown size={15} className="sort-icon" />
+            <select 
+              value={sortBy} 
+              onChange={(e) => setSortBy(e.target.value)}
+              className="sort-select"
+            >
+              <option value="newest">Sort by: Newest First</option>
+              <option value="citations">Sort by: Most Cited / Downloads</option>
+              <option value="title">Sort by: Title (A-Z)</option>
+            </select>
           </div>
         </div>
 
-        <div className="category-pills">
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              className={`category-btn ${selectedCategory === cat ? 'active' : ''}`}
-              onClick={() => setSelectedCategory(cat)}
-            >
-              {cat}
+        {/* Category Pills & Active Filter Bar */}
+        <div className="filter-pills-row">
+          <div className="category-chips-list">
+            <span className="filter-label">
+              <Filter size={13} />
+              <span>Discipline:</span>
+            </span>
+            {categories.map((cat) => {
+              const isActive = selectedCategory === cat;
+              return (
+                <button
+                  key={cat}
+                  className={`category-pill-btn ${isActive ? 'active' : ''}`}
+                  onClick={() => setSelectedCategory(cat)}
+                >
+                  {cat}
+                </button>
+              );
+            })}
+          </div>
+
+          {(searchTerm || selectedCategory !== 'All') && (
+            <button className="btn-reset-filters" onClick={resetFilters}>
+              <X size={13} />
+              <span>Reset Filters</span>
             </button>
-          ))}
+          )}
+        </div>
+
+        {/* Result summary */}
+        <div className="results-summary-line">
+          <span>Showing <strong>{currentTotalFiltered}</strong> {currentTotalFiltered === 1 ? 'record' : 'records'}</span>
+          {searchTerm && <span> matching "<em>{searchTerm}</em>"</span>}
+          {selectedCategory !== 'All' && <span> under <strong>{selectedCategory}</strong></span>}
         </div>
       </div>
 
@@ -171,82 +305,161 @@ export default function Publications({ navigateTo }) {
         {/* DATASETS SECTION */}
         {(viewTab === 'all' || viewTab === 'datasets') && filteredDatasets.length > 0 && (
           <div className="section-block">
-            <div className="list-count-header">
-              <span className="section-type-title">
-                <Database size={18} className="icon-cyan" />
-                <span>Open Scientific Datasets ({filteredDatasets.length})</span>
-              </span>
+            <div className="section-header-band">
+              <div className="section-title-group">
+                <div className="section-icon-cube dataset-cube">
+                  <Database size={18} />
+                </div>
+                <div>
+                  <h2 className="section-heading-text">Open Scientific Datasets</h2>
+                  <p className="section-subtext">Verified observational time-series, ice core profiles, and oceanographic logs</p>
+                </div>
+              </div>
+              <span className="section-counter-badge dataset-count">{filteredDatasets.length} datasets</span>
             </div>
 
             <div className="pubs-vertical-stack">
               {filteredDatasets.map((ds) => {
                 const isExpanded = expandedId === ds.id;
+                const catStyle = getCategoryColor(ds.category);
+
                 return (
-                  <div key={ds.id} className="glass-panel pub-record-card dataset-card-accent">
-                    <div className="pub-card-top">
-                      <div className="pub-badge-line">
-                        <span className="pub-discipline-badge dataset-badge">{ds.category}</span>
-                        <span className="pub-format-badge">{ds.format}</span>
-                        <span className="pub-year-badge">
-                          <Calendar size={12} /> {ds.year}
-                        </span>
-                        <span className="license-pill">
-                          <ShieldCheck size={12} /> {ds.license || 'CC-BY Open Data'}
-                        </span>
+                  <div key={ds.id} className="pub-card-modern dataset-accent-border">
+                    <div className="pub-card-main">
+                      {/* Badge Ribbon */}
+                      <div className="card-top-ribbon">
+                        <div className="badge-cluster">
+                          <span 
+                            className="card-category-badge"
+                            style={{ 
+                              backgroundColor: catStyle.bg, 
+                              color: catStyle.text, 
+                              borderColor: catStyle.border 
+                            }}
+                          >
+                            <span className="badge-dot" style={{ backgroundColor: catStyle.dot }} />
+                            {ds.category}
+                          </span>
+
+                          <span className="card-format-pill">
+                            <FileCode size={12} />
+                            {ds.format}
+                          </span>
+
+                          <span className="card-year-pill">
+                            <Calendar size={12} />
+                            {ds.year}
+                          </span>
+
+                          <span className="card-license-pill">
+                            <ShieldCheck size={12} />
+                            {ds.license || 'CC-BY 4.0 Open Science'}
+                          </span>
+                        </div>
+
+                        {ds.downloadsCount && (
+                          <span className="card-download-stat" title="Total downloads">
+                            <Download size={12} />
+                            <span>{ds.downloadsCount} downloads</span>
+                          </span>
+                        )}
                       </div>
 
-                      <h3 className="pub-title-text">{ds.title}</h3>
+                      {/* Title */}
+                      <h3 className="card-title-text">{ds.title}</h3>
 
-                      <div className="dataset-meta-row">
-                        <span className="dataset-meta-item">
-                          <MapPin size={13} /> {ds.spatialCoverage}
-                        </span>
-                        <span className="dataset-meta-item">
-                          <Clock size={13} /> {ds.temporalCoverage}
-                        </span>
-                        <span className="dataset-meta-item">
-                          <FileText size={13} /> Size: {ds.fileSize}
-                        </span>
+                      {/* Meta information row */}
+                      <div className="card-meta-grid">
+                        <div className="meta-chip">
+                          <MapPin size={14} className="meta-icon geo-icon" />
+                          <span className="meta-value">{ds.spatialCoverage}</span>
+                        </div>
+                        <div className="meta-chip">
+                          <Clock size={14} className="meta-icon time-icon" />
+                          <span className="meta-value">{ds.temporalCoverage}</span>
+                        </div>
+                        <div className="meta-chip">
+                          <FileText size={14} className="meta-icon size-icon" />
+                          <span className="meta-value">File Size: {ds.fileSize}</span>
+                        </div>
                       </div>
 
-                      {/* Parameters Tags */}
-                      {ds.parameters && (
-                        <div className="param-chips-row">
-                          <span className="param-label">Measured Variables:</span>
-                          {ds.parameters.map((p, i) => (
-                            <span key={i} className="param-chip">{p}</span>
-                          ))}
+                      {/* Measured Variables */}
+                      {ds.parameters && ds.parameters.length > 0 && (
+                        <div className="parameters-container">
+                          <span className="params-title">
+                            <Tag size={12} />
+                            <span>Measured Variables:</span>
+                          </span>
+                          <div className="params-chips-wrap">
+                            {ds.parameters.map((param, i) => (
+                              <span key={i} className="variable-chip">
+                                {param}
+                              </span>
+                            ))}
+                          </div>
                         </div>
                       )}
                     </div>
 
+                    {/* Expandable Details Drawer */}
                     {isExpanded && (
-                      <div className="abstract-expanded-box">
-                        <h5 className="abstract-title">Dataset Description & Ingestion Notes</h5>
-                        <p className="abstract-body">{ds.summary}</p>
-                        <div className="doi-direct-row">
-                          <span>DOI Identifier: <strong>https://doi.org/{ds.doi}</strong></span>
+                      <div className="expanded-details-drawer">
+                        <div className="drawer-inner">
+                          <div className="drawer-header">
+                            <h4 className="drawer-title">Dataset Summary & Technical Specifications</h4>
+                          </div>
+                          
+                          <p className="drawer-description">{ds.summary}</p>
+
+                          <div className="doi-interactive-strip">
+                            <div className="doi-info">
+                              <span className="doi-prefix">Persistent Identifier (DOI):</span>
+                              <code className="doi-code-box">https://doi.org/{ds.doi}</code>
+                            </div>
+
+                            <button 
+                              className={`btn-doi-copy ${copiedDoiId === ds.id ? 'active' : ''}`}
+                              onClick={() => copyDoi(ds.doi, ds.id)}
+                            >
+                              {copiedDoiId === ds.id ? (
+                                <><Check size={13} /><span>Copied DOI</span></>
+                              ) : (
+                                <><Copy size={13} /><span>Copy DOI</span></>
+                              )}
+                            </button>
+                          </div>
                         </div>
                       </div>
                     )}
 
-                    <div className="pub-card-actions">
+                    {/* Actions Toolbar */}
+                    <div className="card-actions-bar">
                       <button 
-                        className="btn-text-expand"
+                        className="btn-expand-toggle"
                         onClick={() => toggleExpand(ds.id)}
                       >
                         {isExpanded ? (
-                          <><span>Hide Metadata</span><ChevronUp size={15} /></>
+                          <><span>Collapse Details</span><ChevronUp size={15} /></>
                         ) : (
                           <><span>Inspect Variables & Abstract</span><ChevronDown size={15} /></>
                         )}
                       </button>
 
-                      <div className="pub-right-actions">
+                      <div className="action-buttons-group">
                         <button 
-                          className="btn-action-pill download"
+                          className="btn-secondary-action"
+                          onClick={() => copyDoi(ds.doi, ds.id)}
+                          title="Copy direct DOI"
+                        >
+                          {copiedDoiId === ds.id ? <Check size={14} /> : <Share2 size={14} />}
+                          <span>DOI Link</span>
+                        </button>
+
+                        <button 
+                          className="btn-download-primary"
                           onClick={() => handleDownload(ds)}
-                          title="Download dataset file"
+                          title="Download dataset"
                         >
                           <Download size={14} />
                           <span>Download {ds.format.split(' ')[0]}</span>
@@ -263,60 +476,115 @@ export default function Publications({ navigateTo }) {
         {/* PUBLICATIONS SECTION */}
         {(viewTab === 'all' || viewTab === 'publications') && filteredPubs.length > 0 && (
           <div className="section-block">
-            <div className="list-count-header">
-              <span className="section-type-title">
-                <BookOpen size={18} className="icon-amber" />
-                <span>Peer-Reviewed Publications ({filteredPubs.length})</span>
-              </span>
+            <div className="section-header-band">
+              <div className="section-title-group">
+                <div className="section-icon-cube pub-cube">
+                  <BookOpen size={18} />
+                </div>
+                <div>
+                  <h2 className="section-heading-text">Peer-Reviewed Publications</h2>
+                  <p className="section-subtext">Original research articles published in high-impact international journals</p>
+                </div>
+              </div>
+              <span className="section-counter-badge pub-count">{filteredPubs.length} publications</span>
             </div>
 
             <div className="pubs-vertical-stack">
               {filteredPubs.map((pub) => {
                 const isExpanded = expandedId === pub.id;
+                const catStyle = getCategoryColor(pub.category);
+
                 return (
-                  <div key={pub.id} className="glass-panel pub-record-card">
-                    <div className="pub-card-top">
-                      <div className="pub-badge-line">
-                        <span className="pub-discipline-badge">{pub.category}</span>
-                        <span className="pub-year-badge">
-                          <Calendar size={12} /> {pub.year}
-                        </span>
-                        <span className="citation-pill">
-                          📚 {pub.citations} Citations
-                        </span>
+                  <div key={pub.id} className="pub-card-modern publication-card-accent">
+                    <div className="pub-card-main">
+                      {/* Badges */}
+                      <div className="card-top-ribbon">
+                        <div className="badge-cluster">
+                          <span 
+                            className="card-category-badge"
+                            style={{ 
+                              backgroundColor: catStyle.bg, 
+                              color: catStyle.text, 
+                              borderColor: catStyle.border 
+                            }}
+                          >
+                            <span className="badge-dot" style={{ backgroundColor: catStyle.dot }} />
+                            {pub.category}
+                          </span>
+
+                          <span className="card-year-pill">
+                            <Calendar size={12} />
+                            {pub.year}
+                          </span>
+
+                          <span className="card-journal-badge">
+                            <em>{pub.journal}</em>
+                          </span>
+                        </div>
+
+                        {pub.citations !== undefined && (
+                          <span className="card-citation-badge" title="Citations tracked">
+                            <Sparkles size={12} />
+                            <span>{pub.citations} Citations</span>
+                          </span>
+                        )}
                       </div>
 
-                      <h3 className="pub-title-text">{pub.title}</h3>
+                      {/* Title */}
+                      <h3 className="card-title-text">{pub.title}</h3>
 
-                      <div className="pub-authors-line">
-                        <User size={14} className="author-icon" />
-                        <span>{pub.authors.join(', ')}</span>
+                      {/* Authors Line */}
+                      <div className="card-authors-bar">
+                        <User size={14} className="author-glyph" />
+                        <span className="author-names">{pub.authors.join(', ')}</span>
                       </div>
 
-                      <div className="pub-journal-line">
-                        <em>{pub.journal}</em> • DOI: <span className="doi-text">{pub.doi}</span>
-                      </div>
-
-                      {pub.tags && (
-                        <div className="pub-tags-list">
+                      {/* Tags */}
+                      {pub.tags && pub.tags.length > 0 && (
+                        <div className="pub-keywords-row">
                           {pub.tags.map((tag, i) => (
-                            <span key={i} className="mini-tag">{tag}</span>
+                            <span key={i} className="keyword-chip">
+                              #{tag}
+                            </span>
                           ))}
                         </div>
                       )}
                     </div>
 
-                    {/* Abstract Section (collapsible) */}
+                    {/* Expandable Abstract Drawer */}
                     {isExpanded && (
-                      <div className="abstract-expanded-box">
-                        <h5 className="abstract-title">Abstract</h5>
-                        <p className="abstract-body">{pub.abstract}</p>
+                      <div className="expanded-details-drawer">
+                        <div className="drawer-inner">
+                          <div className="drawer-header">
+                            <h4 className="drawer-title">Research Abstract</h4>
+                          </div>
+                          
+                          <p className="drawer-description">{pub.abstract}</p>
+
+                          <div className="doi-interactive-strip">
+                            <div className="doi-info">
+                              <span className="doi-prefix">Journal DOI:</span>
+                              <code className="doi-code-box">https://doi.org/{pub.doi}</code>
+                            </div>
+
+                            <a 
+                              href={`https://doi.org/${pub.doi}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="btn-publisher-link"
+                            >
+                              <span>Open Publisher Record</span>
+                              <ExternalLink size={13} />
+                            </a>
+                          </div>
+                        </div>
                       </div>
                     )}
 
-                    <div className="pub-card-actions">
+                    {/* Actions Toolbar */}
+                    <div className="card-actions-bar">
                       <button 
-                        className="btn-text-expand"
+                        className="btn-expand-toggle"
                         onClick={() => toggleExpand(pub.id)}
                       >
                         {isExpanded ? (
@@ -326,16 +594,16 @@ export default function Publications({ navigateTo }) {
                         )}
                       </button>
 
-                      <div className="pub-right-actions">
+                      <div className="action-buttons-group">
                         <button 
-                          className={`btn-action-pill ${copiedId === pub.id ? 'copied' : ''}`}
+                          className={`btn-secondary-action ${copiedId === pub.id ? 'active-copied' : ''}`}
                           onClick={() => copyCitation(pub)}
-                          title="Copy reference citation"
+                          title="Copy APA formatted citation"
                         >
                           {copiedId === pub.id ? (
-                            <><Check size={14} /><span>Copied!</span></>
+                            <><Check size={14} /><span>Copied APA</span></>
                           ) : (
-                            <><Copy size={14} /><span>Cite</span></>
+                            <><Copy size={14} /><span>Cite / APA</span></>
                           )}
                         </button>
 
@@ -343,10 +611,10 @@ export default function Publications({ navigateTo }) {
                           href={`https://doi.org/${pub.doi}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="btn-action-pill doi-link"
-                          title="View on publisher website"
+                          className="btn-primary-view"
+                          title="Visit original publication"
                         >
-                          <span>DOI Link</span>
+                          <span>View Article</span>
                           <ExternalLink size={13} />
                         </a>
                       </div>
@@ -357,28 +625,131 @@ export default function Publications({ navigateTo }) {
             </div>
           </div>
         )}
+
+        {/* Empty State when no results found */}
+        {currentTotalFiltered === 0 && (
+          <div className="empty-results-box">
+            <div className="empty-icon-circle">
+              <Search size={32} />
+            </div>
+            <h3 className="empty-title">No Matching Publications or Datasets</h3>
+            <p className="empty-subtitle">
+              We couldn't find any resources matching your search criteria. Try modifying your keywords or removing filters.
+            </p>
+            <button className="btn-empty-reset" onClick={resetFilters}>
+              Reset All Filters
+            </button>
+          </div>
+        )}
       </div>
 
       <style>{`
         .publications-page-container {
-          padding: 2.5rem 1.5rem 5rem;
+          padding: 2.5rem 1.5rem 6rem;
           display: flex;
           flex-direction: column;
-          gap: 1.75rem;
+          gap: 2rem;
+          max-width: 1280px;
+          margin: 0 auto;
         }
 
+        /* --- Toast Notification Box --- */
+        .download-toast-box {
+          position: fixed;
+          bottom: 2rem;
+          right: 2rem;
+          z-index: 1000;
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          background: #0f172a;
+          color: #ffffff;
+          border: 1px solid #334155;
+          padding: 0.9rem 1.25rem;
+          border-radius: var(--radius-md);
+          font-size: 0.88rem;
+          font-weight: 500;
+          box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.2);
+          animation: slideUpToast 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes slideUpToast {
+          from {
+            opacity: 0;
+            transform: translateY(20px) scale(0.96);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+          }
+        }
+
+        .toast-icon {
+          color: #10b981;
+          flex-shrink: 0;
+        }
+
+        .toast-close-btn {
+          background: transparent;
+          border: none;
+          color: #94a3b8;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 0.2rem;
+          margin-left: 0.5rem;
+          border-radius: 4px;
+        }
+
+        .toast-close-btn:hover {
+          color: #ffffff;
+          background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* --- Header Section --- */
         .page-header-row {
           display: flex;
           align-items: flex-end;
           justify-content: space-between;
           flex-wrap: wrap;
-          gap: 1rem;
+          gap: 1.25rem;
+        }
+
+        .section-eyebrow {
+          font-size: 0.8rem;
+          font-weight: 800;
+          letter-spacing: 0.08em;
+          color: #d97706;
+          text-transform: uppercase;
+          margin-bottom: 0.35rem;
+        }
+
+        .page-title {
+          font-size: 2.1rem;
+          font-weight: 800;
+          color: var(--navy);
+          line-height: 1.2;
+          letter-spacing: -0.02em;
+          margin: 0 0 0.5rem 0;
+        }
+
+        .page-sub {
+          font-size: 0.96rem;
+          color: var(--text-secondary);
+          max-width: 820px;
+          line-height: 1.55;
+          margin: 0;
+        }
+
+        .header-action-upload {
+          flex-shrink: 0;
         }
 
         .btn-upload-hub {
-          display: flex;
+          display: inline-flex;
           align-items: center;
-          gap: 0.4rem;
+          gap: 0.45rem;
           background: var(--navy);
           color: #ffffff;
           font-weight: 600;
@@ -388,151 +759,334 @@ export default function Publications({ navigateTo }) {
           border: none;
           cursor: pointer;
           box-shadow: var(--shadow-sm);
+          transition: all 0.15s ease;
         }
 
-        .download-toast-box {
+        .btn-upload-hub:hover {
+          background: #1e293b;
+        }
+
+        /* --- View Mode Tabs --- */
+        .view-mode-tabs-container {
           display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          background: #ecfdf5;
-          border: 1px solid #a7f3d0;
-          color: #047857;
-          padding: 0.75rem 1.25rem;
-          border-radius: var(--radius-sm);
-          font-size: 0.85rem;
-          font-weight: 600;
+          justify-content: flex-start;
         }
 
         .view-mode-tabs {
-          display: flex;
+          display: inline-flex;
           align-items: center;
-          gap: 0.5rem;
-          border-bottom: 1px solid var(--border-subtle);
-          padding-bottom: 0.5rem;
+          background: #e2e8f0;
+          padding: 0.35rem;
+          border-radius: var(--radius-md);
+          gap: 0.35rem;
+          box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
         }
 
         .mode-tab {
           display: flex;
           align-items: center;
-          gap: 0.45rem;
-          padding: 0.55rem 1rem;
+          gap: 0.5rem;
+          padding: 0.65rem 1.15rem;
           background: transparent;
-          border: 1px solid transparent;
+          border: none;
           color: var(--text-secondary);
           border-radius: var(--radius-sm);
-          font-size: 0.85rem;
+          font-size: 0.88rem;
           font-weight: 600;
           cursor: pointer;
-          transition: all 0.15s ease;
+          transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .mode-tab:hover {
           color: var(--navy);
-          background: #f1f5f9;
         }
 
         .mode-tab.active {
-          background: #eff6ff;
-          border-color: #bfdbfe;
+          background: #ffffff;
           color: var(--navy);
-        }
-
-        .section-block {
-          margin-bottom: 2rem;
-        }
-
-        .section-type-title {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          font-size: 1.15rem;
+          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
           font-weight: 700;
-          color: var(--navy);
         }
 
-        .icon-cyan { color: #059669; }
-        .icon-amber { color: #d97706; }
+        .tab-count-badge {
+          background: #f1f5f9;
+          color: #475569;
+          font-size: 0.75rem;
+          font-weight: 700;
+          padding: 0.15rem 0.5rem;
+          border-radius: var(--radius-full);
+        }
 
-        .filter-box {
-          padding: 1.25rem 1.5rem;
-          border-radius: var(--radius-md);
-          display: flex;
-          flex-direction: column;
-          gap: 1rem;
+        .mode-tab.active .tab-count-badge {
+          background: #eff6ff;
+          color: #1d4ed8;
+        }
+
+        /* --- Filter & Search Hub --- */
+        .filter-hub-card {
           background: #ffffff;
           border: 1px solid var(--border-card);
+          border-radius: var(--radius-md);
+          padding: 1.5rem;
+          display: flex;
+          flex-direction: column;
+          gap: 1.25rem;
           box-shadow: var(--shadow-sm);
         }
 
-        .search-input-wrap {
+        .search-sort-row {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          width: 100%;
+        }
+
+        .search-input-wrapper {
           position: relative;
           display: flex;
           align-items: center;
-          width: 100%;
+          flex: 1;
         }
 
-        .search-icon {
+        .search-icon-left {
           position: absolute;
-          left: 1rem;
-          color: var(--text-muted);
+          left: 1.1rem;
+          color: #64748b;
+          pointer-events: none;
         }
 
-        .search-field {
+        .pub-search-input {
           width: 100%;
           background: #f8fafc;
-          border: 1px solid var(--border-subtle);
+          border: 1px solid #cbd5e1;
           border-radius: var(--radius-sm);
-          padding: 0.75rem 1rem 0.75rem 2.75rem;
+          padding: 0.85rem 2.75rem 0.85rem 2.85rem;
           color: var(--text-primary);
           font-size: 0.95rem;
+          transition: all 0.2s ease;
         }
 
-        .search-field:focus {
+        .pub-search-input:focus {
           outline: none;
-          border-color: var(--ice);
+          border-color: #059669;
           background: #ffffff;
-          box-shadow: 0 0 0 3px var(--ice-glow);
+          box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15);
         }
 
-        .category-pills {
+        .search-clear-btn {
+          position: absolute;
+          right: 0.85rem;
+          background: #e2e8f0;
+          border: none;
+          color: #64748b;
+          width: 22px;
+          height: 22px;
+          border-radius: 50%;
           display: flex;
-          flex-wrap: wrap;
-          gap: 0.5rem;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
         }
 
-        .category-btn {
+        .search-clear-btn:hover {
+          background: #cbd5e1;
+          color: #0f172a;
+        }
+
+        .sort-dropdown-wrap {
+          position: relative;
+          display: flex;
+          align-items: center;
+          min-width: 230px;
+        }
+
+        .sort-icon {
+          position: absolute;
+          left: 0.9rem;
+          color: #64748b;
+          pointer-events: none;
+        }
+
+        .sort-select {
+          width: 100%;
           background: #f8fafc;
-          border: 1px solid var(--border-subtle);
+          border: 1px solid #cbd5e1;
+          border-radius: var(--radius-sm);
+          padding: 0.85rem 1rem 0.85rem 2.4rem;
           color: var(--text-secondary);
-          padding: 0.35rem 0.85rem;
-          border-radius: var(--radius-full);
+          font-size: 0.88rem;
+          font-weight: 600;
+          cursor: pointer;
+          appearance: none;
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+          background-repeat: no-repeat;
+          background-position: right 0.85rem center;
+        }
+
+        .sort-select:focus {
+          outline: none;
+          border-color: #059669;
+        }
+
+        .filter-pills-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          flex-wrap: wrap;
+          gap: 0.75rem;
+          border-top: 1px solid #f1f5f9;
+          padding-top: 1rem;
+        }
+
+        .category-chips-list {
+          display: flex;
+          align-items: center;
+          flex-wrap: wrap;
+          gap: 0.45rem;
+        }
+
+        .filter-label {
+          display: flex;
+          align-items: center;
+          gap: 0.35rem;
           font-size: 0.8rem;
+          color: #64748b;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.03em;
+          margin-right: 0.35rem;
+        }
+
+        .category-pill-btn {
+          background: #f8fafc;
+          border: 1px solid #e2e8f0;
+          color: var(--text-secondary);
+          padding: 0.4rem 0.85rem;
+          border-radius: var(--radius-full);
+          font-size: 0.82rem;
+          font-weight: 500;
           cursor: pointer;
           transition: all 0.15s ease;
         }
 
-        .category-btn:hover {
+        .category-pill-btn:hover {
           color: var(--navy);
-          background: #e2e8f0;
+          background: #f1f5f9;
+          border-color: #cbd5e1;
         }
 
-        .category-btn.active {
-          background: var(--navy);
-          border-color: var(--navy);
+        .category-pill-btn.active {
+          background: #0f172a;
+          border-color: #0f172a;
           color: #ffffff;
           font-weight: 600;
+          box-shadow: 0 2px 6px rgba(15, 23, 42, 0.2);
         }
 
+        .btn-reset-filters {
+          display: flex;
+          align-items: center;
+          gap: 0.35rem;
+          background: #fee2e2;
+          border: 1px solid #fecaca;
+          color: #b91c1c;
+          font-size: 0.8rem;
+          font-weight: 600;
+          padding: 0.35rem 0.75rem;
+          border-radius: var(--radius-sm);
+          cursor: pointer;
+          transition: background 0.15s ease;
+        }
+
+        .btn-reset-filters:hover {
+          background: #fca5a5;
+        }
+
+        .results-summary-line {
+          font-size: 0.85rem;
+          color: #64748b;
+        }
+
+        /* --- Section Grouping & Headers --- */
         .publications-list-wrapper {
           display: flex;
           flex-direction: column;
-          gap: 1.5rem;
+          gap: 2.5rem;
         }
 
-        .list-count-header {
-          font-size: 0.85rem;
-          color: var(--text-muted);
-          margin-bottom: 0.75rem;
+        .section-block {
+          display: flex;
+          flex-direction: column;
+          gap: 1.25rem;
+        }
+
+        .section-header-band {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding-bottom: 0.5rem;
+          border-bottom: 2px solid #e2e8f0;
+        }
+
+        .section-title-group {
+          display: flex;
+          align-items: center;
+          gap: 0.85rem;
+        }
+
+        .section-icon-cube {
+          width: 38px;
+          height: 38px;
+          border-radius: var(--radius-sm);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+        }
+
+        .dataset-cube {
+          background: #ecfdf5;
+          color: #059669;
+          border: 1px solid #a7f3d0;
+        }
+
+        .pub-cube {
+          background: #fffbeb;
+          color: #d97706;
+          border: 1px solid #fde68a;
+        }
+
+        .section-heading-text {
+          font-size: 1.25rem;
+          font-weight: 800;
+          color: var(--navy);
+          margin: 0;
+          line-height: 1.2;
+        }
+
+        .section-subtext {
+          font-size: 0.82rem;
+          color: #64748b;
+          margin: 0;
+        }
+
+        .section-counter-badge {
+          font-size: 0.8rem;
+          font-weight: 700;
+          padding: 0.35rem 0.85rem;
+          border-radius: var(--radius-full);
+        }
+
+        .dataset-count {
+          background: #ecfdf5;
+          color: #047857;
+          border: 1px solid #a7f3d0;
+        }
+
+        .pub-count {
+          background: #fffbeb;
+          color: #b45309;
+          border: 1px solid #fde68a;
         }
 
         .pubs-vertical-stack {
@@ -541,333 +1095,603 @@ export default function Publications({ navigateTo }) {
           gap: 1.25rem;
         }
 
-        .pub-record-card {
-          padding: 1.5rem;
+        /* --- Modern Record Card --- */
+        .pub-card-modern {
+          background: #ffffff;
+          border: 1px solid #e2e8f0;
           border-radius: var(--radius-md);
+          overflow: hidden;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+          transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
           display: flex;
           flex-direction: column;
-          gap: 1rem;
-          background: #ffffff;
-          border: 1px solid var(--border-card);
-          box-shadow: var(--shadow-sm);
         }
 
-        .dataset-card-accent {
-          border-left: 3px solid #059669;
+        .pub-card-modern:hover {
+          box-shadow: 0 8px 20px -4px rgba(15, 23, 42, 0.08), 0 4px 8px -2px rgba(15, 23, 42, 0.04);
+          border-color: #cbd5e1;
         }
 
-        .pub-badge-line {
+        .dataset-accent-border {
+          border-left: 4px solid #059669;
+        }
+
+        .publication-card-accent {
+          border-left: 4px solid #d97706;
+        }
+
+        .pub-card-main {
+          padding: 1.5rem 1.75rem 1.25rem;
           display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          flex-wrap: wrap;
-          margin-bottom: 0.4rem;
+          flex-direction: column;
+          gap: 0.85rem;
         }
 
-        .pub-discipline-badge {
-          background: #ecfdf5;
-          color: #047857;
-          border: 1px solid #a7f3d0;
-          font-size: 0.75rem;
-          font-weight: 600;
-          padding: 0.2rem 0.6rem;
-          border-radius: var(--radius-full);
-        }
-
-        .dataset-badge {
-          background: #f0fdf4;
-          color: #047857;
-          border: 1px solid #bbf7d0;
-        }
-
-        .pub-format-badge {
-          background: #f1f5f9;
-          color: #475569;
-          border: 1px solid #e2e8f0;
-          font-size: 0.72rem;
-          font-weight: 700;
-          padding: 0.15rem 0.55rem;
-          border-radius: 4px;
-        }
-
-        .license-pill {
-          display: flex;
-          align-items: center;
-          gap: 0.3rem;
-          font-size: 0.72rem;
-          color: var(--text-muted);
-        }
-
-        .pub-year-badge {
-          display: flex;
-          align-items: center;
-          gap: 0.3rem;
-          font-size: 0.75rem;
-          color: var(--text-muted);
-        }
-
-        .citation-pill {
-          font-size: 0.72rem;
-          color: #b45309;
-          background: #fffbeb;
-          border: 1px solid #fde68a;
-          padding: 0.15rem 0.5rem;
-          border-radius: 4px;
-          font-weight: 600;
-        }
-
-        .pub-title-text {
-          font-size: 1.15rem;
-          color: var(--navy);
-          font-weight: 700;
-          line-height: 1.35;
-          margin: 0.3rem 0;
-        }
-
-        .dataset-meta-row {
-          display: flex;
-          align-items: center;
-          gap: 1.25rem;
-          font-size: 0.8rem;
-          color: var(--text-secondary);
-          flex-wrap: wrap;
-          margin-top: 0.3rem;
-        }
-
-        .dataset-meta-item {
-          display: flex;
-          align-items: center;
-          gap: 0.35rem;
-        }
-
-        .param-chips-row {
-          display: flex;
-          align-items: center;
-          gap: 0.4rem;
-          flex-wrap: wrap;
-          margin-top: 0.5rem;
-        }
-
-        .param-label {
-          font-size: 0.72rem;
-          color: var(--text-muted);
-          font-weight: 600;
-        }
-
-        .param-chip {
-          background: #f1f5f9;
-          border: 1px solid #e2e8f0;
-          color: var(--text-secondary);
-          font-size: 0.72rem;
-          padding: 0.15rem 0.5rem;
-          border-radius: 4px;
-        }
-
-        .pub-authors-line {
-          display: flex;
-          align-items: center;
-          gap: 0.4rem;
-          font-size: 0.85rem;
-          color: var(--text-secondary);
-        }
-
-        .author-icon {
-          color: #0284c7;
-        }
-
-        .pub-journal-line {
-          font-size: 0.82rem;
-          color: var(--text-muted);
-        }
-
-        .doi-text {
-          font-family: var(--font-mono);
-          color: var(--text-muted);
-        }
-
-        .pub-tags-list {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 0.35rem;
-          margin-top: 0.4rem;
-        }
-
-        .mini-tag {
-          font-size: 0.72rem;
-          background: #f8fafc;
-          border: 1px solid #e2e8f0;
-          color: var(--text-muted);
-          padding: 0.1rem 0.45rem;
-          border-radius: 3px;
-        }
-
-        .abstract-expanded-box {
-          background: #f8fafc;
-          border-radius: var(--radius-sm);
-          padding: 1rem;
-          border-left: 3px solid #059669;
-        }
-
-        .abstract-title {
-          font-size: 0.8rem;
-          color: #059669;
-          text-transform: uppercase;
-          letter-spacing: 0.05em;
-          margin-bottom: 0.4rem;
-          font-weight: 700;
-        }
-
-        .abstract-body {
-          font-size: 0.85rem;
-          line-height: 1.55;
-          color: var(--text-secondary);
-        }
-
-        .doi-direct-row {
-          margin-top: 0.6rem;
-          font-size: 0.78rem;
-          color: var(--text-muted);
-        }
-
-        .pub-card-actions {
+        .card-top-ribbon {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          border-top: 1px solid #f1f5f9;
-          padding-top: 0.85rem;
           flex-wrap: wrap;
-          gap: 0.75rem;
-        }
-
-        .btn-text-expand {
-          display: flex;
-          align-items: center;
-          gap: 0.3rem;
-          background: transparent;
-          border: none;
-          color: #059669;
-          font-size: 0.82rem;
-          font-weight: 600;
-          cursor: pointer;
-        }
-
-        .pub-right-actions {
-          display: flex;
-          align-items: center;
           gap: 0.5rem;
         }
 
-        .btn-action-pill {
+        .badge-cluster {
+          display: flex;
+          align-items: center;
+          flex-wrap: wrap;
+          gap: 0.45rem;
+        }
+
+        .card-category-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.35rem;
+          font-size: 0.76rem;
+          font-weight: 700;
+          padding: 0.25rem 0.7rem;
+          border-radius: var(--radius-full);
+          border: 1px solid transparent;
+        }
+
+        .badge-dot {
+          width: 6px;
+          height: 6px;
+          border-radius: 50%;
+          display: inline-block;
+        }
+
+        .card-format-pill {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.3rem;
+          background: #f1f5f9;
+          color: #334155;
+          border: 1px solid #e2e8f0;
+          font-size: 0.74rem;
+          font-weight: 700;
+          padding: 0.2rem 0.6rem;
+          border-radius: 4px;
+        }
+
+        .card-year-pill {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.3rem;
+          font-size: 0.76rem;
+          color: #64748b;
+          font-weight: 600;
+          background: #f8fafc;
+          border: 1px solid #e2e8f0;
+          padding: 0.2rem 0.55rem;
+          border-radius: 4px;
+        }
+
+        .card-license-pill {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.3rem;
+          font-size: 0.74rem;
+          color: #047857;
+          background: #ecfdf5;
+          border: 1px solid #a7f3d0;
+          padding: 0.2rem 0.55rem;
+          border-radius: 4px;
+          font-weight: 600;
+        }
+
+        .card-journal-badge {
+          font-size: 0.78rem;
+          color: #475569;
+          background: #f8fafc;
+          border: 1px solid #e2e8f0;
+          padding: 0.2rem 0.6rem;
+          border-radius: 4px;
+        }
+
+        .card-citation-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.35rem;
+          font-size: 0.76rem;
+          color: #b45309;
+          background: #fffbeb;
+          border: 1px solid #fde68a;
+          padding: 0.25rem 0.65rem;
+          border-radius: var(--radius-full);
+          font-weight: 700;
+        }
+
+        .card-download-stat {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.35rem;
+          font-size: 0.76rem;
+          color: #047857;
+          background: #ecfdf5;
+          border: 1px solid #a7f3d0;
+          padding: 0.25rem 0.65rem;
+          border-radius: var(--radius-full);
+          font-weight: 600;
+        }
+
+        .card-title-text {
+          font-size: 1.22rem;
+          font-weight: 700;
+          color: var(--navy);
+          line-height: 1.35;
+          margin: 0.2rem 0;
+          letter-spacing: -0.01em;
+        }
+
+        .card-meta-grid {
+          display: flex;
+          align-items: center;
+          flex-wrap: wrap;
+          gap: 1.25rem;
+          padding: 0.5rem 0;
+        }
+
+        .meta-chip {
+          display: flex;
+          align-items: center;
+          gap: 0.4rem;
+          font-size: 0.84rem;
+          color: #475569;
+        }
+
+        .meta-icon {
+          flex-shrink: 0;
+        }
+
+        .geo-icon { color: #0284c7; }
+        .time-icon { color: #d97706; }
+        .size-icon { color: #059669; }
+
+        .meta-value {
+          font-weight: 500;
+        }
+
+        .parameters-container {
+          display: flex;
+          align-items: flex-start;
+          flex-wrap: wrap;
+          gap: 0.5rem;
+          margin-top: 0.25rem;
+        }
+
+        .params-title {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.3rem;
+          font-size: 0.76rem;
+          font-weight: 700;
+          color: #64748b;
+          text-transform: uppercase;
+          letter-spacing: 0.02em;
+          padding-top: 0.25rem;
+        }
+
+        .params-chips-wrap {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.4rem;
+        }
+
+        .variable-chip {
+          background: #f1f5f9;
+          border: 1px solid #cbd5e1;
+          color: #334155;
+          font-size: 0.76rem;
+          font-weight: 600;
+          padding: 0.2rem 0.55rem;
+          border-radius: 4px;
+          font-family: var(--font-mono);
+          letter-spacing: -0.01em;
+        }
+
+        .card-authors-bar {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          font-size: 0.88rem;
+          color: #334155;
+        }
+
+        .author-glyph {
+          color: #0284c7;
+          flex-shrink: 0;
+        }
+
+        .author-names {
+          font-weight: 500;
+        }
+
+        .pub-keywords-row {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.4rem;
+          margin-top: 0.2rem;
+        }
+
+        .keyword-chip {
+          font-size: 0.74rem;
+          background: #f8fafc;
+          border: 1px solid #e2e8f0;
+          color: #64748b;
+          padding: 0.15rem 0.5rem;
+          border-radius: 4px;
+          font-weight: 500;
+        }
+
+        /* --- Expanded Details Drawer --- */
+        .expanded-details-drawer {
+          background: #f8fafc;
+          border-top: 1px solid #e2e8f0;
+          border-bottom: 1px solid #e2e8f0;
+          padding: 1.25rem 1.75rem;
+          animation: expandFade 0.2s ease-out;
+        }
+
+        @keyframes expandFade {
+          from { opacity: 0; transform: translateY(-6px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+
+        .drawer-inner {
+          display: flex;
+          flex-direction: column;
+          gap: 0.85rem;
+        }
+
+        .drawer-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        }
+
+        .drawer-title {
+          font-size: 0.82rem;
+          font-weight: 700;
+          color: #0f172a;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+          margin: 0;
+        }
+
+        .drawer-description {
+          font-size: 0.9rem;
+          line-height: 1.6;
+          color: #334155;
+          margin: 0;
+        }
+
+        .doi-interactive-strip {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          flex-wrap: wrap;
+          gap: 0.75rem;
+          background: #ffffff;
+          padding: 0.75rem 1rem;
+          border-radius: var(--radius-sm);
+          border: 1px solid #e2e8f0;
+        }
+
+        .doi-info {
+          display: flex;
+          align-items: center;
+          gap: 0.6rem;
+          flex-wrap: wrap;
+        }
+
+        .doi-prefix {
+          font-size: 0.78rem;
+          color: #64748b;
+          font-weight: 600;
+        }
+
+        .doi-code-box {
+          font-family: var(--font-mono);
+          font-size: 0.82rem;
+          color: #047857;
+          background: #ecfdf5;
+          padding: 0.2rem 0.5rem;
+          border-radius: 4px;
+          border: 1px solid #a7f3d0;
+        }
+
+        .btn-doi-copy {
           display: flex;
           align-items: center;
           gap: 0.35rem;
-          background: #ffffff;
-          border: 1px solid var(--border-subtle);
-          color: var(--text-secondary);
-          padding: 0.35rem 0.75rem;
-          border-radius: var(--radius-sm);
+          background: #f1f5f9;
+          border: 1px solid #cbd5e1;
+          color: #334155;
           font-size: 0.78rem;
           font-weight: 600;
+          padding: 0.35rem 0.75rem;
+          border-radius: 4px;
           cursor: pointer;
+          transition: all 0.15s ease;
+        }
+
+        .btn-doi-copy:hover {
+          background: #e2e8f0;
+          color: #0f172a;
+        }
+
+        .btn-doi-copy.active {
+          background: #ecfdf5;
+          border-color: #a7f3d0;
+          color: #047857;
+        }
+
+        .btn-publisher-link {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.35rem;
+          background: #eff6ff;
+          border: 1px solid #bfdbfe;
+          color: #1d4ed8;
+          font-size: 0.78rem;
+          font-weight: 600;
+          padding: 0.35rem 0.75rem;
+          border-radius: 4px;
           text-decoration: none;
           transition: all 0.15s ease;
         }
 
-        .btn-action-pill:hover {
-          background: #f8fafc;
-          color: var(--navy);
-          border-color: #cbd5e1;
+        .btn-publisher-link:hover {
+          background: #dbeafe;
         }
 
-        .btn-action-pill.download {
-          background: #ecfdf5;
-          color: #047857;
-          border-color: #a7f3d0;
+        /* --- Actions Toolbar --- */
+        .card-actions-bar {
+          padding: 0.9rem 1.75rem;
+          background: #ffffff;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          flex-wrap: wrap;
+          gap: 0.85rem;
         }
 
-        .btn-action-pill.download:hover {
-          background: #a7f3d0;
-          color: #065f46;
-        }
-
-        .btn-action-pill.copied {
-          background: #ecfdf5;
-          color: #047857;
-          border-color: #a7f3d0;
-        }
-
-        .doi-link {
+        .btn-expand-toggle {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.35rem;
+          background: transparent;
+          border: none;
           color: #059669;
+          font-size: 0.85rem;
+          font-weight: 700;
+          cursor: pointer;
+          padding: 0.2rem 0;
+          transition: color 0.15s ease;
+        }
+
+        .btn-expand-toggle:hover {
+          color: #047857;
+          text-decoration: underline;
+        }
+
+        .action-buttons-group {
+          display: flex;
+          align-items: center;
+          gap: 0.6rem;
+        }
+
+        .btn-secondary-action {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.4rem;
+          background: #ffffff;
+          border: 1px solid #cbd5e1;
+          color: #334155;
+          padding: 0.5rem 0.9rem;
+          border-radius: var(--radius-sm);
+          font-size: 0.82rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.15s ease;
+        }
+
+        .btn-secondary-action:hover {
+          background: #f8fafc;
+          border-color: #94a3b8;
+          color: var(--navy);
+        }
+
+        .btn-secondary-action.active-copied {
+          background: #ecfdf5;
+          color: #047857;
+          border-color: #a7f3d0;
+        }
+
+        .btn-download-primary {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.45rem;
+          background: #059669;
+          border: 1px solid #047857;
+          color: #ffffff;
+          padding: 0.5rem 1.1rem;
+          border-radius: var(--radius-sm);
+          font-size: 0.84rem;
+          font-weight: 700;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          box-shadow: 0 2px 4px rgba(5, 150, 105, 0.25);
+        }
+
+        .btn-download-primary:hover {
+          background: #047857;
+          box-shadow: 0 4px 8px rgba(5, 150, 105, 0.35);
+          transform: translateY(-1px);
+        }
+
+        .btn-primary-view {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.45rem;
+          background: #0f172a;
+          border: 1px solid #0f172a;
+          color: #ffffff;
+          padding: 0.5rem 1.1rem;
+          border-radius: var(--radius-sm);
+          font-size: 0.84rem;
+          font-weight: 700;
+          text-decoration: none;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          box-shadow: 0 2px 4px rgba(15, 23, 42, 0.2);
+        }
+
+        .btn-primary-view:hover {
+          background: #1e293b;
+          transform: translateY(-1px);
+        }
+
+        /* --- Empty Results State --- */
+        .empty-results-box {
+          background: #ffffff;
+          border: 1px dashed #cbd5e1;
+          border-radius: var(--radius-lg);
+          padding: 3.5rem 2rem;
+          text-align: center;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 0.75rem;
+        }
+
+        .empty-icon-circle {
+          width: 64px;
+          height: 64px;
+          border-radius: 50%;
+          background: #f1f5f9;
+          color: #94a3b8;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 0.5rem;
+        }
+
+        .empty-title {
+          font-size: 1.25rem;
+          font-weight: 700;
+          color: var(--navy);
+          margin: 0;
+        }
+
+        .empty-subtitle {
+          font-size: 0.9rem;
+          color: #64748b;
+          max-width: 480px;
+          line-height: 1.5;
+          margin: 0;
+        }
+
+        .btn-empty-reset {
+          margin-top: 0.75rem;
+          background: #0f172a;
+          color: #ffffff;
+          border: none;
+          font-size: 0.85rem;
+          font-weight: 600;
+          padding: 0.65rem 1.25rem;
+          border-radius: var(--radius-sm);
+          cursor: pointer;
+          transition: background 0.15s ease;
+        }
+
+        .btn-empty-reset:hover {
+          background: #1e293b;
+        }
+
+        /* --- Responsive Styles --- */
+        @media (max-width: 900px) {
+          .pub-hero-banner {
+            padding: 1.75rem;
+          }
+          .pub-hero-title {
+            font-size: 1.75rem;
+          }
+          .search-sort-row {
+            flex-direction: column;
+            align-items: stretch;
+          }
+          .sort-dropdown-wrap {
+            min-width: 100%;
+          }
         }
 
         @media (max-width: 768px) {
           .publications-page-container {
-            padding-top: 1.5rem;
-            padding-bottom: 3.5rem;
+            padding: 1.5rem 1rem 4rem;
+            gap: 1.5rem;
           }
-          .page-header-row {
-            flex-direction: column;
-            align-items: flex-start;
+          .pub-stats-ribbon {
+            width: 100%;
+            justify-content: space-around;
             gap: 1rem;
+            padding: 0.75rem 1rem;
           }
-          .header-action-upload {
-            width: 100%;
-          }
-          .btn-upload-hub {
-            width: 100%;
-            justify-content: center;
-          }
-          .view-mode-tabs {
-            display: flex;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: none;
-            gap: 0.4rem;
-            padding-bottom: 4px;
-          }
-          .view-mode-tabs::-webkit-scrollbar {
+          .stat-divider {
             display: none;
           }
-          .mode-tab {
-            white-space: nowrap;
-            padding: 0.6rem 0.9rem;
-            font-size: 0.8rem;
-          }
-          .filter-box {
-            padding: 1rem;
-          }
-          .pub-record-card {
-            padding: 1.15rem;
-          }
-          .pub-card-actions {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 0.75rem;
-          }
-          .pub-right-actions {
+          .view-mode-tabs {
             width: 100%;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.45rem;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
           }
-          .btn-action-pill {
+          .mode-tab {
             flex: 1;
             justify-content: center;
-            min-height: 38px;
+            padding: 0.55rem 0.75rem;
+            font-size: 0.8rem;
             white-space: nowrap;
+          }
+          .card-actions-bar {
+            flex-direction: column;
+            align-items: flex-start;
+          }
+          .action-buttons-group {
+            width: 100%;
+          }
+          .btn-secondary-action, .btn-download-primary, .btn-primary-view {
+            flex: 1;
+            justify-content: center;
           }
         }
 
         @media (max-width: 480px) {
-          .category-pills {
+          .category-chips-list {
             gap: 0.35rem;
           }
-          .category-btn {
-            font-size: 0.74rem;
+          .category-pill-btn {
+            font-size: 0.75rem;
             padding: 0.3rem 0.65rem;
-          }
-          .btn-action-pill {
-            flex: 1 1 100%;
           }
         }
       `}</style>
