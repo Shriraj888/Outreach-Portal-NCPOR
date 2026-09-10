@@ -521,8 +521,8 @@ export default function Home({ navigateTo, onSelectExpedition }) {
           position: relative;
           padding: 2.25rem 0 2.25rem;
           background: 
-            radial-gradient(120% 100% at 50% 0%, rgba(15, 23, 42, 0.6) 0%, rgba(15, 23, 42, 0.88) 60%, rgba(15, 23, 42, 0.98) 100%),
-            url('https://images.unsplash.com/photo-1517411032315-54ef2cb783bb?auto=format&fit=crop&w=1920&q=85') center 30% / cover no-repeat;
+            radial-gradient(120% 100% at 50% 0%, rgba(15, 23, 42, 0.48) 0%, rgba(15, 23, 42, 0.82) 60%, rgba(15, 23, 42, 0.98) 100%),
+            url('https://images.unsplash.com/photo-1509326066092-14b2e882fe86?q=80&w=1920&auto=format&fit=crop') center 40% / cover no-repeat;
           border-bottom: 1px solid rgba(255, 255, 255, 0.12);
           overflow: hidden;
         }
