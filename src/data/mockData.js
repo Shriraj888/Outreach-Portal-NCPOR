@@ -71,9 +71,9 @@ Major Scientific Deliverables:
       {
         id: "m-43-4",
         type: "photo",
-        url: "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=1200&q=80",
+        url: "https://images.unsplash.com/photo-1598439210625-5067c578f3f6?auto=format&fit=crop&w=1200&q=80",
         caption: "Pygoscelis adeliae (Adélie penguin) colony observed during biological survey.",
-        altText: "Penguins standing on rocky ground with snowy Antarctic hills in background.",
+        altText: "Adélie penguins standing together on the rocky terrain and ice of Antarctica during biodiversity assessment.",
         tags: ["Fauna", "Penguins", "Biodiversity"]
       }
     ],

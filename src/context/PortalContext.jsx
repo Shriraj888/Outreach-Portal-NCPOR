@@ -12,11 +12,11 @@ import { translations } from '../data/translations';
 const PortalContext = createContext();
 
 const STORAGE_KEYS = {
-  EXPEDITIONS: 'ncpor_outreach_expeditions_v4',
-  PUBLICATIONS: 'ncpor_outreach_publications_v4',
-  DATASETS: 'ncpor_outreach_datasets_v4',
-  MEDIA: 'ncpor_outreach_media_v4',
-  ACTIVITIES: 'ncpor_outreach_activities_v4',
+  EXPEDITIONS: 'ncpor_outreach_expeditions_v7',
+  PUBLICATIONS: 'ncpor_outreach_publications_v7',
+  DATASETS: 'ncpor_outreach_datasets_v7',
+  MEDIA: 'ncpor_outreach_media_v7',
+  ACTIVITIES: 'ncpor_outreach_activities_v7',
   AUTH: 'ncpor_outreach_auth_v2',
   LANG: 'ncpor_outreach_lang_v2',
   ACCESSIBILITY: 'ncpor_outreach_a11y_v2'
