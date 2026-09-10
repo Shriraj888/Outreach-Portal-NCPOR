@@ -2,7 +2,7 @@ import { useEffect, useRef, useCallback, useState, useMemo } from 'react';
 import * as d3geo from 'd3-geo';
 import * as topojson from 'topojson-client';
 import worldData from 'world-atlas/countries-110m.json';
-import { ZoomIn, ZoomOut, RotateCw, Crosshair } from 'lucide-react';
+import { ZoomIn, ZoomOut, RotateCw, Maximize2, Minimize2 } from 'lucide-react';
 
 // ─── Static Geo Features & Geometry ─────────────────────────────────────────
 const LAND = topojson.feature(worldData, worldData.objects.countries);
@@ -884,61 +884,98 @@ export default function PolarGlobeMap({
     return () => ro.disconnect();
   }, []);
 
-  // ── Pointer & Mouse Drag Events ───────────────────────────────────────────
+  // ── Multi-Touch & Pointer Drag Events ─────────────────────────────────────
+  const activePointersRef = useRef(new Map());
+  const pinchInitialDistRef = useRef(null);
+  const pinchInitialScaleRef = useRef(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
   const onPointerDown = useCallback((e) => {
     const canvas = canvasRef.current;
     if (canvas && typeof canvas.setPointerCapture === 'function') {
-      canvas.setPointerCapture(e.pointerId);
-    }
-    dragRef.current = {
-      startX: e.clientX,
-      startY: e.clientY,
-      lastX: e.clientX,
-      lastY: e.clientY,
-      rot: [...rotRef.current],
-      time: performance.now(),
-    };
-    targetRef.current = null;
-    targetScaleRef.current = null;
-    velRef.current = [0, 0];
-
-    // Immediate hit-testing on pointer down
-    const rect = canvas?.getBoundingClientRect();
-    if (canvas && rect) {
-      const mx = e.clientX - rect.left;
-      const my = e.clientY - rect.top;
-      const items = renderedStationsRef.current || [];
-      let foundStation = null;
-      let closestDist = Infinity;
-
-      for (const item of items) {
-        const b = item.tagBounds;
-        if (mx >= b.x - 4 && mx <= b.x + b.w + 4 && my >= b.y - 4 && my <= b.y + b.h + 4) {
-          foundStation = item.station;
-          closestDist = 0;
-          break;
-        }
+      try {
+        canvas.setPointerCapture(e.pointerId);
+      } catch {
+        // ignore if not supported
       }
+    }
 
-      if (!foundStation) {
+    activePointersRef.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+    // Multi-touch pinch start
+    if (activePointersRef.current.size === 2) {
+      const pts = Array.from(activePointersRef.current.values());
+      pinchInitialDistRef.current = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
+      pinchInitialScaleRef.current = scaleRef.current;
+      dragRef.current = null;
+      return;
+    }
+
+    if (activePointersRef.current.size === 1) {
+      dragRef.current = {
+        startX: e.clientX,
+        startY: e.clientY,
+        lastX: e.clientX,
+        lastY: e.clientY,
+        rot: [...rotRef.current],
+        time: performance.now(),
+      };
+      targetRef.current = null;
+      targetScaleRef.current = null;
+      velRef.current = [0, 0];
+
+      // Immediate hit-testing on pointer down
+      const rect = canvas?.getBoundingClientRect();
+      if (canvas && rect) {
+        const mx = e.clientX - rect.left;
+        const my = e.clientY - rect.top;
+        const items = renderedStationsRef.current || [];
+        let foundStation = null;
+        let closestDist = Infinity;
+
         for (const item of items) {
-          const d = Math.hypot(item.pin[0] - mx, item.pin[1] - my);
-          if (d < 22 && d < closestDist) {
-            closestDist = d;
+          const b = item.tagBounds;
+          if (mx >= b.x - 6 && mx <= b.x + b.w + 6 && my >= b.y - 6 && my <= b.y + b.h + 6) {
             foundStation = item.station;
+            closestDist = 0;
+            break;
           }
         }
-      }
 
-      if (foundStation) {
-        hovRef.current = foundStation;
-        setIsHoveringPin(true);
+        if (!foundStation) {
+          for (const item of items) {
+            const d = Math.hypot(item.pin[0] - mx, item.pin[1] - my);
+            if (d < 28 && d < closestDist) {
+              closestDist = d;
+              foundStation = item.station;
+            }
+          }
+        }
+
+        if (foundStation) {
+          hovRef.current = foundStation;
+          setIsHoveringPin(true);
+        }
       }
     }
   }, []);
 
   const onPointerMove = useCallback((e) => {
-    // ── Hover hit-test (checks both badge tag bounds and precision pin distance) ─
+    activePointersRef.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+    // 1. Two-Finger Pinch-to-Zoom Handler (Mobile & Tablet)
+    if (activePointersRef.current.size >= 2 && pinchInitialDistRef.current) {
+      const pts = Array.from(activePointersRef.current.values());
+      const currentDist = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
+      if (currentDist > 0 && pinchInitialDistRef.current > 0) {
+        const factor = currentDist / pinchInitialDistRef.current;
+        scaleRef.current = clamp(pinchInitialScaleRef.current * factor, 140, 650);
+        setScaleState(Math.round(scaleRef.current));
+      }
+      return;
+    }
+
+    // 2. Hover hit-test (checks both badge tag bounds and precision pin distance)
     const canvas = canvasRef.current;
     const rect = canvas?.getBoundingClientRect();
     if (canvas && rect) {
@@ -949,21 +986,19 @@ export default function PolarGlobeMap({
       let foundStation = null;
       let closestDist = Infinity;
 
-      // 1. Direct tag/tooltip box hover check (highest precision)
       for (const item of items) {
         const b = item.tagBounds;
-        if (mx >= b.x - 4 && mx <= b.x + b.w + 4 && my >= b.y - 4 && my <= b.y + b.h + 4) {
+        if (mx >= b.x - 6 && mx <= b.x + b.w + 6 && my >= b.y - 6 && my <= b.y + b.h + 6) {
           foundStation = item.station;
           closestDist = 0;
           break;
         }
       }
 
-      // 2. Proximity check to pin marker center
       if (!foundStation) {
         for (const item of items) {
           const d = Math.hypot(item.pin[0] - mx, item.pin[1] - my);
-          if (d < 22 && d < closestDist) {
+          if (d < 28 && d < closestDist) {
             closestDist = d;
             foundStation = item.station;
           }
@@ -974,14 +1009,13 @@ export default function PolarGlobeMap({
       setIsHoveringPin(!!foundStation);
     }
 
-    // ── Drag rotation (only runs when pointer is held down) ─────────────────
+    // 3. Drag rotation (only runs when 1 pointer is held down)
     if (!dragRef.current) return;
 
     const dx = e.clientX - dragRef.current.startX;
     const dy = e.clientY - dragRef.current.startY;
     const sens = 0.32;
 
-    // Per-frame delta for inertia velocity (not cumulative)
     const frameDx = e.clientX - dragRef.current.lastX;
     const frameDy = e.clientY - dragRef.current.lastY;
     dragRef.current.lastX = e.clientX;
@@ -990,15 +1024,24 @@ export default function PolarGlobeMap({
     rotRef.current[0] = dragRef.current.rot[0] + dx * sens;
     rotRef.current[1] = clamp(dragRef.current.rot[1] - dy * sens, -85, 85);
 
-    // Inertia velocity based on per-frame delta
     velRef.current[0] = velRef.current[0] * 0.5 + frameDx * sens * 0.5;
     velRef.current[1] = velRef.current[1] * 0.5 + (-frameDy * sens) * 0.5;
   }, []);
 
   const onPointerUp = useCallback((e) => {
+    activePointersRef.current.delete(e.pointerId);
+    if (activePointersRef.current.size < 2) {
+      pinchInitialDistRef.current = null;
+      pinchInitialScaleRef.current = null;
+    }
+
     const canvas = canvasRef.current;
     if (canvas && typeof canvas.releasePointerCapture === 'function' && canvas.hasPointerCapture?.(e.pointerId)) {
-      canvas.releasePointerCapture(e.pointerId);
+      try {
+        canvas.releasePointerCapture(e.pointerId);
+      } catch {
+        // ignore
+      }
     }
     if (!dragRef.current) return;
     const distMoved = Math.hypot(
@@ -1006,8 +1049,8 @@ export default function PolarGlobeMap({
       e.clientY - dragRef.current.startY
     );
 
-    // If it was a click without major dragging
-    if (distMoved < 6 && hovRef.current) {
+    // If it was a tap/click without major dragging
+    if (distMoved < 8 && hovRef.current) {
       onSelectStation(hovRef.current);
     }
 
@@ -1033,18 +1076,22 @@ export default function PolarGlobeMap({
 
   // Zoom In / Out Controls
   const handleZoomIn = () => {
-    scaleRef.current = clamp(scaleRef.current + 50, 140, 650);
+    scaleRef.current = clamp(scaleRef.current + 55, 140, 650);
     setScaleState(Math.round(scaleRef.current));
   };
 
   const handleZoomOut = () => {
-    scaleRef.current = clamp(scaleRef.current - 50, 140, 650);
+    scaleRef.current = clamp(scaleRef.current - 55, 140, 650);
     setScaleState(Math.round(scaleRef.current));
   };
 
   const handleReset = () => {
     applyPreset('all');
     onSelectStation(null);
+  };
+
+  const toggleFullscreenMode = () => {
+    setIsFullscreen(prev => !prev);
   };
 
   // Center Coordinates Formatted Readout
@@ -1057,27 +1104,40 @@ export default function PolarGlobeMap({
   return (
     <div 
       ref={containerRef} 
-      className={`polar-globe-wrapper ${isHoveringPin ? 'hovering-pin' : ''}`}
+      className={`polar-globe-wrapper ${isHoveringPin ? 'hovering-pin' : ''} ${isFullscreen ? 'pg-fullscreen-active' : ''}`}
     >
-      {/* Top HUD Overlay Controls */}
+      {/* Top HUD Overlay Header */}
       <div className="pg-hud-top">
-        <div className="pg-badge">
-          <span className="pg-live-dot" />
-          <span>CRYOSPHERE GEOSPATIAL RADAR</span>
-        </div>
+        {selectedStation && (
+          <div className="pg-selected-pill">
+            <span className="pg-station-name">{selectedStation.name}</span>
+            <button 
+              className="pg-clear-btn" 
+              onClick={(e) => { e.stopPropagation(); onSelectStation(null); }}
+              title="Clear selection"
+            >
+              ✕
+            </button>
+          </div>
+        )}
+      </div>
 
-        <div className="pg-ctrl-row">
-          <button className="pg-btn" onClick={handleZoomIn} title="Zoom In">
-            <ZoomIn size={14} />
-          </button>
-          <button className="pg-btn" onClick={handleZoomOut} title="Zoom Out">
-            <ZoomOut size={14} />
-          </button>
-          <button className="pg-btn" onClick={handleReset} title="Reset View">
-            <RotateCw size={14} />
-            <span>Reset</span>
-          </button>
-        </div>
+      {/* Floating Vertical Control Dock (Mobile Thumb & Desktop Friendly) */}
+      <div className="pg-floating-dock">
+        <button className="pg-dock-btn" onClick={handleZoomIn} title="Zoom In (+)" aria-label="Zoom In">
+          <ZoomIn size={16} />
+        </button>
+        <button className="pg-dock-btn" onClick={handleZoomOut} title="Zoom Out (-)" aria-label="Zoom Out">
+          <ZoomOut size={16} />
+        </button>
+        <div className="pg-dock-divider" />
+        <button className="pg-dock-btn" onClick={handleReset} title="Reset Global View" aria-label="Reset Global View">
+          <RotateCw size={16} />
+        </button>
+        <div className="pg-dock-divider" />
+        <button className="pg-dock-btn" onClick={toggleFullscreenMode} title={isFullscreen ? "Exit Fullscreen Map" : "Expand Fullscreen Map"} aria-label="Toggle Fullscreen">
+          {isFullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
+        </button>
       </div>
 
       {/* Main Interactive Canvas */}
@@ -1094,12 +1154,12 @@ export default function PolarGlobeMap({
       {/* Bottom HUD Status Strip */}
       <div className="pg-hud-bottom">
         <div className="pg-coord-readout">
-          <Crosshair size={12} className="pg-icon-cyan" />
-          <span>CENTER: <strong>{coordDisplay.lng}°E, {coordDisplay.lat}°N</strong></span>
-          <span className="pg-scale-tag">ZOOM: {scaleState}px</span>
+          <span className="pg-coord-dot" />
+          <span><strong>{coordDisplay.lng}°E, {coordDisplay.lat}°N</strong></span>
+          <span className="pg-scale-tag">Z: {scaleState}px</span>
         </div>
         <div className="pg-hint-bar">
-          🖱️ Drag to rotate sphere · 📜 Scroll to zoom · 📍 Click pin to inspect
+          <span>👆 1-finger rotate · 🤏 Pinch zoom · 📍 Tap base</span>
         </div>
       </div>
 
@@ -1113,6 +1173,7 @@ export default function PolarGlobeMap({
           box-shadow: inset 0 0 80px rgba(0, 0, 0, 0.75), 0 12px 40px rgba(0, 0, 0, 0.55);
           cursor: grab;
           user-select: none;
+          touch-action: none;
         }
 
         .polar-globe-wrapper:active {
@@ -1123,83 +1184,152 @@ export default function PolarGlobeMap({
           cursor: pointer;
         }
 
+        .polar-globe-wrapper.pg-fullscreen-active {
+          position: fixed;
+          inset: 0;
+          z-index: 9999;
+          border-radius: 0;
+          width: 100vw;
+          height: 100vh;
+        }
+
         .pg-canvas {
           display: block;
           width: 100%;
+          touch-action: none;
         }
 
         .pg-hud-top {
           position: absolute;
-          top: 0.85rem;
-          left: 0.85rem;
-          right: 0.85rem;
+          top: 0.75rem;
+          left: 0.75rem;
+          right: 0.75rem;
           display: flex;
           align-items: center;
           justify-content: space-between;
           z-index: 10;
           pointer-events: none;
+          gap: 0.5rem;
         }
 
-        .pg-live-badge {
-          display: flex;
-          align-items: center;
-          gap: 0.45rem;
-          background: rgba(255, 255, 255, 0.92);
-          border: 1px solid #cbd5e1;
-          backdrop-filter: blur(8px);
-          padding: 0.35rem 0.8rem;
-          border-radius: 999px;
-          font-size: 0.72rem;
-          font-weight: 700;
-          letter-spacing: 0.04em;
-          color: #0f172a;
-          pointer-events: auto;
-          box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-
-        .pg-live-dot {
-          width: 7px;
-          height: 7px;
-          border-radius: 50%;
-          background: #10b981;
-          box-shadow: 0 0 6px #10b981;
-        }
-
-        .pg-ctrl-row {
+        .pg-badge {
           display: flex;
           align-items: center;
           gap: 0.4rem;
+          background: rgba(15, 23, 42, 0.88);
+          border: 1px solid rgba(56, 189, 248, 0.35);
+          backdrop-filter: blur(10px);
+          padding: 0.3rem 0.65rem;
+          border-radius: 999px;
+          font-size: 0.7rem;
+          font-weight: 700;
+          letter-spacing: 0.05em;
+          color: #38bdf8;
           pointer-events: auto;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
         }
 
-        .pg-btn {
+        .pg-live-dot {
+          width: 6px;
+          height: 6px;
+          border-radius: 50%;
+          background: #10b981;
+          box-shadow: 0 0 6px #10b981;
+          animation: pulseDot 2s infinite;
+        }
+
+        @keyframes pulseDot {
+          0%, 100% { opacity: 1; transform: scale(1); }
+          50% { opacity: 0.5; transform: scale(0.85); }
+        }
+
+        .pg-selected-pill {
           display: flex;
           align-items: center;
-          gap: 0.3rem;
-          background: rgba(255, 255, 255, 0.92);
-          border: 1px solid #cbd5e1;
+          gap: 0.4rem;
+          background: rgba(2, 132, 199, 0.92);
+          border: 1px solid rgba(255, 255, 255, 0.4);
           backdrop-filter: blur(8px);
-          color: #334155;
-          padding: 0.35rem 0.7rem;
-          border-radius: 6px;
-          font-size: 0.75rem;
-          font-weight: 600;
-          cursor: pointer;
-          transition: all 0.15s ease;
-          box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+          padding: 0.28rem 0.6rem;
+          border-radius: 999px;
+          color: #ffffff;
+          font-size: 0.72rem;
+          font-weight: 700;
+          pointer-events: auto;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.3);
         }
 
-        .pg-btn:hover {
-          color: #0a2540;
-          border-color: #94a3b8;
-          background: #ffffff;
+        .pg-clear-btn {
+          background: rgba(0, 0, 0, 0.25);
+          border: none;
+          color: #ffffff;
+          width: 16px;
+          height: 16px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 0.65rem;
+          cursor: pointer;
+        }
+
+        /* Ergonomic Floating Dock */
+        .pg-floating-dock {
+          position: absolute;
+          right: 0.75rem;
+          top: 50%;
+          transform: translateY(-50%);
+          display: flex;
+          flex-direction: column;
+          gap: 0.35rem;
+          background: rgba(15, 23, 42, 0.88);
+          border: 1px solid rgba(56, 189, 248, 0.3);
+          backdrop-filter: blur(12px);
+          padding: 0.35rem;
+          border-radius: 10px;
+          z-index: 12;
+          pointer-events: auto;
+          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+        }
+
+        .pg-dock-btn {
+          width: 36px;
+          height: 36px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: rgba(255, 255, 255, 0.08);
+          border: 1px solid rgba(255, 255, 255, 0.12);
+          color: #e2e8f0;
+          border-radius: 8px;
+          cursor: pointer;
+          transition: all 0.15s ease;
+          touch-action: manipulation;
+        }
+
+        .pg-dock-btn:hover {
+          background: rgba(56, 189, 248, 0.25);
+          border-color: #38bdf8;
+          color: #ffffff;
+          transform: scale(1.05);
+        }
+
+        .pg-dock-btn:active {
+          transform: scale(0.95);
+          background: rgba(56, 189, 248, 0.4);
+        }
+
+        .pg-dock-divider {
+          height: 1px;
+          background: rgba(255, 255, 255, 0.15);
+          margin: 0.15rem 0.2rem;
         }
 
         .pg-hud-bottom {
           position: absolute;
-          bottom: 0.75rem;
-          left: 0.85rem;
-          right: 0.85rem;
+          bottom: 0.65rem;
+          left: 0.75rem;
+          right: 0.75rem;
           display: flex;
           align-items: center;
           justify-content: space-between;
@@ -1207,40 +1337,74 @@ export default function PolarGlobeMap({
           pointer-events: none;
           font-size: 0.72rem;
           flex-wrap: wrap;
-          gap: 0.5rem;
+          gap: 0.4rem;
         }
 
         .pg-coord-readout {
           display: flex;
           align-items: center;
-          gap: 0.5rem;
-          background: rgba(255, 255, 255, 0.92);
-          border: 1px solid #cbd5e1;
+          gap: 0.4rem;
+          background: rgba(15, 23, 42, 0.88);
+          border: 1px solid rgba(56, 189, 248, 0.25);
           backdrop-filter: blur(8px);
-          padding: 0.3rem 0.65rem;
+          padding: 0.28rem 0.55rem;
           border-radius: 6px;
-          color: #0284c7;
+          color: #38bdf8;
           font-family: monospace;
           pointer-events: auto;
+          font-size: 0.7rem;
         }
 
-        .pg-icon-cyan {
-          color: #38bdf8;
+        .pg-coord-dot {
+          width: 5px;
+          height: 5px;
+          border-radius: 50%;
+          background: #38bdf8;
         }
 
         .pg-scale-tag {
-          color: #64748b;
+          color: #94a3b8;
           border-left: 1px solid rgba(255, 255, 255, 0.15);
-          padding-left: 0.4rem;
+          padding-left: 0.35rem;
         }
 
         .pg-hint-bar {
-          background: rgba(7, 16, 30, 0.88);
+          background: rgba(7, 16, 30, 0.85);
           border: 1px solid rgba(255, 255, 255, 0.08);
           backdrop-filter: blur(8px);
-          padding: 0.3rem 0.65rem;
+          padding: 0.28rem 0.55rem;
           border-radius: 6px;
           color: #94a3b8;
+          font-size: 0.68rem;
+          font-weight: 500;
+        }
+
+        @media (max-width: 640px) {
+          .pg-floating-dock {
+            right: 0.5rem;
+            padding: 0.25rem;
+            gap: 0.25rem;
+          }
+          .pg-dock-btn {
+            width: 34px;
+            height: 34px;
+          }
+          .pg-hud-top {
+            top: 0.5rem;
+            left: 0.5rem;
+            right: 0.5rem;
+          }
+          .pg-hud-bottom {
+            bottom: 0.5rem;
+            left: 0.5rem;
+            right: 0.5rem;
+          }
+          .pg-hint-bar {
+            display: none;
+          }
+          .pg-badge-label {
+            font-size: 0.65rem;
+          }
         }
       `}</style>
     </div>

@@ -317,23 +317,60 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
             />
           </div>
 
+          {/* Mobile Quick Station Drawer Popup */}
+          {selectedStation && (
+            <div className="mobile-station-quick-drawer">
+              <div className="quick-drawer-left">
+                <img 
+                  src={selectedStation.image} 
+                  alt={selectedStation.name} 
+                  className="quick-drawer-thumb" 
+                />
+                <div className="quick-drawer-info">
+                  <div className="quick-drawer-name">
+                    {lang === 'hi' && selectedStation.nameHi ? selectedStation.nameHi : selectedStation.name}
+                  </div>
+                  <div className="quick-drawer-tags">
+                    <span className="quick-region-tag">{selectedStation.region}</span>
+                    <span className="quick-temp-tag">🌡️ {selectedStation.temp}</span>
+                    <span className="quick-wind-tag">💨 {selectedStation.wind}</span>
+                  </div>
+                </div>
+              </div>
+              <div className="quick-drawer-actions">
+                <a href="#station-inspector-section" className="quick-inspect-anchor-btn">
+                  <span>Inspect</span>
+                  <ArrowRight size={13} />
+                </a>
+                <button 
+                  className="quick-close-btn" 
+                  onClick={() => setSelectedStation(null)}
+                  title="Clear selection"
+                  aria-label="Deselect Station"
+                >
+                  ✕
+                </button>
+              </div>
+            </div>
+          )}
+
           {/* Footer Legend Bar */}
           <div className="viewport-footer-bar">
             <div className="interactive-tips">
-              <span className="tip-badge">HOW TO INTERACT</span>
-              <span>🖱️ Drag to rotate 3D sphere • 📜 Wheel to zoom • 📍 Click pin to lock telemetry</span>
+              <span className="tip-badge">INTERACTION CONTROLS</span>
+              <span>👆 1-finger rotate · 🤏 Pinch zoom · 📍 Tap pin to lock telemetry</span>
             </div>
             
             <div className="legend-strip">
-              <span className="legend-item"><span className="legend-dot antarctica-dot"></span> Antarctica Bases</span>
-              <span className="legend-item"><span className="legend-dot arctic-dot"></span> High Arctic</span>
+              <span className="legend-item"><span className="legend-dot antarctica-dot"></span> Antarctica</span>
+              <span className="legend-item"><span className="legend-dot arctic-dot"></span> Arctic</span>
               <span className="legend-item"><span className="legend-dot himalaya-dot"></span> Himalayas</span>
             </div>
           </div>
         </div>
 
         {/* Right Column: Selected Station Telemetry & Mission Command Center */}
-        <div className="glass-panel station-inspect-card">
+        <div id="station-inspector-section" className="glass-panel station-inspect-card">
           {selectedStation ? (
             <div className="station-card-inner">
               {/* Header Visual with Badges */}
@@ -1647,6 +1684,123 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
           font-weight: 700;
         }
 
+        /* Mobile Quick Station Drawer */
+        .mobile-station-quick-drawer {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          background: #ffffff;
+          border: 1px solid #bfdbfe;
+          border-radius: var(--radius-sm, 8px);
+          padding: 0.65rem 0.85rem;
+          margin-top: 0.75rem;
+          box-shadow: 0 4px 12px rgba(2, 132, 199, 0.12);
+          gap: 0.75rem;
+          animation: slideUpDrawer 0.25s ease-out;
+        }
+
+        @keyframes slideUpDrawer {
+          from { opacity: 0; transform: translateY(6px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+
+        .quick-drawer-left {
+          display: flex;
+          align-items: center;
+          gap: 0.65rem;
+          min-width: 0;
+        }
+
+        .quick-drawer-thumb {
+          width: 44px;
+          height: 44px;
+          border-radius: 6px;
+          object-fit: cover;
+          flex-shrink: 0;
+          border: 1px solid var(--border-subtle);
+        }
+
+        .quick-drawer-info {
+          min-width: 0;
+        }
+
+        .quick-drawer-name {
+          font-size: 0.88rem;
+          font-weight: 700;
+          color: var(--navy);
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .quick-drawer-tags {
+          display: flex;
+          align-items: center;
+          gap: 0.4rem;
+          margin-top: 0.15rem;
+          flex-wrap: wrap;
+        }
+
+        .quick-region-tag {
+          font-size: 0.68rem;
+          font-weight: 700;
+          color: #0284c7;
+          background: #eff6ff;
+          padding: 0.1rem 0.4rem;
+          border-radius: 4px;
+        }
+
+        .quick-temp-tag, .quick-wind-tag {
+          font-size: 0.68rem;
+          color: var(--text-secondary);
+          font-weight: 600;
+        }
+
+        .quick-drawer-actions {
+          display: flex;
+          align-items: center;
+          gap: 0.4rem;
+          flex-shrink: 0;
+        }
+
+        .quick-inspect-anchor-btn {
+          display: flex;
+          align-items: center;
+          gap: 0.3rem;
+          background: #0284c7;
+          color: #ffffff;
+          padding: 0.4rem 0.75rem;
+          border-radius: 6px;
+          font-size: 0.75rem;
+          font-weight: 700;
+          text-decoration: none;
+          transition: background 0.15s ease;
+        }
+
+        .quick-inspect-anchor-btn:hover {
+          background: #0369a1;
+        }
+
+        .quick-close-btn {
+          background: #f1f5f9;
+          border: 1px solid var(--border-subtle);
+          color: var(--text-secondary);
+          width: 28px;
+          height: 28px;
+          border-radius: 6px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          font-size: 0.75rem;
+        }
+
+        .quick-close-btn:hover {
+          background: #e2e8f0;
+          color: var(--navy);
+        }
+
+        /* Responsive Improvements */
         @media (max-width: 1024px) {
           .map-layout-grid {
             grid-template-columns: 1fr;
@@ -1654,11 +1808,23 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
           .viewport-stage {
             min-height: 440px;
           }
+          .viewport-layers-toolbar {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.6rem;
+          }
+          .layer-chip-buttons {
+            width: 100%;
+            overflow-x: auto;
+            padding-bottom: 0.35rem;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+          }
         }
 
         @media (max-width: 768px) {
           .polar-map-page {
-            padding: 1.5rem 0 3.5rem;
+            padding: 1.25rem 0.75rem 3.5rem;
           }
           .page-header-row {
             flex-direction: column;
@@ -1668,42 +1834,89 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
           .view-mode-toggle-group {
             width: 100%;
             display: flex;
+            background: #f1f5f9;
+            padding: 0.25rem;
+            border-radius: 8px;
           }
           .mode-toggle-btn {
             flex: 1;
             justify-content: center;
-            padding: 0.45rem 0.4rem;
-            font-size: 0.75rem;
+            padding: 0.45rem 0.35rem;
+            font-size: 0.74rem;
+            border-radius: 6px;
+          }
+          .mode-toggle-btn span {
+            font-size: 0.72rem;
+          }
+          .map-view-pills-bar {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+          }
+          .pills-scroll {
+            width: 100%;
+            overflow-x: auto;
+            padding-bottom: 0.35rem;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
           }
           .viewport-stage {
-            min-height: 320px;
+            min-height: 340px;
           }
           .map-viewport-card {
-            padding: 0.85rem;
-          }
-          .layer-chip-buttons {
-            gap: 0.3rem;
+            padding: 0.75rem;
           }
           .layer-chip {
-            padding: 0.25rem 0.5rem;
+            padding: 0.3rem 0.55rem;
             font-size: 0.7rem;
+            white-space: nowrap;
+          }
+          .telemetry-statusbar {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+            padding: 0.65rem 0.75rem;
+          }
+          .telemetry-refresh-btn {
+            grid-column: span 2;
+            justify-content: center;
           }
           .stations-grid {
-            grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+            grid-template-columns: 1fr;
             gap: 0.85rem;
+          }
+          .viewport-footer-bar {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
           }
         }
 
         @media (max-width: 480px) {
           .mode-toggle-btn span {
-            font-size: 0.72rem;
+            font-size: 0.68rem;
           }
           .telemetry-statusbar {
-            padding: 0.5rem 0.65rem;
-            gap: 0.5rem;
+            grid-template-columns: 1fr;
+            padding: 0.55rem 0.65rem;
+          }
+          .telemetry-refresh-btn {
+            grid-column: span 1;
           }
           .station-telemetry-grid {
             grid-template-columns: 1fr;
+          }
+          .mobile-station-quick-drawer {
+            flex-direction: column;
+            align-items: flex-start;
+          }
+          .quick-drawer-actions {
+            width: 100%;
+            justify-content: space-between;
+          }
+          .quick-inspect-anchor-btn {
+            flex: 1;
+            justify-content: center;
           }
         }
 
