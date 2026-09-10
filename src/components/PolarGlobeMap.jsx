@@ -234,11 +234,13 @@ export default function PolarGlobeMap({
 
     const pt = projTypeRef.current;
     const baseScale = scaleRef.current;
-    // Adapt scale on mobile screens so 3D globe fits comfortably without clipping
-    const maxGlobeR = Math.min(W * 0.44, H * 0.44);
-    const currentScale = (W < 640 && pt !== 'geoEqualEarth') 
-      ? Math.min(baseScale, maxGlobeR) 
-      : (W < 640 && pt === 'geoEqualEarth' ? baseScale * Math.min(1, W / 600) : baseScale);
+    // Responsive scale: on mobile screens, fit the initial baseline view comfortably
+    // while allowing unrestricted pinch-to-zoom and zoom button scaling
+    const isMobile = W < 640;
+    const mobileRatio = isMobile ? Math.min(W * 0.44, H * 0.44) / 300 : 1;
+    const currentScale = pt === 'geoEqualEarth'
+      ? (isMobile ? baseScale * Math.min(1, W / 600) : baseScale)
+      : baseScale * mobileRatio;
     const currentRot = rotRef.current;
     const proj = createProjection(pt, currentScale, currentRot, W, H);
     const path = d3geo.geoPath(proj, ctx);
@@ -389,7 +391,7 @@ export default function PolarGlobeMap({
     // 5.5. Geographic Country, Continent & Ocean Labels
     if (layersRef.current.showLabels !== false) {
       GEO_LABELS.forEach((lbl) => {
-        if (currentScale < (lbl.minScale || 140)) return;
+        if (baseScale < (lbl.minScale || 140)) return;
         if (!isCoordFacing(lbl.lng, lbl.lat, currentRot, pt)) return;
 
         const lp = proj([lbl.lng, lbl.lat]);
@@ -884,98 +886,237 @@ export default function PolarGlobeMap({
     return () => ro.disconnect();
   }, []);
 
-  // ── Multi-Touch & Pointer Drag Events ─────────────────────────────────────
-  const activePointersRef = useRef(new Map());
-  const pinchInitialDistRef = useRef(null);
-  const pinchInitialScaleRef = useRef(null);
+  // ── Native Mobile Multi-Touch (Pinch-to-Zoom & Rotate) Handlers ─────────
   const [isFullscreen, setIsFullscreen] = useState(false);
 
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    let initialDist = null;
+    let initialScale = null;
+    let touchDrag = null;
+
+    const onTouchStart = (e) => {
+      // Prevent page viewport zoom or pull-to-refresh over the 3D globe canvas
+      if (e.cancelable) e.preventDefault();
+
+      // Cancel any ongoing animation tweens on manual touch
+      targetRef.current = null;
+      targetScaleRef.current = null;
+
+      if (e.touches.length >= 2) {
+        // Multi-touch pinch start
+        const t1 = e.touches[0];
+        const t2 = e.touches[1];
+        initialDist = Math.hypot(t1.clientX - t2.clientX, t1.clientY - t2.clientY);
+        initialScale = scaleRef.current;
+        touchDrag = null;
+        velRef.current = [0, 0];
+        return;
+      }
+
+      if (e.touches.length === 1) {
+        const t = e.touches[0];
+        touchDrag = {
+          startX: t.clientX,
+          startY: t.clientY,
+          lastX: t.clientX,
+          lastY: t.clientY,
+          rot: [...rotRef.current],
+          startTime: performance.now(),
+        };
+        velRef.current = [0, 0];
+
+        // Hit-test on touch down for station selection
+        const rect = canvas.getBoundingClientRect();
+        if (rect) {
+          const mx = t.clientX - rect.left;
+          const my = t.clientY - rect.top;
+          const items = renderedStationsRef.current || [];
+          let foundStation = null;
+          let closestDist = Infinity;
+
+          for (const item of items) {
+            const b = item.tagBounds;
+            if (mx >= b.x - 8 && mx <= b.x + b.w + 8 && my >= b.y - 8 && my <= b.y + b.h + 8) {
+              foundStation = item.station;
+              closestDist = 0;
+              break;
+            }
+          }
+          if (!foundStation) {
+            for (const item of items) {
+              const d = Math.hypot(item.pin[0] - mx, item.pin[1] - my);
+              if (d < 32 && d < closestDist) {
+                closestDist = d;
+                foundStation = item.station;
+              }
+            }
+          }
+          hovRef.current = foundStation;
+          setIsHoveringPin(Boolean(foundStation));
+        }
+      }
+    };
+
+    const onTouchMove = (e) => {
+      if (e.cancelable) e.preventDefault();
+
+      // 1. Two-finger Pinch Zoom (Smooth, Unclamped & Responsive)
+      if (e.touches.length >= 2 && initialDist && initialScale) {
+        const t1 = e.touches[0];
+        const t2 = e.touches[1];
+        const currentDist = Math.hypot(t1.clientX - t2.clientX, t1.clientY - t2.clientY);
+        if (currentDist > 0 && initialDist > 0) {
+          const factor = currentDist / initialDist;
+          const newScale = clamp(initialScale * factor, 120, 1000);
+          scaleRef.current = newScale;
+          setScaleState(Math.round(newScale));
+        }
+        return;
+      }
+
+      // 2. Single-finger Rotate Drag
+      if (e.touches.length === 1 && touchDrag) {
+        const t = e.touches[0];
+        const dx = t.clientX - touchDrag.startX;
+        const dy = t.clientY - touchDrag.startY;
+        const sens = 0.35;
+
+        const frameDx = t.clientX - touchDrag.lastX;
+        const frameDy = t.clientY - touchDrag.lastY;
+        touchDrag.lastX = t.clientX;
+        touchDrag.lastY = t.clientY;
+
+        rotRef.current[0] = touchDrag.rot[0] + dx * sens;
+        rotRef.current[1] = clamp(touchDrag.rot[1] - dy * sens, -85, 85);
+
+        velRef.current[0] = velRef.current[0] * 0.5 + frameDx * sens * 0.5;
+        velRef.current[1] = velRef.current[1] * 0.5 + (-frameDy * sens) * 0.5;
+      }
+    };
+
+    const onTouchEnd = (e) => {
+      if (e.touches.length === 1) {
+        // Transition from 2 fingers to 1 finger: re-anchor drag smoothly
+        initialDist = null;
+        initialScale = null;
+        const t = e.touches[0];
+        touchDrag = {
+          startX: t.clientX,
+          startY: t.clientY,
+          lastX: t.clientX,
+          lastY: t.clientY,
+          rot: [...rotRef.current],
+          startTime: performance.now(),
+        };
+        return;
+      }
+
+      if (e.touches.length === 0) {
+        initialDist = null;
+        initialScale = null;
+
+        if (touchDrag) {
+          const changed = e.changedTouches?.[0];
+          if (changed) {
+            const distMoved = Math.hypot(
+              changed.clientX - touchDrag.startX,
+              changed.clientY - touchDrag.startY
+            );
+            const duration = performance.now() - touchDrag.startTime;
+
+            // Tap station detection (< 12px move & < 350ms duration)
+            if (distMoved < 12 && duration < 350 && hovRef.current) {
+              onSelectStation(hovRef.current);
+            }
+          }
+          velRef.current[0] *= 0.3;
+          velRef.current[1] *= 0.3;
+          touchDrag = null;
+        }
+      }
+    };
+
+    canvas.addEventListener('touchstart', onTouchStart, { passive: false });
+    canvas.addEventListener('touchmove', onTouchMove, { passive: false });
+    canvas.addEventListener('touchend', onTouchEnd, { passive: false });
+    canvas.addEventListener('touchcancel', onTouchEnd, { passive: false });
+
+    return () => {
+      canvas.removeEventListener('touchstart', onTouchStart);
+      canvas.removeEventListener('touchmove', onTouchMove);
+      canvas.removeEventListener('touchend', onTouchEnd);
+      canvas.removeEventListener('touchcancel', onTouchEnd);
+    };
+  }, [onSelectStation]);
+
+  // ── Desktop Mouse & Pointer Drag Events ──────────────────────────────────
   const onPointerDown = useCallback((e) => {
+    // Touch is exclusively handled by native touch listeners above
+    if (e.pointerType === 'touch') return;
+
     const canvas = canvasRef.current;
     if (canvas && typeof canvas.setPointerCapture === 'function') {
       try {
         canvas.setPointerCapture(e.pointerId);
       } catch {
-        // ignore if not supported
+        // ignore
       }
     }
 
-    activePointersRef.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    dragRef.current = {
+      startX: e.clientX,
+      startY: e.clientY,
+      lastX: e.clientX,
+      lastY: e.clientY,
+      rot: [...rotRef.current],
+      time: performance.now(),
+    };
+    targetRef.current = null;
+    targetScaleRef.current = null;
+    velRef.current = [0, 0];
 
-    // Multi-touch pinch start
-    if (activePointersRef.current.size === 2) {
-      const pts = Array.from(activePointersRef.current.values());
-      pinchInitialDistRef.current = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
-      pinchInitialScaleRef.current = scaleRef.current;
-      dragRef.current = null;
-      return;
-    }
+    // Immediate hit-testing on pointer down
+    const rect = canvas?.getBoundingClientRect();
+    if (canvas && rect) {
+      const mx = e.clientX - rect.left;
+      const my = e.clientY - rect.top;
+      const items = renderedStationsRef.current || [];
+      let foundStation = null;
+      let closestDist = Infinity;
 
-    if (activePointersRef.current.size === 1) {
-      dragRef.current = {
-        startX: e.clientX,
-        startY: e.clientY,
-        lastX: e.clientX,
-        lastY: e.clientY,
-        rot: [...rotRef.current],
-        time: performance.now(),
-      };
-      targetRef.current = null;
-      targetScaleRef.current = null;
-      velRef.current = [0, 0];
+      for (const item of items) {
+        const b = item.tagBounds;
+        if (mx >= b.x - 6 && mx <= b.x + b.w + 6 && my >= b.y - 6 && my <= b.y + b.h + 6) {
+          foundStation = item.station;
+          closestDist = 0;
+          break;
+        }
+      }
 
-      // Immediate hit-testing on pointer down
-      const rect = canvas?.getBoundingClientRect();
-      if (canvas && rect) {
-        const mx = e.clientX - rect.left;
-        const my = e.clientY - rect.top;
-        const items = renderedStationsRef.current || [];
-        let foundStation = null;
-        let closestDist = Infinity;
-
+      if (!foundStation) {
         for (const item of items) {
-          const b = item.tagBounds;
-          if (mx >= b.x - 6 && mx <= b.x + b.w + 6 && my >= b.y - 6 && my <= b.y + b.h + 6) {
+          const d = Math.hypot(item.pin[0] - mx, item.pin[1] - my);
+          if (d < 28 && d < closestDist) {
+            closestDist = d;
             foundStation = item.station;
-            closestDist = 0;
-            break;
           }
         }
+      }
 
-        if (!foundStation) {
-          for (const item of items) {
-            const d = Math.hypot(item.pin[0] - mx, item.pin[1] - my);
-            if (d < 28 && d < closestDist) {
-              closestDist = d;
-              foundStation = item.station;
-            }
-          }
-        }
-
-        if (foundStation) {
-          hovRef.current = foundStation;
-          setIsHoveringPin(true);
-        }
+      if (foundStation) {
+        hovRef.current = foundStation;
+        setIsHoveringPin(true);
       }
     }
   }, []);
 
   const onPointerMove = useCallback((e) => {
-    activePointersRef.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (e.pointerType === 'touch') return;
 
-    // 1. Two-Finger Pinch-to-Zoom Handler (Mobile & Tablet)
-    if (activePointersRef.current.size >= 2 && pinchInitialDistRef.current) {
-      const pts = Array.from(activePointersRef.current.values());
-      const currentDist = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
-      if (currentDist > 0 && pinchInitialDistRef.current > 0) {
-        const factor = currentDist / pinchInitialDistRef.current;
-        scaleRef.current = clamp(pinchInitialScaleRef.current * factor, 140, 650);
-        setScaleState(Math.round(scaleRef.current));
-      }
-      return;
-    }
-
-    // 2. Hover hit-test (checks both badge tag bounds and precision pin distance)
+    // Hover hit-test
     const canvas = canvasRef.current;
     const rect = canvas?.getBoundingClientRect();
     if (canvas && rect) {
@@ -1006,10 +1147,10 @@ export default function PolarGlobeMap({
       }
 
       hovRef.current = foundStation;
-      setIsHoveringPin(!!foundStation);
+      setIsHoveringPin(Boolean(foundStation));
     }
 
-    // 3. Drag rotation (only runs when 1 pointer is held down)
+    // Drag rotation
     if (!dragRef.current) return;
 
     const dx = e.clientX - dragRef.current.startX;
@@ -1029,11 +1170,7 @@ export default function PolarGlobeMap({
   }, []);
 
   const onPointerUp = useCallback((e) => {
-    activePointersRef.current.delete(e.pointerId);
-    if (activePointersRef.current.size < 2) {
-      pinchInitialDistRef.current = null;
-      pinchInitialScaleRef.current = null;
-    }
+    if (e.pointerType === 'touch') return;
 
     const canvas = canvasRef.current;
     if (canvas && typeof canvas.releasePointerCapture === 'function' && canvas.hasPointerCapture?.(e.pointerId)) {
@@ -1062,7 +1199,7 @@ export default function PolarGlobeMap({
   // Mouse Wheel Zoom
   const onWheel = useCallback((e) => {
     e.preventDefault();
-    scaleRef.current = clamp(scaleRef.current - e.deltaY * 0.45, 140, 650);
+    scaleRef.current = clamp(scaleRef.current - e.deltaY * 0.45, 120, 1000);
     targetScaleRef.current = null;
     setScaleState(Math.round(scaleRef.current));
   }, []);
@@ -1076,12 +1213,14 @@ export default function PolarGlobeMap({
 
   // Zoom In / Out Controls
   const handleZoomIn = () => {
-    scaleRef.current = clamp(scaleRef.current + 55, 140, 650);
+    targetScaleRef.current = null;
+    scaleRef.current = clamp(scaleRef.current + 60, 120, 1000);
     setScaleState(Math.round(scaleRef.current));
   };
 
   const handleZoomOut = () => {
-    scaleRef.current = clamp(scaleRef.current - 55, 140, 650);
+    targetScaleRef.current = null;
+    scaleRef.current = clamp(scaleRef.current - 60, 120, 1000);
     setScaleState(Math.round(scaleRef.current));
   };
 
@@ -1156,7 +1295,7 @@ export default function PolarGlobeMap({
         <div className="pg-coord-readout">
           <span className="pg-coord-dot" />
           <span><strong>{coordDisplay.lng}°E, {coordDisplay.lat}°N</strong></span>
-          <span className="pg-scale-tag">Z: {scaleState}px</span>
+          <span className="pg-scale-tag">Zoom: {(scaleState / 300).toFixed(1)}x</span>
         </div>
         <div className="pg-hint-bar">
           <span>👆 1-finger rotate · 🤏 Pinch zoom · 📍 Tap base</span>
