@@ -47,18 +47,40 @@ export default function Home({ navigateTo, onSelectExpedition }) {
       {/* Live Polar Telemetry Ticker Bar */}
       <div className="telemetry-bar">
         <div className="container telemetry-inner">
-          <div className="telemetry-label">
+          <div className="telemetry-label" onClick={() => navigateTo('map')} title="Open Live Polar Map" role="button" tabIndex={0}>
             <Radio size={14} className="telemetry-pulse-icon" />
-            <span>LIVE POLAR TELEMETRY:</span>
+            <span>LIVE POLAR TELEMETRY</span>
           </div>
+
+          <div className="telemetry-divider"></div>
+
           <div className="telemetry-stations">
             {stations.slice(0, 4).map((st) => (
-              <div key={st.id} className="station-ticker-item">
-                <span className="st-name">{st.name}:</span>
-                <span className="st-temp"><ThermometerSnowflake size={12} /> {st.temp}</span>
-                <span className="st-wind"><Wind size={12} /> {st.wind}</span>
+              <div 
+                key={st.id} 
+                className="station-ticker-item"
+                onClick={() => navigateTo('map')}
+                title={`View ${st.name} live telemetry on 3D map`}
+                role="button"
+                tabIndex={0}
+              >
+                <span className="st-name">{st.name.replace(' Station', '')}</span>
+                <span className="st-temp">
+                  <ThermometerSnowflake size={13} />
+                  <span>{st.temp}</span>
+                </span>
+                <span className="st-dot">•</span>
+                <span className="st-wind">
+                  <Wind size={13} />
+                  <span>{st.wind}</span>
+                </span>
               </div>
             ))}
+          </div>
+
+          <div className="telemetry-action" onClick={() => navigateTo('map')} role="button" tabIndex={0} title="View all bases on 3D map">
+            <span>3D Map</span>
+            <ArrowRight size={13} />
           </div>
         </div>
       </div>
@@ -502,14 +524,14 @@ export default function Home({ navigateTo, onSelectExpedition }) {
           background: #dfe4ea;
           border-bottom: 1px solid #cbd5e1;
           padding: 0.5rem 0;
-          font-size: 0.8rem;
+          font-size: 0.84rem;
           margin-bottom: -4rem;
         }
 
         .telemetry-inner {
           display: flex;
           align-items: center;
-          gap: 1.5rem;
+          gap: 1.15rem;
           overflow-x: auto;
           white-space: nowrap;
           scrollbar-width: none;
@@ -521,46 +543,95 @@ export default function Home({ navigateTo, onSelectExpedition }) {
         }
 
         .telemetry-label {
-          display: flex;
+          display: inline-flex;
           align-items: center;
           gap: 0.45rem;
           color: #0369a1;
-          font-weight: 700;
-          letter-spacing: 0.03em;
+          font-size: 0.78rem;
+          font-weight: 800;
+          letter-spacing: 0.04em;
+          flex-shrink: 0;
+          cursor: pointer;
+        }
+
+        .telemetry-pulse-icon {
+          color: #0369a1;
+        }
+
+        .telemetry-divider {
+          width: 1px;
+          height: 16px;
+          background: #cbd5e1;
           flex-shrink: 0;
         }
 
         .telemetry-stations {
           display: flex;
           align-items: center;
-          gap: 1.25rem;
+          gap: 0.85rem;
+          flex: 1;
         }
 
         .station-ticker-item {
-          display: flex;
+          display: inline-flex;
           align-items: center;
-          gap: 0.5rem;
-          color: #334155;
+          gap: 0.4rem;
+          padding: 0.2rem 0.55rem;
+          border-radius: 6px;
+          cursor: pointer;
+          transition: background 0.15s ease, transform 0.15s ease;
+        }
+
+        .station-ticker-item:hover {
+          background: rgba(255, 255, 255, 0.55);
+          transform: translateY(-1px);
         }
 
         .st-name {
           color: #0f172a;
-          font-weight: 600;
+          font-weight: 700;
+          font-size: 0.83rem;
         }
 
         .st-temp {
           color: #059669;
-          font-weight: 600;
-          display: flex;
+          font-weight: 700;
+          display: inline-flex;
           align-items: center;
           gap: 0.2rem;
+          font-size: 0.82rem;
+        }
+
+        .st-dot {
+          color: #94a3b8;
+          font-size: 0.72rem;
         }
 
         .st-wind {
           color: #64748b;
-          display: flex;
+          font-weight: 500;
+          display: inline-flex;
           align-items: center;
           gap: 0.2rem;
+          font-size: 0.80rem;
+        }
+
+        .telemetry-action {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.3rem;
+          font-size: 0.78rem;
+          font-weight: 700;
+          color: #0369a1;
+          cursor: pointer;
+          margin-left: auto;
+          flex-shrink: 0;
+          transition: opacity 0.15s ease, transform 0.15s ease;
+        }
+
+        .telemetry-action:hover {
+          opacity: 0.8;
+          transform: translateX(2px);
         }
 
         /* Hero Section */
@@ -703,17 +774,18 @@ export default function Home({ navigateTo, onSelectExpedition }) {
         }
 
         .institute-acronym {
-          color: #7dd3fc;
+          color: #ffffff;
           font-weight: 800;
-          background: rgba(14, 165, 233, 0.28);
-          border: 1px solid rgba(125, 211, 252, 0.7);
+          background: rgba(255, 255, 255, 0.12);
+          border: 1px solid rgba(255, 255, 255, 0.3);
           padding: 0.12rem 0.5rem;
           border-radius: 4px;
           font-size: 0.68rem;
           letter-spacing: 0.12em;
-          text-shadow: 0 0 10px rgba(56, 189, 248, 0.7);
-          box-shadow: 0 0 14px rgba(56, 189, 248, 0.3), inset 0 0 8px rgba(56, 189, 248, 0.2);
-          backdrop-filter: blur(4px);
+          text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15), inset 0 0 6px rgba(255, 255, 255, 0.1);
+          backdrop-filter: blur(8px);
+          -webkit-backdrop-filter: blur(8px);
         }
 
         /* Primary High-Priority Main Portal Heading */

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { usePortal } from '../context/PortalContext';
 import { 
   Compass, 
@@ -31,6 +31,23 @@ export default function Header({ currentRoute, navigateTo }) {
   } = usePortal();
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const searchInputRef = useRef(null);
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (
+        e.key === '/' && 
+        document.activeElement !== searchInputRef.current && 
+        document.activeElement?.tagName !== 'INPUT' && 
+        document.activeElement?.tagName !== 'TEXTAREA'
+      ) {
+        e.preventDefault();
+        searchInputRef.current?.focus();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const navItems = [
     { id: 'home', label: t.nav.home, icon: Compass },
@@ -109,7 +126,7 @@ export default function Header({ currentRoute, navigateTo }) {
           <div className="brand-lockup" onClick={() => handleNav('home')} role="button" tabIndex={0}>
             <div className="brand-logo-container">
               <div className="brand-emblem-badge">
-                <Compass className="brand-icon" size={24} />
+                <Compass className="brand-icon" size={23} />
               </div>
             </div>
             <div className="brand-text">
@@ -117,10 +134,10 @@ export default function Header({ currentRoute, navigateTo }) {
                 {lang === 'hi' ? 'राष्ट्रीय ध्रुवीय एवं महासागर अनुसंधान केंद्र' : 'NCPOR'}
               </div>
               <div className="brand-secondary">
-                {lang === 'hi' ? 'पृथ्वी विज्ञान मंत्रालय' : 'National Centre for Polar and Ocean Research'}
+                {lang === 'hi' ? 'राष्ट्रीय ध्रुवीय एवं महासागर अनुसंधान केंद्र' : 'National Centre for Polar and Ocean Research'}
               </div>
               <div className="brand-tagline">
-                Ministry of Earth Sciences, Govt. of India • Polar Science Outreach
+                {lang === 'hi' ? 'पृथ्वी विज्ञान मंत्रालय, भारत सरकार' : 'Ministry of Earth Sciences, Govt. of India'}
               </div>
             </div>
           </div>
@@ -147,10 +164,11 @@ export default function Header({ currentRoute, navigateTo }) {
           <div className="nav-actions">
             {/* Quick Search */}
             <div className="search-input-wrapper">
-              <Search size={15} className="search-icon" />
+              <Search size={14} className="search-icon" />
               <input
+                ref={searchInputRef}
                 type="text"
-                placeholder={lang === 'hi' ? "खोजें..." : "Search missions, stations..."}
+                placeholder={lang === 'hi' ? "खोजें..." : "Search missions..."}
                 value={searchQuery}
                 onChange={(e) => {
                   setSearchQuery(e.target.value);
@@ -160,13 +178,17 @@ export default function Header({ currentRoute, navigateTo }) {
                 }}
                 className="header-search-input"
               />
-              {searchQuery && (
+              {searchQuery ? (
                 <button 
                   className="clear-search-btn"
                   onClick={() => setSearchQuery('')}
+                  title="Clear search"
+                  type="button"
                 >
-                  <X size={13} />
+                  <X size={12} />
                 </button>
+              ) : (
+                <kbd className="search-kbd-hint" title="Press / to search" onClick={() => searchInputRef.current?.focus()}>/</kbd>
               )}
             </div>
 
@@ -400,9 +422,16 @@ export default function Header({ currentRoute, navigateTo }) {
         }
 
         .main-nav-bar {
-          padding: 0.75rem 0;
-          background: #ffffff;
+          padding: 0.8rem 0;
+          background: rgba(255, 255, 255, 0.96);
+          backdrop-filter: blur(12px);
+          -webkit-backdrop-filter: blur(12px);
           border-bottom: 1px solid #cbd5e1;
+          position: sticky;
+          top: 0;
+          z-index: 100;
+          box-shadow: 0 1px 6px rgba(0, 0, 0, 0.03);
+          transition: background 0.2s ease, box-shadow 0.2s ease;
         }
 
         .nav-container {
@@ -415,14 +444,23 @@ export default function Header({ currentRoute, navigateTo }) {
         .brand-lockup {
           display: flex;
           align-items: center;
-          gap: 0.85rem;
+          gap: 0.8rem;
           cursor: pointer;
           text-decoration: none;
+          flex-shrink: 0;
+        }
+
+        .brand-icon {
+          transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .brand-lockup:hover .brand-icon {
+          transform: rotate(25deg);
         }
 
         .brand-emblem-badge {
-          width: 42px;
-          height: 42px;
+          width: 40px;
+          height: 40px;
           border-radius: 8px;
           background: var(--navy);
           border: 1px solid #0f2b5c;
@@ -431,6 +469,13 @@ export default function Header({ currentRoute, navigateTo }) {
           justify-content: center;
           color: #fbbf24;
           box-shadow: 0 2px 5px rgba(10, 37, 64, 0.15);
+          flex-shrink: 0;
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .brand-lockup:hover .brand-emblem-badge {
+          transform: translateY(-1px);
+          box-shadow: 0 4px 10px rgba(10, 37, 64, 0.22);
         }
 
         .brand-text {
@@ -439,23 +484,26 @@ export default function Header({ currentRoute, navigateTo }) {
         }
 
         .brand-primary {
-          font-size: 1.18rem;
+          font-size: 1.15rem;
           font-weight: 800;
           letter-spacing: -0.01em;
           color: var(--navy);
-          line-height: 1.15;
+          line-height: 1.2;
         }
 
         .brand-secondary {
-          font-size: 0.78rem;
+          font-size: 0.76rem;
           color: var(--text-secondary);
-          font-weight: 500;
+          font-weight: 600;
           line-height: 1.2;
         }
 
         .brand-tagline {
-          font-size: 0.7rem;
-          color: var(--text-muted);
+          font-size: 0.68rem;
+          color: #64748b;
+          font-weight: 500;
+          line-height: 1.2;
+          white-space: nowrap;
         }
 
         .desktop-nav {
@@ -467,35 +515,39 @@ export default function Header({ currentRoute, navigateTo }) {
         .nav-link {
           display: flex;
           align-items: center;
-          gap: 0.45rem;
-          padding: 0.5rem 0.85rem;
-          border-radius: var(--radius-sm);
+          gap: 0.4rem;
+          padding: 0.48rem 0.85rem;
+          border-radius: 7px;
           font-size: 0.88rem;
-          font-weight: 500;
+          font-weight: 600;
           color: var(--text-secondary);
           background: transparent;
           border: 1px solid transparent;
           cursor: pointer;
-          transition: all 0.15s ease;
+          transition: all 0.18s ease;
           position: relative;
+          white-space: nowrap;
         }
 
         .nav-link:hover {
           color: var(--navy);
           background: #f1f5f9;
+          transform: translateY(-1px);
         }
 
         .nav-link.active {
-          color: #065f46;
+          color: #047857;
           background: #ecfdf5;
           border-color: #a7f3d0;
-          font-weight: 600;
+          font-weight: 700;
+          box-shadow: 0 1px 3px rgba(4, 120, 87, 0.08);
         }
 
         .nav-actions {
           display: flex;
           align-items: center;
           gap: 0.75rem;
+          flex-shrink: 0;
         }
 
         .search-input-wrapper {
@@ -515,17 +567,17 @@ export default function Header({ currentRoute, navigateTo }) {
           background: #f8fafc;
           border: 1px solid var(--border-subtle);
           border-radius: var(--radius-full);
-          padding: 0.45rem 1.8rem 0.45rem 2.2rem;
+          padding: 0.45rem 2.2rem 0.45rem 2.2rem;
           color: var(--text-primary);
           font-size: 0.82rem;
-          width: 190px;
-          transition: all 0.2s ease;
+          width: 185px;
+          transition: all 0.22s ease;
         }
 
         .header-search-input:focus {
           outline: none;
           border-color: var(--ice);
-          width: 240px;
+          width: 225px;
           background: #ffffff;
           box-shadow: 0 0 0 3px var(--ice-glow);
         }
@@ -540,6 +592,28 @@ export default function Header({ currentRoute, navigateTo }) {
           padding: 2px;
         }
 
+        .search-kbd-hint {
+          position: absolute;
+          right: 0.65rem;
+          font-family: inherit;
+          font-size: 0.7rem;
+          font-weight: 700;
+          color: #94a3b8;
+          background: #e2e8f0;
+          border: 1px solid #cbd5e1;
+          padding: 1px 5px;
+          border-radius: 4px;
+          line-height: 1.2;
+          cursor: pointer;
+          pointer-events: auto;
+          transition: all 0.15s ease;
+        }
+
+        .search-kbd-hint:hover {
+          color: #0f172a;
+          border-color: #94a3b8;
+        }
+
         .btn-admin {
           display: flex;
           align-items: center;
@@ -548,11 +622,12 @@ export default function Header({ currentRoute, navigateTo }) {
           color: var(--navy);
           border: 1px solid #cbd5e1;
           padding: 0.45rem 0.85rem;
-          border-radius: var(--radius-sm);
+          border-radius: 7px;
           font-size: 0.82rem;
-          font-weight: 600;
+          font-weight: 700;
           cursor: pointer;
           transition: all 0.15s ease;
+          white-space: nowrap;
         }
 
         .btn-admin:hover, .btn-admin.active {
