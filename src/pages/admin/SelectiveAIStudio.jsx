@@ -58,7 +58,7 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
         title: d.title,
         region: d.region,
         year: d.year,
-        heroImage: 'https://images.unsplash.com/photo-1508873696983-2df5293cb32f?auto=format&fit=crop&w=1200&q=80',
+        heroImage: 'https://images.unsplash.com/photo-1517999144091-3d9dca6d1e43?auto=format&fit=crop&w=1200&q=80',
         rawText: `DATASET: ${d.title}\nFormat: ${d.format}\nVariables: ${d.parameters?.join(', ')}\nCoverage: ${d.spatialCoverage}\n\nSummary:\n${d.summary}`
       })),
       ...publications.map(p => ({

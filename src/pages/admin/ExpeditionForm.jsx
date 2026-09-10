@@ -67,7 +67,7 @@ The voyage departed Cape Town with 48 scientists from MoES institutes, Survey of
     const newMedia = {
       id: `m-${Date.now()}`,
       type: 'photo',
-      url: 'https://images.unsplash.com/photo-1508873696983-2df5293cb32f?auto=format&fit=crop&w=1200&q=80',
+      url: 'https://images.unsplash.com/photo-1517999144091-3d9dca6d1e43?auto=format&fit=crop&w=1200&q=80',
       caption: 'Glaciology team conducting survey.',
       altText: autoGenerateImageAlt('Glaciology team survey', region)
     };

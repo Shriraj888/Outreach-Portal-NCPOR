@@ -27,10 +27,14 @@ import {
   ChevronDown,
   Eye,
   EyeOff,
-  FileCode
+  FileCode,
+  BookOpen,
+  TrendingUp,
+  Quote,
+  Search
 } from 'lucide-react';
 import SocialCardPreview from '../components/SocialCardPreview';
-import { TwitterIcon, InstagramIcon, LinkedinIcon } from '../components/SocialIcons';
+import { TwitterIcon, InstagramIcon, LinkedinIcon, FacebookIcon, BlogIcon, ArticleIcon } from '../components/SocialIcons';
 
 export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
   const { expeditions, publications, auth, lang } = usePortal();
@@ -40,8 +44,16 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
   const [copiedTwitter, setCopiedTwitter] = useState(false);
   const [copiedLinkedIn, setCopiedLinkedIn] = useState(false);
   const [copiedInstagram, setCopiedInstagram] = useState(false);
+  const [copiedFacebook, setCopiedFacebook] = useState(false);
+  const [copiedBlog, setCopiedBlog] = useState(false);
+  const [copiedArticle, setCopiedArticle] = useState(false);
   const [expandedReports, setExpandedReports] = useState({});
   const [copiedReportId, setCopiedReportId] = useState(null);
+  const [pubSearchQuery, setPubSearchQuery] = useState('');
+  const [pubCategoryFilter, setPubCategoryFilter] = useState('all');
+  const [copiedCitationId, setCopiedCitationId] = useState(null);
+  const [copiedDoiId, setCopiedDoiId] = useState(null);
+  const [expandedAbstracts, setExpandedAbstracts] = useState({});
 
   const expedition = expeditions.find(e => e.id === expeditionId);
 
@@ -58,8 +70,42 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
     );
   }
 
-  // Linked publications
+  // Linked publications & computed metrics
   const linkedPubs = publications.filter(p => p.expeditionId === expedition.id || (expedition.publications || []).includes(p.id));
+  const totalCitations = linkedPubs.reduce((acc, p) => acc + (p.citations || 0), 0);
+  const pubCategories = ['all', ...Array.from(new Set(linkedPubs.map(p => p.category).filter(Boolean)))];
+
+  const filteredPubs = linkedPubs.filter(pub => {
+    const matchesCat = pubCategoryFilter === 'all' || pub.category === pubCategoryFilter;
+    const matchesQuery = !pubSearchQuery.trim() || 
+      pub.title.toLowerCase().includes(pubSearchQuery.toLowerCase()) ||
+      (pub.authors && pub.authors.some(a => a.toLowerCase().includes(pubSearchQuery.toLowerCase()))) ||
+      (pub.journal && pub.journal.toLowerCase().includes(pubSearchQuery.toLowerCase())) ||
+      (pub.doi && pub.doi.toLowerCase().includes(pubSearchQuery.toLowerCase())) ||
+      (pub.abstract && pub.abstract.toLowerCase().includes(pubSearchQuery.toLowerCase()));
+    return matchesCat && matchesQuery;
+  });
+
+  const handleCopyCitation = (pub) => {
+    const authorsFormatted = pub.authors && pub.authors.length > 0 ? pub.authors.join(', ') : 'NCPOR Scientific Team';
+    const citation = `${authorsFormatted} (${pub.year}). ${pub.title}. ${pub.journal || 'NCPOR Research Archive'}. https://doi.org/${pub.doi}`;
+    navigator.clipboard.writeText(citation);
+    setCopiedCitationId(pub.id);
+    setTimeout(() => setCopiedCitationId(null), 2200);
+  };
+
+  const handleCopyDoi = (pub) => {
+    navigator.clipboard.writeText(`https://doi.org/${pub.doi}`);
+    setCopiedDoiId(pub.id);
+    setTimeout(() => setCopiedDoiId(null), 2200);
+  };
+
+  const toggleAbstractExpanded = (pubId) => {
+    setExpandedAbstracts(prev => ({
+      ...prev,
+      [pubId]: !prev[pubId]
+    }));
+  };
 
   const handleCopySummary = () => {
     const textToCopy = expedition.aiGeneratedContent?.summary || expedition.summary;
@@ -87,6 +133,27 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
     navigator.clipboard.writeText(insta);
     setCopiedInstagram(true);
     setTimeout(() => setCopiedInstagram(false), 2000);
+  };
+
+  const handleCopyFacebook = () => {
+    const fb = expedition.aiGeneratedContent?.socialCaptions?.facebook || expedition.summary;
+    navigator.clipboard.writeText(fb);
+    setCopiedFacebook(true);
+    setTimeout(() => setCopiedFacebook(false), 2000);
+  };
+
+  const handleCopyBlog = () => {
+    const blogText = expedition.aiGeneratedContent?.socialCaptions?.blog || expedition.summary;
+    navigator.clipboard.writeText(blogText);
+    setCopiedBlog(true);
+    setTimeout(() => setCopiedBlog(false), 2000);
+  };
+
+  const handleCopyArticle = () => {
+    const artText = expedition.aiGeneratedContent?.socialCaptions?.article || expedition.summary;
+    navigator.clipboard.writeText(artText);
+    setCopiedArticle(true);
+    setTimeout(() => setCopiedArticle(false), 2000);
   };
 
   const toggleReportExpanded = (repId) => {
@@ -333,10 +400,49 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
                               {copiedInstagram ? <Check size={13} /> : <InstagramIcon size={12} />}
                             </span>
                             <span className="draft-btn-text">
-                              {copiedInstagram ? 'Copied Instagram!' : 'Copy Instagram'}
+                              {copiedInstagram ? 'Copied IG!' : 'Copy Instagram'}
                             </span>
                           </button>
                         )}
+
+                        <button
+                          className={`social-draft-btn btn-facebook ${copiedFacebook ? 'copied' : ''}`}
+                          onClick={handleCopyFacebook}
+                          title="Copy Facebook Community Post"
+                        >
+                          <span className="social-icon-wrapper facebook-icon-wrap">
+                            {copiedFacebook ? <Check size={13} /> : <FacebookIcon size={12} />}
+                          </span>
+                          <span className="draft-btn-text">
+                            {copiedFacebook ? 'Copied FB!' : 'Copy Facebook'}
+                          </span>
+                        </button>
+
+                        <button
+                          className={`social-draft-btn btn-blog ${copiedBlog ? 'copied' : ''}`}
+                          onClick={handleCopyBlog}
+                          title="Copy Science Blog Article (Markdown)"
+                        >
+                          <span className="social-icon-wrapper blog-icon-wrap">
+                            {copiedBlog ? <Check size={13} /> : <BlogIcon size={12} />}
+                          </span>
+                          <span className="draft-btn-text">
+                            {copiedBlog ? 'Copied Blog!' : 'Copy Blog Post'}
+                          </span>
+                        </button>
+
+                        <button
+                          className={`social-draft-btn btn-article ${copiedArticle ? 'copied' : ''}`}
+                          onClick={handleCopyArticle}
+                          title="Copy Official Press Release Article"
+                        >
+                          <span className="social-icon-wrapper article-icon-wrap">
+                            {copiedArticle ? <Check size={13} /> : <ArticleIcon size={12} />}
+                          </span>
+                          <span className="draft-btn-text">
+                            {copiedArticle ? 'Copied Article!' : 'Copy Press Article'}
+                          </span>
+                        </button>
                       </div>
                     </div>
 
@@ -619,7 +725,15 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
               {expedition.media && expedition.media.map((item) => (
                 <div key={item.id} className="glass-panel media-card-item">
                   <div className="media-img-wrap" onClick={() => setLightboxImg(item)}>
-                    <img src={item.url} alt={item.altText || item.caption} className="media-thumb" />
+                    <img 
+                      src={item.url} 
+                      alt={item.altText || item.caption} 
+                      className="media-thumb" 
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = "https://images.unsplash.com/photo-1517999144091-3d9dca6d1e43?auto=format&fit=crop&w=1200&q=80";
+                      }}
+                    />
                     <div className="media-zoom-overlay">
                       <Maximize2 size={20} />
                     </div>
@@ -645,33 +759,218 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
         {/* Tab 4: Publications */}
         {activeTab === 'publications' && (
           <div className="pubs-tab-container">
-            <div className="section-intro">
-              <h3>Peer-Reviewed Publications & Datasets</h3>
-              <p>Scientific papers and open datasets resulting from this expedition.</p>
+            {/* Header with Title & Live Impact Metrics */}
+            <div className="pubs-section-header">
+              <div className="pubs-header-text">
+                <div className="pubs-badge-pill">
+                  <BookOpen size={13} />
+                  <span>Peer-Reviewed Science Repository</span>
+                </div>
+                <h3>Peer-Reviewed Publications & Research Datasets</h3>
+                <p>High-impact scientific research articles, open datasets, and peer-reviewed studies published under the NCPOR polar mandate.</p>
+              </div>
+
+              <div className="pubs-stats-summary">
+                <div className="pub-stat-card">
+                  <div className="pub-stat-icon-wrap primary">
+                    <FileText size={16} />
+                  </div>
+                  <div className="pub-stat-details">
+                    <span className="pub-stat-num">{linkedPubs.length}</span>
+                    <span className="pub-stat-label">Indexed Papers</span>
+                  </div>
+                </div>
+
+                <div className="pub-stat-card">
+                  <div className="pub-stat-icon-wrap amber">
+                    <TrendingUp size={16} />
+                  </div>
+                  <div className="pub-stat-details">
+                    <span className="pub-stat-num">{totalCitations}</span>
+                    <span className="pub-stat-label">Total Citations</span>
+                  </div>
+                </div>
+
+                <div className="pub-stat-card">
+                  <div className="pub-stat-icon-wrap emerald">
+                    <ShieldCheck size={16} />
+                  </div>
+                  <div className="pub-stat-details">
+                    <span className="pub-stat-num">100%</span>
+                    <span className="pub-stat-label">Open Access DOI</span>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            {linkedPubs.length > 0 ? (
-              <div className="pubs-list">
-                {linkedPubs.map((pub) => (
-                  <div key={pub.id} className="glass-panel pub-item-card">
-                    <div className="pub-cat-badge">{pub.category}</div>
-                    <h4 className="pub-title">{pub.title}</h4>
-                    <p className="pub-authors">{pub.authors.join(', ')} ({pub.year})</p>
-                    <p className="pub-journal"><em>{pub.journal}</em> • DOI: {pub.doi}</p>
-                    <p className="pub-abstract">{pub.abstract}</p>
-                    <div className="pub-actions">
-                      <span className="citation-count">📚 {pub.citations} Citations</span>
-                      <a href={`https://doi.org/${pub.doi}`} target="_blank" rel="noopener noreferrer" className="btn-secondary">
-                        <span>Open DOI Link</span>
-                        <ExternalLink size={13} />
-                      </a>
-                    </div>
+            {/* Filter & Search Bar */}
+            {linkedPubs.length > 0 && (
+              <div className="pubs-toolbar-bar">
+                <div className="pub-search-input-wrap">
+                  <Search size={15} className="pub-search-icon" />
+                  <input
+                    type="text"
+                    placeholder="Search publications by title, author, journal, or DOI..."
+                    value={pubSearchQuery}
+                    onChange={(e) => setPubSearchQuery(e.target.value)}
+                    className="pub-search-input"
+                  />
+                  {pubSearchQuery && (
+                    <button className="pub-clear-search" onClick={() => setPubSearchQuery('')}>
+                      <X size={13} />
+                    </button>
+                  )}
+                </div>
+
+                {pubCategories.length > 2 && (
+                  <div className="pub-category-pills">
+                    {pubCategories.map(cat => {
+                      const count = cat === 'all' 
+                        ? linkedPubs.length 
+                        : linkedPubs.filter(p => p.category === cat).length;
+                      return (
+                        <button
+                          key={cat}
+                          onClick={() => setPubCategoryFilter(cat)}
+                          className={`pub-filter-btn ${pubCategoryFilter === cat ? 'active' : ''}`}
+                        >
+                          <span>{cat === 'all' ? 'All Disciplines' : cat}</span>
+                          <span className="pub-filter-count">{count}</span>
+                        </button>
+                      );
+                    })}
                   </div>
-                ))}
+                )}
+              </div>
+            )}
+
+            {/* Publications List */}
+            {filteredPubs.length > 0 ? (
+              <div className="pubs-list-grid">
+                {filteredPubs.map((pub) => {
+                  const isCitationCopied = copiedCitationId === pub.id;
+                  const isDoiCopied = copiedDoiId === pub.id;
+                  const isExpanded = !!expandedAbstracts[pub.id];
+
+                  return (
+                    <div key={pub.id} className="pub-card-premium">
+                      {/* Top Meta Line */}
+                      <div className="pub-card-top">
+                        <div className="pub-meta-tags-left">
+                          <span className="pub-category-tag">{pub.category || 'Polar Research'}</span>
+                          <span className="pub-year-tag">{pub.year}</span>
+                          <span className="pub-peer-verified">
+                            <CheckCircle2 size={12} />
+                            <span>Peer-Reviewed</span>
+                          </span>
+                        </div>
+
+                        <div className="pub-metrics-right">
+                          <span className="pub-citation-badge" title="Total indexed academic citations">
+                            <TrendingUp size={13} />
+                            <span>{pub.citations || 0} Citations</span>
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Main Title */}
+                      <h4 className="pub-heading">
+                        <a 
+                          href={`https://doi.org/${pub.doi}`} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="pub-title-link"
+                        >
+                          {pub.title}
+                        </a>
+                      </h4>
+
+                      {/* Authors & Journal Credentials */}
+                      <div className="pub-credentials-box">
+                        <div className="pub-authors-line">
+                          <User size={13} className="pub-author-icon" />
+                          <span className="pub-authors-text">{pub.authors ? pub.authors.join(', ') : 'NCPOR Scientific Team'}</span>
+                        </div>
+
+                        <div className="pub-journal-line">
+                          <BookOpen size={13} className="pub-journal-icon" />
+                          <span className="pub-journal-name">{pub.journal}</span>
+                          <span className="pub-meta-divider">•</span>
+                          <span className="pub-doi-text">DOI: {pub.doi}</span>
+                          <button
+                            className="btn-copy-mini-doi"
+                            onClick={() => handleCopyDoi(pub)}
+                            title="Copy DOI URL"
+                          >
+                            {isDoiCopied ? <Check size={11} /> : <Copy size={11} />}
+                            <span>{isDoiCopied ? 'Copied' : 'Copy'}</span>
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Abstract Quote Block */}
+                      {pub.abstract && (
+                        <div className="pub-abstract-block">
+                          <div className="pub-abstract-label">
+                            <Quote size={13} />
+                            <span>Abstract & Key Findings:</span>
+                          </div>
+                          <p className={`pub-abstract-text ${isExpanded ? 'expanded' : ''}`}>
+                            {pub.abstract}
+                          </p>
+                          {pub.abstract.length > 180 && (
+                            <button
+                              className="btn-pub-expand"
+                              onClick={() => toggleAbstractExpanded(pub.id)}
+                            >
+                              <span>{isExpanded ? 'Show Less' : 'Read Full Abstract'}</span>
+                              <ChevronDown size={13} className={`expand-chevron ${isExpanded ? 'rotated' : ''}`} />
+                            </button>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Bottom Action Footer */}
+                      <div className="pub-card-footer">
+                        <div className="pub-footer-left-actions">
+                          <button
+                            className={`btn-pub-cite ${isCitationCopied ? 'copied' : ''}`}
+                            onClick={() => handleCopyCitation(pub)}
+                            title="Copy formatted citation in APA format"
+                          >
+                            {isCitationCopied ? <Check size={13} /> : <Copy size={13} />}
+                            <span>{isCitationCopied ? 'Citation Copied (APA)!' : 'Copy APA Citation'}</span>
+                          </button>
+                        </div>
+
+                        <div className="pub-footer-right-actions">
+                          <a
+                            href={`https://doi.org/${pub.doi}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="btn-pub-doi-link"
+                          >
+                            <span>Open DOI Link</span>
+                            <ExternalLink size={13} />
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             ) : (
               <div className="empty-results-box glass-panel">
-                <p>No formal publications indexed under this ID yet.</p>
+                <BookOpen size={32} className="empty-icon" />
+                <h4>No publications found matching your search.</h4>
+                <p>Try adjusting your search keywords or resetting the discipline filter.</p>
+                <button 
+                  className="btn-secondary" 
+                  onClick={() => { setPubSearchQuery(''); setPubCategoryFilter('all'); }}
+                  style={{ marginTop: '0.75rem' }}
+                >
+                  <span>Reset Filters</span>
+                </button>
               </div>
             )}
           </div>
@@ -701,6 +1000,8 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
               expeditionTitle={expedition.title}
               region={expedition.region}
               mediaUrl={expedition.media && expedition.media[0]?.url}
+              mediaList={expedition.media || []}
+              expedition={expedition}
             />
           </div>
         )}
@@ -713,7 +1014,15 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
             <button className="lightbox-close" onClick={() => setLightboxImg(null)}>
               <X size={24} />
             </button>
-            <img src={lightboxImg.url} alt={lightboxImg.altText} className="lightbox-full-img" />
+            <img 
+              src={lightboxImg.url} 
+              alt={lightboxImg.altText} 
+              className="lightbox-full-img" 
+              onError={(e) => {
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = "https://images.unsplash.com/photo-1517999144091-3d9dca6d1e43?auto=format&fit=crop&w=1600&q=80";
+              }}
+            />
             <div className="lightbox-caption">
               <h4>{lightboxImg.caption}</h4>
               <p><strong>Alt-Text:</strong> {lightboxImg.altText}</p>
@@ -1215,6 +1524,39 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
         .social-draft-btn.btn-instagram:hover {
           border-color: #e1306c;
           color: #e1306c;
+        }
+
+        /* Facebook Specific */
+        .facebook-icon-wrap {
+          background: #1877f2;
+          color: #ffffff;
+        }
+
+        .social-draft-btn.btn-facebook:hover {
+          border-color: #1877f2;
+          color: #1877f2;
+        }
+
+        /* Blog Specific */
+        .blog-icon-wrap {
+          background: #059669;
+          color: #ffffff;
+        }
+
+        .social-draft-btn.btn-blog:hover {
+          border-color: #059669;
+          color: #059669;
+        }
+
+        /* Article Specific */
+        .article-icon-wrap {
+          background: #7c3aed;
+          color: #ffffff;
+        }
+
+        .social-draft-btn.btn-article:hover {
+          border-color: #7c3aed;
+          color: #7c3aed;
         }
 
         /* Copied State */
@@ -1961,66 +2303,538 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
           line-height: 1.4;
         }
 
-        /* Publications Tab */
-        .pubs-list {
+        /* Refined Publications Tab */
+        .pubs-tab-container {
+          display: flex;
+          flex-direction: column;
+          gap: 1.5rem;
+        }
+
+        .pubs-section-header {
+          display: flex;
+          align-items: flex-start;
+          justify-content: space-between;
+          gap: 1.5rem;
+          flex-wrap: wrap;
+          padding-bottom: 0.5rem;
+        }
+
+        .pubs-header-text {
+          flex: 1;
+          min-width: 280px;
+        }
+
+        .pubs-badge-pill {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.35rem;
+          background: rgba(2, 132, 199, 0.1);
+          border: 1px solid rgba(2, 132, 199, 0.25);
+          color: #0284c7;
+          font-size: 0.72rem;
+          font-weight: 800;
+          text-transform: uppercase;
+          letter-spacing: 0.04em;
+          padding: 0.2rem 0.65rem;
+          border-radius: 6px;
+          margin-bottom: 0.4rem;
+        }
+
+        .pubs-header-text h3 {
+          font-size: 1.35rem;
+          font-weight: 800;
+          color: var(--navy);
+          margin: 0 0 0.25rem 0;
+          letter-spacing: -0.01em;
+        }
+
+        .pubs-header-text p {
+          font-size: 0.88rem;
+          color: var(--text-secondary);
+          margin: 0;
+        }
+
+        .pubs-stats-summary {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          flex-wrap: wrap;
+        }
+
+        .pub-stat-card {
+          background: #ffffff;
+          border: 1px solid var(--border-card);
+          border-radius: 10px;
+          padding: 0.6rem 0.95rem;
+          display: flex;
+          align-items: center;
+          gap: 0.65rem;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+        }
+
+        .pub-stat-icon-wrap {
+          width: 32px;
+          height: 32px;
+          border-radius: 8px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+        }
+
+        .pub-stat-icon-wrap.primary {
+          background: #e0f2fe;
+          color: #0284c7;
+        }
+
+        .pub-stat-icon-wrap.amber {
+          background: #fef3c7;
+          color: #d97706;
+        }
+
+        .pub-stat-icon-wrap.emerald {
+          background: #ecfdf5;
+          color: #059669;
+        }
+
+        .pub-stat-details {
+          display: flex;
+          flex-direction: column;
+        }
+
+        .pub-stat-num {
+          font-size: 1.05rem;
+          font-weight: 800;
+          color: var(--navy);
+          line-height: 1.1;
+        }
+
+        .pub-stat-label {
+          font-size: 0.68rem;
+          font-weight: 600;
+          color: var(--text-muted);
+          text-transform: uppercase;
+          letter-spacing: 0.02em;
+        }
+
+        /* Toolbar / Search */
+        .pubs-toolbar-bar {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 1rem;
+          flex-wrap: wrap;
+          background: #ffffff;
+          border: 1px solid var(--border-card);
+          border-radius: 12px;
+          padding: 0.65rem 1rem;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+        }
+
+        .pub-search-input-wrap {
+          position: relative;
+          display: flex;
+          align-items: center;
+          flex: 1;
+          min-width: 240px;
+        }
+
+        .pub-search-icon {
+          position: absolute;
+          left: 0.75rem;
+          color: #94a3b8;
+          pointer-events: none;
+        }
+
+        .pub-search-input {
+          width: 100%;
+          padding: 0.45rem 2rem 0.45rem 2.25rem;
+          border: 1px solid #e2e8f0;
+          border-radius: 8px;
+          font-size: 0.82rem;
+          background: #f8fafc;
+          color: #0f172a;
+          outline: none;
+          transition: border-color 0.15s ease, background 0.15s ease;
+        }
+
+        .pub-search-input:focus {
+          border-color: #0284c7;
+          background: #ffffff;
+          box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.1);
+        }
+
+        .pub-clear-search {
+          position: absolute;
+          right: 0.65rem;
+          background: #e2e8f0;
+          border: none;
+          border-radius: 50%;
+          width: 18px;
+          height: 18px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #64748b;
+          cursor: pointer;
+        }
+
+        .pub-category-pills {
+          display: flex;
+          align-items: center;
+          gap: 0.4rem;
+          flex-wrap: wrap;
+        }
+
+        .pub-filter-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.35rem;
+          background: #f8fafc;
+          border: 1px solid #e2e8f0;
+          color: #475569;
+          font-size: 0.74rem;
+          font-weight: 600;
+          padding: 0.35rem 0.7rem;
+          border-radius: 6px;
+          cursor: pointer;
+          transition: all 0.15s ease;
+        }
+
+        .pub-filter-btn:hover {
+          background: #f1f5f9;
+          border-color: #cbd5e1;
+          color: #0f172a;
+        }
+
+        .pub-filter-btn.active {
+          background: #0284c7;
+          border-color: #0284c7;
+          color: #ffffff;
+        }
+
+        .pub-filter-count {
+          font-size: 0.66rem;
+          font-weight: 700;
+          background: rgba(0, 0, 0, 0.08);
+          padding: 0.1rem 0.35rem;
+          border-radius: 4px;
+        }
+
+        .pub-filter-btn.active .pub-filter-count {
+          background: rgba(255, 255, 255, 0.25);
+          color: #ffffff;
+        }
+
+        /* Publications List & Cards */
+        .pubs-list-grid {
           display: flex;
           flex-direction: column;
           gap: 1.25rem;
         }
 
-        .pub-item-card {
-          padding: 1.5rem;
+        .pub-card-premium {
           background: #ffffff;
+          border: 1px solid var(--border-card);
+          border-radius: 14px;
+          padding: 1.5rem;
+          display: flex;
+          flex-direction: column;
+          gap: 0.95rem;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+          transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
         }
 
-        .pub-cat-badge {
-          display: inline-block;
+        .pub-card-premium:hover {
+          border-color: #cbd5e1;
+          box-shadow: 0 6px 20px rgba(0, 0, 0, 0.04);
+          transform: translateY(-2px);
+        }
+
+        .pub-card-top {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          flex-wrap: wrap;
+          gap: 0.5rem;
+        }
+
+        .pub-meta-tags-left {
+          display: flex;
+          align-items: center;
+          gap: 0.45rem;
+          flex-wrap: wrap;
+        }
+
+        .pub-category-tag {
           background: #ecfdf5;
           color: #047857;
           font-size: 0.72rem;
           font-weight: 700;
-          padding: 2px 8px;
-          border-radius: 4px;
-          margin-bottom: 0.5rem;
+          padding: 0.2rem 0.65rem;
+          border-radius: 6px;
+          border: 1px solid #a7f3d0;
         }
 
-        .pub-title {
-          font-size: 1.15rem;
+        .pub-year-tag {
+          background: #f1f5f9;
+          color: #475569;
+          font-size: 0.72rem;
+          font-weight: 700;
+          padding: 0.2rem 0.55rem;
+          border-radius: 6px;
+          border: 1px solid #e2e8f0;
+        }
+
+        .pub-peer-verified {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.25rem;
+          font-size: 0.72rem;
+          font-weight: 600;
+          color: #0284c7;
+          background: #e0f2fe;
+          padding: 0.2rem 0.55rem;
+          border-radius: 6px;
+          border: 1px solid #bae6fd;
+        }
+
+        .pub-citation-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.35rem;
+          font-size: 0.76rem;
+          font-weight: 700;
+          color: #b45309;
+          background: #fef3c7;
+          border: 1px solid #fde68a;
+          padding: 0.2rem 0.65rem;
+          border-radius: var(--radius-full);
+        }
+
+        .pub-heading {
+          font-size: 1.18rem;
+          font-weight: 800;
           color: var(--navy);
-          margin-bottom: 0.35rem;
+          line-height: 1.35;
+          margin: 0;
+          letter-spacing: -0.01em;
         }
 
-        .pub-authors {
-          font-size: 0.85rem;
-          color: var(--text-secondary);
-          margin-bottom: 0.2rem;
+        .pub-title-link {
+          color: #0f172a;
+          text-decoration: none;
+          transition: color 0.15s ease;
         }
 
-        .pub-journal {
+        .pub-title-link:hover {
+          color: #0284c7;
+        }
+
+        .pub-credentials-box {
+          background: #f8fafc;
+          border: 1px solid #f1f5f9;
+          border-radius: 8px;
+          padding: 0.75rem 1rem;
+          display: flex;
+          flex-direction: column;
+          gap: 0.4rem;
+        }
+
+        .pub-authors-line {
+          display: flex;
+          align-items: center;
+          gap: 0.45rem;
+          font-size: 0.84rem;
+          font-weight: 600;
+          color: #334155;
+          flex-wrap: wrap;
+        }
+
+        .pub-author-icon {
+          color: #64748b;
+          flex-shrink: 0;
+        }
+
+        .pub-journal-line {
+          display: flex;
+          align-items: center;
+          gap: 0.45rem;
           font-size: 0.8rem;
-          color: #059669;
-          margin-bottom: 0.75rem;
+          color: #64748b;
+          flex-wrap: wrap;
         }
 
-        .pub-abstract {
+        .pub-journal-icon {
+          color: #0284c7;
+          flex-shrink: 0;
+        }
+
+        .pub-journal-name {
+          font-style: italic;
+          color: #0369a1;
+          font-weight: 600;
+        }
+
+        .pub-meta-divider {
+          color: #cbd5e1;
+        }
+
+        .pub-doi-text {
+          font-family: var(--font-mono, monospace);
+          font-size: 0.74rem;
+          color: #475569;
+        }
+
+        .btn-copy-mini-doi {
+          background: #ffffff;
+          border: 1px solid #cbd5e1;
+          color: #475569;
+          font-size: 0.68rem;
+          font-weight: 600;
+          padding: 0.12rem 0.45rem;
+          border-radius: 4px;
+          cursor: pointer;
+          display: inline-flex;
+          align-items: center;
+          gap: 0.25rem;
+          transition: all 0.15s ease;
+        }
+
+        .btn-copy-mini-doi:hover {
+          background: #f8fafc;
+          border-color: #0284c7;
+          color: #0284c7;
+        }
+
+        .pub-abstract-block {
+          background: #f8fafc;
+          border-left: 3px solid #0284c7;
+          border-radius: 0 8px 8px 0;
+          padding: 0.85rem 1.15rem;
+          display: flex;
+          flex-direction: column;
+          gap: 0.35rem;
+        }
+
+        .pub-abstract-label {
+          display: flex;
+          align-items: center;
+          gap: 0.35rem;
+          font-size: 0.72rem;
+          font-weight: 700;
+          color: #0284c7;
+          text-transform: uppercase;
+          letter-spacing: 0.03em;
+        }
+
+        .pub-abstract-text {
           font-size: 0.85rem;
-          color: var(--text-muted);
+          color: #475569;
           line-height: 1.55;
-          margin-bottom: 1rem;
+          margin: 0;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
         }
 
-        .pub-actions {
+        .pub-abstract-text.expanded {
+          display: block;
+          -webkit-line-clamp: unset;
+        }
+
+        .btn-pub-expand {
+          background: none;
+          border: none;
+          color: #0284c7;
+          font-size: 0.75rem;
+          font-weight: 700;
+          cursor: pointer;
+          display: inline-flex;
+          align-items: center;
+          gap: 0.25rem;
+          padding: 0;
+          margin-top: 0.15rem;
+          width: fit-content;
+        }
+
+        .btn-pub-expand:hover {
+          text-decoration: underline;
+        }
+
+        .expand-chevron {
+          transition: transform 0.2s ease;
+        }
+
+        .expand-chevron.rotated {
+          transform: rotate(180deg);
+        }
+
+        .pub-card-footer {
           display: flex;
           align-items: center;
           justify-content: space-between;
+          padding-top: 0.85rem;
           border-top: 1px solid #f1f5f9;
-          padding-top: 0.75rem;
-          font-size: 0.8rem;
+          flex-wrap: wrap;
+          gap: 0.75rem;
         }
 
-        .citation-count {
-          color: #d97706;
+        .pub-footer-left-actions {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+        }
+
+        .btn-pub-cite {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.4rem;
+          background: #f8fafc;
+          border: 1px solid #cbd5e1;
+          color: #1e293b;
+          font-size: 0.78rem;
           font-weight: 600;
+          padding: 0.4rem 0.85rem;
+          border-radius: 7px;
+          cursor: pointer;
+          transition: all 0.15s ease;
+        }
+
+        .btn-pub-cite:hover {
+          background: #f1f5f9;
+          border-color: #94a3b8;
+          color: #0284c7;
+        }
+
+        .btn-pub-cite.copied {
+          background: #ecfdf5;
+          border-color: #a7f3d0;
+          color: #059669;
+          font-weight: 700;
+        }
+
+        .btn-pub-doi-link {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.4rem;
+          background: #0284c7;
+          border: 1px solid #0284c7;
+          color: #ffffff;
+          font-size: 0.78rem;
+          font-weight: 600;
+          padding: 0.4rem 1rem;
+          border-radius: 7px;
+          text-decoration: none;
+          transition: all 0.15s ease;
+          box-shadow: 0 1px 3px rgba(2, 132, 199, 0.2);
+        }
+
+        .btn-pub-doi-link:hover {
+          background: #0369a1;
+          border-color: #0369a1;
+          transform: translateY(-1px);
         }
 
         /* Lightbox Modal */

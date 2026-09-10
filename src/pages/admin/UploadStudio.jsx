@@ -237,7 +237,7 @@ The voyage departed Cape Town with 48 scientists from MoES institutes, Survey of
           {
             id: `m-${Date.now()}-2`,
             type: 'photo',
-            url: 'https://images.unsplash.com/photo-1508873696983-2df5293cb32f?auto=format&fit=crop&w=1200&q=80',
+            url: 'https://images.unsplash.com/photo-1517999144091-3d9dca6d1e43?auto=format&fit=crop&w=1200&q=80',
             caption: 'Glaciologist preparing electromechanical drill at Dronning Maud Land margin.',
             altText: 'Scientist in polar parka assembling drill apparatus on snow field.',
             tags: ['Glaciology', 'Fieldwork']

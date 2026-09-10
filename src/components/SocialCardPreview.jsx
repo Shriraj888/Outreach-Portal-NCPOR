@@ -1,20 +1,47 @@
 import { useState } from 'react';
 import { 
   Copy, 
-  Check, 
+  Check,
   Sparkles, 
   Share2, 
   MessageCircle, 
   Heart, 
   Repeat, 
   Bookmark, 
-  ThumbsUp 
+  ThumbsUp,
+  Download,
+  ExternalLink,
+  Edit3,
+  RotateCcw,
+  LayoutGrid,
+  Smartphone,
+  ImageIcon,
+  Hash,
+  ShieldCheck,
+  CheckCheck,
+  Send,
+  BookOpen,
+  FileText
 } from 'lucide-react';
-import { TwitterIcon, InstagramIcon, LinkedinIcon } from './SocialIcons';
+import { TwitterIcon, InstagramIcon, LinkedinIcon, FacebookIcon, BlogIcon, ArticleIcon } from './SocialIcons';
 
-export default function SocialCardPreview({ aiContent, expeditionTitle, region, mediaUrl }) {
+export default function SocialCardPreview({ aiContent, expeditionTitle, region, mediaUrl, mediaList = [] }) {
   const [activePlatform, setActivePlatform] = useState('twitter');
+  const [viewMode, setViewMode] = useState('grid'); // 'grid' (all side-by-side) or 'mock' (single platform mock)
+  const [selectedMediaUrl, setSelectedMediaUrl] = useState(mediaUrl || (mediaList[0]?.url) || '');
   const [copiedKey, setCopiedKey] = useState(null);
+  const [editingPlatform, setEditingPlatform] = useState(null);
+
+  const initialCaptions = {
+    twitter: aiContent?.socialCaptions?.twitter || "❄️ Setting sail for scientific discovery! The Indian Scientific Expedition #NCPOR #MoES has deployed critical cryosphere & climate monitoring assets. 🇮🇳🇦🇶 #PolarScience",
+    instagram: aiContent?.socialCaptions?.instagram || "Into the White Wilderness! 🇦🇶✨\n\nNCPOR researchers are advancing frontline polar science—from autonomous weather buoys to ice-core climate archives!\n\n#Antarctica #NCPOR #PolarExploration #ClimateScience #IndiaInAntarctica",
+    linkedin: aiContent?.socialCaptions?.linkedin || "The National Centre for Polar and Ocean Research (NCPOR), Ministry of Earth Sciences, presents scientific updates on polar expedition operations.\n\nKey Milestones:\n🔹 Autonomous cryospheric sensor arrays deployed.\n🔹 Paleoclimate data records logged.\n🔹 Zero-emission station energy systems tested.",
+    facebook: aiContent?.socialCaptions?.facebook || `❄️ Exploring the Ends of the Earth! 🌏 Discover how Indian scientists with the National Centre for Polar and Ocean Research (NCPOR) conducted vital research during the ${expeditionTitle || 'mission'} in ${region || 'Polar regions'}.\n\n🔬 Highlights of the Mission:\n• In-situ baseline recording under extreme conditions\n• Deployment of real-time telemetry sensor arrays\n• Uncovering critical links between polar weather and the Indian monsoon\n\n👉 Share this to celebrate Indian science! 🇮🇳\n\n#NCPOR #MoES #PolarScience #IndiaInAntarctica`,
+    blog: aiContent?.socialCaptions?.blog || `## Exploring the Frontiers of Polar Science: Insights from ${expeditionTitle || 'Polar Mission'}\n\n**By NCPOR Science Outreach Division**\n\nPolar regions may feel a world away, but the groundbreaking work conducted during **${expeditionTitle || 'the expedition'}** in ${region || 'the polar frontier'} directly influences our global climate and the Indian monsoon system.\n\n### Key Mission Milestones\n- **In-situ Cryospheric Probing**: High-resolution ice profiling across polar margins.\n- **Atmospheric Physics**: Continuous baseline monitoring of polar air masses.\n- **Green Hybrid Power Integration**: Reducing fuel dependency in sub-zero environments.\n\n### Why This Matters for India\nWhat happens at the poles drives deep oceanic and atmospheric teleconnections. By deploying cutting-edge instrumentation and retrieving unblemished climate records, Indian researchers are safeguarding our future and cementing India's leadership in the Antarctic Treaty System.\n\n*Explore open datasets and reports on the NCPOR Portal.*`,
+    article: aiContent?.socialCaptions?.article || `PRESS RELEASE / NATIONAL SCIENCE DISPATCH\n\nDATELINE: GOA / NEW DELHI — MINISTRY OF EARTH SCIENCES, GOVT. OF INDIA\n\nSUBJECT: NCPOR Issues Scientific Report on ${expeditionTitle || 'Polar Expedition'}\n\nThe National Centre for Polar and Ocean Research (NCPOR), Ministry of Earth Sciences, announces the successful archival and validation of technical logs from ${expeditionTitle || 'the expedition'} in ${region || 'the polar region'}.\n\nKey Achievements:\n1. Recovery of benchmark scientific logs from extreme polar terrain.\n2. Deployment of autonomous sensor buoys with satellite links.\n3. Validation of cold-tolerant renewable microgrids.\n\nThe complete archive, comprising peer-reviewed papers, open datasets, and outreach multimedia, is publicly accessible on the NCPOR Outreach Portal.`
+  };
+
+  const [captions, setCaptions] = useState(initialCaptions);
 
   if (!aiContent || !aiContent.socialCaptions) {
     return (
@@ -25,7 +52,7 @@ export default function SocialCardPreview({ aiContent, expeditionTitle, region, 
     );
   }
 
-  const { twitter, instagram, linkedin } = aiContent.socialCaptions;
+  const selectedMediaObj = mediaList.find(m => m.url === selectedMediaUrl) || mediaList[0] || {};
 
   const handleCopy = (text, key) => {
     navigator.clipboard.writeText(text);
@@ -33,214 +60,1373 @@ export default function SocialCardPreview({ aiContent, expeditionTitle, region, 
     setTimeout(() => setCopiedKey(null), 2500);
   };
 
+  const handleCopyAll = () => {
+    const fullBundle = `=======================================================
+NCPOR COMPLETE MULTI-CHANNEL OUTREACH PACK: ${expeditionTitle || 'Polar Expedition'}
+Region: ${region || 'Polar'} | Verified Government Communication
+=======================================================
+
+🐦 TWITTER / X POST:
+-------------------------------------------------------
+${captions.twitter}
+
+📸 INSTAGRAM POST & HASHTAGS:
+-------------------------------------------------------
+${captions.instagram}
+
+💼 LINKEDIN EXECUTIVE UPDATE:
+-------------------------------------------------------
+${captions.linkedin}
+
+📘 FACEBOOK COMMUNITY POST:
+-------------------------------------------------------
+${captions.facebook}
+
+📝 SCIENCE OUTREACH BLOG POST:
+-------------------------------------------------------
+${captions.blog}
+
+📰 OFFICIAL PRESS DISPATCH & ARTICLE:
+-------------------------------------------------------
+${captions.article}
+
+🖼️ RECOMMENDED ATTACHED MEDIA ASSET:
+URL: ${selectedMediaUrl}
+Alt-Text: ${selectedMediaObj.altText || 'Expedition scientific fieldwork photograph.'}
+Caption: ${selectedMediaObj.caption || 'Scientific observation during NCPOR mission.'}
+
+Generated by NCPOR Automated AI Outreach Studio.`;
+
+    navigator.clipboard.writeText(fullBundle);
+    setCopiedKey('all');
+    setTimeout(() => setCopiedKey(null), 3000);
+  };
+
+  const handleDownloadKit = () => {
+    const fullBundle = `NCPOR COMPLETE MULTI-CHANNEL SOCIAL & PRESS OUTREACH KIT
+Expedition: ${expeditionTitle || 'Polar Expedition'}
+Generated: ${new Date().toLocaleDateString()}
+
+================ TWITTER / X ================
+${captions.twitter}
+
+================ INSTAGRAM ================
+${captions.instagram}
+
+================ LINKEDIN ================
+${captions.linkedin}
+
+================ FACEBOOK ================
+${captions.facebook}
+
+================ SCIENCE BLOG POST ================
+${captions.blog}
+
+================ PRESS DISPATCH ARTICLE ================
+${captions.article}
+
+================ ATTACHED MEDIA ================
+Image URL: ${selectedMediaUrl}
+Accessibility Alt-Text: ${selectedMediaObj.altText || ''}
+Caption: ${selectedMediaObj.caption || ''}
+`;
+    const blob = new Blob([fullBundle], { type: 'text/plain;charset=utf-8' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `NCPOR_Full_Outreach_Kit_${(expeditionTitle || 'Expedition').replace(/\s+/g, '_')}.txt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const handleShareTwitter = (text) => {
+    const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
+    window.open(url, '_blank', 'noopener,noreferrer');
+  };
+
+  const handleShareLinkedIn = (text) => {
+    const url = `https://www.linkedin.com/feed/?shareActive=true&text=${encodeURIComponent(text)}`;
+    window.open(url, '_blank', 'noopener,noreferrer');
+  };
+
+  const handleShareFacebook = () => {
+    const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`;
+    window.open(url, '_blank', 'noopener,noreferrer');
+  };
+
+  const handleAppendHashtag = (tag, platform) => {
+    const current = captions[platform] || '';
+    if (!current.includes(tag)) {
+      setCaptions(prev => ({
+        ...prev,
+        [platform]: `${current.trim()} ${tag}`
+      }));
+    }
+  };
+
+  const handleResetCaption = (platform) => {
+    setCaptions(prev => ({
+      ...prev,
+      [platform]: initialCaptions[platform]
+    }));
+    setEditingPlatform(null);
+  };
+
+  // Character limits
+  const limits = {
+    twitter: 280,
+    instagram: 2200,
+    linkedin: 3000,
+    facebook: 5000,
+    blog: 10000,
+    article: 10000
+  };
+
+  const platforms = [
+    { id: 'twitter', label: 'Twitter / X', icon: <TwitterIcon size={15} />, badge: 'Short Form' },
+    { id: 'instagram', label: 'Instagram', icon: <InstagramIcon size={15} />, badge: 'Visual' },
+    { id: 'linkedin', label: 'LinkedIn', icon: <LinkedinIcon size={15} />, badge: 'Executive' },
+    { id: 'facebook', label: 'Facebook', icon: <FacebookIcon size={15} />, badge: 'Community' },
+    { id: 'blog', label: 'Science Blog', icon: <BlogIcon size={15} />, badge: 'Long Form' },
+    { id: 'article', label: 'Press Article', icon: <ArticleIcon size={15} />, badge: 'Official News' }
+  ];
+
   return (
-    <div className="social-studio-container">
-      {/* Platform Selector Tabs */}
-      <div className="platform-tab-bar">
-        <button
-          className={`platform-btn twitter ${activePlatform === 'twitter' ? 'active' : ''}`}
-          onClick={() => setActivePlatform('twitter')}
-        >
-          <TwitterIcon size={15} />
-          <span>Twitter / X</span>
-          <span className="char-badge">{twitter ? `${twitter.length} chars` : ''}</span>
-        </button>
+    <div className="social-command-center">
+      {/* Top Executive Toolbar */}
+      <div className="social-executive-bar">
+        <div className="exec-left-info">
+          <div className="social-pack-ready-badge">
+            <Sparkles size={14} className="sparkle-active" />
+            <span>Multi-Channel Outreach Hub (6 Formats)</span>
+            <span className="live-pill">LIVE DISPATCH READY</span>
+          </div>
+          <p className="exec-desc">
+            Pre-formatted copy for Twitter/X, Instagram, LinkedIn, Facebook, Science Blog, and Press News Articles.
+          </p>
+        </div>
 
-        <button
-          className={`platform-btn instagram ${activePlatform === 'instagram' ? 'active' : ''}`}
-          onClick={() => setActivePlatform('instagram')}
-        >
-          <InstagramIcon size={15} />
-          <span>Instagram</span>
-        </button>
+        <div className="exec-actions-right">
+          <button 
+            className={`btn-exec-bulk ${copiedKey === 'all' ? 'copied' : ''}`}
+            onClick={handleCopyAll}
+            title="Copy all 6 outreach formats + media in 1 click"
+          >
+            {copiedKey === 'all' ? <CheckCheck size={15} /> : <Copy size={15} />}
+            <span>{copiedKey === 'all' ? 'All 6 Channels Copied!' : '1-Click Copy All Channels'}</span>
+          </button>
 
-        <button
-          className={`platform-btn linkedin ${activePlatform === 'linkedin' ? 'active' : ''}`}
-          onClick={() => setActivePlatform('linkedin')}
-        >
-          <LinkedinIcon size={15} />
-          <span>LinkedIn</span>
-        </button>
+          <button 
+            className="btn-exec-download"
+            onClick={handleDownloadKit}
+            title="Download Social Media & Press Kit text file"
+          >
+            <Download size={15} />
+            <span>Export Complete Kit (.txt)</span>
+          </button>
+        </div>
       </div>
 
-      {/* Preview Card Body */}
-      <div className="platform-card-wrapper">
-        {/* Twitter / X Mock */}
-        {activePlatform === 'twitter' && (
-          <div className="mock-card mock-twitter">
-            <div className="mock-header">
-              <div className="mock-avatar-wrap">
-                <div className="avatar-ncpor">NC</div>
-              </div>
-              <div className="mock-user-info">
-                <div className="user-name-row">
-                  <strong>NCPOR India</strong>
-                  <span className="gov-verified-badge" title="Government Official">✓</span>
-                  <span className="user-handle">@NCPOR_MoES</span>
-                  <span className="post-dot">·</span>
-                  <span className="post-time">1h</span>
-                </div>
-                <div className="post-subtitle">Ministry of Earth Sciences, Govt. of India</div>
-              </div>
-            </div>
-
-            <div className="mock-post-body">
-              <p className="tweet-text">{twitter}</p>
-            </div>
-
-            {mediaUrl && (
-              <div className="mock-media-container">
-                <img src={mediaUrl} alt={expeditionTitle} className="mock-post-img" />
-              </div>
-            )}
-
-            <div className="mock-actions twitter-actions">
-              <span><MessageCircle size={15} /> 48</span>
-              <span><Repeat size={15} /> 182</span>
-              <span><Heart size={15} /> 942</span>
-              <span><Share2 size={15} /></span>
-            </div>
-
-            <div className="copy-action-bar">
-              <button 
-                className="btn-copy-caption"
-                onClick={() => handleCopy(twitter, 'twitter')}
-              >
-                {copiedKey === 'twitter' ? (
-                  <>
-                    <Check size={14} className="check-icon" />
-                    <span>Copied for Twitter!</span>
-                  </>
-                ) : (
-                  <>
-                    <Copy size={14} />
-                    <span>Copy Ready-to-Post Tweet</span>
-                  </>
-                )}
-              </button>
-            </div>
+      {/* Control Strip: View Mode & Media Switcher */}
+      <div className="social-control-strip">
+        <div className="view-mode-selector">
+          <span className="ctrl-label">Display Mode:</span>
+          <div className="view-mode-buttons">
+            <button
+              className={`btn-mode ${viewMode === 'grid' ? 'active' : ''}`}
+              onClick={() => setViewMode('grid')}
+            >
+              <LayoutGrid size={14} />
+              <span>Multi-Channel Grid (6 Formats)</span>
+            </button>
+            <button
+              className={`btn-mode ${viewMode === 'mock' ? 'active' : ''}`}
+              onClick={() => setViewMode('mock')}
+            >
+              <Smartphone size={14} />
+              <span>Interactive Feed Mockup</span>
+            </button>
           </div>
-        )}
+        </div>
 
-        {/* Instagram Mock */}
-        {activePlatform === 'instagram' && (
-          <div className="mock-card mock-instagram">
-            <div className="insta-top-bar">
-              <div className="insta-user">
-                <div className="insta-avatar">NC</div>
-                <div className="insta-names">
-                  <strong>ncpor_india</strong>
-                  <span className="insta-location">{region || 'Antarctica'} Frontier</span>
-                </div>
-              </div>
-              <span className="insta-more">•••</span>
-            </div>
-
-            {mediaUrl && (
-              <div className="insta-image-box">
-                <img src={mediaUrl} alt={expeditionTitle} className="insta-img" />
-              </div>
-            )}
-
-            <div className="insta-actions-row">
-              <div className="left-icons">
-                <Heart size={20} className="insta-heart" />
-                <MessageCircle size={20} />
-                <Share2 size={20} />
-              </div>
-              <Bookmark size={20} />
-            </div>
-
-            <div className="insta-likes">Liked by <strong>moes_goi</strong> and <strong>1,842 others</strong></div>
-
-            <div className="insta-caption-box">
-              <span className="caption-handle">ncpor_india</span>
-              <p className="insta-caption-text">{instagram}</p>
-            </div>
-
-            <div className="copy-action-bar">
-              <button 
-                className="btn-copy-caption"
-                onClick={() => handleCopy(instagram, 'instagram')}
-              >
-                {copiedKey === 'instagram' ? (
-                  <>
-                    <Check size={14} className="check-icon" />
-                    <span>Copied Instagram Caption!</span>
-                  </>
-                ) : (
-                  <>
-                    <Copy size={14} />
-                    <span>Copy Full Instagram Caption & Hashtags</span>
-                  </>
-                )}
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* LinkedIn Mock */}
-        {activePlatform === 'linkedin' && (
-          <div className="mock-card mock-linkedin">
-            <div className="li-header">
-              <div className="li-avatar">NC</div>
-              <div className="li-info">
-                <strong>National Centre for Polar and Ocean Research (NCPOR)</strong>
-                <span className="li-followers">58,920 followers • 2h • 🌐</span>
-              </div>
-            </div>
-
-            <div className="li-body">
-              <p className="li-text">{linkedin}</p>
-            </div>
-
-            {mediaUrl && (
-              <div className="li-media">
-                <img src={mediaUrl} alt={expeditionTitle} className="li-img" />
-              </div>
-            )}
-
-            <div className="li-reactions-stat">
-              <span>👍💡❤️ 412 reactions</span>
-              <span>38 comments • 19 reposts</span>
-            </div>
-
-            <div className="li-action-bar">
-              <span><ThumbsUp size={16} /> Like</span>
-              <span><MessageCircle size={16} /> Comment</span>
-              <span><Repeat size={16} /> Repost</span>
-              <span><Share2 size={16} /> Send</span>
-            </div>
-
-            <div className="copy-action-bar">
-              <button 
-                className="btn-copy-caption"
-                onClick={() => handleCopy(linkedin, 'linkedin')}
-              >
-                {copiedKey === 'linkedin' ? (
-                  <>
-                    <Check size={14} className="check-icon" />
-                    <span>Copied LinkedIn Post!</span>
-                  </>
-                ) : (
-                  <>
-                    <Copy size={14} />
-                    <span>Copy Executive LinkedIn Update</span>
-                  </>
-                )}
-              </button>
+        {/* Media Selector Strip */}
+        {mediaList.length > 1 && (
+          <div className="media-selector-box">
+            <span className="ctrl-label">
+              <ImageIcon size={13} />
+              <span>Attached Media ({mediaList.length}):</span>
+            </span>
+            <div className="media-thumb-pills">
+              {mediaList.map((m, idx) => (
+                <button
+                  key={m.id || idx}
+                  className={`media-pill-btn ${selectedMediaUrl === m.url ? 'active' : ''}`}
+                  onClick={() => setSelectedMediaUrl(m.url)}
+                  title={m.caption || `Image ${idx + 1}`}
+                >
+                  <img src={m.url} alt="" className="pill-img-thumb" />
+                  <span>Photo #{idx + 1}</span>
+                </button>
+              ))}
             </div>
           </div>
         )}
       </div>
+
+      {/* VIEW 1: MULTI-CHANNEL GRID (ALL 6 FORMATS) */}
+      {viewMode === 'grid' && (
+        <div className="social-grid-6col">
+          {/* 1. Twitter / X */}
+          <div className="channel-column-card twitter-theme">
+            <div className="channel-card-header">
+              <div className="channel-title-wrap">
+                <div className="channel-icon-circle twitter-bg">
+                  <TwitterIcon size={14} />
+                </div>
+                <div>
+                  <h4>Twitter / X</h4>
+                  <span className="channel-sub">Fast & Punchy Updates</span>
+                </div>
+              </div>
+              <div className="char-meter-badge">
+                <span className={`char-num ${captions.twitter.length > limits.twitter ? 'over-limit' : ''}`}>
+                  {captions.twitter.length} / {limits.twitter}
+                </span>
+              </div>
+            </div>
+
+            {selectedMediaUrl && (
+              <div className="channel-media-preview">
+                <img src={selectedMediaUrl} alt="" className="grid-media-thumb" />
+                <div className="media-tag-overlay">
+                  <ShieldCheck size={11} />
+                  <span>Alt-Text Attached</span>
+                </div>
+              </div>
+            )}
+
+            <div className="channel-caption-container">
+              {editingPlatform === 'twitter' ? (
+                <textarea
+                  className="channel-textarea"
+                  value={captions.twitter}
+                  onChange={(e) => setCaptions({ ...captions, twitter: e.target.value })}
+                  rows={5}
+                />
+              ) : (
+                <p className="channel-text-display twitter-font">{captions.twitter}</p>
+              )}
+            </div>
+
+            <div className="quick-tags-wrap">
+              <span className="tags-label"><Hash size={11} /> Tags:</span>
+              <div className="tag-chips">
+                {['#NCPOR', '#PolarScience', '#MoES', '#Antarctica'].map(t => (
+                  <button key={t} className="chip-btn" onClick={() => handleAppendHashtag(t, 'twitter')}>{t}</button>
+                ))}
+              </div>
+            </div>
+
+            <div className="channel-actions-footer">
+              <div className="edit-reset-actions">
+                <button className="btn-edit-caption" onClick={() => setEditingPlatform(editingPlatform === 'twitter' ? null : 'twitter')}>
+                  <Edit3 size={13} />
+                  <span>{editingPlatform === 'twitter' ? 'Done' : 'Edit'}</span>
+                </button>
+                {editingPlatform === 'twitter' && (
+                  <button className="btn-reset-caption" onClick={() => handleResetCaption('twitter')}><RotateCcw size={12} /></button>
+                )}
+              </div>
+              <div className="main-copy-share-btns">
+                <button className={`btn-channel-copy ${copiedKey === 'twitter' ? 'copied' : ''}`} onClick={() => handleCopy(captions.twitter, 'twitter')}>
+                  {copiedKey === 'twitter' ? <Check size={13} /> : <Copy size={13} />}
+                  <span>{copiedKey === 'twitter' ? 'Copied!' : 'Copy'}</span>
+                </button>
+                <button className="btn-channel-share twitter-btn" onClick={() => handleShareTwitter(captions.twitter)}>
+                  <Send size={13} />
+                  <span>Post on X</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* 2. Instagram */}
+          <div className="channel-column-card instagram-theme">
+            <div className="channel-card-header">
+              <div className="channel-title-wrap">
+                <div className="channel-icon-circle instagram-bg">
+                  <InstagramIcon size={14} />
+                </div>
+                <div>
+                  <h4>Instagram</h4>
+                  <span className="channel-sub">Visual Story & Tags</span>
+                </div>
+              </div>
+              <div className="char-meter-badge">
+                <span className="char-num">{captions.instagram.length} chars</span>
+              </div>
+            </div>
+
+            {selectedMediaUrl && (
+              <div className="channel-media-preview">
+                <img src={selectedMediaUrl} alt="" className="grid-media-thumb" />
+                <div className="media-tag-overlay">
+                  <ShieldCheck size={11} />
+                  <span>1080x1080 Ready</span>
+                </div>
+              </div>
+            )}
+
+            <div className="channel-caption-container">
+              {editingPlatform === 'instagram' ? (
+                <textarea
+                  className="channel-textarea"
+                  value={captions.instagram}
+                  onChange={(e) => setCaptions({ ...captions, instagram: e.target.value })}
+                  rows={5}
+                />
+              ) : (
+                <p className="channel-text-display instagram-font">{captions.instagram}</p>
+              )}
+            </div>
+
+            <div className="quick-tags-wrap">
+              <span className="tags-label"><Hash size={11} /> Tags:</span>
+              <div className="tag-chips">
+                {['#PolarExploration', '#ClimateChange', '#IndiaInAntarctica'].map(t => (
+                  <button key={t} className="chip-btn" onClick={() => handleAppendHashtag(t, 'instagram')}>{t}</button>
+                ))}
+              </div>
+            </div>
+
+            <div className="channel-actions-footer">
+              <div className="edit-reset-actions">
+                <button className="btn-edit-caption" onClick={() => setEditingPlatform(editingPlatform === 'instagram' ? null : 'instagram')}>
+                  <Edit3 size={13} />
+                  <span>{editingPlatform === 'instagram' ? 'Done' : 'Edit'}</span>
+                </button>
+                {editingPlatform === 'instagram' && (
+                  <button className="btn-reset-caption" onClick={() => handleResetCaption('instagram')}><RotateCcw size={12} /></button>
+                )}
+              </div>
+              <div className="main-copy-share-btns">
+                <button className={`btn-channel-copy insta-copy-btn ${copiedKey === 'instagram' ? 'copied' : ''}`} onClick={() => handleCopy(captions.instagram, 'instagram')}>
+                  {copiedKey === 'instagram' ? <Check size={13} /> : <Copy size={13} />}
+                  <span>{copiedKey === 'instagram' ? 'Caption Copied!' : 'Copy for IG'}</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* 3. LinkedIn */}
+          <div className="channel-column-card linkedin-theme">
+            <div className="channel-card-header">
+              <div className="channel-title-wrap">
+                <div className="channel-icon-circle linkedin-bg">
+                  <LinkedinIcon size={14} />
+                </div>
+                <div>
+                  <h4>LinkedIn</h4>
+                  <span className="channel-sub">Professional & Executive</span>
+                </div>
+              </div>
+              <div className="char-meter-badge">
+                <span className="char-num">{captions.linkedin.length} chars</span>
+              </div>
+            </div>
+
+            {selectedMediaUrl && (
+              <div className="channel-media-preview">
+                <img src={selectedMediaUrl} alt="" className="grid-media-thumb" />
+                <div className="media-tag-overlay">
+                  <ShieldCheck size={11} />
+                  <span>1200x627 High-Res</span>
+                </div>
+              </div>
+            )}
+
+            <div className="channel-caption-container">
+              {editingPlatform === 'linkedin' ? (
+                <textarea
+                  className="channel-textarea"
+                  value={captions.linkedin}
+                  onChange={(e) => setCaptions({ ...captions, linkedin: e.target.value })}
+                  rows={5}
+                />
+              ) : (
+                <p className="channel-text-display linkedin-font">{captions.linkedin}</p>
+              )}
+            </div>
+
+            <div className="quick-tags-wrap">
+              <span className="tags-label"><Hash size={11} /> Tags:</span>
+              <div className="tag-chips">
+                {['#NCPOR', '#EarthSciences', '#OpenScience', '#ClimateResilience'].map(t => (
+                  <button key={t} className="chip-btn" onClick={() => handleAppendHashtag(t, 'linkedin')}>{t}</button>
+                ))}
+              </div>
+            </div>
+
+            <div className="channel-actions-footer">
+              <div className="edit-reset-actions">
+                <button className="btn-edit-caption" onClick={() => setEditingPlatform(editingPlatform === 'linkedin' ? null : 'linkedin')}>
+                  <Edit3 size={13} />
+                  <span>{editingPlatform === 'linkedin' ? 'Done' : 'Edit'}</span>
+                </button>
+                {editingPlatform === 'linkedin' && (
+                  <button className="btn-reset-caption" onClick={() => handleResetCaption('linkedin')}><RotateCcw size={12} /></button>
+                )}
+              </div>
+              <div className="main-copy-share-btns">
+                <button className={`btn-channel-copy ${copiedKey === 'linkedin' ? 'copied' : ''}`} onClick={() => handleCopy(captions.linkedin, 'linkedin')}>
+                  {copiedKey === 'linkedin' ? <Check size={13} /> : <Copy size={13} />}
+                  <span>{copiedKey === 'linkedin' ? 'Copied!' : 'Copy'}</span>
+                </button>
+                <button className="btn-channel-share linkedin-btn" onClick={() => handleShareLinkedIn(captions.linkedin)}>
+                  <Send size={13} />
+                  <span>Share</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* 4. Facebook */}
+          <div className="channel-column-card facebook-theme">
+            <div className="channel-card-header">
+              <div className="channel-title-wrap">
+                <div className="channel-icon-circle facebook-bg">
+                  <FacebookIcon size={14} />
+                </div>
+                <div>
+                  <h4>Facebook</h4>
+                  <span className="channel-sub">Community Outreach</span>
+                </div>
+              </div>
+              <div className="char-meter-badge">
+                <span className="char-num">{captions.facebook.length} chars</span>
+              </div>
+            </div>
+
+            {selectedMediaUrl && (
+              <div className="channel-media-preview">
+                <img src={selectedMediaUrl} alt="" className="grid-media-thumb" />
+                <div className="media-tag-overlay">
+                  <ShieldCheck size={11} />
+                  <span>Public Outreach</span>
+                </div>
+              </div>
+            )}
+
+            <div className="channel-caption-container">
+              {editingPlatform === 'facebook' ? (
+                <textarea
+                  className="channel-textarea"
+                  value={captions.facebook}
+                  onChange={(e) => setCaptions({ ...captions, facebook: e.target.value })}
+                  rows={5}
+                />
+              ) : (
+                <p className="channel-text-display facebook-font">{captions.facebook}</p>
+              )}
+            </div>
+
+            <div className="quick-tags-wrap">
+              <span className="tags-label"><Hash size={11} /> Tags:</span>
+              <div className="tag-chips">
+                {['#NCPOR', '#MoES', '#ScienceForAll', '#IndiaInPolar'].map(t => (
+                  <button key={t} className="chip-btn" onClick={() => handleAppendHashtag(t, 'facebook')}>{t}</button>
+                ))}
+              </div>
+            </div>
+
+            <div className="channel-actions-footer">
+              <div className="edit-reset-actions">
+                <button className="btn-edit-caption" onClick={() => setEditingPlatform(editingPlatform === 'facebook' ? null : 'facebook')}>
+                  <Edit3 size={13} />
+                  <span>{editingPlatform === 'facebook' ? 'Done' : 'Edit'}</span>
+                </button>
+                {editingPlatform === 'facebook' && (
+                  <button className="btn-reset-caption" onClick={() => handleResetCaption('facebook')}><RotateCcw size={12} /></button>
+                )}
+              </div>
+              <div className="main-copy-share-btns">
+                <button className={`btn-channel-copy ${copiedKey === 'facebook' ? 'copied' : ''}`} onClick={() => handleCopy(captions.facebook, 'facebook')}>
+                  {copiedKey === 'facebook' ? <Check size={13} /> : <Copy size={13} />}
+                  <span>{copiedKey === 'facebook' ? 'Copied!' : 'Copy'}</span>
+                </button>
+                <button className="btn-channel-share facebook-btn" onClick={handleShareFacebook}>
+                  <Send size={13} />
+                  <span>Post</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* 5. Science Blog Post */}
+          <div className="channel-column-card blog-theme">
+            <div className="channel-card-header">
+              <div className="channel-title-wrap">
+                <div className="channel-icon-circle blog-bg">
+                  <BlogIcon size={14} />
+                </div>
+                <div>
+                  <h4>Science Blog</h4>
+                  <span className="channel-sub">In-Depth Story & Editorial</span>
+                </div>
+              </div>
+              <div className="char-meter-badge">
+                <span className="char-num">{captions.blog.split(/\s+/).length} words</span>
+              </div>
+            </div>
+
+            <div className="channel-caption-container blog-scroll-container">
+              {editingPlatform === 'blog' ? (
+                <textarea
+                  className="channel-textarea"
+                  value={captions.blog}
+                  onChange={(e) => setCaptions({ ...captions, blog: e.target.value })}
+                  rows={9}
+                />
+              ) : (
+                <div className="blog-formatted-text">
+                  <pre className="blog-pre-preview">{captions.blog}</pre>
+                </div>
+              )}
+            </div>
+
+            <div className="channel-actions-footer">
+              <div className="edit-reset-actions">
+                <button className="btn-edit-caption" onClick={() => setEditingPlatform(editingPlatform === 'blog' ? null : 'blog')}>
+                  <Edit3 size={13} />
+                  <span>{editingPlatform === 'blog' ? 'Done' : 'Edit'}</span>
+                </button>
+                {editingPlatform === 'blog' && (
+                  <button className="btn-reset-caption" onClick={() => handleResetCaption('blog')}><RotateCcw size={12} /></button>
+                )}
+              </div>
+              <div className="main-copy-share-btns">
+                <button className={`btn-channel-copy blog-copy-btn ${copiedKey === 'blog' ? 'copied' : ''}`} onClick={() => handleCopy(captions.blog, 'blog')}>
+                  {copiedKey === 'blog' ? <Check size={13} /> : <Copy size={13} />}
+                  <span>{copiedKey === 'blog' ? 'Markdown Copied!' : 'Copy Blog Post (Markdown)'}</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* 6. Press Article & Official Dispatch */}
+          <div className="channel-column-card article-theme">
+            <div className="channel-card-header">
+              <div className="channel-title-wrap">
+                <div className="channel-icon-circle article-bg">
+                  <ArticleIcon size={14} />
+                </div>
+                <div>
+                  <h4>Press Article</h4>
+                  <span className="channel-sub">Official Media Release</span>
+                </div>
+              </div>
+              <div className="char-meter-badge">
+                <span className="char-num">{captions.article.split(/\s+/).length} words</span>
+              </div>
+            </div>
+
+            <div className="channel-caption-container blog-scroll-container">
+              {editingPlatform === 'article' ? (
+                <textarea
+                  className="channel-textarea"
+                  value={captions.article}
+                  onChange={(e) => setCaptions({ ...captions, article: e.target.value })}
+                  rows={9}
+                />
+              ) : (
+                <div className="article-formatted-text">
+                  <pre className="article-pre-preview">{captions.article}</pre>
+                </div>
+              )}
+            </div>
+
+            <div className="channel-actions-footer">
+              <div className="edit-reset-actions">
+                <button className="btn-edit-caption" onClick={() => setEditingPlatform(editingPlatform === 'article' ? null : 'article')}>
+                  <Edit3 size={13} />
+                  <span>{editingPlatform === 'article' ? 'Done' : 'Edit'}</span>
+                </button>
+                {editingPlatform === 'article' && (
+                  <button className="btn-reset-caption" onClick={() => handleResetCaption('article')}><RotateCcw size={12} /></button>
+                )}
+              </div>
+              <div className="main-copy-share-btns">
+                <button className={`btn-channel-copy article-copy-btn ${copiedKey === 'article' ? 'copied' : ''}`} onClick={() => handleCopy(captions.article, 'article')}>
+                  {copiedKey === 'article' ? <Check size={13} /> : <Copy size={13} />}
+                  <span>{copiedKey === 'article' ? 'Press Release Copied!' : 'Copy Press Article'}</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* VIEW 2: AUTHENTIC FEED MOCKUP PREVIEW */}
+      {viewMode === 'mock' && (
+        <div className="mock-preview-container">
+          {/* Tab bar across all 6 channels */}
+          <div className="platform-tab-bar">
+            {platforms.map(p => (
+              <button
+                key={p.id}
+                className={`platform-btn ${p.id} ${activePlatform === p.id ? 'active' : ''}`}
+                onClick={() => setActivePlatform(p.id)}
+              >
+                {p.icon}
+                <span>{p.label}</span>
+                <span className="char-badge">{p.badge}</span>
+              </button>
+            ))}
+          </div>
+
+          <div className="platform-card-wrapper">
+            {/* Twitter / X Mock */}
+            {activePlatform === 'twitter' && (
+              <div className="mock-card mock-twitter">
+                <div className="mock-header">
+                  <div className="mock-avatar-wrap"><div className="avatar-ncpor">NC</div></div>
+                  <div className="mock-user-info">
+                    <div className="user-name-row">
+                      <strong>NCPOR India</strong>
+                      <span className="gov-verified-badge" title="Government Official">✓</span>
+                      <span className="user-handle">@NCPOR_MoES</span>
+                      <span className="post-dot">·</span>
+                      <span className="post-time">1h</span>
+                    </div>
+                    <div className="post-subtitle">Ministry of Earth Sciences, Govt. of India</div>
+                  </div>
+                </div>
+                <div className="mock-post-body"><p className="tweet-text">{captions.twitter}</p></div>
+                {selectedMediaUrl && (
+                  <div className="mock-media-container"><img src={selectedMediaUrl} alt={expeditionTitle} className="mock-post-img" /></div>
+                )}
+                <div className="mock-actions twitter-actions">
+                  <span><MessageCircle size={15} /> 48</span>
+                  <span><Repeat size={15} /> 182</span>
+                  <span><Heart size={15} /> 942</span>
+                  <span><Share2 size={15} /></span>
+                </div>
+                <div className="copy-action-bar">
+                  <button className="btn-copy-caption" onClick={() => handleCopy(captions.twitter, 'twitter')}>
+                    {copiedKey === 'twitter' ? <><Check size={14} className="check-icon" /><span>Copied for Twitter!</span></> : <><Copy size={14} /><span>Copy Ready-to-Post Tweet</span></>}
+                  </button>
+                  <button className="btn-direct-post-action twitter-btn" onClick={() => handleShareTwitter(captions.twitter)}>
+                    <ExternalLink size={14} />
+                    <span>Post Directly on X</span>
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Instagram Mock */}
+            {activePlatform === 'instagram' && (
+              <div className="mock-card mock-instagram">
+                <div className="insta-top-bar">
+                  <div className="insta-user">
+                    <div className="insta-avatar">NC</div>
+                    <div className="insta-names">
+                      <strong>ncpor_india</strong>
+                      <span className="insta-location">{region || 'Antarctica'} Frontier</span>
+                    </div>
+                  </div>
+                  <span className="insta-more">•••</span>
+                </div>
+                {selectedMediaUrl && (
+                  <div className="insta-image-box"><img src={selectedMediaUrl} alt={expeditionTitle} className="insta-img" /></div>
+                )}
+                <div className="insta-actions-row">
+                  <div className="left-icons"><Heart size={20} className="insta-heart" /><MessageCircle size={20} /><Share2 size={20} /></div>
+                  <Bookmark size={20} />
+                </div>
+                <div className="insta-likes">Liked by <strong>moes_goi</strong> and <strong>1,842 others</strong></div>
+                <div className="insta-caption-box">
+                  <span className="caption-handle">ncpor_india</span>
+                  <p className="insta-caption-text">{captions.instagram}</p>
+                </div>
+                <div className="copy-action-bar">
+                  <button className="btn-copy-caption" onClick={() => handleCopy(captions.instagram, 'instagram')}>
+                    {copiedKey === 'instagram' ? <><Check size={14} className="check-icon" /><span>Copied Instagram Caption!</span></> : <><Copy size={14} /><span>Copy Full Instagram Caption & Hashtags</span></>}
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* LinkedIn Mock */}
+            {activePlatform === 'linkedin' && (
+              <div className="mock-card mock-linkedin">
+                <div className="li-header">
+                  <div className="li-avatar">NC</div>
+                  <div className="li-info">
+                    <strong>National Centre for Polar and Ocean Research (NCPOR)</strong>
+                    <span className="li-followers">58,920 followers • 2h • 🌐</span>
+                  </div>
+                </div>
+                <div className="li-body"><p className="li-text">{captions.linkedin}</p></div>
+                {selectedMediaUrl && (
+                  <div className="li-media"><img src={selectedMediaUrl} alt={expeditionTitle} className="li-img" /></div>
+                )}
+                <div className="li-reactions-stat">
+                  <span>👍💡❤️ 412 reactions</span>
+                  <span>38 comments • 19 reposts</span>
+                </div>
+                <div className="li-action-bar">
+                  <span><ThumbsUp size={16} /> Like</span>
+                  <span><MessageCircle size={16} /> Comment</span>
+                  <span><Repeat size={16} /> Repost</span>
+                  <span><Share2 size={16} /> Send</span>
+                </div>
+                <div className="copy-action-bar">
+                  <button className="btn-copy-caption" onClick={() => handleCopy(captions.linkedin, 'linkedin')}>
+                    {copiedKey === 'linkedin' ? <><Check size={14} className="check-icon" /><span>Copied LinkedIn Post!</span></> : <><Copy size={14} /><span>Copy Executive LinkedIn Update</span></>}
+                  </button>
+                  <button className="btn-direct-post-action li-share-btn" onClick={() => handleShareLinkedIn(captions.linkedin)}>
+                    <ExternalLink size={14} />
+                    <span>Share on LinkedIn</span>
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Facebook Mock */}
+            {activePlatform === 'facebook' && (
+              <div className="mock-card mock-facebook">
+                <div className="fb-header">
+                  <div className="fb-avatar">NC</div>
+                  <div className="fb-info">
+                    <div className="fb-name-row">
+                      <strong>National Centre for Polar and Ocean Research - NCPOR</strong>
+                      <span className="gov-verified-badge" title="Verified Public Organization">✓</span>
+                    </div>
+                    <span className="fb-time">Just now • 🌐 Public</span>
+                  </div>
+                </div>
+                <div className="fb-body"><p className="fb-text">{captions.facebook}</p></div>
+                {selectedMediaUrl && (
+                  <div className="fb-media"><img src={selectedMediaUrl} alt={expeditionTitle} className="fb-img" /></div>
+                )}
+                <div className="fb-reactions-stat">
+                  <span>👍❤️ 248 Likes • 29 Comments • 14 Shares</span>
+                </div>
+                <div className="fb-action-bar">
+                  <span><ThumbsUp size={16} /> Like</span>
+                  <span><MessageCircle size={16} /> Comment</span>
+                  <span><Share2 size={16} /> Share</span>
+                </div>
+                <div className="copy-action-bar">
+                  <button className="btn-copy-caption" onClick={() => handleCopy(captions.facebook, 'facebook')}>
+                    {copiedKey === 'facebook' ? <><Check size={14} className="check-icon" /><span>Copied Facebook Post!</span></> : <><Copy size={14} /><span>Copy Facebook Post</span></>}
+                  </button>
+                  <button className="btn-direct-post-action fb-share-btn" onClick={handleShareFacebook}>
+                    <ExternalLink size={14} />
+                    <span>Share on Facebook</span>
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Science Blog Post Mock */}
+            {activePlatform === 'blog' && (
+              <div className="mock-card mock-blog-full">
+                <div className="mock-blog-header">
+                  <div className="blog-meta-badge">
+                    <BookOpen size={14} />
+                    <span>NCPOR Polar Science Communications Blog</span>
+                  </div>
+                  <h3>Editorial & Science Outreach Feature</h3>
+                </div>
+                <div className="mock-blog-body">
+                  <pre className="blog-full-pre">{captions.blog}</pre>
+                </div>
+                <div className="copy-action-bar">
+                  <button className="btn-copy-caption" onClick={() => handleCopy(captions.blog, 'blog')}>
+                    {copiedKey === 'blog' ? <><Check size={14} className="check-icon" /><span>Copied Blog Markdown!</span></> : <><Copy size={14} /><span>Copy Markdown Blog Post</span></>}
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Press Article Mock */}
+            {activePlatform === 'article' && (
+              <div className="mock-card mock-article-full">
+                <div className="mock-article-header">
+                  <div className="article-meta-badge">
+                    <FileText size={14} />
+                    <span>Official Press Release Dispatch • Ministry of Earth Sciences</span>
+                  </div>
+                  <h3>National Polar Knowledge Series Article</h3>
+                </div>
+                <div className="mock-article-body">
+                  <pre className="article-full-pre">{captions.article}</pre>
+                </div>
+                <div className="copy-action-bar">
+                  <button className="btn-copy-caption" onClick={() => handleCopy(captions.article, 'article')}>
+                    {copiedKey === 'article' ? <><Check size={14} className="check-icon" /><span>Copied Press Release!</span></> : <><Copy size={14} /><span>Copy Press Release Article</span></>}
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       <style>{`
-        .social-studio-container {
+        .social-command-center {
           background: #ffffff;
           border: 1px solid var(--border-card);
-          border-radius: var(--radius-md);
+          border-radius: 16px;
           overflow: hidden;
-          box-shadow: var(--shadow-sm);
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+          display: flex;
+          flex-direction: column;
+          gap: 0;
+        }
+
+        /* Executive Header */
+        .social-executive-bar {
+          background: linear-gradient(180deg, #f0fdf4 0%, #ffffff 100%);
+          border-bottom: 1px solid #dcfce7;
+          padding: 1.25rem 1.5rem;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          flex-wrap: wrap;
+          gap: 1rem;
+        }
+
+        .exec-left-info {
+          display: flex;
+          flex-direction: column;
+          gap: 0.3rem;
+          flex: 1;
+          min-width: 280px;
+        }
+
+        .social-pack-ready-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.45rem;
+          font-size: 0.82rem;
+          font-weight: 800;
+          color: #065f46;
+          text-transform: uppercase;
+          letter-spacing: 0.04em;
+        }
+
+        .sparkle-active {
+          color: #059669;
+        }
+
+        .live-pill {
+          background: #059669;
+          color: #ffffff;
+          font-size: 0.62rem;
+          font-weight: 900;
+          padding: 0.15rem 0.5rem;
+          border-radius: 4px;
+          letter-spacing: 0.05em;
+        }
+
+        .exec-desc {
+          font-size: 0.84rem;
+          color: #047857;
+          margin: 0;
+        }
+
+        .exec-actions-right {
+          display: flex;
+          align-items: center;
+          gap: 0.65rem;
+          flex-wrap: wrap;
+        }
+
+        .btn-exec-bulk {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.45rem;
+          background: #059669;
+          border: 1px solid #047857;
+          color: #ffffff;
+          padding: 0.55rem 1.15rem;
+          border-radius: 8px;
+          font-size: 0.82rem;
+          font-weight: 700;
+          cursor: pointer;
+          transition: all 0.18s ease;
+          box-shadow: 0 2px 6px rgba(5, 150, 105, 0.25);
+        }
+
+        .btn-exec-bulk:hover {
+          background: #047857;
+          transform: translateY(-1px);
+        }
+
+        .btn-exec-bulk.copied {
+          background: #065f46;
+          box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.3);
+        }
+
+        .btn-exec-download {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.4rem;
+          background: #ffffff;
+          border: 1px solid #cbd5e1;
+          color: #334155;
+          padding: 0.55rem 1rem;
+          border-radius: 8px;
+          font-size: 0.82rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.18s ease;
+        }
+
+        .btn-exec-download:hover {
+          background: #f8fafc;
+          border-color: #94a3b8;
+          color: #0f172a;
+        }
+
+        /* Control Strip */
+        .social-control-strip {
+          background: #f8fafc;
+          border-bottom: 1px solid #e2e8f0;
+          padding: 0.85rem 1.5rem;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          flex-wrap: wrap;
+          gap: 1rem;
+        }
+
+        .view-mode-selector {
+          display: flex;
+          align-items: center;
+          gap: 0.65rem;
+        }
+
+        .ctrl-label {
+          font-size: 0.76rem;
+          font-weight: 700;
+          color: #64748b;
+          text-transform: uppercase;
+          letter-spacing: 0.03em;
+          display: flex;
+          align-items: center;
+          gap: 0.35rem;
+        }
+
+        .view-mode-buttons {
+          display: flex;
+          background: #e2e8f0;
+          padding: 2px;
+          border-radius: 8px;
+          gap: 2px;
+        }
+
+        .btn-mode {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.35rem;
+          background: transparent;
+          border: none;
+          color: #475569;
+          font-size: 0.76rem;
+          font-weight: 600;
+          padding: 0.35rem 0.75rem;
+          border-radius: 6px;
+          cursor: pointer;
+          transition: all 0.15s ease;
+        }
+
+        .btn-mode.active {
+          background: #ffffff;
+          color: var(--navy);
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+          font-weight: 700;
+        }
+
+        .media-selector-box {
+          display: flex;
+          align-items: center;
+          gap: 0.65rem;
+          flex-wrap: wrap;
+        }
+
+        .media-thumb-pills {
+          display: flex;
+          align-items: center;
+          gap: 0.4rem;
+        }
+
+        .media-pill-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.35rem;
+          background: #ffffff;
+          border: 1px solid #cbd5e1;
+          color: #475569;
+          font-size: 0.72rem;
+          font-weight: 600;
+          padding: 0.2rem 0.5rem 0.2rem 0.25rem;
+          border-radius: 6px;
+          cursor: pointer;
+          transition: all 0.15s ease;
+        }
+
+        .media-pill-btn:hover {
+          border-color: #0284c7;
+        }
+
+        .media-pill-btn.active {
+          background: #e0f2fe;
+          border-color: #0284c7;
+          color: #0369a1;
+          font-weight: 700;
+        }
+
+        .pill-img-thumb {
+          width: 20px;
+          height: 20px;
+          border-radius: 4px;
+          object-fit: cover;
+        }
+
+        /* 6-Channel Grid */
+        .social-grid-6col {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 1.25rem;
+          padding: 1.5rem;
+          background: #f8fafc;
+        }
+
+        @media (max-width: 1200px) {
+          .social-grid-6col {
+            grid-template-columns: repeat(2, 1fr);
+          }
+        }
+
+        @media (max-width: 768px) {
+          .social-grid-6col {
+            grid-template-columns: 1fr;
+          }
+        }
+
+        .channel-column-card {
+          background: #ffffff;
+          border: 1px solid var(--border-card);
+          border-radius: 14px;
+          padding: 1.25rem;
+          display: flex;
+          flex-direction: column;
+          gap: 0.85rem;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+          transition: transform 0.18s ease, box-shadow 0.18s ease;
+        }
+
+        .channel-column-card:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+        }
+
+        .channel-card-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          border-bottom: 1px solid #f1f5f9;
+          padding-bottom: 0.75rem;
+        }
+
+        .channel-title-wrap {
+          display: flex;
+          align-items: center;
+          gap: 0.65rem;
+        }
+
+        .channel-icon-circle {
+          width: 32px;
+          height: 32px;
+          border-radius: 8px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #ffffff;
+          flex-shrink: 0;
+        }
+
+        .twitter-bg { background: #000000; }
+        .instagram-bg { background: linear-gradient(135deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); }
+        .linkedin-bg { background: #0a66c2; }
+        .facebook-bg { background: #1877f2; }
+        .blog-bg { background: #059669; }
+        .article-bg { background: #7c3aed; }
+
+        .channel-title-wrap h4 {
+          font-size: 0.95rem;
+          font-weight: 800;
+          color: var(--navy);
+          margin: 0;
+          line-height: 1.2;
+        }
+
+        .channel-sub {
+          font-size: 0.68rem;
+          color: var(--text-muted);
+          display: block;
+        }
+
+        .char-meter-badge {
+          font-size: 0.7rem;
+          font-weight: 700;
+          color: #64748b;
+          background: #f1f5f9;
+          padding: 0.15rem 0.5rem;
+          border-radius: 4px;
+        }
+
+        .char-num.over-limit {
+          color: #dc2626;
+          font-weight: 900;
+        }
+
+        .channel-media-preview {
+          position: relative;
+          border-radius: 8px;
+          overflow: hidden;
+          height: 130px;
+          border: 1px solid #e2e8f0;
+        }
+
+        .grid-media-thumb {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+
+        .media-tag-overlay {
+          position: absolute;
+          bottom: 6px;
+          left: 6px;
+          background: rgba(15, 23, 42, 0.75);
+          backdrop-filter: blur(4px);
+          color: #ffffff;
+          font-size: 0.65rem;
+          font-weight: 600;
+          padding: 0.15rem 0.45rem;
+          border-radius: 4px;
+          display: inline-flex;
+          align-items: center;
+          gap: 0.25rem;
+        }
+
+        .channel-caption-container {
+          background: #f8fafc;
+          border: 1px solid #e2e8f0;
+          border-radius: 8px;
+          padding: 0.85rem;
+          min-height: 130px;
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-start;
+        }
+
+        .blog-scroll-container {
+          max-height: 220px;
+          overflow-y: auto;
+        }
+
+        .channel-text-display {
+          font-size: 0.84rem;
+          line-height: 1.55;
+          color: #1e293b;
+          margin: 0;
+          white-space: pre-line;
+          word-break: break-word;
+        }
+
+        .blog-pre-preview, .article-pre-preview {
+          font-family: inherit;
+          font-size: 0.8rem;
+          line-height: 1.55;
+          color: #334155;
+          margin: 0;
+          white-space: pre-wrap;
+        }
+
+        .channel-textarea {
+          width: 100%;
+          border: none;
+          background: transparent;
+          font-family: inherit;
+          font-size: 0.84rem;
+          line-height: 1.55;
+          color: #0f172a;
+          resize: vertical;
+          outline: none;
+        }
+
+        .quick-tags-wrap {
+          display: flex;
+          align-items: center;
+          gap: 0.4rem;
+          flex-wrap: wrap;
+          font-size: 0.72rem;
+        }
+
+        .tags-label {
+          font-weight: 700;
+          color: #64748b;
+          display: flex;
+          align-items: center;
+          gap: 0.2rem;
+        }
+
+        .tag-chips {
+          display: flex;
+          gap: 0.3rem;
+          flex-wrap: wrap;
+        }
+
+        .chip-btn {
+          background: #f1f5f9;
+          border: 1px solid #e2e8f0;
+          color: #0369a1;
+          font-size: 0.68rem;
+          font-weight: 600;
+          padding: 0.1rem 0.4rem;
+          border-radius: 4px;
+          cursor: pointer;
+          transition: all 0.15s ease;
+        }
+
+        .chip-btn:hover {
+          background: #e0f2fe;
+          border-color: #bae6fd;
+        }
+
+        .channel-actions-footer {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          border-top: 1px solid #f1f5f9;
+          padding-top: 0.75rem;
+          margin-top: auto;
+          gap: 0.5rem;
+          flex-wrap: wrap;
+        }
+
+        .edit-reset-actions {
+          display: flex;
+          align-items: center;
+          gap: 0.3rem;
+        }
+
+        .btn-edit-caption {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.3rem;
+          background: #ffffff;
+          border: 1px solid #cbd5e1;
+          color: #475569;
+          font-size: 0.72rem;
+          font-weight: 600;
+          padding: 0.35rem 0.6rem;
+          border-radius: 6px;
+          cursor: pointer;
+          transition: all 0.15s ease;
+        }
+
+        .btn-edit-caption:hover {
+          background: #f8fafc;
+          color: #0f172a;
+        }
+
+        .btn-reset-caption {
+          background: #ffffff;
+          border: 1px solid #cbd5e1;
+          color: #64748b;
+          width: 26px;
+          height: 26px;
+          border-radius: 6px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+        }
+
+        .main-copy-share-btns {
+          display: flex;
+          align-items: center;
+          gap: 0.4rem;
+        }
+
+        .btn-channel-copy {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.35rem;
+          background: #ffffff;
+          border: 1px solid #cbd5e1;
+          color: #1e293b;
+          font-size: 0.74rem;
+          font-weight: 700;
+          padding: 0.38rem 0.75rem;
+          border-radius: 6px;
+          cursor: pointer;
+          transition: all 0.15s ease;
+        }
+
+        .btn-channel-copy:hover {
+          background: #f8fafc;
+          border-color: #94a3b8;
+        }
+
+        .btn-channel-copy.copied {
+          background: #ecfdf5;
+          border-color: #a7f3d0;
+          color: #059669;
+        }
+
+        .blog-copy-btn {
+          background: #ecfdf5;
+          border-color: #a7f3d0;
+          color: #047857;
+        }
+
+        .article-copy-btn {
+          background: #f5f3ff;
+          border-color: #ddd6fe;
+          color: #6d28d9;
+        }
+
+        .btn-channel-share {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.35rem;
+          color: #ffffff;
+          font-size: 0.74rem;
+          font-weight: 700;
+          padding: 0.38rem 0.8rem;
+          border-radius: 6px;
+          cursor: pointer;
+          border: none;
+          transition: all 0.15s ease;
+        }
+
+        .twitter-btn { background: #0f172a; }
+        .twitter-btn:hover { background: #000000; }
+        .linkedin-btn { background: #0a66c2; }
+        .linkedin-btn:hover { background: #004182; }
+        .facebook-btn { background: #1877f2; }
+        .facebook-btn:hover { background: #0c63d4; }
+
+        /* Mockup View */
+        .mock-preview-container {
+          background: #f8fafc;
         }
 
         .platform-tab-bar {
@@ -260,12 +1446,12 @@ export default function SocialCardPreview({ aiContent, expeditionTitle, region, 
           display: flex;
           align-items: center;
           gap: 0.5rem;
-          padding: 0.85rem 1.25rem;
+          padding: 0.85rem 1.15rem;
           background: transparent;
           border: none;
           border-bottom: 2px solid transparent;
           color: var(--text-secondary);
-          font-size: 0.85rem;
+          font-size: 0.82rem;
           font-weight: 600;
           cursor: pointer;
           transition: all 0.15s ease;
@@ -284,7 +1470,7 @@ export default function SocialCardPreview({ aiContent, expeditionTitle, region, 
         }
 
         .char-badge {
-          font-size: 0.7rem;
+          font-size: 0.68rem;
           background: #e2e8f0;
           color: var(--text-muted);
           padding: 1px 6px;
@@ -300,7 +1486,7 @@ export default function SocialCardPreview({ aiContent, expeditionTitle, region, 
 
         .mock-card {
           width: 100%;
-          max-width: 580px;
+          max-width: 620px;
           border-radius: var(--radius-sm);
           background: #ffffff;
           border: 1px solid #e2e8f0;
@@ -308,17 +1494,17 @@ export default function SocialCardPreview({ aiContent, expeditionTitle, region, 
           box-shadow: var(--shadow-md);
         }
 
-        .mock-twitter {
+        .mock-twitter, .mock-facebook, .mock-linkedin {
           padding: 1.25rem;
         }
 
-        .mock-header {
+        .mock-header, .fb-header, .li-header {
           display: flex;
           gap: 0.75rem;
           margin-bottom: 0.75rem;
         }
 
-        .avatar-ncpor, .insta-avatar, .li-avatar {
+        .avatar-ncpor, .insta-avatar, .li-avatar, .fb-avatar {
           width: 40px;
           height: 40px;
           border-radius: 50%;
@@ -331,12 +1517,17 @@ export default function SocialCardPreview({ aiContent, expeditionTitle, region, 
           color: #ffffff;
         }
 
-        .user-name-row {
+        .fb-avatar {
+          background: #1877f2;
+        }
+
+        .user-name-row, .fb-name-row {
           display: flex;
           align-items: center;
           gap: 0.35rem;
           font-size: 0.88rem;
           color: var(--navy);
+          flex-wrap: wrap;
         }
 
         .gov-verified-badge {
@@ -352,12 +1543,12 @@ export default function SocialCardPreview({ aiContent, expeditionTitle, region, 
           justify-content: center;
         }
 
-        .user-handle, .post-time, .post-subtitle {
+        .user-handle, .post-time, .post-subtitle, .fb-time, .li-followers {
           color: var(--text-muted);
           font-size: 0.8rem;
         }
 
-        .tweet-text {
+        .tweet-text, .fb-text, .li-text {
           font-size: 0.92rem;
           line-height: 1.55;
           color: var(--text-primary);
@@ -365,33 +1556,35 @@ export default function SocialCardPreview({ aiContent, expeditionTitle, region, 
           margin-bottom: 0.85rem;
         }
 
-        .mock-media-container {
+        .mock-media-container, .fb-media, .li-media {
           border-radius: 8px;
           overflow: hidden;
           margin-bottom: 0.85rem;
           border: 1px solid #e2e8f0;
         }
 
-        .mock-post-img {
+        .mock-post-img, .fb-img, .li-img {
           width: 100%;
           max-height: 280px;
           object-fit: cover;
           display: block;
         }
 
-        .twitter-actions {
+        .twitter-actions, .fb-action-bar, .li-action-bar {
           display: flex;
-          justify-content: space-between;
-          padding: 0.5rem 0.5rem 0;
-          color: var(--text-muted);
+          justify-content: space-around;
+          padding: 0.5rem 0 0;
+          color: var(--text-secondary);
           font-size: 0.8rem;
+          font-weight: 600;
           border-top: 1px solid #f1f5f9;
         }
 
-        .twitter-actions span {
-          display: flex;
-          align-items: center;
-          gap: 0.35rem;
+        .fb-reactions-stat, .li-reactions-stat {
+          padding: 0.5rem 0;
+          font-size: 0.75rem;
+          color: var(--text-muted);
+          border-top: 1px solid #f8fafc;
         }
 
         /* Instagram */
@@ -473,70 +1666,52 @@ export default function SocialCardPreview({ aiContent, expeditionTitle, region, 
           color: var(--text-secondary);
         }
 
-        /* LinkedIn */
-        .mock-linkedin {
-          background: #ffffff;
-          padding: 1.25rem;
+        /* Mock Blog & Article */
+        .mock-blog-full, .mock-article-full {
+          padding: 1.5rem;
         }
 
-        .li-header {
-          display: flex;
-          gap: 0.75rem;
+        .mock-blog-header, .mock-article-header {
+          border-bottom: 1px solid #e2e8f0;
+          padding-bottom: 0.75rem;
           margin-bottom: 1rem;
         }
 
-        .li-info {
-          display: flex;
-          flex-direction: column;
-          font-size: 0.85rem;
-          color: var(--navy);
-        }
-
-        .li-followers {
-          font-size: 0.72rem;
-          color: var(--text-muted);
-        }
-
-        .li-text {
-          font-size: 0.88rem;
-          line-height: 1.55;
-          color: var(--text-primary);
-          white-space: pre-line;
-          margin-bottom: 1rem;
-        }
-
-        .li-media img {
-          width: 100%;
-          max-height: 240px;
-          object-fit: cover;
-          border-radius: 6px;
-        }
-
-        .li-reactions-stat {
-          display: flex;
-          justify-content: space-between;
-          padding: 0.75rem 0 0.5rem;
-          font-size: 0.75rem;
-          color: var(--text-muted);
-          border-bottom: 1px solid #f1f5f9;
-        }
-
-        .li-action-bar {
-          display: flex;
-          justify-content: space-around;
-          padding: 0.75rem 0 0;
-          color: var(--text-secondary);
-          font-size: 0.8rem;
-          font-weight: 600;
-        }
-
-        .li-action-bar span {
-          display: flex;
+        .blog-meta-badge, .article-meta-badge {
+          display: inline-flex;
           align-items: center;
           gap: 0.35rem;
-          cursor: pointer;
+          font-size: 0.72rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.03em;
+          margin-bottom: 0.35rem;
         }
 
+        .blog-meta-badge { color: #059669; }
+        .article-meta-badge { color: #7c3aed; }
+
+        .mock-blog-header h3, .mock-article-header h3 {
+          font-size: 1.15rem;
+          font-weight: 800;
+          color: var(--navy);
+          margin: 0;
+        }
+
+        .blog-full-pre, .article-full-pre {
+          font-family: inherit;
+          font-size: 0.88rem;
+          line-height: 1.65;
+          color: #334155;
+          white-space: pre-wrap;
+          margin: 0;
+          max-height: 380px;
+          overflow-y: auto;
+          background: #f8fafc;
+          padding: 1.25rem;
+          border-radius: 8px;
+          border: 1px solid #e2e8f0;
+        }
 
         .copy-action-bar {
           margin-top: 1rem;
@@ -544,6 +1719,8 @@ export default function SocialCardPreview({ aiContent, expeditionTitle, region, 
           justify-content: flex-end;
           padding-top: 0.75rem;
           border-top: 1px solid #f1f5f9;
+          gap: 0.65rem;
+          flex-wrap: wrap;
         }
 
         .btn-copy-caption {
@@ -565,6 +1742,26 @@ export default function SocialCardPreview({ aiContent, expeditionTitle, region, 
           background: #f1f5f9;
         }
 
+        .btn-direct-post-action {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.45rem;
+          background: #0f172a;
+          color: #ffffff;
+          border: none;
+          padding: 0.5rem 1rem;
+          border-radius: var(--radius-sm);
+          font-size: 0.82rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.15s ease;
+        }
+
+        .fb-share-btn { background: #1877f2; }
+        .fb-share-btn:hover { background: #0c63d4; }
+        .li-share-btn { background: #0a66c2; }
+        .li-share-btn:hover { background: #004182; }
+
         .check-icon {
           color: #059669;
         }
@@ -584,23 +1781,30 @@ export default function SocialCardPreview({ aiContent, expeditionTitle, region, 
         }
 
         @media (max-width: 640px) {
+          .social-grid-6col {
+            padding: 1rem 0.75rem;
+          }
+          .social-executive-bar {
+            padding: 1rem;
+          }
+          .exec-actions-right {
+            width: 100%;
+          }
+          .btn-exec-bulk, .btn-exec-download {
+            flex: 1;
+            justify-content: center;
+          }
           .platform-card-wrapper {
             padding: 1rem 0.65rem;
           }
           .platform-btn {
-            padding: 0.65rem 0.95rem;
-            font-size: 0.8rem;
+            padding: 0.65rem 0.85rem;
+            font-size: 0.78rem;
           }
-          .btn-copy-caption {
+          .btn-copy-caption, .btn-direct-post-action {
             width: 100%;
             justify-content: center;
             min-height: 40px;
-          }
-          .mock-facts {
-            padding: 1rem;
-          }
-          .mock-twitter, .mock-instagram, .mock-linkedin {
-            padding: 1rem;
           }
         }
       `}</style>

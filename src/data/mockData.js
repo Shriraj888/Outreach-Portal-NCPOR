@@ -55,7 +55,7 @@ Major Scientific Deliverables:
       {
         id: "m-43-2",
         type: "photo",
-        url: "https://images.unsplash.com/photo-1508873696983-2df5293cb32f?auto=format&fit=crop&w=1200&q=80",
+        url: "https://images.unsplash.com/photo-1517999144091-3d9dca6d1e43?auto=format&fit=crop&w=1200&q=80",
         caption: "Glaciologist preparing electromechanical ice core drill at Dronning Maud Land margin.",
         altText: "Scientist in high-visibility polar parka assembling drill apparatus on wide snow field with safety ropes.",
         tags: ["Glaciology", "Ice Core", "Fieldwork"]
@@ -83,7 +83,10 @@ Major Scientific Deliverables:
       socialCaptions: {
         twitter: "🇦🇶 Mission Complete! The 43rd Indian Scientific Expedition to Antarctica #ISEA43 by @NCPOR_MoES has returned with 122m of pristine ice cores & breakthrough microbial discoveries! 🇮🇳❄️ #PolarScience #ClimateAction #MoES",
         instagram: "Unlocking Earth's Ancient Secrets from Antarctica! 🧊✨\n\n53 Indian researchers braved blizzards and isolation in the 43rd Indian Scientific Expedition to Antarctica (ISEA). They extracted deep ice cores spanning thousands of years of climate history and tested new green energy systems at Bharati Station!\n\n#Antarctica #NCPOR #ISEA43 #PolarScience #ClimateResearch #Bharati #Maitri",
-        linkedin: "The National Centre for Polar and Ocean Research (NCPOR), Ministry of Earth Sciences, is pleased to share key outcomes from the 43rd Indian Scientific Expedition to Antarctica (ISEA).\n\nKey Highlights:\n🔹 Recovery of a 122.4m paleoclimatic ice core from Dronning Maud Land.\n🔹 Identification of novel cold-tolerant bacterial strains for bio-catalysis.\n🔹 Successful integration of hybrid wind-solar auxiliary microgrid trials at Bharati Station."
+        linkedin: "The National Centre for Polar and Ocean Research (NCPOR), Ministry of Earth Sciences, is pleased to share key outcomes from the 43rd Indian Scientific Expedition to Antarctica (ISEA).\n\nKey Highlights:\n🔹 Recovery of a 122.4m paleoclimatic ice core from Dronning Maud Land.\n🔹 Identification of novel cold-tolerant bacterial strains for bio-catalysis.\n🔹 Successful integration of hybrid wind-solar auxiliary microgrid trials at Bharati Station.",
+        facebook: "❄️ Mission Accomplished in Antarctica! 🇦🇶 The 43rd Indian Scientific Expedition to Antarctica (ISEA) has officially concluded with monumental discoveries. Our researchers have returned with a 122m paleoclimate ice core and isolated novel psychrotolerant bacteria that could revolutionize cold-active biotechnology!\n\n👉 Discover our open polar datasets and visual media gallery on the NCPOR Portal.\n\n#NCPOR #MoES #Antarctica #PolarScience #IndiaAtThePoles",
+        blog: "## Unlocking 8,000 Years of Climate Secrets: The Legacy of the 43rd Antarctic Expedition\n\n**By NCPOR Science Outreach Division**\n\nDeep in the heart of East Antarctica, Indian glaciologists drilled into pristine ice to retrieve an unprecedented 122-meter ice core record. Here is how their findings connect high-latitude freezing vaults to the Indian summer monsoon.\n\n### Key Breakthroughs\n- **122m Deep Paleoclimate Ice Core**: Capturing volcanic dust pulses and Holocene temperature shifts.\n- **Green Renewable Microgrids**: Tested clean battery backups in -35°C polar blizzards.\n- **Cold-Active Microbial Genomes**: Novel enzymes extracted from Schirmacher Oasis lake sediment.\n\n*Read the full scientific dossier on the NCPOR Portal.*",
+        article: "PRESS RELEASE / NATIONAL POLAR SCIENCE REPORT\n\nDATELINE: GOA / NEW DELHI — NCPOR, MINISTRY OF EARTH SCIENCES\n\nSUBJECT: NCPOR Releases Summary of 43rd Indian Scientific Expedition to Antarctica\n\nThe National Centre for Polar and Ocean Research (NCPOR) has published the official executive report for the 43rd Indian Scientific Expedition to Antarctica (ISEA-43).\n\nHighlights Include:\n1. Successful extraction of 122m ice core at Dome C margin.\n2. Bio-prospection of novel enzymes from Antarctic lake sediments.\n3. Operational validation of hybrid wind-solar renewable infrastructure.\n\nDatasets and reports are accessible via the National Outreach Portal."
       },
       isApproved: true
     }
@@ -138,7 +141,7 @@ The voyage departed Cape Town onboard chartered ice-class vessel MV Vasiliy Golo
       {
         id: "m-44-2",
         type: "photo",
-        url: "https://images.unsplash.com/photo-1508873696983-2df5293cb32f?auto=format&fit=crop&w=1200&q=80",
+        url: "https://images.unsplash.com/photo-1517999144091-3d9dca6d1e43?auto=format&fit=crop&w=1200&q=80",
         caption: "Glaciologist preparing electromechanical ice core drill at Dronning Maud Land margin.",
         altText: "Scientist in polar parka assembling drill apparatus on snow field.",
         tags: ["Glaciology", "Ice Core", "Fieldwork"]
@@ -158,7 +161,10 @@ The voyage departed Cape Town onboard chartered ice-class vessel MV Vasiliy Golo
       socialCaptions: {
         twitter: "❄️ Setting sail for scientific discovery! The 44th Indian Scientific Expedition to Antarctica #ISEA44 by @NCPOR_MoES has launched vital glaciological drilling & green microgrid operations at Maitri & Bharati! 🇮🇳🇦🇶 #PolarScience #MoES #CleanEnergy",
         instagram: "Into the White Wilderness! 🇦🇶✨\n\nThe 44th Indian Scientific Expedition to Antarctica is officially under way! From installing autonomous polar weather buoys to advancing zero-emission energy systems at Bharati Station, Indian researchers continue pushing the frontiers of Earth science.\n\n#Antarctica #NCPOR #ISEA44 #PolarExploration #ClimateScience #IndiaInAntarctica",
-        linkedin: "The National Centre for Polar and Ocean Research (NCPOR), Ministry of Earth Sciences, presents the preliminary scientific dossier for the 44th Indian Scientific Expedition to Antarctica (ISEA).\n\nKey Milestones:\n🔹 Launch of autonomous glaciological sensor networks.\n🔹 Field validation of high-capacity green microgrids at Bharati Station.\n🔹 Long-range aerosol and cryospheric monitoring across East Antarctica."
+        linkedin: "The National Centre for Polar and Ocean Research (NCPOR), Ministry of Earth Sciences, presents the preliminary scientific dossier for the 44th Indian Scientific Expedition to Antarctica (ISEA).\n\nKey Milestones:\n🔹 Launch of autonomous glaciological sensor networks.\n🔹 Field validation of high-capacity green microgrids at Bharati Station.\n🔹 Long-range aerosol and cryospheric monitoring across East Antarctica.",
+        facebook: "❄️ Into the White Wilderness! 🇦🇶 The 44th Indian Scientific Expedition to Antarctica has commenced! 48 researchers aboard the chartered polar vessel MV Vasiliy Golovnin are undertaking critical missions including 24/7 aerosol spectroscopy at Bharati Station and deploying autonomous glaciology buoys across ice shelves.\n\n👉 Follow the live updates and open data feeds on our outreach portal!\n\n#NCPOR #MoES #Antarctica #ISEA44 #PolarExploration",
+        blog: "## Onward to the South Pole: Inside the 44th Indian Antarctic Expedition\n\n**By NCPOR Science Outreach Division**\n\nThe 44th Indian Scientific Expedition to Antarctica marks a pivotal moment in India's polar journey—integrating green microgrids, autonomous IoT telemetry, and high-resolution atmospheric physics.\n\n### Core Mission Objectives\n- **Aerosol Physics at Bharati**: Measuring black carbon and pristine air baselines.\n- **Autonomous Buoy Deployments**: Transmitting ice shelf telemetry in real time.\n- **Green Hybrid Power Integration**: Reducing fuel dependency across Indian stations.\n\n*Stay tuned for scientific updates on the NCPOR Portal.*",
+        article: "OFFICIAL DISPATCH / MINISTRY OF EARTH SCIENCES\n\nDATELINE: GOA / NEW DELHI — NATIONAL CENTRE FOR POLAR AND OCEAN RESEARCH\n\nSUBJECT: 44th Indian Scientific Expedition to Antarctica Commences Operations\n\nThe Ministry of Earth Sciences, Government of India, announces the operational deployment of the 44th Indian Scientific Expedition to Antarctica (ISEA-44).\n\nKey Focus Areas:\n1. In-situ cryospheric probe deployments on East Antarctic margins.\n2. 24/7 continuous aerosol spectroscopy at Bharati Station.\n3. Extreme-climate stress testing of high-capacity lithium battery banks.\n\nPreliminary reports and public datasets are available via the NCPOR Portal."
       },
       isApproved: true
     }
@@ -602,7 +608,7 @@ export const initialMediaArchives = [
     region: "Antarctica",
     expeditionId: "isea-43",
     year: 2024,
-    url: "https://images.unsplash.com/photo-1508873696983-2df5293cb32f?auto=format&fit=crop&w=1600&q=80",
+    url: "https://images.unsplash.com/photo-1517999144091-3d9dca6d1e43?auto=format&fit=crop&w=1600&q=80",
     caption: "Indian glaciology team operating ice-drilling winch during deep core extraction.",
     altText: "Polar researchers in protective orange survival suits carefully guiding metal drilling pipe into pristine blue ice borehole.",
     tags: ["Glaciology", "Ice Drilling", "Fieldwork", "Science"],

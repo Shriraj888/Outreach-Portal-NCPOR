@@ -84,7 +84,7 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
       status: d.status || 'published',
       aiReady: !!d.aiGeneratedContent,
       metaInfo: `${d.format} • ${d.fileSize || '35 MB'} • ${d.parameters?.length || 4} Variables`,
-      heroImage: 'https://images.unsplash.com/photo-1508873696983-2df5293cb32f?auto=format&fit=crop&w=600&q=80',
+      heroImage: 'https://images.unsplash.com/photo-1517999144091-3d9dca6d1e43?auto=format&fit=crop&w=600&q=80',
       rawItem: d
     })),
     ...publications.map(p => ({
