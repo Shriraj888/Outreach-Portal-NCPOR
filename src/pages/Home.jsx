@@ -76,7 +76,7 @@ export default function Home({ navigateTo, onSelectExpedition }) {
             <div className="masthead-sovereign-line">
               <span className="masthead-rule left-rule"></span>
               <div className="masthead-identity">
-                <IndiaFlag width={22} height={15} className="masthead-flag" />
+                <IndiaFlag width={24} height={16} className="masthead-flag" />
                 <span className="masthead-entity">
                   {lang === 'hi' ? 'भारत सरकार • पृथ्वी विज्ञान मंत्रालय' : 'GOVERNMENT OF INDIA • MINISTRY OF EARTH SCIENCES'}
                 </span>
@@ -630,10 +630,10 @@ export default function Home({ navigateTo, onSelectExpedition }) {
 
         .masthead-entity {
           font-family: var(--font-heading);
-          font-size: 0.76rem;
-          font-weight: 700;
-          letter-spacing: 0.16em;
-          color: #f1f5f9;
+          font-size: 0.88rem;
+          font-weight: 750;
+          letter-spacing: 0.14em;
+          color: #f8fafc;
           text-transform: uppercase;
           text-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
         }
@@ -649,20 +649,24 @@ export default function Home({ navigateTo, onSelectExpedition }) {
         }
 
         .institute-fullname {
-          color: #94a3b8;
-          font-weight: 500;
+          color: #e2e8f0;
+          font-weight: 600;
+          letter-spacing: 0.1em;
+          text-shadow: 0 1px 8px rgba(0, 0, 0, 0.5);
         }
 
         .institute-acronym {
-          color: #38bdf8;
+          color: #7dd3fc;
           font-weight: 800;
-          background: rgba(56, 189, 248, 0.12);
-          border: 1px solid rgba(56, 189, 248, 0.32);
-          padding: 0.12rem 0.45rem;
+          background: rgba(14, 165, 233, 0.28);
+          border: 1px solid rgba(125, 211, 252, 0.7);
+          padding: 0.12rem 0.5rem;
           border-radius: 4px;
-          font-size: 0.65rem;
-          letter-spacing: 0.1em;
-          box-shadow: inset 0 0 8px rgba(56, 189, 248, 0.12);
+          font-size: 0.68rem;
+          letter-spacing: 0.12em;
+          text-shadow: 0 0 10px rgba(56, 189, 248, 0.7);
+          box-shadow: 0 0 14px rgba(56, 189, 248, 0.3), inset 0 0 8px rgba(56, 189, 248, 0.2);
+          backdrop-filter: blur(4px);
         }
 
         /* Primary High-Priority Main Portal Heading */
