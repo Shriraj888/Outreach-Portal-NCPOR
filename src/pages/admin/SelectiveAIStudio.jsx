@@ -244,11 +244,6 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
           <ArrowLeft size={16} />
           <span>Back to Dashboard</span>
         </button>
-
-        <div className="top-badge-info">
-          <span className="live-dot"></span>
-          <span>NCPOR SELECTIVE AI STUDIO • CHUNKS, ARTICLES, IMAGES & VIDEO</span>
-        </div>
       </div>
 
       <div className="page-header-row">
