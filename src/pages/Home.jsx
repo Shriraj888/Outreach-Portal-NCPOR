@@ -104,9 +104,7 @@ export default function Home({ navigateTo, onSelectExpedition }) {
           </h1>
 
           <h2 className="hero-tagline">
-            {lang === 'hi' 
-              ? 'भूमध्य रेखा से पृथ्वी के छोर तक — ध्रुवीय और महासागरीय अनुसंधान' 
-              : 'Pioneering Polar & Ocean Science from the Equator to the Ends of Earth'}
+            {t.hero.title}
           </h2>
 
           <p className="hero-subtext">
@@ -256,51 +254,72 @@ export default function Home({ navigateTo, onSelectExpedition }) {
           <div className="pillars-grid">
             {/* Antarctica */}
             <div className="pillar-card antarctica" onClick={() => handleRegionClick('Antarctica')}>
-              <div className="pillar-bg-img bg-antarctica"></div>
-              <div className="pillar-overlay"></div>
-              <div className="pillar-content">
-                <span className="badge badge-antarctica">South Pole • 69°S to 90°S</span>
-                <h3 className="pillar-title">Antarctica (ISEA)</h3>
+              <div className="pillar-img-wrap">
+                <div className="pillar-bg-img bg-antarctica"></div>
+                <div className="pillar-img-fade"></div>
+              </div>
+              <div className="pillar-body">
+                <h3 className="pillar-title">Antarctica</h3>
                 <p className="pillar-desc">
-                  Maitri & Bharati stations. Deep ice core paleoclimatology, Southern Ocean teleconnections, and space weather monitoring.
+                  Maitri & Bharati — ice core paleoclimatology, Southern Ocean dynamics, and space weather.
                 </p>
-                <div className="pillar-action">
-                  <span>Explore 43 Expeditions</span>
-                  <ArrowRight size={16} />
+                <div className="pillar-footer">
+                  <div className="pillar-stats-row">
+                    <span className="pillar-stat"><strong>43</strong> Expeditions</span>
+                    <span className="pillar-stat-dot"></span>
+                    <span className="pillar-stat"><strong>40+</strong> Years</span>
+                  </div>
+                  <div className="pillar-cta">
+                    Explore <ArrowRight size={14} />
+                  </div>
                 </div>
               </div>
             </div>
 
             {/* Arctic */}
             <div className="pillar-card arctic" onClick={() => handleRegionClick('Arctic')}>
-              <div className="pillar-bg-img bg-arctic"></div>
-              <div className="pillar-overlay"></div>
-              <div className="pillar-content">
-                <span className="badge badge-arctic">North Pole • 78°55'N</span>
-                <h3 className="pillar-title">The Arctic (Himadri)</h3>
+              <div className="pillar-img-wrap">
+                <div className="pillar-bg-img bg-arctic"></div>
+                <div className="pillar-img-fade"></div>
+              </div>
+              <div className="pillar-body">
+                <h3 className="pillar-title">The Arctic</h3>
                 <p className="pillar-desc">
-                  Ny-Ålesund & Kongsfjorden. Tracking Arctic amplification, sea-ice shrinkage, and oceanic links to the Indian Monsoon.
+                  Himadri at Ny-Ålesund — Arctic amplification, sea-ice dynamics, and monsoon linkages.
                 </p>
-                <div className="pillar-action">
-                  <span>Explore Arctic Missions</span>
-                  <ArrowRight size={16} />
+                <div className="pillar-footer">
+                  <div className="pillar-stats-row">
+                    <span className="pillar-stat"><strong>16</strong> Years</span>
+                    <span className="pillar-stat-dot"></span>
+                    <span className="pillar-stat"><strong>12+</strong> Expeditions</span>
+                  </div>
+                  <div className="pillar-cta">
+                    Explore <ArrowRight size={14} />
+                  </div>
                 </div>
               </div>
             </div>
 
             {/* Himalaya */}
             <div className="pillar-card himalaya" onClick={() => handleRegionClick('Himalaya')}>
-              <div className="pillar-bg-img bg-himalaya"></div>
-              <div className="pillar-overlay"></div>
-              <div className="pillar-content">
-                <span className="badge badge-himalaya">Third Pole • 4,080m Altitude</span>
+              <div className="pillar-img-wrap">
+                <div className="pillar-bg-img bg-himalaya"></div>
+                <div className="pillar-img-fade"></div>
+              </div>
+              <div className="pillar-body">
                 <h3 className="pillar-title">Himalayan Cryosphere</h3>
                 <p className="pillar-desc">
-                  Himansh Observatory in Spiti Valley. Glacier mass balance, radar ice profiling, and downstream river water security.
+                  Himansh Observatory, Spiti — glacier mass balance, ice-radar profiling, and water security.
                 </p>
-                <div className="pillar-action">
-                  <span>Explore Glaciology</span>
-                  <ArrowRight size={16} />
+                <div className="pillar-footer">
+                  <div className="pillar-stats-row">
+                    <span className="pillar-stat"><strong>4,080m</strong> Altitude</span>
+                    <span className="pillar-stat-dot"></span>
+                    <span className="pillar-stat"><strong>5+</strong> Glaciers</span>
+                  </div>
+                  <div className="pillar-cta">
+                    Explore <ArrowRight size={14} />
+                  </div>
                 </div>
               </div>
             </div>
@@ -691,10 +710,10 @@ export default function Home({ navigateTo, onSelectExpedition }) {
         }
 
         .hero-title-accent {
-          background: linear-gradient(135deg, #38bdf8 0%, #67e8f9 35%, #86efac 70%, #ffffff 100%);
+          background: linear-gradient(115deg, #0ea5e9 0%, #38bdf8 25%, #67e8f9 50%, #bae6fd 78%, #ffffff 100%);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
-          filter: drop-shadow(0 4px 24px rgba(56, 189, 248, 0.45));
+          filter: drop-shadow(0 4px 24px rgba(14, 165, 233, 0.55)) drop-shadow(0 2px 12px rgba(0, 0, 0, 0.45));
           letter-spacing: 0.02em;
         }
 
@@ -1203,27 +1222,42 @@ export default function Home({ navigateTo, onSelectExpedition }) {
           gap: 1rem;
         }
 
-        /* 3 Pillars */
+        /* 3 Pillars — Enhanced */
         .pillars-grid {
           display: grid;
           grid-template-columns: repeat(3, 1fr);
-          gap: 1.75rem;
+          gap: 1.5rem;
         }
 
         .pillar-card {
           position: relative;
-          height: 380px;
-          border-radius: var(--radius-md);
+          height: 420px;
+          border-radius: 16px;
           overflow: hidden;
           cursor: pointer;
-          border: 1px solid var(--border-subtle);
-          box-shadow: var(--shadow-sm);
-          transition: all 0.25s ease;
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          box-shadow: 0 4px 24px -4px rgba(0, 0, 0, 0.3);
+          transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .pillar-card:hover {
-          transform: translateY(-5px);
-          box-shadow: var(--shadow-lg);
+          transform: translateY(-6px);
+          box-shadow: 0 20px 40px -8px rgba(0, 0, 0, 0.45);
+        }
+
+        .pillar-card.antarctica:hover {
+          border-color: rgba(52, 211, 153, 0.5);
+          box-shadow: 0 20px 40px -8px rgba(0, 0, 0, 0.45), 0 0 24px rgba(52, 211, 153, 0.15);
+        }
+
+        .pillar-card.arctic:hover {
+          border-color: rgba(56, 189, 248, 0.5);
+          box-shadow: 0 20px 40px -8px rgba(0, 0, 0, 0.45), 0 0 24px rgba(56, 189, 248, 0.15);
+        }
+
+        .pillar-card.himalaya:hover {
+          border-color: rgba(251, 191, 36, 0.5);
+          box-shadow: 0 20px 40px -8px rgba(0, 0, 0, 0.45), 0 0 24px rgba(251, 191, 36, 0.15);
         }
 
         .pillar-bg-img {
@@ -1231,7 +1265,7 @@ export default function Home({ navigateTo, onSelectExpedition }) {
           inset: 0;
           background-size: cover;
           background-position: center;
-          transition: transform 0.5s ease;
+          transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .bg-antarctica {
@@ -1247,46 +1281,137 @@ export default function Home({ navigateTo, onSelectExpedition }) {
         }
 
         .pillar-card:hover .pillar-bg-img {
-          transform: scale(1.06);
+          transform: scale(1.08);
         }
 
         .pillar-overlay {
           position: absolute;
           inset: 0;
-          background: linear-gradient(180deg, rgba(10, 25, 47, 0.2) 0%, rgba(10, 25, 47, 0.88) 100%);
+          background: linear-gradient(180deg, rgba(10, 25, 47, 0.15) 0%, rgba(10, 25, 47, 0.5) 45%, rgba(10, 25, 47, 0.92) 100%);
         }
 
         .pillar-content {
           position: absolute;
           inset: 0;
-          padding: 1.75rem;
+          padding: 1.5rem;
           display: flex;
           flex-direction: column;
           justify-content: flex-end;
           z-index: 1;
         }
 
+        /* Meta chips */
+        .pillar-meta-chips {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          margin-bottom: 0.65rem;
+        }
+
+        .pillar-chip {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.25rem;
+          font-size: 0.68rem;
+          font-weight: 700;
+          padding: 0.2rem 0.55rem;
+          border-radius: 9999px;
+          backdrop-filter: blur(8px);
+          letter-spacing: 0.02em;
+        }
+
+        .chip-location {
+          background: rgba(255, 255, 255, 0.12);
+          color: #e2e8f0;
+          border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+
+        .chip-count {
+          background: rgba(255, 255, 255, 0.08);
+          color: #cbd5e1;
+          border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
         .pillar-title {
-          font-size: 1.35rem;
+          font-size: 1.4rem;
           font-weight: 800;
           color: #ffffff;
-          margin: 0.75rem 0 0.5rem;
+          margin: 0 0 0.45rem;
+          letter-spacing: -0.01em;
+          line-height: 1.25;
+        }
+
+        .pillar-title-sub {
+          font-weight: 500;
+          color: #94a3b8;
+          font-size: 0.85em;
         }
 
         .pillar-desc {
-          font-size: 0.85rem;
-          color: #e2e8f0;
-          line-height: 1.5;
-          margin-bottom: 1.25rem;
+          font-size: 0.82rem;
+          color: #cbd5e1;
+          line-height: 1.55;
+          margin-bottom: 1rem;
+        }
+
+        /* Stats row */
+        .pillar-stats-row {
+          display: flex;
+          align-items: center;
+          gap: 0.85rem;
+          padding: 0.65rem 0;
+          margin-bottom: 0.85rem;
+          border-top: 1px solid rgba(255, 255, 255, 0.1);
+          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .pillar-stat {
+          display: flex;
+          flex-direction: column;
+          gap: 0.1rem;
+        }
+
+        .pillar-stat-num {
+          font-family: var(--font-heading);
+          font-size: 1.15rem;
+          font-weight: 800;
+          color: #ffffff;
+          line-height: 1;
+        }
+
+        .antarctica .pillar-stat-num { color: #6ee7b7; }
+        .arctic .pillar-stat-num { color: #7dd3fc; }
+        .himalaya .pillar-stat-num { color: #fcd34d; }
+
+        .pillar-stat-label {
+          font-size: 0.65rem;
+          color: #94a3b8;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.04em;
+        }
+
+        .pillar-stat-divider {
+          width: 1px;
+          height: 28px;
+          background: rgba(255, 255, 255, 0.15);
         }
 
         .pillar-action {
           display: flex;
           align-items: center;
           gap: 0.5rem;
-          color: #fbbf24;
-          font-size: 0.85rem;
+          font-size: 0.82rem;
           font-weight: 700;
+          transition: gap 0.25s ease;
+        }
+
+        .antarctica .pillar-action { color: #34d399; }
+        .arctic .pillar-action { color: #38bdf8; }
+        .himalaya .pillar-action { color: #fbbf24; }
+
+        .pillar-card:hover .pillar-action {
+          gap: 0.75rem;
         }
 
         /* Spotlight */
@@ -1471,7 +1596,7 @@ export default function Home({ navigateTo, onSelectExpedition }) {
             grid-template-columns: 1fr;
           }
           .pillar-card {
-            height: 280px;
+            height: 340px;
           }
           .spotlight-grid {
             grid-template-columns: 1fr;
@@ -1553,7 +1678,7 @@ export default function Home({ navigateTo, onSelectExpedition }) {
             margin: 0 auto;
           }
           .pillar-card {
-            height: 240px;
+            height: 320px;
           }
           .spotlight-card {
             padding: 1.25rem;

@@ -11,8 +11,8 @@ export const translations = {
       tagline: "India's Gateway to the Cryosphere & Polar Frontiers"
     },
     hero: {
-      title: "Pioneering Polar & Ocean Science from the Equator to the Ends of Earth",
-      subtitle: "Discover India's scientific expeditions across Antarctica, the Arctic, the Southern Ocean, and the Himalayan Third Pole.",
+      title: "Discover India's Polar & Himalayan Science",
+      subtitle: "Archives, datasets & outreach from India's polar and Himalayan expeditions.",
       exploreExpeditions: "Explore Expeditions",
       interactiveMap: "Interactive Polar Map",
       stats: {
@@ -64,8 +64,8 @@ export const translations = {
       tagline: "क्रायोस्फीयर और ध्रुवीय सीमाओं के लिए भारत का द्वार"
     },
     hero: {
-      title: "भूमध्य रेखा से पृथ्वी के छोर तक ध्रुवीय और महासागरीय विज्ञान में अग्रणी",
-      subtitle: "अंटार्कटिका, आर्कटिक, दक्षिणी महासागर और हिमालयी तीसरे ध्रुव में भारत के ऐतिहासिक वैज्ञानिक अभियानों को जानें।",
+      title: "भारत के ध्रुवीय एवं हिमालयी विज्ञान की खोज",
+      subtitle: "भारत के ध्रुवीय और हिमालयी अभियानों के अभिलेख, डेटा एवं आउटरीच।",
       exploreExpeditions: "अभियान देखें",
       interactiveMap: "इंटरैक्टिव ध्रुवीय नक्शा",
       stats: {
