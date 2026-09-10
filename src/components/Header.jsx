@@ -14,6 +14,8 @@ import {
   Sparkles
 } from 'lucide-react';
 
+import IndiaFlag from './IndiaFlag';
+
 export default function Header({ currentRoute, navigateTo }) {
   const { 
     lang, 
@@ -48,7 +50,7 @@ export default function Header({ currentRoute, navigateTo }) {
       <div className="gov-strip">
         <div className="container gov-strip-content">
           <div className="gov-title">
-            <span className="tricolor-badge"></span>
+            <IndiaFlag width={18} height={12} className="gov-strip-flag" />
             <span className="gov-text gov-text-full">
               भारत सरकार | <strong>GOVERNMENT OF INDIA</strong> • MINISTRY OF EARTH SCIENCES
             </span>
@@ -325,13 +327,10 @@ export default function Header({ currentRoute, navigateTo }) {
           display: none;
         }
 
-        .tricolor-badge {
-          width: 14px;
-          height: 10px;
+        .gov-strip-flag {
           border-radius: 2px;
-          display: inline-block;
-          background: linear-gradient(180deg, #ff9933 33%, #ffffff 33%, #ffffff 66%, #138808 66%);
-          box-shadow: 0 0 0 1px rgba(0,0,0,0.2);
+          box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.3), 0 1px 3px rgba(0, 0, 0, 0.25);
+          flex-shrink: 0;
         }
 
         .a11y-toolbar {
