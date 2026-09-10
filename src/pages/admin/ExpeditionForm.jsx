@@ -26,7 +26,7 @@ export default function ExpeditionForm({ expeditionId, onBack, navigateTo }) {
   const [vessel, setVessel] = useState(existingExpedition?.vessel || (isEditing ? '' : 'MV Vasiliy Golovnin (Chartered Polar Vessel)'));
   const [stationInput, setStationInput] = useState('');
   const [stations, setStations] = useState(existingExpedition?.stations || (isEditing ? [] : ['Maitri Station', 'Bharati Station']));
-  const [heroImage, setHeroImage] = useState(existingExpedition?.heroImage || 'https://images.unsplash.com/photo-1517411032315-54ef2cb783bb?auto=format&fit=crop&w=1200&q=80');
+  const [heroImage, setHeroImage] = useState(existingExpedition?.heroImage || 'https://data.ncpor.res.in/static/images/slider/bharati/IMG_(17).JPG');
   const [summary, setSummary] = useState(existingExpedition?.summary || (isEditing ? '' : 'Preliminary scientific deployment focusing on coastal ice shelf dynamics and environmental monitoring.'));
   const [scientificAbstract, setScientificAbstract] = useState(existingExpedition?.scientificAbstract || (isEditing ? '' : 'The 44th ISEA deployed advanced automatic weather monitoring arrays and continuous paleoclimatic snow pit sampling to evaluate austral summer temperature gradients.'));
   const [keyFindingsText, setKeyFindingsText] = useState((existingExpedition?.keyFindings || (isEditing ? [] : [
@@ -46,7 +46,7 @@ The voyage departed Cape Town with 48 scientists from MoES institutes, Survey of
     {
       id: `m-init-1`,
       type: 'photo',
-      url: 'https://images.unsplash.com/photo-1517411032315-54ef2cb783bb?auto=format&fit=crop&w=1200&q=80',
+      url: 'https://data.ncpor.res.in/static/images/slider/bharati/IMG_(17).JPG',
       caption: 'Bharati Station under clear Antarctic skies.',
       altText: 'Modern scientific research architecture Bharati Station on rocky outcrop against pure snow background.'
     }

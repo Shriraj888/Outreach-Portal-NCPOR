@@ -11,9 +11,9 @@ export const initialExpeditions = [
     vessel: "MV Vasiliy Golovnin (Ice-class chartered vessel)",
     stations: ["Maitri Station", "Bharati Station", "Larsemann Hills"],
     coordinates: { lat: -69.4069, lng: 76.1867, label: "Bharati Station, Larsemann Hills" },
+    heroImage: "https://data.ncpor.res.in/static/images/slider/bharati/IMG_(17).JPG",
     startDate: "November 2023",
     endDate: "April 2024",
-    heroImage: "https://images.unsplash.com/photo-1517411032315-54ef2cb783bb?auto=format&fit=crop&w=1600&q=80",
     tags: ["Ice Cores", "Paleoclimate", "Atmospheric Physics", "Microbiology"],
     summary: "The 43rd Indian Scientific Expedition to Antarctica successfully recovered a 122-meter deep ice core near Dome C margin, installed high-resolution atmospheric aerosol monitors at Bharati, and conducted microbiological sampling of extremophile organisms in freshwater lakes of Larsemann Hills.",
     summaryHi: "अंटार्कटिका के लिए 43वें भारतीय वैज्ञानिक अभियान ने डोम सी मार्जिन के पास 122 मीटर गहरा बर्फ कोर सफलतापूर्वक निकाला, भारती स्टेशन पर उच्च-रिज़ॉल्यूशन एरोसोल मॉनिटर स्थापित किए और लार्सेमन हिल्स की झीलों में सूक्ष्मजीव नमूने एकत्र किए।",
@@ -47,7 +47,7 @@ Major Scientific Deliverables:
       {
         id: "m-43-1",
         type: "photo",
-        url: "https://images.unsplash.com/photo-1517411032315-54ef2cb783bb?auto=format&fit=crop&w=1200&q=80",
+        url: "https://data.ncpor.res.in/static/images/slider/bharati/IMG_(17).JPG",
         caption: "Bharati Station under the midnight sun, Larsemann Hills, East Antarctica.",
         altText: "Modern architectural scientific base Bharati Station illuminated against pristine Antarctic ice sheet and blue summer sky.",
         tags: ["Station", "Larsemann Hills", "Infrastructure"]
@@ -63,45 +63,45 @@ Major Scientific Deliverables:
       {
         id: "m-43-3",
         type: "photo",
-        url: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80",
-        caption: "Schirmacher Oasis nunataks surrounding India's Maitri research station.",
-        altText: "Rugged rocky hills jutting above surrounding continental ice sheet under clear sky.",
-        tags: ["Maitri", "Landscape", "Geology"]
+        url: "https://data.ncpor.res.in/static/images/slider/maitri/IMG_6.JPG",
+        caption: "Maitri Research Station situated in the ice-free rocky oasis of Schirmacher Hills.",
+        altText: "Official photograph of Indian Antarctic station Maitri on rocky terrain beside freshwater lake.",
+        tags: ["Station", "Maitri", "Schirmacher"]
       },
       {
         id: "m-43-4",
         type: "photo",
         url: "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=1200&q=80",
-        caption: "Adélie penguin rookery monitoring along coastal Prydz Bay.",
-        altText: "Group of Adélie penguins on rocky shoreline with icebergs floating in background ocean.",
-        tags: ["Wildlife", "Adélie", "Biology"]
+        caption: "Pygoscelis adeliae (Adélie penguin) colony observed during biological survey.",
+        altText: "Penguins standing on rocky ground with snowy Antarctic hills in background.",
+        tags: ["Fauna", "Penguins", "Biodiversity"]
       }
     ],
-    publications: ["pub-101", "pub-104", "pub-108"],
+    publications: ["pub-101", "pub-106"],
     aiGeneratedContent: {
-      summary: "India's 43rd Antarctic Expedition marked a giant leap for polar science! 53 dedicated researchers lived and worked in extreme sub-zero conditions across Maitri and Bharati stations. They extracted a 122-meter deep ice core that unlocks nearly 8,000 years of Earth's climate history, tested clean renewable solar energy systems in polar cold, and studied how Antarctic micro-organisms survive harsh conditions.",
+      summary: "The 43rd Indian Scientific Expedition to Antarctica has concluded an extraordinary polar season! Operating from Bharati and Maitri stations, 53 researchers successfully extracted a 122m paleoclimate ice core, isolated new cold-tolerant bacteria with biotechnology potential, and stress-tested clean hybrid energy systems in extreme sub-zero conditions.",
       socialCaptions: {
-        twitter: "❄️ Mission Milestone: The 43rd Indian Antarctic Expedition by @NCPOR_MoES successfully drilled a 122m ice core at Dronning Maud Land, revealing 8,000 years of climate secrets! 🇮🇳🇦🇶 #PolarScience #IndiaInAntarctica #MoES #ClimateAction",
-        instagram: "Journey to the end of the Earth! 🧊✨\n\nIndia's 43rd Scientific Expedition to Antarctica has concluded with historic milestones! From drilling 122 meters deep into ancient ice to testing zero-carbon solar stations, our scientists are uncovering the planet's climate past to protect our future.\n\n Swipe to see life at Bharati & Maitri stations! 👉\n\n#Antarctica #NCPOR #ScienceOutreach #PolarExploration #IndiaScience",
-        linkedin: "The Ministry of Earth Sciences (MoES) and National Centre for Polar and Ocean Research (NCPOR) are pleased to announce the successful completion of the 43rd Indian Scientific Expedition to Antarctica (ISEA).\n\nKey Highlights:\n🔹 Recovery of a 122.4m paleoclimatic ice core sequence.\n🔹 Advanced aerosol-cloud interaction monitoring at Bharati Station.\n🔹 Validation of hybrid green energy microgrids for polar habitats.\n\nIndia continues its steadfast commitment to peaceful polar scientific research and environmental stewardship under the Antarctic Treaty System."
+        twitter: "🇦🇶 Mission Complete! The 43rd Indian Scientific Expedition to Antarctica #ISEA43 by @NCPOR_MoES has returned with 122m of pristine ice cores & breakthrough microbial discoveries! 🇮🇳❄️ #PolarScience #ClimateAction #MoES",
+        instagram: "Unlocking Earth's Ancient Secrets from Antarctica! 🧊✨\n\n53 Indian researchers braved blizzards and isolation in the 43rd Indian Scientific Expedition to Antarctica (ISEA). They extracted deep ice cores spanning thousands of years of climate history and tested new green energy systems at Bharati Station!\n\n#Antarctica #NCPOR #ISEA43 #PolarScience #ClimateResearch #Bharati #Maitri",
+        linkedin: "The National Centre for Polar and Ocean Research (NCPOR), Ministry of Earth Sciences, is pleased to share key outcomes from the 43rd Indian Scientific Expedition to Antarctica (ISEA).\n\nKey Highlights:\n🔹 Recovery of a 122.4m paleoclimatic ice core from Dronning Maud Land.\n🔹 Identification of novel cold-tolerant bacterial strains for bio-catalysis.\n🔹 Successful integration of hybrid wind-solar auxiliary microgrid trials at Bharati Station."
       },
       isApproved: true
     }
   },
   {
     id: "isea-44",
-    title: "44th Indian Scientific Expedition to Antarctica (ISEA) Preliminary Cruise Dossier",
-    titleHi: "अंटार्कटिका के लिए 44वां भारतीय वैज्ञानिक अभियान (आईएसईए) प्रारंभिक क्रूज डोजियर",
+    title: "44th Indian Scientific Expedition to Antarctica (ISEA)",
+    titleHi: "अंटार्कटिका के लिए 44वां भारतीय वैज्ञानिक अभियान",
     region: "Antarctica",
-    year: 2024,
+    year: 2025,
     status: "published",
-    chiefScientist: "Dr. Rahul Sengupta (Senior Scientist, NCPOR)",
-    vessel: "MV Vasiliy Golovnin (Chartered Ice-Class Vessel)",
+    chiefScientist: "Dr. Shailendra Saini (NCPOR)",
+    vessel: "MV Vasiliy Golovnin (Chartered Polar Vessel)",
     stations: ["Maitri Station", "Bharati Station", "Dome C Margin"],
     coordinates: { lat: -70.7667, lng: 11.7333, label: "Maitri Station, Schirmacher Oasis" },
     startDate: "November 2024",
     endDate: "April 2025",
-    heroImage: "https://images.unsplash.com/photo-1517411032315-54ef2cb783bb?auto=format&fit=crop&w=1600&q=80",
+    heroImage: "https://data.ncpor.res.in/static/images/slider/maitri/IMG_6.JPG",
     tags: ["Glaciology", "Aerosol Physics", "Green Microgrid", "Autonomous Buoys"],
     summary: "Preliminary technical and scientific expedition log covering deep glaciological drilling, aerosol sampling, and green microgrid trials.",
     summaryHi: "मैत्री और भारती स्टेशनों पर गहरे हिमनद ड्रिलिंग, एरोसोल नमूनाकरण और ग्रीन माइक्रोग्रिड परीक्षणों को कवर करने वाला प्रारंभिक तकनीकी और वैज्ञानिक अभियान।",
@@ -130,7 +130,7 @@ The voyage departed Cape Town onboard chartered ice-class vessel MV Vasiliy Golo
       {
         id: "m-44-1",
         type: "photo",
-        url: "https://images.unsplash.com/photo-1517411032315-54ef2cb783bb?auto=format&fit=crop&w=1200&q=80",
+        url: "https://data.ncpor.res.in/static/images/slider/bharati/IMG_(17).JPG",
         caption: "Bharati Station green microgrid array under midnight sun.",
         altText: "Modern elevated Antarctic base Bharati under clear blue skies with solar arrays.",
         tags: ["Station", "Bharati", "Clean Energy"]
@@ -146,7 +146,7 @@ The voyage departed Cape Town onboard chartered ice-class vessel MV Vasiliy Golo
       {
         id: "m-44-3",
         type: "photo",
-        url: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80",
+        url: "https://data.ncpor.res.in/static/images/slider/maitri/IMG_6.JPG",
         caption: "Schirmacher Oasis nunataks surrounding India's Maitri research station.",
         altText: "Rugged rocky hills jutting above surrounding continental ice sheet under clear sky.",
         tags: ["Maitri", "Landscape", "Geology"]
@@ -176,7 +176,7 @@ The voyage departed Cape Town onboard chartered ice-class vessel MV Vasiliy Golo
     coordinates: { lat: 78.9244, lng: 11.9286, label: "Himadri Station, Ny-Ålesund, Svalbard" },
     startDate: "March 2024",
     endDate: "October 2024 (Year-Round)",
-    heroImage: "https://images.unsplash.com/photo-1517999144091-3d9dca6d1e43?auto=format&fit=crop&w=1600&q=80",
+    heroImage: "https://data.ncpor.res.in/static/images/slider/himadri/IMG_3.JPG",
     tags: ["Fjord Oceanography", "Arctic Amplification", "Black Carbon", "Marine Ecology"],
     summary: "Operating from Himadri, India's research station in the international polar base of Ny-Ålesund, researchers tracked the influx of warm Atlantic water into Kongsfjorden and monitored atmospheric black carbon causing rapid Arctic ice melt.",
     summaryHi: "न्या-अलेसुंड, स्वालबार्ड में भारत के हिमाद्रि स्टेशन से संचालित, शोधकर्ताओं ने कोंग्सफजॉर्डन में गर्म अटलांटिक पानी के प्रवाह की निगरानी की और बर्फ के पिघलने को गति देने वाले ब्लैक कार्बन का अध्ययन किया।",
@@ -205,7 +205,7 @@ India's scientific presence at 78°55'N in Ny-Ålesund has transitioned into yea
       {
         id: "m-arc-1",
         type: "photo",
-        url: "https://images.unsplash.com/photo-1517999144091-3d9dca6d1e43?auto=format&fit=crop&w=1200&q=80",
+        url: "https://data.ncpor.res.in/static/images/slider/himadri/IMG_3.JPG",
         caption: "Himadri Research Station against the snowcapped peaks of Ny-Ålesund, Svalbard.",
         altText: "Traditional Nordic style yellow building with Indian Tricolour flag flying in foreground surrounded by snow peaks.",
         tags: ["Station", "Himadri", "Svalbard"]
@@ -251,7 +251,7 @@ India's scientific presence at 78°55'N in Ny-Ålesund has transitioned into yea
     coordinates: { lat: 32.4042, lng: 77.6189, label: "Himansh Station, Chandra Basin, Spiti" },
     startDate: "May 2024",
     endDate: "October 2024",
-    heroImage: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1600&q=80",
+    heroImage: "https://data.ncpor.res.in/static/images/slider/himansh/IMG_4.JPG",
     tags: ["Third Pole", "Glacier Mass Balance", "Runoff Hydrology", "Permafrost"],
     summary: "Operating in the rugged high-altitude desert of Spiti at over 4,000 meters above sea level, scientists at Himansh monitor the health of 6 benchmark glaciers in the Chandra basin to forecast water availability for millions downstream in the Indus river basin.",
     summaryHi: "स्पीति में समुद्र तल से 4,000 मीटर ऊपर स्थित 'हिमांशु' स्टेशन पर वैज्ञानिक चंद्रा बेसिन के 6 प्रमुख ग्लेशियरों की निगरानी कर रहे हैं, ताकि सिंधु नदी घाटी में जल सुरक्षा का सटीक पूर्वानुमान लगाया जा सके।",
@@ -280,7 +280,7 @@ The Third Pole holds the largest reserve of frozen freshwater outside the polar 
       {
         id: "m-him-1",
         type: "photo",
-        url: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80",
+        url: "https://data.ncpor.res.in/static/images/slider/himansh/IMG_4.JPG",
         caption: "Himansh Research Base located at 4,080m in Chandra Basin, Spiti Valley.",
         altText: "High altitude scientific station huts nestled in dramatic barren Himalayan valley surrounded by snow peaks.",
         tags: ["Station", "Himansh", "Himalayas"]
@@ -583,14 +583,14 @@ export const initialMediaArchives = [
   {
     id: "media-ph-1",
     type: "photo",
-    title: "Bharati Station Architectural Modular Base under Aurora Australis",
+    title: "Bharati Station Architectural Modular Base in Larsemann Hills",
     region: "Antarctica",
     expeditionId: "isea-43",
     year: 2024,
-    url: "https://images.unsplash.com/photo-1517411032315-54ef2cb783bb?auto=format&fit=crop&w=1600&q=80",
-    caption: "Bharati Research Station illuminated against the polar night sky in Larsemann Hills.",
-    altText: "Modern architectural elevated research station Bharati glowing in vibrant night colors on rocky Antarctic coastline under starry night.",
-    tags: ["Bharati", "Architecture", "Aurora", "Infrastructure"],
+    url: "https://data.ncpor.res.in/static/images/slider/bharati/IMG_(17).JPG",
+    caption: "Bharati Research Station illuminated on rocky ridge overlooking Prydz Bay in Larsemann Hills.",
+    altText: "Official NCPOR photo of modern architectural elevated research station Bharati in Larsemann Hills, Antarctica.",
+    tags: ["Bharati", "Architecture", "Infrastructure", "Station"],
     category: "Photographs",
     resolution: "4K UHD (3840x2160)",
     status: "published"
@@ -617,7 +617,7 @@ export const initialMediaArchives = [
     region: "Arctic",
     expeditionId: "arctic-2024",
     year: 2024,
-    url: "https://images.unsplash.com/photo-1517999144091-3d9dca6d1e43?auto=format&fit=crop&w=1600&q=80",
+    url: "https://data.ncpor.res.in/static/images/slider/himadri/IMG_3.JPG",
     videoStreamUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
     duration: "4 min 12 sec",
     caption: "High-altitude 4K aerial mapping of fjord ice dynamics surrounding Ny-Ålesund international research hub.",
@@ -634,7 +634,7 @@ export const initialMediaArchives = [
     region: "Himalaya",
     expeditionId: "himalaya-himansh",
     year: 2024,
-    url: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1600&q=80",
+    url: "https://data.ncpor.res.in/static/images/slider/himansh/IMG_4.JPG",
     duration: "6 min 45 sec",
     caption: "Documentary footage of NCPOR researchers trekking across moraine ridges to install automated weather stations.",
     altText: "Glaciologists traversing steep Himalayan scree slopes with satellite telemetric sensor masts.",
@@ -659,7 +659,7 @@ export const polarStations = [
     temp: "-12°C",
     wind: "28 km/h E",
     description: "India's modern energy-efficient base in Larsemann Hills, focusing on oceanography, satellite communication, and paleoclimate.",
-    image: "https://images.unsplash.com/photo-1517411032315-54ef2cb783bb?auto=format&fit=crop&w=600&q=80"
+    image: "https://data.ncpor.res.in/static/images/slider/bharati/IMG_(17).JPG"
   },
   {
     id: "st-maitri",
@@ -674,7 +674,7 @@ export const polarStations = [
     temp: "-18°C",
     wind: "35 km/h SE",
     description: "Located on the rocky oasis of Schirmacher Hills, conducting atmospheric, meteorological, and geological studies.",
-    image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=600&q=80"
+    image: "https://data.ncpor.res.in/static/images/slider/maitri/IMG_6.JPG"
   },
   {
     id: "st-dg",
@@ -689,7 +689,7 @@ export const polarStations = [
     temp: "-22°C",
     wind: "40 km/h S",
     description: "India's historic first permanent Antarctic station established during the 3rd Indian Antarctic Expedition, now maintained as a supply depot.",
-    image: "https://images.unsplash.com/photo-1508873696983-2df5293cb32f?auto=format&fit=crop&w=600&q=80"
+    image: "https://upload.wikimedia.org/wikipedia/commons/2/22/%E0%A4%A6%E0%A4%95%E0%A5%8D%E0%A4%B7%E0%A4%BF%E0%A4%A3_%E0%A4%97%E0%A4%82%E0%A4%97%E0%A5%8B%E0%A4%A4%E0%A5%8D%E0%A4%B0%E0%A5%80%2C_%E0%A4%85%E0%A4%82%E0%A4%9F%E0%A4%BE%E0%A4%B0%E0%A5%8D%E0%A4%95%E0%A4%9F%E0%A4%BF%E0%A4%95%E0%A4%BE.jpg"
   },
   {
     id: "st-himadri",
@@ -704,7 +704,7 @@ export const polarStations = [
     temp: "-4°C",
     wind: "18 km/h NW",
     description: "India's Arctic research base in Ny-Ålesund, Svalbard, Norway. Studies Arctic warming, atmospheric aerosols, and marine biology.",
-    image: "https://images.unsplash.com/photo-1517999144091-3d9dca6d1e43?auto=format&fit=crop&w=600&q=80"
+    image: "https://data.ncpor.res.in/static/images/slider/himadri/IMG_3.JPG"
   },
   {
     id: "st-himansh",
@@ -719,7 +719,7 @@ export const polarStations = [
     temp: "-6°C",
     wind: "22 km/h W",
     description: "Dedicated high-altitude research station at Sutri Dhaka in Spiti, studying Himalayan glacier health, mass balance, and runoff.",
-    image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=600&q=80"
+    image: "https://data.ncpor.res.in/static/images/slider/himansh/IMG_4.JPG"
   },
   {
     id: "st-indarc",

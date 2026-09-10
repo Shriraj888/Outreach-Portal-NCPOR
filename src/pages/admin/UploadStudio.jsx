@@ -51,7 +51,7 @@ export default function UploadStudio({ onBack, navigateTo, initialCategory = 're
   const [stationLogs, setStationLogs] = useState(['Maitri Station', 'Bharati Station']);
   const [stationInput, setStationInput] = useState('');
   const [reportRawText, setReportRawText] = useState('');
-  const [heroImage] = useState('https://images.unsplash.com/photo-1517411032315-54ef2cb783bb?auto=format&fit=crop&w=1200&q=80');
+  const [heroImage] = useState('https://data.ncpor.res.in/static/images/slider/bharati/IMG_(17).JPG');
 
   // 2. Dataset Specific
   const [datasetFormat, setDatasetFormat] = useState('CSV (.csv)');
@@ -71,14 +71,14 @@ export default function UploadStudio({ onBack, navigateTo, initialCategory = 're
   const [citations, setCitations] = useState(0);
 
   // 4. Photo Specific
-  const [photoUrl, setPhotoUrl] = useState('https://images.unsplash.com/photo-1517411032315-54ef2cb783bb?auto=format&fit=crop&w=1600&q=80');
+  const [photoUrl, setPhotoUrl] = useState('https://data.ncpor.res.in/static/images/slider/bharati/IMG_(17).JPG');
   const [photoCaption, setPhotoCaption] = useState('');
   const [photoAltText, setPhotoAltText] = useState('');
   const [resolution] = useState('4K UHD (3840x2160)');
   const [photoTags, setPhotoTags] = useState(['Fieldwork', 'Antarctica', 'Station']);
 
   // 5. Video Specific
-  const [videoUrl] = useState('https://images.unsplash.com/photo-1517999144091-3d9dca6d1e43?auto=format&fit=crop&w=1600&q=80');
+  const [videoUrl] = useState('https://data.ncpor.res.in/static/images/slider/himadri/IMG_3.JPG');
   const [videoStreamUrl, setVideoStreamUrl] = useState('https://www.youtube.com/watch?v=sample');
   const [duration, setDuration] = useState('4 min 20 sec');
   const [transcript, setTranscript] = useState('');

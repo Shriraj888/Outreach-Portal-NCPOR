@@ -1231,15 +1231,15 @@ export default function Home({ navigateTo, onSelectExpedition }) {
         }
 
         .bg-antarctica {
-          background-image: url('https://images.unsplash.com/photo-1517411032315-54ef2cb783bb?auto=format&fit=crop&w=800&q=80');
+          background-image: url('https://data.ncpor.res.in/static/images/slider/bharati/IMG_(17).JPG');
         }
 
         .bg-arctic {
-          background-image: url('https://images.unsplash.com/photo-1517999144091-3d9dca6d1e43?auto=format&fit=crop&w=800&q=80');
+          background-image: url('https://data.ncpor.res.in/static/images/slider/himadri/IMG_3.JPG');
         }
 
         .bg-himalaya {
-          background-image: url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=800&q=80');
+          background-image: url('https://data.ncpor.res.in/static/images/slider/himansh/IMG_4.JPG');
         }
 
         .pillar-card:hover .pillar-bg-img {

@@ -272,7 +272,7 @@ export default function Header({ currentRoute, navigateTo }) {
                     onClick={logout}
                   >
                     <span>Sign Out</span>
-                  </button>
+                  </button> 
                 </>
               ) : (
                 <button
