@@ -78,7 +78,7 @@ export default function Footer({ navigateTo }) {
           </div>
 
           {/* Column 4: Headquarters & Hackathon Badge */}
-          <div className="footer-col">
+          <div className="footer-col hq-col">
             <h5 className="footer-heading">Headquarters</h5>
             <div className="footer-contact">
               <div className="contact-item">
@@ -387,22 +387,86 @@ export default function Footer({ navigateTo }) {
           }
         }
 
-        @media (max-width: 640px) {
+        @media (max-width: 768px) {
+          .site-footer {
+            margin-top: 2rem;
+          }
           .footer-content {
-            padding: 2.25rem 1rem 1.25rem;
+            padding: 1.75rem 0.85rem 1rem;
           }
           .footer-grid {
+            grid-template-columns: 1fr 1fr;
+            gap: 1.25rem 1rem;
+          }
+          .footer-col.brand-col {
+            grid-column: 1 / -1;
+            margin-bottom: 0.25rem;
+          }
+          .footer-col.hq-col {
+            grid-column: 1 / -1;
+            margin-top: 0.25rem;
+          }
+          .footer-desc {
+            font-size: 0.76rem;
+            line-height: 1.45;
+            margin-bottom: 0.5rem;
+          }
+          .footer-heading {
+            font-size: 0.76rem;
+            margin-bottom: 0.55rem;
+          }
+          .footer-links {
+            gap: 0.4rem;
+          }
+          .footer-links button, .footer-links a {
+            font-size: 0.75rem;
+          }
+          .footer-contact {
+            display: grid;
             grid-template-columns: 1fr;
-            gap: 1.75rem;
+            gap: 0.35rem;
+            margin-bottom: 0.65rem;
+            font-size: 0.74rem;
+          }
+          .contact-item {
+            gap: 0.4rem;
+          }
+          .sih-badge-card {
+            padding: 0.45rem 0.65rem;
+            gap: 0.45rem;
+          }
+          .sih-title {
+            font-size: 0.72rem;
+          }
+          .sih-subtitle {
+            font-size: 0.64rem;
+          }
+          .footer-divider {
+            margin: 1.25rem 0 0.85rem;
           }
           .footer-bottom {
             flex-direction: column;
             align-items: flex-start;
-            gap: 0.75rem;
+            gap: 0.6rem;
+            font-size: 0.7rem;
           }
           .footer-meta-links {
             flex-wrap: wrap;
             gap: 0.35rem;
+            font-size: 0.68rem;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .footer-brand-title {
+            font-size: 0.95rem;
+          }
+          .footer-links button, .footer-links a {
+            font-size: 0.72rem;
+            line-height: 1.35;
+          }
+          .footer-heading {
+            font-size: 0.72rem;
           }
         }
       `}</style>
