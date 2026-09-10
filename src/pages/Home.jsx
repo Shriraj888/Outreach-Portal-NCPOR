@@ -254,23 +254,27 @@ export default function Home({ navigateTo, onSelectExpedition }) {
           <div className="pillars-grid">
             {/* Antarctica */}
             <div className="pillar-card antarctica" onClick={() => handleRegionClick('Antarctica')}>
-              <div className="pillar-img-wrap">
-                <div className="pillar-bg-img bg-antarctica"></div>
-                <div className="pillar-img-fade"></div>
+              <div className="pillar-bg-img bg-antarctica"></div>
+              <div className="pillar-overlay"></div>
+              <div className="pillar-top-tag">
+                <span className="pillar-tag-badge">South Pole</span>
               </div>
-              <div className="pillar-body">
+              <div className="pillar-content">
                 <h3 className="pillar-title">Antarctica</h3>
-                <p className="pillar-desc">
-                  Maitri & Bharati — ice core paleoclimatology, Southern Ocean dynamics, and space weather.
-                </p>
+                <p className="pillar-desc">Maitri and Bharati stations investigating ice cores, ocean currents, and space weather.</p>
+                <div className="pillar-chips">
+                  <span className="pillar-chip">Ice Cores</span>
+                  <span className="pillar-chip">Space Weather</span>
+                </div>
                 <div className="pillar-footer">
-                  <div className="pillar-stats-row">
-                    <span className="pillar-stat"><strong>43</strong> Expeditions</span>
-                    <span className="pillar-stat-dot"></span>
-                    <span className="pillar-stat"><strong>40+</strong> Years</span>
+                  <div className="pillar-meta">
+                    <span>43 Expeditions</span>
+                    <span className="meta-dot">•</span>
+                    <span>40+ Years</span>
                   </div>
-                  <div className="pillar-cta">
-                    Explore <ArrowRight size={14} />
+                  <div className="pillar-action">
+                    <span>Explore</span>
+                    <ArrowRight size={14} className="pillar-arrow" />
                   </div>
                 </div>
               </div>
@@ -278,23 +282,27 @@ export default function Home({ navigateTo, onSelectExpedition }) {
 
             {/* Arctic */}
             <div className="pillar-card arctic" onClick={() => handleRegionClick('Arctic')}>
-              <div className="pillar-img-wrap">
-                <div className="pillar-bg-img bg-arctic"></div>
-                <div className="pillar-img-fade"></div>
+              <div className="pillar-bg-img bg-arctic"></div>
+              <div className="pillar-overlay"></div>
+              <div className="pillar-top-tag">
+                <span className="pillar-tag-badge">North Pole</span>
               </div>
-              <div className="pillar-body">
-                <h3 className="pillar-title">The Arctic</h3>
-                <p className="pillar-desc">
-                  Himadri at Ny-Ålesund — Arctic amplification, sea-ice dynamics, and monsoon linkages.
-                </p>
+              <div className="pillar-content">
+                <h3 className="pillar-title">Arctic</h3>
+                <p className="pillar-desc">Himadri station at Ny-Ålesund studying Arctic amplification and monsoon linkages.</p>
+                <div className="pillar-chips">
+                  <span className="pillar-chip">Sea Ice</span>
+                  <span className="pillar-chip">Monsoon Links</span>
+                </div>
                 <div className="pillar-footer">
-                  <div className="pillar-stats-row">
-                    <span className="pillar-stat"><strong>16</strong> Years</span>
-                    <span className="pillar-stat-dot"></span>
-                    <span className="pillar-stat"><strong>12+</strong> Expeditions</span>
+                  <div className="pillar-meta">
+                    <span>12+ Expeditions</span>
+                    <span className="meta-dot">•</span>
+                    <span>16 Years</span>
                   </div>
-                  <div className="pillar-cta">
-                    Explore <ArrowRight size={14} />
+                  <div className="pillar-action">
+                    <span>Explore</span>
+                    <ArrowRight size={14} className="pillar-arrow" />
                   </div>
                 </div>
               </div>
@@ -302,23 +310,27 @@ export default function Home({ navigateTo, onSelectExpedition }) {
 
             {/* Himalaya */}
             <div className="pillar-card himalaya" onClick={() => handleRegionClick('Himalaya')}>
-              <div className="pillar-img-wrap">
-                <div className="pillar-bg-img bg-himalaya"></div>
-                <div className="pillar-img-fade"></div>
+              <div className="pillar-bg-img bg-himalaya"></div>
+              <div className="pillar-overlay"></div>
+              <div className="pillar-top-tag">
+                <span className="pillar-tag-badge">Third Pole</span>
               </div>
-              <div className="pillar-body">
-                <h3 className="pillar-title">Himalayan Cryosphere</h3>
-                <p className="pillar-desc">
-                  Himansh Observatory, Spiti — glacier mass balance, ice-radar profiling, and water security.
-                </p>
+              <div className="pillar-content">
+                <h3 className="pillar-title">Himalayas</h3>
+                <p className="pillar-desc">Himansh observatory in Spiti Valley monitoring glacier mass balance and water security.</p>
+                <div className="pillar-chips">
+                  <span className="pillar-chip">Glaciology</span>
+                  <span className="pillar-chip">Water Security</span>
+                </div>
                 <div className="pillar-footer">
-                  <div className="pillar-stats-row">
-                    <span className="pillar-stat"><strong>4,080m</strong> Altitude</span>
-                    <span className="pillar-stat-dot"></span>
-                    <span className="pillar-stat"><strong>5+</strong> Glaciers</span>
+                  <div className="pillar-meta">
+                    <span>4,080m Altitude</span>
+                    <span className="meta-dot">•</span>
+                    <span>5+ Glaciers</span>
                   </div>
-                  <div className="pillar-cta">
-                    Explore <ArrowRight size={14} />
+                  <div className="pillar-action">
+                    <span>Explore</span>
+                    <ArrowRight size={14} className="pillar-arrow" />
                   </div>
                 </div>
               </div>
@@ -331,7 +343,11 @@ export default function Home({ navigateTo, onSelectExpedition }) {
       {featuredExpedition && (
         <section className="featured-spotlight-section">
           <div className="container">
-            <div className="spotlight-card glass-panel">
+            <div className="section-header">
+              <div className="section-eyebrow">FEATURED MISSION</div>
+              <h2 className="section-title">Latest Expedition Spotlight</h2>
+            </div>
+            <div className="spotlight-card">
               <div className="spotlight-grid">
                 <div className="spotlight-media">
                   <img 
@@ -339,19 +355,14 @@ export default function Home({ navigateTo, onSelectExpedition }) {
                     alt={featuredExpedition.title} 
                     className="spotlight-img"
                   />
-                  <div className="spotlight-img-badge">
-                    <span>Featured Mission Archive</span>
-                  </div>
                 </div>
 
                 <div className="spotlight-info">
                   <div className="spotlight-top-tags">
                     <span className="badge badge-antarctica">{featuredExpedition.region}</span>
-                    <span className="spotlight-year">Season {featuredExpedition.year}</span>
+                    <span className="spotlight-year">{featuredExpedition.year}</span>
                     {featuredExpedition.aiGeneratedContent && (
-                      <span className="spotlight-ai-tag">
-                        Outreach Pack Ready
-                      </span>
+                      <span className="spotlight-ai-tag">AI Outreach Ready</span>
                     )}
                   </div>
 
@@ -365,16 +376,16 @@ export default function Home({ navigateTo, onSelectExpedition }) {
 
                   <div className="spotlight-deliverables">
                     <div className="deliverable-item">
-                      <CheckCircle2 size={16} className="deliv-icon" />
-                      <span>122m Paleoclimatic Ice Core Retrieved</span>
+                      <CheckCircle2 size={14} className="deliv-icon" />
+                      <span>122m paleoclimatic ice core retrieved</span>
                     </div>
                     <div className="deliverable-item">
-                      <CheckCircle2 size={16} className="deliv-icon" />
-                      <span>Zero-Waste Green Power Microgrid Operational</span>
+                      <CheckCircle2 size={14} className="deliv-icon" />
+                      <span>Zero-waste green power microgrid operational</span>
                     </div>
                     <div className="deliverable-item">
-                      <CheckCircle2 size={16} className="deliv-icon" />
-                      <span>14 Novel Cold-Active Extremophile Microbes Isolated</span>
+                      <CheckCircle2 size={14} className="deliv-icon" />
+                      <span>14 novel cold-active extremophile microbes isolated</span>
                     </div>
                   </div>
 
@@ -383,15 +394,15 @@ export default function Home({ navigateTo, onSelectExpedition }) {
                       className="btn-primary"
                       onClick={() => onSelectExpedition(featuredExpedition.id)}
                     >
-                      <span>Explore Full Expedition Archive</span>
-                      <ArrowRight size={16} />
+                      <span>View Full Archive</span>
+                      <ArrowRight size={15} />
                     </button>
                     <button 
                       className="btn-secondary"
                       onClick={() => navigateTo('map')}
                     >
-                      <MapPin size={16} />
-                      <span>View Station Map</span>
+                      <MapPin size={15} />
+                      <span>Station Map</span>
                     </button>
                   </div>
                 </div>
@@ -444,20 +455,37 @@ export default function Home({ navigateTo, onSelectExpedition }) {
           </div>
 
           <div className="activities-grid">
-            {activities.map((act) => (
-              <div key={act.id} className="glass-panel activity-card">
-                <div className="act-header">
-                  <span className="act-badge">{act.badge}</span>
-                  <span className="act-date">
-                    <Calendar size={13} /> {act.date}
-                  </span>
+            {activities.map((act) => {
+              const cleanTitle = (lang === 'hi' && act.titleHi ? act.titleHi : act.title).replace(/[—–]/g, '-');
+              const cleanSummary = act.summary ? act.summary.replace(/[—–]/g, '-') : '';
+              return (
+                <div key={act.id} className="activity-card" role="article">
+                  <div className="act-top-bar">
+                    <span className={`act-badge act-badge-${act.id}`}>
+                      {act.badge}
+                    </span>
+                    <span className="act-date">
+                      <Calendar size={12} />
+                      <span>{act.date}</span>
+                    </span>
+                  </div>
+
+                  <h4 className="act-title" title={cleanTitle}>
+                    {cleanTitle}
+                  </h4>
+
+                  <p className="act-summary">{cleanSummary}</p>
+
+                  <div className="act-footer">
+                    <span className="act-type-label">{act.type}</span>
+                    <div className="act-action-link">
+                      <span>Read Update</span>
+                      <ArrowRight size={13} className="act-arrow" />
+                    </div>
+                  </div>
                 </div>
-                <h4 className="act-title">
-                  {lang === 'hi' && act.titleHi ? act.titleHi : act.title}
-                </h4>
-                <p className="act-summary">{act.summary}</p>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
@@ -1222,7 +1250,7 @@ export default function Home({ navigateTo, onSelectExpedition }) {
           gap: 1rem;
         }
 
-        /* 3 Pillars — Enhanced */
+        /* 3 Pillars */
         .pillars-grid {
           display: grid;
           grid-template-columns: repeat(3, 1fr);
@@ -1231,33 +1259,23 @@ export default function Home({ navigateTo, onSelectExpedition }) {
 
         .pillar-card {
           position: relative;
-          height: 420px;
+          height: 380px;
           border-radius: 16px;
           overflow: hidden;
           cursor: pointer;
-          border: 1px solid rgba(255, 255, 255, 0.08);
-          box-shadow: 0 4px 24px -4px rgba(0, 0, 0, 0.3);
-          transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          box-shadow: 0 8px 24px -6px rgba(0, 0, 0, 0.25);
+          transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease, border-color 0.35s ease;
         }
 
         .pillar-card:hover {
           transform: translateY(-6px);
-          box-shadow: 0 20px 40px -8px rgba(0, 0, 0, 0.45);
+          box-shadow: 0 22px 42px -10px rgba(0, 0, 0, 0.45);
+          border-color: rgba(255, 255, 255, 0.25);
         }
 
-        .pillar-card.antarctica:hover {
-          border-color: rgba(52, 211, 153, 0.5);
-          box-shadow: 0 20px 40px -8px rgba(0, 0, 0, 0.45), 0 0 24px rgba(52, 211, 153, 0.15);
-        }
-
-        .pillar-card.arctic:hover {
-          border-color: rgba(56, 189, 248, 0.5);
-          box-shadow: 0 20px 40px -8px rgba(0, 0, 0, 0.45), 0 0 24px rgba(56, 189, 248, 0.15);
-        }
-
-        .pillar-card.himalaya:hover {
-          border-color: rgba(251, 191, 36, 0.5);
-          box-shadow: 0 20px 40px -8px rgba(0, 0, 0, 0.45), 0 0 24px rgba(251, 191, 36, 0.15);
+        .pillar-card:active {
+          transform: translateY(-2px);
         }
 
         .pillar-bg-img {
@@ -1268,172 +1286,188 @@ export default function Home({ navigateTo, onSelectExpedition }) {
           transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        .bg-antarctica {
-          background-image: url('https://data.ncpor.res.in/static/images/slider/bharati/IMG_(17).JPG');
-        }
-
-        .bg-arctic {
-          background-image: url('https://data.ncpor.res.in/static/images/slider/himadri/IMG_3.JPG');
-        }
-
-        .bg-himalaya {
-          background-image: url('https://data.ncpor.res.in/static/images/slider/himansh/IMG_4.JPG');
-        }
-
         .pillar-card:hover .pillar-bg-img {
           transform: scale(1.08);
         }
 
+        .bg-antarctica { background-image: url('https://data.ncpor.res.in/static/images/slider/bharati/IMG_(17).JPG'); }
+        .bg-arctic { background-image: url('https://data.ncpor.res.in/static/images/slider/himadri/IMG_3.JPG'); }
+        .bg-himalaya { background-image: url('https://data.ncpor.res.in/static/images/slider/himansh/IMG_4.JPG'); }
+
         .pillar-overlay {
           position: absolute;
           inset: 0;
-          background: linear-gradient(180deg, rgba(10, 25, 47, 0.15) 0%, rgba(10, 25, 47, 0.5) 45%, rgba(10, 25, 47, 0.92) 100%);
+          background: linear-gradient(180deg, rgba(10, 20, 40, 0.15) 0%, rgba(10, 20, 40, 0.35) 35%, rgba(8, 15, 30, 0.95) 100%);
+          transition: background 0.35s ease;
+        }
+
+        .pillar-card:hover .pillar-overlay {
+          background: linear-gradient(180deg, rgba(10, 20, 40, 0.08) 0%, rgba(10, 20, 40, 0.28) 30%, rgba(8, 15, 30, 0.96) 100%);
+        }
+
+        .pillar-top-tag {
+          position: absolute;
+          top: 1.15rem;
+          left: 1.15rem;
+          z-index: 2;
+        }
+
+        .pillar-tag-badge {
+          display: inline-flex;
+          align-items: center;
+          padding: 0.3rem 0.75rem;
+          font-size: 0.7rem;
+          font-weight: 700;
+          letter-spacing: 0.04em;
+          text-transform: uppercase;
+          color: #ffffff;
+          background: rgba(10, 20, 40, 0.65);
+          backdrop-filter: blur(10px);
+          -webkit-backdrop-filter: blur(10px);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          border-radius: 9999px;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+          transition: background 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+        }
+
+        .pillar-card:hover .pillar-tag-badge {
+          background: rgba(10, 20, 40, 0.85);
+          border-color: rgba(255, 255, 255, 0.4);
+          transform: translateY(-1px);
         }
 
         .pillar-content {
           position: absolute;
-          inset: 0;
-          padding: 1.5rem;
-          display: flex;
-          flex-direction: column;
-          justify-content: flex-end;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          padding: 1.35rem;
           z-index: 1;
         }
 
-        /* Meta chips */
-        .pillar-meta-chips {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          margin-bottom: 0.65rem;
-        }
-
-        .pillar-chip {
-          display: inline-flex;
-          align-items: center;
-          gap: 0.25rem;
-          font-size: 0.68rem;
-          font-weight: 700;
-          padding: 0.2rem 0.55rem;
-          border-radius: 9999px;
-          backdrop-filter: blur(8px);
-          letter-spacing: 0.02em;
-        }
-
-        .chip-location {
-          background: rgba(255, 255, 255, 0.12);
-          color: #e2e8f0;
-          border: 1px solid rgba(255, 255, 255, 0.18);
-        }
-
-        .chip-count {
-          background: rgba(255, 255, 255, 0.08);
-          color: #cbd5e1;
-          border: 1px solid rgba(255, 255, 255, 0.12);
-        }
-
         .pillar-title {
-          font-size: 1.4rem;
+          font-size: 1.35rem;
           font-weight: 800;
           color: #ffffff;
-          margin: 0 0 0.45rem;
+          margin: 0 0 0.35rem;
           letter-spacing: -0.01em;
-          line-height: 1.25;
+          transition: transform 0.25s ease;
         }
 
-        .pillar-title-sub {
-          font-weight: 500;
-          color: #94a3b8;
-          font-size: 0.85em;
+        .pillar-card:hover .pillar-title {
+          transform: translateX(2px);
         }
 
         .pillar-desc {
-          font-size: 0.82rem;
-          color: #cbd5e1;
-          line-height: 1.55;
-          margin-bottom: 1rem;
+          font-size: 0.78rem;
+          color: rgba(255, 255, 255, 0.8);
+          line-height: 1.45;
+          margin: 0 0 0.7rem;
         }
 
-        /* Stats row */
-        .pillar-stats-row {
+        .pillar-chips {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.4rem;
+          margin-bottom: 0.85rem;
+        }
+
+        .pillar-chip {
+          font-size: 0.68rem;
+          font-weight: 600;
+          color: rgba(255, 255, 255, 0.9);
+          background: rgba(255, 255, 255, 0.12);
+          backdrop-filter: blur(8px);
+          -webkit-backdrop-filter: blur(8px);
+          border: 1px solid rgba(255, 255, 255, 0.15);
+          padding: 0.2rem 0.55rem;
+          border-radius: 6px;
+          transition: all 0.2s ease;
+        }
+
+        .pillar-card:hover .pillar-chip {
+          background: rgba(255, 255, 255, 0.2);
+          border-color: rgba(255, 255, 255, 0.3);
+          color: #ffffff;
+        }
+
+        .pillar-footer {
           display: flex;
           align-items: center;
-          gap: 0.85rem;
-          padding: 0.65rem 0;
-          margin-bottom: 0.85rem;
+          justify-content: space-between;
+          padding-top: 0.65rem;
           border-top: 1px solid rgba(255, 255, 255, 0.1);
-          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .pillar-stat {
+        .pillar-meta {
           display: flex;
-          flex-direction: column;
-          gap: 0.1rem;
-        }
-
-        .pillar-stat-num {
-          font-family: var(--font-heading);
-          font-size: 1.15rem;
-          font-weight: 800;
-          color: #ffffff;
-          line-height: 1;
-        }
-
-        .antarctica .pillar-stat-num { color: #6ee7b7; }
-        .arctic .pillar-stat-num { color: #7dd3fc; }
-        .himalaya .pillar-stat-num { color: #fcd34d; }
-
-        .pillar-stat-label {
-          font-size: 0.65rem;
-          color: #94a3b8;
+          align-items: center;
+          gap: 0.4rem;
+          font-size: 0.72rem;
           font-weight: 600;
-          text-transform: uppercase;
-          letter-spacing: 0.04em;
+          color: rgba(255, 255, 255, 0.65);
         }
 
-        .pillar-stat-divider {
-          width: 1px;
-          height: 28px;
-          background: rgba(255, 255, 255, 0.15);
+        .meta-dot {
+          opacity: 0.5;
         }
 
         .pillar-action {
-          display: flex;
+          display: inline-flex;
           align-items: center;
-          gap: 0.5rem;
-          font-size: 0.82rem;
+          gap: 0.35rem;
+          font-size: 0.74rem;
           font-weight: 700;
-          transition: gap 0.25s ease;
+          padding: 0.38rem 0.85rem;
+          border-radius: 9999px;
+          transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+          background: rgba(255, 255, 255, 0.14);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          color: #ffffff;
+          backdrop-filter: blur(8px);
+          -webkit-backdrop-filter: blur(8px);
         }
 
-        .antarctica .pillar-action { color: #34d399; }
-        .arctic .pillar-action { color: #38bdf8; }
-        .himalaya .pillar-action { color: #fbbf24; }
+        .pillar-arrow {
+          transition: transform 0.25s ease;
+        }
 
         .pillar-card:hover .pillar-action {
-          gap: 0.75rem;
+          background: #ffffff;
+          color: #0b192c;
+          border-color: #ffffff;
+          box-shadow: 0 4px 14px rgba(255, 255, 255, 0.25);
+        }
+
+        .pillar-card:hover .pillar-arrow {
+          transform: translateX(3px);
         }
 
         /* Spotlight */
         .spotlight-card {
-          padding: 2.25rem;
+          padding: 1.75rem;
           border-radius: var(--radius-lg);
           background: #ffffff;
           border: 1px solid var(--border-card);
-          box-shadow: var(--shadow-md);
+          box-shadow: 0 2px 20px -4px rgba(0, 0, 0, 0.08);
+          transition: box-shadow 0.3s ease;
+        }
+
+        .spotlight-card:hover {
+          box-shadow: 0 8px 32px -6px rgba(0, 0, 0, 0.12);
         }
 
         .spotlight-grid {
           display: grid;
-          grid-template-columns: 1.1fr 1fr;
-          gap: 2.5rem;
-          align-items: center;
+          grid-template-columns: 1fr 1fr;
+          gap: 2rem;
+          align-items: start;
         }
 
         .spotlight-media {
           position: relative;
-          height: 360px;
-          border-radius: var(--radius-md);
+          height: 320px;
+          border-radius: 10px;
           overflow: hidden;
           border: 1px solid var(--border-subtle);
         }
@@ -1442,71 +1476,64 @@ export default function Home({ navigateTo, onSelectExpedition }) {
           width: 100%;
           height: 100%;
           object-fit: cover;
+          transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        .spotlight-img-badge {
-          position: absolute;
-          top: 1rem;
-          left: 1rem;
-          background: rgba(15, 23, 42, 0.85);
-          color: #ffffff;
-          padding: 0.35rem 0.8rem;
-          border-radius: var(--radius-full);
-          font-size: 0.75rem;
-          font-weight: 700;
+        .spotlight-card:hover .spotlight-img {
+          transform: scale(1.03);
         }
 
         .spotlight-top-tags {
           display: flex;
           align-items: center;
-          gap: 0.6rem;
-          margin-bottom: 0.85rem;
+          gap: 0.5rem;
+          margin-bottom: 0.65rem;
           flex-wrap: wrap;
         }
 
         .spotlight-year {
-          font-size: 0.8rem;
+          font-size: 0.78rem;
           color: var(--text-muted);
           font-weight: 600;
         }
 
         .spotlight-ai-tag {
-          background: #e0f2fe;
-          color: #0369a1;
-          border: 1px solid #bae6fd;
-          padding: 0.2rem 0.55rem;
+          background: #ecfdf5;
+          color: #047857;
+          border: 1px solid #a7f3d0;
+          padding: 0.15rem 0.5rem;
           border-radius: var(--radius-full);
-          font-size: 0.72rem;
-          font-weight: 600;
+          font-size: 0.68rem;
+          font-weight: 700;
         }
 
         .spotlight-title {
-          font-size: 1.6rem;
+          font-size: 1.4rem;
           font-weight: 800;
           color: var(--navy);
-          line-height: 1.25;
-          margin-bottom: 0.85rem;
+          line-height: 1.3;
+          margin-bottom: 0.65rem;
         }
 
         .spotlight-summary {
-          font-size: 0.9rem;
+          font-size: 0.85rem;
           color: var(--text-secondary);
           line-height: 1.6;
-          margin-bottom: 1.25rem;
+          margin-bottom: 1rem;
         }
 
         .spotlight-deliverables {
           display: flex;
           flex-direction: column;
-          gap: 0.5rem;
-          margin-bottom: 1.75rem;
+          gap: 0.4rem;
+          margin-bottom: 1.25rem;
         }
 
         .deliverable-item {
           display: flex;
           align-items: center;
-          gap: 0.6rem;
-          font-size: 0.85rem;
+          gap: 0.5rem;
+          font-size: 0.8rem;
           color: var(--text-secondary);
         }
 
@@ -1518,11 +1545,15 @@ export default function Home({ navigateTo, onSelectExpedition }) {
         .spotlight-actions {
           display: flex;
           align-items: center;
-          gap: 1rem;
+          gap: 0.75rem;
           flex-wrap: wrap;
         }
 
         /* Activities */
+        .news-section {
+          position: relative;
+        }
+
         .activities-grid {
           display: grid;
           grid-template-columns: repeat(3, 1fr);
@@ -1530,48 +1561,139 @@ export default function Home({ navigateTo, onSelectExpedition }) {
         }
 
         .activity-card {
-          padding: 1.5rem;
+          padding: 1.35rem 1.35rem 1.15rem;
           display: flex;
           flex-direction: column;
           background: #ffffff;
+          border: 1px solid #e2e8f0;
+          border-radius: 14px;
+          box-shadow: 0 2px 10px -2px rgba(0, 0, 0, 0.04);
+          transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.28s ease, border-color 0.28s ease;
+          position: relative;
+          cursor: pointer;
         }
 
-        .act-header {
+        .activity-card:hover {
+          transform: translateY(-4px);
+          border-color: #cbd5e1;
+          box-shadow: 0 14px 28px -6px rgba(0, 0, 0, 0.09), 0 2px 6px rgba(0, 0, 0, 0.04);
+        }
+
+        .activity-card:active {
+          transform: translateY(-1px);
+        }
+
+        .act-top-bar {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          margin-bottom: 0.75rem;
+          gap: 0.5rem;
+          margin-bottom: 0.85rem;
         }
 
         .act-badge {
+          font-size: 0.7rem;
+          font-weight: 700;
+          padding: 0.22rem 0.6rem;
+          border-radius: 6px;
+          display: inline-flex;
+          align-items: center;
+          gap: 0.3rem;
           background: #e0f2fe;
           color: #0369a1;
-          font-size: 0.72rem;
-          font-weight: 700;
-          padding: 2px 8px;
-          border-radius: 4px;
+          border: 1px solid #bae6fd;
+        }
+
+        .act-badge-act-1 {
+          background: #fef3c7;
+          color: #92400e;
+          border-color: #fde68a;
+        }
+
+        .act-badge-act-2 {
+          background: #e0f2fe;
+          color: #0369a1;
+          border-color: #bae6fd;
+        }
+
+        .act-badge-act-3 {
+          background: #ecfdf5;
+          color: #065f46;
+          border-color: #a7f3d0;
         }
 
         .act-date {
-          font-size: 0.75rem;
-          color: var(--text-muted);
-          display: flex;
+          font-size: 0.72rem;
+          font-weight: 600;
+          color: #64748b;
+          display: inline-flex;
           align-items: center;
           gap: 0.3rem;
         }
 
         .act-title {
-          font-size: 1.05rem;
-          color: var(--navy);
+          font-size: 1.02rem;
+          color: #0f172a;
           font-weight: 700;
           line-height: 1.35;
-          margin-bottom: 0.65rem;
+          margin-bottom: 0.6rem;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+          min-height: 2.75rem;
+          transition: color 0.2s ease;
+        }
+
+        .activity-card:hover .act-title {
+          color: #0284c7;
         }
 
         .act-summary {
-          font-size: 0.85rem;
-          color: var(--text-secondary);
-          line-height: 1.55;
+          font-size: 0.8rem;
+          color: #475569;
+          line-height: 1.5;
+          margin-bottom: 1.1rem;
+          display: -webkit-box;
+          -webkit-line-clamp: 3;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+          flex: 1;
+        }
+
+        .act-footer {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding-top: 0.75rem;
+          border-top: 1px solid #f1f5f9;
+          margin-top: auto;
+        }
+
+        .act-type-label {
+          font-size: 0.7rem;
+          font-weight: 600;
+          color: #94a3b8;
+          text-transform: uppercase;
+          letter-spacing: 0.03em;
+        }
+
+        .act-action-link {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.35rem;
+          font-size: 0.76rem;
+          font-weight: 700;
+          color: #0284c7;
+          transition: color 0.2s ease;
+        }
+
+        .act-arrow {
+          transition: transform 0.2s ease;
+        }
+
+        .activity-card:hover .act-arrow {
+          transform: translateX(3px);
         }
 
         @media (max-width: 1024px) {
@@ -1596,7 +1718,7 @@ export default function Home({ navigateTo, onSelectExpedition }) {
             grid-template-columns: 1fr;
           }
           .pillar-card {
-            height: 340px;
+            height: 350px;
           }
           .spotlight-grid {
             grid-template-columns: 1fr;
@@ -1678,7 +1800,7 @@ export default function Home({ navigateTo, onSelectExpedition }) {
             margin: 0 auto;
           }
           .pillar-card {
-            height: 320px;
+            height: 330px;
           }
           .spotlight-card {
             padding: 1.25rem;

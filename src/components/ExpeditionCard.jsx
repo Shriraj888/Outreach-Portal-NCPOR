@@ -21,11 +21,16 @@ export default function ExpeditionCard({ expedition, onSelect }) {
   };
 
   const title = (lang === 'hi' && expedition.titleHi) ? expedition.titleHi : expedition.title;
-  const summary = (lang === 'hi' && expedition.summaryHi) ? expedition.summaryHi : expedition.summary;
+  const rawSummary = (lang === 'hi' && expedition.summaryHi) ? expedition.summaryHi : expedition.summary;
+  const summary = (rawSummary || '').replace(/—/g, ', ');
+
+  // Clean scientist & station names for compact display
+  const scientistName = expedition.chiefScientist ? expedition.chiefScientist.replace(/\s*\(.*?\)/g, '').trim() : '';
+  const stationName = expedition.stations?.[0] ? expedition.stations[0].replace(/\s*\(.*?\)/g, '').trim() : '';
 
   return (
-    <div className="glass-panel expedition-card" onClick={() => onSelect(expedition.id)}>
-      {/* Image Banner with Badges */}
+    <div className="expedition-card" onClick={() => onSelect(expedition.id)}>
+      {/* Image Banner */}
       <div className="card-image-wrap">
         <img 
           src={expedition.heroImage} 
@@ -33,29 +38,30 @@ export default function ExpeditionCard({ expedition, onSelect }) {
           className="card-hero-img" 
           loading="lazy"
         />
+        <div className="card-img-gradient"></div>
         
         {/* Top Badges */}
         <div className="card-top-badges">
-          <span className={`badge ${getRegionBadgeClass(expedition.region)}`}>
-            <MapPin size={12} />
+          <span className={`badge ${getRegionBadgeClass(expedition.region)} card-region-pill`}>
+            <MapPin size={11} />
             <span>{expedition.region}</span>
           </span>
           <span className="card-year-badge">
-            <Calendar size={12} />
+            <Calendar size={11} />
             <span>{expedition.year}</span>
           </span>
         </div>
 
-        {/* Status & Media Count */}
+        {/* Bottom Floating Stats */}
         <div className="card-bottom-badges">
           <div className="card-stat-pill">
-            <ImageIcon size={12} />
+            <ImageIcon size={11} />
             <span>{expedition.media?.length || 0} Photos</span>
           </div>
           {expedition.aiGeneratedContent && (
             <div className="card-ai-pill" title="Outreach Package Ready">
-              <Sparkles size={12} />
-              <span>Outreach Pack</span>
+              <Sparkles size={11} />
+              <span>Outreach Ready</span>
             </div>
           )}
         </div>
@@ -63,19 +69,19 @@ export default function ExpeditionCard({ expedition, onSelect }) {
 
       {/* Content Area */}
       <div className="card-body">
-        <h3 className="card-title">{title}</h3>
+        <h3 className="card-title" title={title}>{title}</h3>
         
         <div className="card-meta">
-          {expedition.chiefScientist && (
-            <div className="meta-row">
-              <User size={13} className="meta-icon" />
-              <span className="meta-text">{expedition.chiefScientist}</span>
+          {scientistName && (
+            <div className="meta-item" title={expedition.chiefScientist}>
+              <User size={12} className="meta-icon" />
+              <span className="meta-text">{scientistName}</span>
             </div>
           )}
-          {expedition.stations && expedition.stations.length > 0 && (
-            <div className="meta-row">
-              <MapPin size={13} className="meta-icon" />
-              <span className="meta-text">{expedition.stations[0]}</span>
+          {stationName && (
+            <div className="meta-item" title={expedition.stations?.[0]}>
+              <MapPin size={12} className="meta-icon" />
+              <span className="meta-text">{stationName}</span>
             </div>
           )}
         </div>
@@ -85,27 +91,26 @@ export default function ExpeditionCard({ expedition, onSelect }) {
         </p>
 
         {/* Tags */}
-        {(expedition.tags && expedition.tags.length > 0) ? (
-          <div className="card-tags">
-            {expedition.tags.slice(0, 3).map((tag, i) => (
+        <div className="card-tags">
+          {(expedition.tags && expedition.tags.length > 0) ? (
+            expedition.tags.slice(0, 3).map((tag, i) => (
               <span key={i} className="mini-tag">
-                {tag}
+                {tag.replace(/—/g, ' ')}
               </span>
-            ))}
-          </div>
-        ) : (
-          <div className="card-tags">
-            <span className="mini-tag">{expedition.region || 'Polar'}</span>
-            <span className="mini-tag">Glaciology</span>
-            <span className="mini-tag">Climate Research</span>
-          </div>
-        )}
+            ))
+          ) : (
+            <>
+              <span className="mini-tag">{expedition.region || 'Polar'}</span>
+              <span className="mini-tag">Glaciology</span>
+            </>
+          )}
+        </div>
 
         {/* Footer Action */}
         <div className="card-action-footer">
-          <span className="action-label">{t.common.readMore}</span>
+          <span className="action-label">{t?.common?.readMore || 'Explore Expedition'}</span>
           <div className="action-arrow">
-            <ArrowRight size={15} />
+            <ArrowRight size={14} />
           </div>
         </div>
       </div>
@@ -117,23 +122,27 @@ export default function ExpeditionCard({ expedition, onSelect }) {
           display: flex;
           flex-direction: column;
           background: #ffffff;
-          border: 1px solid var(--border-card);
-          border-radius: var(--radius-md);
-          box-shadow: var(--shadow-card);
-          transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease, border-color 0.2s ease;
+          border: 1px solid #e2e8f0;
+          border-radius: 14px;
+          box-shadow: 0 2px 10px -2px rgba(0, 0, 0, 0.05);
+          transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.28s ease, border-color 0.28s ease;
           position: relative;
           height: 100%;
         }
 
         .expedition-card:hover {
-          transform: translateY(-4px);
-          border-color: #94a3b8;
-          box-shadow: var(--shadow-lg);
+          transform: translateY(-5px);
+          border-color: #cbd5e1;
+          box-shadow: 0 16px 30px -8px rgba(0, 0, 0, 0.12), 0 4px 8px -2px rgba(0, 0, 0, 0.04);
+        }
+
+        .expedition-card:active {
+          transform: translateY(-2px);
         }
 
         .card-image-wrap {
           position: relative;
-          height: 200px;
+          height: 185px;
           overflow: hidden;
           background: #f1f5f9;
         }
@@ -142,73 +151,101 @@ export default function ExpeditionCard({ expedition, onSelect }) {
           width: 100%;
           height: 100%;
           object-fit: cover;
-          transition: transform 0.35s ease;
+          transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .expedition-card:hover .card-hero-img {
-          transform: scale(1.04);
+          transform: scale(1.06);
+        }
+
+        .card-img-gradient {
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(180deg, rgba(0, 0, 0, 0.25) 0%, transparent 40%, rgba(0, 0, 0, 0.4) 100%);
+          pointer-events: none;
         }
 
         .card-top-badges {
           position: absolute;
-          top: 0.75rem;
-          left: 0.75rem;
-          right: 0.75rem;
+          top: 0.65rem;
+          left: 0.65rem;
+          right: 0.65rem;
           display: flex;
           justify-content: space-between;
           align-items: center;
+          z-index: 2;
+        }
+
+        .card-region-pill {
+          backdrop-filter: blur(8px);
+          -webkit-backdrop-filter: blur(8px);
+          font-size: 0.7rem;
+          font-weight: 700;
+          padding: 0.2rem 0.55rem;
+          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
         }
 
         .card-year-badge {
-          background: rgba(15, 23, 42, 0.85);
+          background: rgba(15, 23, 42, 0.75);
+          backdrop-filter: blur(8px);
+          -webkit-backdrop-filter: blur(8px);
           color: #ffffff;
           padding: 0.2rem 0.55rem;
-          border-radius: var(--radius-full);
-          font-size: 0.75rem;
-          font-weight: 600;
-          display: flex;
+          border-radius: 9999px;
+          font-size: 0.7rem;
+          font-weight: 700;
+          display: inline-flex;
           align-items: center;
-          gap: 0.3rem;
+          gap: 0.25rem;
+          border: 1px solid rgba(255, 255, 255, 0.15);
+          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
         }
 
         .card-bottom-badges {
           position: absolute;
-          bottom: 0.75rem;
-          left: 0.75rem;
-          right: 0.75rem;
+          bottom: 0.65rem;
+          left: 0.65rem;
+          right: 0.65rem;
           display: flex;
           justify-content: space-between;
           align-items: center;
+          z-index: 2;
         }
 
         .card-stat-pill {
-          background: rgba(255, 255, 255, 0.92);
-          color: #334155;
-          padding: 0.2rem 0.55rem;
+          background: rgba(255, 255, 255, 0.88);
+          backdrop-filter: blur(8px);
+          -webkit-backdrop-filter: blur(8px);
+          color: #1e293b;
+          padding: 0.18rem 0.5rem;
           border-radius: 6px;
-          font-size: 0.72rem;
-          font-weight: 600;
-          display: flex;
+          font-size: 0.68rem;
+          font-weight: 700;
+          display: inline-flex;
           align-items: center;
-          gap: 0.35rem;
-          box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+          gap: 0.3rem;
+          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+          border: 1px solid rgba(255, 255, 255, 0.6);
         }
 
         .card-ai-pill {
-          background: #059669;
+          background: rgba(5, 150, 105, 0.9);
+          backdrop-filter: blur(8px);
+          -webkit-backdrop-filter: blur(8px);
           color: #ffffff;
-          padding: 0.2rem 0.6rem;
+          padding: 0.18rem 0.55rem;
           border-radius: 6px;
-          font-size: 0.72rem;
-          font-weight: 600;
-          display: flex;
+          font-size: 0.68rem;
+          font-weight: 700;
+          display: inline-flex;
           align-items: center;
-          gap: 0.35rem;
-          box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+          gap: 0.25rem;
+          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
+          border: 1px solid rgba(255, 255, 255, 0.25);
         }
 
         .card-body {
-          padding: 1.25rem;
+          padding: 1.15rem 1.15rem 1rem;
           display: flex;
           flex-direction: column;
           flex: 1;
@@ -216,26 +253,40 @@ export default function ExpeditionCard({ expedition, onSelect }) {
         }
 
         .card-title {
-          font-size: 1.1rem;
+          font-size: 1.02rem;
           font-weight: 700;
-          color: var(--navy);
+          color: #0f172a;
           line-height: 1.35;
-          margin-bottom: 0.65rem;
+          margin-bottom: 0.45rem;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+          min-height: 2.75rem;
+          transition: color 0.2s ease;
+        }
+
+        .expedition-card:hover .card-title {
+          color: #0369a1;
         }
 
         .card-meta {
           display: flex;
           align-items: center;
-          gap: 1rem;
+          gap: 0.75rem;
           color: #64748b;
-          font-size: 0.78rem;
-          margin-bottom: 0.85rem;
+          font-size: 0.74rem;
+          font-weight: 600;
+          margin-bottom: 0.65rem;
+          min-height: 1.25rem;
         }
 
         .meta-item {
-          display: flex;
+          display: inline-flex;
           align-items: center;
-          gap: 0.35rem;
+          gap: 0.3rem;
+          min-width: 0;
+          flex-shrink: 1;
         }
 
         .meta-icon {
@@ -250,77 +301,84 @@ export default function ExpeditionCard({ expedition, onSelect }) {
         }
 
         .card-desc {
-          font-size: 0.84rem;
+          font-size: 0.8rem;
           color: #475569;
-          line-height: 1.55;
-          margin-bottom: 1rem;
+          line-height: 1.45;
+          margin-bottom: 0.75rem;
           display: -webkit-box;
-          -webkit-line-clamp: 3;
+          -webkit-line-clamp: 2;
           -webkit-box-orient: vertical;
           overflow: hidden;
-          flex: 1;
+          min-height: 2.35rem;
         }
 
         .card-tags {
           display: flex;
           flex-wrap: wrap;
-          gap: 0.4rem;
-          margin-bottom: 1rem;
+          gap: 0.35rem;
+          margin-bottom: 0.75rem;
+          min-height: 1.5rem;
         }
 
         .mini-tag {
-          background: #f1f5f9;
+          background: #f8fafc;
           border: 1px solid #e2e8f0;
           color: #475569;
-          font-size: 0.72rem;
-          font-weight: 500;
-          padding: 0.2rem 0.55rem;
-          border-radius: 4px;
+          font-size: 0.68rem;
+          font-weight: 600;
+          padding: 0.18rem 0.5rem;
+          border-radius: 5px;
+          transition: all 0.2s ease;
+          white-space: nowrap;
+        }
+
+        .expedition-card:hover .mini-tag {
+          background: #f1f5f9;
+          border-color: #cbd5e1;
+          color: #1e293b;
         }
 
         .card-action-footer {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          padding-top: 0.85rem;
+          padding-top: 0.65rem;
           border-top: 1px solid #f1f5f9;
           color: #059669;
-          font-size: 0.85rem;
-          font-weight: 600;
+          font-size: 0.8rem;
+          font-weight: 700;
+          margin-top: auto;
         }
 
         .action-arrow {
-          width: 28px;
-          height: 28px;
+          width: 26px;
+          height: 26px;
           border-radius: 50%;
           background: #ecfdf5;
           display: flex;
           align-items: center;
           justify-content: center;
           color: #059669;
-          transition: all 0.15s ease;
+          transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .expedition-card:hover .action-arrow {
           background: #059669;
           color: #ffffff;
           transform: translateX(3px);
+          box-shadow: 0 3px 8px rgba(5, 150, 105, 0.35);
         }
 
         @media (max-width: 640px) {
           .card-image-wrap {
-            height: 180px;
+            height: 165px;
           }
           .card-body {
-            padding: 1rem;
+            padding: 0.95rem;
           }
           .card-title {
-            font-size: 1.02rem;
-          }
-          .card-meta {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 0.35rem;
+            font-size: 0.98rem;
+            min-height: 2.6rem;
           }
         }
       `}</style>
