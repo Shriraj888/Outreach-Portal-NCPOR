@@ -1951,11 +1951,11 @@ export default function Home({ navigateTo, onSelectExpedition }) {
             border-radius: 10px;
           }
           .station-card-media {
-            height: 64px;
+            height: 68px;
           }
           .station-card-body {
-            padding: 0.5rem 0.55rem 0.6rem;
-            gap: 0.4rem;
+            padding: 0.55rem 0.6rem;
+            gap: 0.35rem;
           }
           .station-card-name {
             font-size: 0.82rem;
@@ -1967,19 +1967,18 @@ export default function Home({ navigateTo, onSelectExpedition }) {
             font-size: 0.58rem;
           }
           .station-card-footer {
-            flex-direction: column;
-            align-items: stretch;
-            gap: 0.35rem;
-            padding: 0.3rem 0.4rem;
+            padding: 0.28rem 0.4rem;
+            gap: 0.25rem;
           }
-          .station-telemetry-strip {
-            justify-content: space-between;
+          .telemetry-chip {
+            font-size: 0.64rem;
+          }
+          .wind-chip {
+            font-size: 0.6rem;
           }
           .station-3d-btn {
-            justify-content: center;
-            width: 100%;
-            font-size: 0.64rem;
-            padding: 0.2rem 0.35rem;
+            padding: 0.18rem 0.4rem;
+            font-size: 0.62rem;
           }
         }
       `}</style>
