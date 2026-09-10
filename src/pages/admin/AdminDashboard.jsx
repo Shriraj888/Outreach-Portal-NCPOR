@@ -19,7 +19,8 @@ import {
   Compass, 
   UploadCloud,
   AlertCircle,
-  Layers
+  Layers,
+  X
 } from 'lucide-react';
 
 export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
@@ -130,6 +131,28 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
       rawItem: a
     }))
   ];
+
+  const getTypeIcon = (type) => {
+    switch (type) {
+      case 'report': return <FileText size={11} />;
+      case 'dataset': return <Database size={11} />;
+      case 'publication': return <BookOpen size={11} />;
+      case 'photo': return <ImageIcon size={11} />;
+      case 'video': return <Video size={11} />;
+      case 'activity': return <Calendar size={11} />;
+      default: return <FileText size={11} />;
+    }
+  };
+
+  const getRegionClass = (region) => {
+    switch (region) {
+      case 'Antarctica': return 'badge-antarctica';
+      case 'Arctic': return 'badge-arctic';
+      case 'Himalaya': return 'badge-himalaya';
+      case 'Southern Ocean': return 'badge-ocean';
+      default: return 'badge-antarctica';
+    }
+  };
 
   const filteredArchives = unifiedArchives.filter(item => {
     if (activeTab !== 'all') {
@@ -348,25 +371,39 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
         {/* Tab Filters for 6 Pillars */}
         <div className="archive-tab-bar">
           <button className={`archive-tab-btn ${activeTab === 'all' ? 'active' : ''}`} onClick={() => setActiveTab('all')}>
-            All Archives ({unifiedArchives.length})
+            <Layers size={14} className="tab-icon" />
+            <span>All Archives</span>
+            <span className="tab-pill-badge">{unifiedArchives.length}</span>
           </button>
           <button className={`archive-tab-btn ${activeTab === 'reports' ? 'active' : ''}`} onClick={() => setActiveTab('reports')}>
-            📑 Reports ({expeditions.length})
+            <FileText size={14} className="tab-icon" />
+            <span>Reports</span>
+            <span className="tab-pill-badge">{expeditions.length}</span>
           </button>
           <button className={`archive-tab-btn ${activeTab === 'datasets' ? 'active' : ''}`} onClick={() => setActiveTab('datasets')}>
-            📊 Datasets ({datasets.length})
+            <Database size={14} className="tab-icon" />
+            <span>Datasets</span>
+            <span className="tab-pill-badge">{datasets.length}</span>
           </button>
           <button className={`archive-tab-btn ${activeTab === 'publications' ? 'active' : ''}`} onClick={() => setActiveTab('publications')}>
-            📚 Publications ({publications.length})
+            <BookOpen size={14} className="tab-icon" />
+            <span>Publications</span>
+            <span className="tab-pill-badge">{publications.length}</span>
           </button>
           <button className={`archive-tab-btn ${activeTab === 'photos' ? 'active' : ''}`} onClick={() => setActiveTab('photos')}>
-            📷 Photos ({mediaArchives.filter(m => m.type === 'photo').length})
+            <ImageIcon size={14} className="tab-icon" />
+            <span>Photos</span>
+            <span className="tab-pill-badge">{mediaArchives.filter(m => m.type === 'photo').length}</span>
           </button>
           <button className={`archive-tab-btn ${activeTab === 'videos' ? 'active' : ''}`} onClick={() => setActiveTab('videos')}>
-            🎥 Videos ({mediaArchives.filter(m => m.type === 'video').length})
+            <Video size={14} className="tab-icon" />
+            <span>Videos</span>
+            <span className="tab-pill-badge">{mediaArchives.filter(m => m.type === 'video').length}</span>
           </button>
           <button className={`archive-tab-btn ${activeTab === 'activities' ? 'active' : ''}`} onClick={() => setActiveTab('activities')}>
-            🏛️ Activities ({activities.length})
+            <Calendar size={14} className="tab-icon" />
+            <span>Activities</span>
+            <span className="tab-pill-badge">{activities.length}</span>
           </button>
         </div>
 
@@ -381,11 +418,16 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
               <Search size={15} className="table-search-icon" />
               <input 
                 type="text" 
-                placeholder="Search archives by keyword..."
+                placeholder="Search archives by keyword, author, type..."
                 value={searchTable}
                 onChange={(e) => setSearchTable(e.target.value)}
                 className="table-search-input"
               />
+              {searchTable && (
+                <button className="table-search-clear" onClick={() => setSearchTable('')} title="Clear search">
+                  <X size={13} />
+                </button>
+              )}
             </div>
 
             <select 
@@ -416,137 +458,162 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
           <table className="admin-table">
             <thead>
               <tr>
-                <th>Asset Title & Type</th>
-                <th>Region / Year</th>
-                <th>Details / Parameters</th>
-                <th>AI Outreach Status</th>
-                <th>Live Status</th>
-                <th className="text-right">Actions</th>
+                <th style={{ minWidth: '320px' }}>Asset Title & Type</th>
+                <th style={{ minWidth: '150px' }}>Region / Year</th>
+                <th style={{ minWidth: '170px' }}>Details / Parameters</th>
+                <th style={{ minWidth: '160px' }}>AI Outreach Status</th>
+                <th style={{ minWidth: '140px' }}>Live Status</th>
+                <th className="text-right" style={{ minWidth: '240px' }}>Actions</th>
               </tr>
             </thead>
             <tbody>
-              {filteredArchives.map((item) => (
-                <tr key={`${item.type}-${item.id}`}>
-                  <td>
-                    <div className="table-mission-cell">
-                      <img src={item.heroImage} alt={item.title} className="table-thumb" />
-                      <div>
-                        <div className="table-mission-title">{item.title}</div>
-                        <div className="table-type-tag">
-                          <span className={`pill-type ${item.type}`}>{item.typeLabel}</span>
-                          <span className="table-mission-reports">{item.metaInfo}</span>
+              {filteredArchives.length > 0 ? (
+                filteredArchives.map((item) => (
+                  <tr key={`${item.type}-${item.id}`}>
+                    <td>
+                      <div className="table-mission-cell">
+                        <img src={item.heroImage} alt={item.title} className="table-thumb" />
+                        <div className="table-mission-info">
+                          <div className="table-mission-title">{item.title}</div>
+                          <div className="table-type-tag">
+                            <span className={`pill-type ${item.type}`}>
+                              {getTypeIcon(item.type)}
+                              <span>{item.typeLabel}</span>
+                            </span>
+                            <span className="table-mission-reports">{item.metaInfo}</span>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </td>
+                    </td>
 
-                  <td>
-                    <div className="table-region-cell">
-                      <span className="badge badge-antarctica">{item.region}</span>
-                      <span className="table-year-text">{item.year}</span>
-                    </div>
-                  </td>
-
-                  <td>
-                    <span className="table-scientist-text">{item.authorOrChief}</span>
-                  </td>
-
-                  <td>
-                    {item.aiReady ? (
-                      <div className="ai-status-badge ready" title="AI summary, social pack, and alt text generated">
-                        <Sparkles size={13} />
-                        <span>Ready (AI Pack)</span>
+                    <td>
+                      <div className="table-region-cell">
+                        <span className={`badge ${getRegionClass(item.region)}`}>{item.region}</span>
+                        <span className="table-year-text">{item.year}</span>
                       </div>
-                    ) : (
-                      <div className="ai-status-badge pending" title="Needs AI generation">
-                        <AlertCircle size={13} />
-                        <span>Pending Generation</span>
+                    </td>
+
+                    <td>
+                      <span className="table-scientist-text">{item.authorOrChief}</span>
+                    </td>
+
+                    <td>
+                      {item.aiReady ? (
+                        <div className="ai-status-badge ready" title="AI summary, social pack, and alt text generated">
+                          <Sparkles size={13} />
+                          <span>Ready (AI Pack)</span>
+                        </div>
+                      ) : (
+                        <div className="ai-status-badge pending" title="Needs AI generation">
+                          <AlertCircle size={13} />
+                          <span>Pending Generation</span>
+                        </div>
+                      )}
+                    </td>
+
+                    <td>
+                      <button 
+                        className={`status-toggle-btn ${item.status}`}
+                        onClick={() => toggleStatus(item)}
+                        title="Click to toggle status"
+                      >
+                        {item.status === 'published' ? (
+                          <>
+                            <CheckCircle2 size={13} />
+                            <span>Published</span>
+                          </>
+                        ) : (
+                          <>
+                            <Clock size={13} />
+                            <span>Draft Review</span>
+                          </>
+                        )}
+                      </button>
+                    </td>
+
+                    <td className="text-right">
+                      <div className="action-buttons-group">
+                        {/* AI Generate Studio Button */}
+                        <button 
+                          className="btn-action ai"
+                          onClick={() => navigateTo(`admin-generate-${item.id}`)}
+                          title="Open AI Content Generation Studio"
+                        >
+                          <Sparkles size={13} />
+                          <span>AI Studio</span>
+                        </button>
+
+                        {/* Selective Chunk AI Button */}
+                        <button 
+                          className="btn-action selective-ai"
+                          onClick={() => navigateTo(`admin-selective-ai-${item.id}`)}
+                          title="Synthesize targeted output from selected chunks"
+                        >
+                          <Layers size={13} />
+                          <span>Chunk AI</span>
+                        </button>
+
+                        {/* Public View */}
+                        {item.type === 'report' ? (
+                          <button 
+                            className="btn-action icon-btn view"
+                            onClick={() => onSelectExpedition(item.id)}
+                            title="View Public Expedition Page"
+                          >
+                            <Eye size={14} />
+                          </button>
+                        ) : (
+                          <button 
+                            className="btn-action icon-btn view"
+                            onClick={() => navigateTo(item.type === 'dataset' || item.type === 'publication' ? 'publications' : 'home')}
+                            title="View on Public Portal"
+                          >
+                            <Eye size={14} />
+                          </button>
+                        )}
+
+                        {/* Edit */}
+                        <button 
+                          className="btn-action icon-btn edit"
+                          onClick={() => navigateTo(`admin-edit-${item.id}`)}
+                          title="Edit Asset"
+                        >
+                          <Edit size={14} />
+                        </button>
+
+                        {/* Delete */}
+                        <button 
+                          className="btn-action icon-btn delete"
+                          onClick={() => handleDelete(item)}
+                          title="Delete from Archive"
+                        >
+                          <Trash2 size={14} />
+                        </button>
                       </div>
-                    )}
-                  </td>
-
-                  <td>
-                    <button 
-                      className={`status-toggle-btn ${item.status}`}
-                      onClick={() => toggleStatus(item)}
-                      title="Click to toggle status"
-                    >
-                      {item.status === 'published' ? (
-                        <>
-                          <CheckCircle2 size={12} />
-                          <span>Published</span>
-                        </>
-                      ) : (
-                        <>
-                          <Clock size={12} />
-                          <span>Draft Review</span>
-                        </>
-                      )}
-                    </button>
-                  </td>
-
-                  <td className="text-right">
-                    <div className="action-buttons-group">
-                      {/* AI Generate Studio Button */}
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={6} className="table-empty-row">
+                    <div className="empty-table-content">
+                      <Search size={24} className="empty-table-icon" />
+                      <p>No archived records match your filter criteria.</p>
                       <button 
-                        className="btn-action ai"
-                        onClick={() => navigateTo(`admin-generate-${item.id}`)}
-                        title="Open AI Content Generation Studio"
+                        className="btn-table-reset"
+                        onClick={() => {
+                          setSearchTable('');
+                          setFilterRegion('All');
+                          setFilterStatus('All');
+                          setActiveTab('all');
+                        }}
                       >
-                        <Sparkles size={14} />
-                        <span>AI Studio</span>
-                      </button>
-
-                      {/* Selective Chunk AI Button */}
-                      <button 
-                        className="btn-action selective-ai"
-                        onClick={() => navigateTo(`admin-selective-ai-${item.id}`)}
-                        title="Synthesize targeted output from selected chunks"
-                      >
-                        <Layers size={13} />
-                        <span>Chunk AI</span>
-                      </button>
-
-                      {/* Public View */}
-                      {item.type === 'report' ? (
-                        <button 
-                          className="btn-action view"
-                          onClick={() => onSelectExpedition(item.id)}
-                          title="View Public Expedition Page"
-                        >
-                          <Eye size={14} />
-                        </button>
-                      ) : (
-                        <button 
-                          className="btn-action view"
-                          onClick={() => navigateTo(item.type === 'dataset' || item.type === 'publication' ? 'publications' : 'home')}
-                          title="View on Public Portal"
-                        >
-                          <Eye size={14} />
-                        </button>
-                      )}
-
-                      {/* Edit */}
-                      <button 
-                        className="btn-action edit"
-                        onClick={() => navigateTo(`admin-edit-${item.id}`)}
-                        title="Edit Asset"
-                      >
-                        <Edit size={14} />
-                      </button>
-
-                      {/* Delete */}
-                      <button 
-                        className="btn-action delete"
-                        onClick={() => handleDelete(item)}
-                        title="Delete from Archive"
-                      >
-                        <Trash2 size={14} />
+                        Reset Filters
                       </button>
                     </div>
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>
@@ -793,7 +860,7 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
 
         /* Table Card & Tab Bar */
         .table-card {
-          padding: 1.75rem;
+          padding: 1.5rem 1.75rem;
           border-radius: var(--radius-md);
           background: #ffffff;
           border: 1px solid var(--border-card);
@@ -803,8 +870,8 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
         .archive-tab-bar {
           display: flex;
           align-items: center;
-          gap: 0.5rem;
-          border-bottom: 1px solid var(--border-subtle);
+          gap: 0.4rem;
+          border-bottom: 1px solid #e2e8f0;
           padding-bottom: 0.85rem;
           margin-bottom: 1.25rem;
           overflow-x: auto;
@@ -817,10 +884,13 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
         }
 
         .archive-tab-btn {
-          background: transparent;
-          border: 1px solid transparent;
+          display: inline-flex;
+          align-items: center;
+          gap: 0.45rem;
+          background: #f8fafc;
+          border: 1px solid #e2e8f0;
           color: var(--text-secondary);
-          padding: 0.4rem 0.85rem;
+          padding: 0.45rem 0.85rem;
           border-radius: var(--radius-sm);
           font-size: 0.82rem;
           font-weight: 600;
@@ -829,15 +899,40 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
           transition: all 0.15s ease;
         }
 
+        .archive-tab-btn .tab-icon {
+          color: #64748b;
+          flex-shrink: 0;
+        }
+
         .archive-tab-btn:hover {
           color: var(--navy);
           background: #f1f5f9;
+          border-color: #cbd5e1;
         }
 
         .archive-tab-btn.active {
-          background: #eff6ff;
-          color: var(--navy);
-          border-color: #bfdbfe;
+          background: #0f172a;
+          color: #ffffff;
+          border-color: #0f172a;
+        }
+
+        .archive-tab-btn.active .tab-icon {
+          color: #6ee7b7;
+        }
+
+        .tab-pill-badge {
+          background: #e2e8f0;
+          color: #334155;
+          font-size: 0.72rem;
+          font-weight: 700;
+          padding: 0.1rem 0.45rem;
+          border-radius: var(--radius-full);
+          transition: all 0.15s ease;
+        }
+
+        .archive-tab-btn.active .tab-pill-badge {
+          background: rgba(255, 255, 255, 0.2);
+          color: #ffffff;
         }
 
         .table-toolbar {
@@ -857,8 +952,9 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
         }
 
         .table-title-wrap p {
-          font-size: 0.82rem;
+          font-size: 0.85rem;
           color: var(--text-muted);
+          margin: 0;
         }
 
         .table-filters {
@@ -872,12 +968,14 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
           position: relative;
           display: flex;
           align-items: center;
+          min-width: 280px;
         }
 
         .table-search-icon {
           position: absolute;
-          left: 0.75rem;
+          left: 0.85rem;
           color: var(--text-muted);
+          pointer-events: none;
         }
 
         .table-search-input {
@@ -885,15 +983,37 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
           border: 1px solid var(--border-subtle);
           border-radius: var(--radius-sm);
           color: var(--text-primary);
-          padding: 0.5rem 0.75rem 0.5rem 2.2rem;
-          font-size: 0.82rem;
-          width: 200px;
+          padding: 0.55rem 2rem 0.55rem 2.4rem;
+          font-size: 0.84rem;
+          width: 100%;
+          transition: all 0.15s ease;
         }
 
         .table-search-input:focus {
           outline: none;
-          border-color: var(--ice);
+          border-color: #059669;
           background: #ffffff;
+          box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.12);
+        }
+
+        .table-search-clear {
+          position: absolute;
+          right: 0.65rem;
+          background: #e2e8f0;
+          border: none;
+          color: #64748b;
+          width: 18px;
+          height: 18px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+        }
+
+        .table-search-clear:hover {
+          background: #cbd5e1;
+          color: #0f172a;
         }
 
         .table-select {
@@ -901,13 +1021,23 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
           border: 1px solid var(--border-subtle);
           border-radius: var(--radius-sm);
           color: var(--text-secondary);
-          padding: 0.5rem 0.75rem;
-          font-size: 0.82rem;
+          padding: 0.55rem 0.85rem;
+          font-size: 0.84rem;
+          font-weight: 500;
           cursor: pointer;
+          transition: all 0.15s ease;
+        }
+
+        .table-select:focus {
+          outline: none;
+          border-color: #059669;
         }
 
         .table-responsive {
           overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+          border-radius: var(--radius-sm);
+          border: 1px solid #e2e8f0;
         }
 
         .admin-table {
@@ -918,20 +1048,26 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
         }
 
         .admin-table th {
-          padding: 0.85rem 1rem;
-          color: var(--text-muted);
-          font-weight: 600;
+          padding: 0.9rem 1.1rem;
+          color: #475569;
+          font-weight: 700;
           text-transform: uppercase;
           font-size: 0.72rem;
           letter-spacing: 0.05em;
-          border-bottom: 1px solid var(--border-subtle);
+          border-bottom: 1px solid #e2e8f0;
           background: #f8fafc;
+          white-space: nowrap;
         }
 
         .admin-table td {
-          padding: 1rem;
-          border-bottom: 1px solid var(--border-subtle);
+          padding: 1.1rem 1.1rem;
+          border-bottom: 1px solid #f1f5f9;
           vertical-align: middle;
+          background: #ffffff;
+        }
+
+        .admin-table tbody tr:hover td {
+          background: #f8fafc;
         }
 
         .table-mission-cell {
@@ -947,64 +1083,78 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
           object-fit: cover;
           flex-shrink: 0;
           background: #f1f5f9;
+          border: 1px solid #e2e8f0;
+        }
+
+        .table-mission-info {
+          display: flex;
+          flex-direction: column;
+          gap: 0.25rem;
         }
 
         .table-mission-title {
           font-weight: 700;
           color: var(--navy);
-          line-height: 1.25;
+          line-height: 1.3;
+          font-size: 0.92rem;
         }
 
         .table-type-tag {
           display: flex;
           align-items: center;
-          gap: 0.4rem;
-          margin-top: 0.2rem;
+          gap: 0.45rem;
+          flex-wrap: wrap;
         }
 
         .pill-type {
-          font-size: 0.68rem;
+          display: inline-flex;
+          align-items: center;
+          gap: 0.3rem;
+          font-size: 0.7rem;
           font-weight: 700;
-          padding: 1px 6px;
+          padding: 2px 7px;
           border-radius: 4px;
         }
 
-        .pill-type.report { background: #eff6ff; color: #1d4ed8; }
-        .pill-type.dataset { background: #f5f3ff; color: #6d28d9; }
-        .pill-type.publication { background: #fffbeb; color: #b45309; }
-        .pill-type.photo { background: #f0fdfa; color: #0f766e; }
-        .pill-type.video { background: #fef2f2; color: #b91c1c; }
-        .pill-type.activity { background: #ecfdf5; color: #047857; }
+        .pill-type.report { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+        .pill-type.dataset { background: #f5f3ff; color: #6d28d9; border: 1px solid #ddd6fe; }
+        .pill-type.publication { background: #fffbeb; color: #b45309; border: 1px solid #fde68a; }
+        .pill-type.photo { background: #f0fdfa; color: #0f766e; border: 1px solid #99f6e4; }
+        .pill-type.video { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
+        .pill-type.activity { background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; }
 
         .table-mission-reports {
-          font-size: 0.72rem;
-          color: var(--text-muted);
+          font-size: 0.75rem;
+          color: #64748b;
         }
 
         .table-region-cell {
           display: flex;
           align-items: center;
-          gap: 0.45rem;
+          gap: 0.5rem;
         }
 
         .table-year-text {
-          font-size: 0.8rem;
-          color: var(--text-muted);
+          font-size: 0.82rem;
+          color: #64748b;
+          font-weight: 500;
         }
 
         .table-scientist-text {
           color: var(--text-secondary);
-          font-size: 0.8rem;
+          font-size: 0.84rem;
+          font-weight: 500;
         }
 
         .ai-status-badge {
           display: inline-flex;
           align-items: center;
           gap: 0.35rem;
-          padding: 0.25rem 0.65rem;
+          padding: 0.3rem 0.7rem;
           border-radius: var(--radius-full);
-          font-size: 0.72rem;
+          font-size: 0.74rem;
           font-weight: 600;
+          white-space: nowrap;
         }
 
         .ai-status-badge.ready {
@@ -1022,14 +1172,15 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
         .status-toggle-btn {
           display: inline-flex;
           align-items: center;
-          gap: 0.3rem;
-          padding: 0.25rem 0.65rem;
+          gap: 0.35rem;
+          padding: 0.3rem 0.7rem;
           border-radius: var(--radius-full);
-          font-size: 0.75rem;
+          font-size: 0.76rem;
           font-weight: 600;
           cursor: pointer;
           border: none;
           transition: all 0.15s ease;
+          white-space: nowrap;
         }
 
         .status-toggle-btn.published {
@@ -1038,24 +1189,33 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
           border: 1px solid #a7f3d0;
         }
 
+        .status-toggle-btn.published:hover {
+          background: #d1fae5;
+        }
+
         .status-toggle-btn.draft {
           background: #fffbeb;
           color: #b45309;
           border: 1px solid #fde68a;
         }
 
+        .status-toggle-btn.draft:hover {
+          background: #fef3c7;
+        }
+
         .action-buttons-group {
           display: flex;
           align-items: center;
           justify-content: flex-end;
-          gap: 0.4rem;
+          gap: 0.35rem;
+          white-space: nowrap;
         }
 
         .btn-action {
           display: inline-flex;
           align-items: center;
-          gap: 0.3rem;
-          padding: 0.35rem 0.65rem;
+          gap: 0.35rem;
+          padding: 0.4rem 0.7rem;
           border-radius: var(--radius-sm);
           font-size: 0.78rem;
           font-weight: 600;
@@ -1073,6 +1233,7 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
         .btn-action.ai:hover {
           background: #0284c7;
           color: #ffffff;
+          border-color: #0284c7;
         }
 
         .btn-action.selective-ai {
@@ -1085,6 +1246,76 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
           background: #059669;
           color: #ffffff;
           border-color: #059669;
+        }
+
+        .btn-action.icon-btn {
+          padding: 0.4rem 0.5rem;
+        }
+
+        .btn-action.view {
+          background: #f8fafc;
+          border: 1px solid var(--border-subtle);
+          color: var(--text-secondary);
+        }
+
+        .btn-action.view:hover {
+          background: #f1f5f9;
+          color: var(--navy);
+          border-color: #94a3b8;
+        }
+
+        .btn-action.edit {
+          background: #e0f2fe;
+          color: #0369a1;
+          border-color: #bae6fd;
+        }
+
+        .btn-action.edit:hover {
+          background: #bae6fd;
+          color: #0284c7;
+        }
+
+        .btn-action.delete {
+          background: #fef2f2;
+          color: #dc2626;
+          border-color: #fecaca;
+        }
+
+        .btn-action.delete:hover {
+          background: #fee2e2;
+          color: #b91c1c;
+        }
+
+        .table-empty-row {
+          text-align: center;
+          padding: 3rem 1rem !important;
+        }
+
+        .empty-table-content {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 0.6rem;
+          color: #64748b;
+        }
+
+        .empty-table-icon {
+          color: #94a3b8;
+        }
+
+        .btn-table-reset {
+          background: #0f172a;
+          color: #ffffff;
+          border: none;
+          font-size: 0.8rem;
+          font-weight: 600;
+          padding: 0.45rem 1rem;
+          border-radius: var(--radius-sm);
+          cursor: pointer;
+        }
+
+        .btn-table-reset:hover {
+          background: #1e293b;
         }
 
         .btn-action.view {
