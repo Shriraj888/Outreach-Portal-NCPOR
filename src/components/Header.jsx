@@ -85,6 +85,9 @@ export default function Header({ currentRoute, navigateTo }) {
             <span className="gov-text gov-text-short">
               भारत सरकार | <strong>GOVT. OF INDIA</strong> • MoES
             </span>
+            <span className="gov-text gov-text-micro">
+              भारत सरकार | <strong>MoES</strong>
+            </span>
           </div>
 
           <div className="a11y-toolbar">
@@ -124,7 +127,8 @@ export default function Header({ currentRoute, navigateTo }) {
             {/* Language Switcher */}
             <button className="lang-toggle-btn" onClick={toggleLang}>
               <Globe2 size={13} />
-              <span>{lang === 'en' ? 'हिन्दी (HI)' : 'English (EN)'}</span>
+              <span className="lang-text-full">{lang === 'en' ? 'हिन्दी (HI)' : 'English (EN)'}</span>
+              <span className="lang-text-short">{lang === 'en' ? 'हिन्दी' : 'EN'}</span>
             </button>
           </div>
         </div>
@@ -393,8 +397,9 @@ export default function Header({ currentRoute, navigateTo }) {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          flex-wrap: wrap;
+          flex-wrap: nowrap;
           gap: 0.5rem;
+          width: 100%;
         }
 
         .gov-title {
@@ -404,9 +409,14 @@ export default function Header({ currentRoute, navigateTo }) {
           font-size: 0.74rem;
           letter-spacing: 0.02em;
           color: #f1f5f9;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          min-width: 0;
+          flex-shrink: 1;
         }
 
-        .gov-text-short {
+        .gov-text-short, .gov-text-micro, .lang-text-short {
           display: none;
         }
 
@@ -911,6 +921,15 @@ export default function Header({ currentRoute, navigateTo }) {
           .header-search-input:focus {
             width: 180px;
           }
+          .gov-text-full {
+            display: none;
+          }
+          .gov-text-short {
+            display: inline;
+          }
+          .a11y-label {
+            display: none;
+          }
         }
 
         @media (max-width: 860px) {
@@ -929,21 +948,29 @@ export default function Header({ currentRoute, navigateTo }) {
           .brand-secondary, .brand-tagline {
             display: none;
           }
+          .gov-strip-content {
+            flex-wrap: nowrap;
+            gap: 0.35rem;
+          }
+          .a11y-toolbar {
+            gap: 0.25rem;
+            flex-shrink: 0;
+          }
+          .a11y-toggle span {
+            display: none;
+          }
+          .a11y-toggle {
+            padding: 3px 6px;
+          }
         }
 
         @media (max-width: 640px) {
           .gov-strip-content {
-            gap: 0.35rem;
-          }
-          .gov-text-full {
-            display: none;
-          }
-          .gov-text-short {
-            display: inline;
+            flex-wrap: nowrap;
+            gap: 0.3rem;
           }
           .gov-title {
             font-size: 0.68rem;
-            max-width: 100%;
           }
           .brand-primary {
             font-size: 1.05rem;
@@ -952,26 +979,63 @@ export default function Header({ currentRoute, navigateTo }) {
             width: 36px;
             height: 36px;
           }
-          .a11y-label {
-            display: none;
-          }
           .a11y-toolbar {
-            gap: 0.25rem;
+            gap: 0.2rem;
+            flex-shrink: 0;
           }
-          .a11y-toggle span {
-            display: none;
+          .a11y-group {
+            padding: 1px 4px;
+            gap: 1px;
           }
-          .a11y-toggle {
-            padding: 4px 6px;
+          .a11y-btn {
+            padding: 1px 4px;
+            font-size: 0.68rem;
+          }
+          .lang-toggle-btn {
+            padding: 2px 6px;
+            font-size: 0.72rem;
           }
         }
 
         @media (max-width: 480px) {
+          .gov-strip-content {
+            flex-wrap: nowrap;
+            gap: 0.25rem;
+          }
+          .gov-text-short {
+            display: none;
+          }
+          .gov-text-micro {
+            display: inline;
+          }
+          .gov-title {
+            font-size: 0.64rem;
+          }
+          .lang-text-full {
+            display: none;
+          }
+          .lang-text-short {
+            display: inline;
+          }
           .nav-container {
             gap: 0.5rem;
           }
           .brand-lockup {
             gap: 0.5rem;
+          }
+          .a11y-group {
+            padding: 1px 3px;
+          }
+          .a11y-btn {
+            padding: 1px 3px;
+            font-size: 0.65rem;
+          }
+          .a11y-toggle {
+            padding: 2px 4px;
+          }
+          .lang-toggle-btn {
+            padding: 2px 5px;
+            font-size: 0.66rem;
           }
         }
 
@@ -980,15 +1044,15 @@ export default function Header({ currentRoute, navigateTo }) {
             padding: 0.3rem 0;
           }
           .gov-title {
-            font-size: 0.65rem;
+            font-size: 0.62rem;
           }
           .a11y-btn {
-            padding: 2px 4px;
-            font-size: 0.68rem;
+            padding: 1px 2px;
+            font-size: 0.62rem;
           }
           .lang-toggle-btn {
-            padding: 2px 6px;
-            font-size: 0.68rem;
+            padding: 2px 4px;
+            font-size: 0.64rem;
           }
         }
       `}</style>
