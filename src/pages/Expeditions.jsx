@@ -10,7 +10,6 @@ import {
   LayoutGrid,
   List,
   ArrowUpDown,
-  Tag,
   Sparkles,
   FileText,
   Image as ImageIcon,
@@ -31,8 +30,7 @@ export default function Expeditions({ onSelectExpedition, navigateTo }) {
     selectedYear, 
     setSelectedYear,
     auth,
-    lang,
-    t
+    lang
   } = usePortal();
 
   const [contentTypeFilter, setContentTypeFilter] = useState('all'); // all, ai, reports, media
@@ -1078,15 +1076,45 @@ export default function Expeditions({ onSelectExpedition, navigateTo }) {
         }
 
         /* Responsive Breakpoints */
+        @media (max-width: 1024px) {
+          .region-pills-wrap {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            padding-bottom: 2px;
+          }
+          .region-pills-wrap::-webkit-scrollbar {
+            display: none;
+          }
+          .region-pills-list {
+            flex-wrap: nowrap;
+          }
+          .region-pill-item {
+            white-space: nowrap;
+            flex-shrink: 0;
+          }
+        }
+
         @media (max-width: 768px) {
           .expeditions-page-container {
             padding: 1.25rem 1rem 3rem;
+          }
+          .page-header-row {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.85rem;
+          }
+          .upload-btn {
+            width: 100%;
+            justify-content: center;
+            min-height: 44px;
           }
           .page-title {
             font-size: 1.6rem;
           }
           .filter-toolbar {
-            padding: 0.75rem;
+            padding: 0.85rem;
+            gap: 0.75rem;
           }
           .search-input-group {
             min-width: 100%;
@@ -1095,35 +1123,62 @@ export default function Expeditions({ onSelectExpedition, navigateTo }) {
             width: 100%;
             display: grid;
             grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
           }
           .filter-selects-group .select-pill-wrap {
             width: 100%;
           }
           .filter-selects-group .custom-select {
             width: 100%;
+            height: 38px;
           }
           .view-mode-toggle {
             grid-column: span 2;
             justify-content: center;
+            height: 38px;
           }
-          .secondary-right-group {
-            width: 100%;
-            justify-content: space-between;
+          .view-btn {
+            flex: 1;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
           }
-          .list-item-card {
+          .filter-secondary-row {
             flex-direction: column;
             align-items: flex-start;
             gap: 0.75rem;
           }
+          .secondary-right-group {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+          }
+          .list-item-card {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.85rem;
+            padding: 1rem;
+          }
           .list-item-thumb {
             width: 100%;
-            height: 130px;
+            height: 160px;
           }
           .list-item-action {
             width: 100%;
             flex-direction: row;
             justify-content: space-between;
             align-items: center;
+            padding-top: 0.65rem;
+            border-top: 1px solid #f1f5f9;
+          }
+          .list-open-btn {
+            flex: 1;
+            justify-content: center;
+            min-height: 40px;
           }
         }
 
@@ -1135,8 +1190,8 @@ export default function Expeditions({ onSelectExpedition, navigateTo }) {
             grid-column: span 1;
           }
           .region-pill-item {
-            font-size: 0.72rem;
-            padding: 0.2rem 0.5rem;
+            font-size: 0.74rem;
+            padding: 0.28rem 0.6rem;
           }
         }
       `}</style>

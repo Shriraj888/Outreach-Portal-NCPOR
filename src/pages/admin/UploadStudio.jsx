@@ -1344,20 +1344,40 @@ The voyage departed Cape Town with 48 scientists from MoES institutes, Survey of
           }
         }
 
-        @media (max-width: 600px) {
+        @media (max-width: 640px) {
           .upload-studio-page {
-            padding: 1.5rem 0 3.5rem;
+            padding: 1.25rem 0.75rem 3.5rem;
+            gap: 1.25rem;
+          }
+          .upload-header-row {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 1rem;
+          }
+          .btn-preset-load {
+            width: 100%;
+            justify-content: center;
+            min-height: 44px;
           }
           .pillar-nav-bar {
             grid-template-columns: repeat(2, 1fr);
             gap: 0.5rem;
           }
-          .pillar-nav-btn {
-            padding: 0.65rem 0.75rem;
-            min-height: 48px;
+          .pillar-tab {
+            padding: 0.75rem 0.65rem;
+            min-height: 52px;
+          }
+          .pillar-tab-desc {
+            display: none;
           }
           .form-grid-2 {
             grid-template-columns: 1fr;
+          }
+          .dropzone-card {
+            padding: 1.5rem 1rem;
+          }
+          .metadata-card {
+            padding: 1.25rem 0.85rem;
           }
           .meta-actions-bar {
             flex-direction: column;
@@ -1371,10 +1391,13 @@ The voyage departed Cape Town with 48 scientists from MoES institutes, Survey of
           .meta-actions-right button {
             width: 100%;
             justify-content: center;
-            min-height: 40px;
+            min-height: 44px;
           }
-          .drop-zone-card {
-            padding: 1.5rem 1rem;
+        }
+
+        @media (max-width: 420px) {
+          .pillar-nav-bar {
+            grid-template-columns: 1fr;
           }
         }
       `}</style>

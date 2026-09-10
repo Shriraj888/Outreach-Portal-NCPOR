@@ -1837,16 +1837,18 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
             background: #f1f5f9;
             padding: 0.25rem;
             border-radius: 8px;
+            gap: 0.25rem;
           }
           .mode-toggle-btn {
             flex: 1;
             justify-content: center;
-            padding: 0.45rem 0.35rem;
-            font-size: 0.74rem;
+            padding: 0.55rem 0.35rem;
+            font-size: 0.76rem;
             border-radius: 6px;
+            min-height: 40px;
           }
           .mode-toggle-btn span {
-            font-size: 0.72rem;
+            font-size: 0.74rem;
           }
           .map-view-pills-bar {
             flex-direction: column;
@@ -1858,28 +1860,44 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
             overflow-x: auto;
             padding-bottom: 0.35rem;
             -webkit-overflow-scrolling: touch;
-            scrollbar-width: thin;
+            scrollbar-width: none;
+          }
+          .pills-scroll::-webkit-scrollbar {
+            display: none;
           }
           .viewport-stage {
-            min-height: 340px;
+            min-height: 380px;
           }
           .map-viewport-card {
             padding: 0.75rem;
           }
+          .layer-chip-buttons {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            padding-bottom: 0.25rem;
+          }
+          .layer-chip-buttons::-webkit-scrollbar {
+            display: none;
+          }
           .layer-chip {
-            padding: 0.3rem 0.55rem;
-            font-size: 0.7rem;
+            padding: 0.35rem 0.65rem;
+            font-size: 0.72rem;
             white-space: nowrap;
+            flex-shrink: 0;
+            min-height: 34px;
           }
           .telemetry-statusbar {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 0.5rem;
-            padding: 0.65rem 0.75rem;
+            gap: 0.6rem;
+            padding: 0.75rem;
           }
           .telemetry-refresh-btn {
             grid-column: span 2;
             justify-content: center;
+            min-height: 38px;
           }
           .stations-grid {
             grid-template-columns: 1fr;
@@ -1894,11 +1912,11 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
 
         @media (max-width: 480px) {
           .mode-toggle-btn span {
-            font-size: 0.68rem;
+            font-size: 0.7rem;
           }
           .telemetry-statusbar {
             grid-template-columns: 1fr;
-            padding: 0.55rem 0.65rem;
+            padding: 0.65rem;
           }
           .telemetry-refresh-btn {
             grid-column: span 1;
@@ -1909,14 +1927,19 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
           .mobile-station-quick-drawer {
             flex-direction: column;
             align-items: flex-start;
+            width: 100%;
+            gap: 0.65rem;
           }
           .quick-drawer-actions {
             width: 100%;
+            display: flex;
             justify-content: space-between;
+            gap: 0.5rem;
           }
           .quick-inspect-anchor-btn {
             flex: 1;
             justify-content: center;
+            min-height: 38px;
           }
         }
 

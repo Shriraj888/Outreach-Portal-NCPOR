@@ -2094,7 +2094,21 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
 
         @media (max-width: 768px) {
           .selective-ai-page {
-            padding: 1.5rem 0 3.5rem;
+            padding: 1.25rem 0.75rem 3.5rem;
+            gap: 1.25rem;
+          }
+          .studio-card {
+            padding: 1rem 0.85rem;
+          }
+          .output-card {
+            min-height: auto;
+          }
+          .output-tabs-strip {
+            -webkit-overflow-scrolling: touch;
+          }
+          .social-subtabs-row {
+            flex-wrap: wrap;
+            gap: 0.35rem;
           }
           .input-row-2 {
             grid-template-columns: 1fr;
@@ -2112,11 +2126,11 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
           .output-actions-bar button {
             width: 100%;
             justify-content: center;
-            min-height: 40px;
+            min-height: 44px;
           }
           .article-preview-container {
-            max-height: 400px;
-            padding: 1rem;
+            max-height: 420px;
+            padding: 0.85rem;
           }
           .article-title {
             font-size: 1.15rem;
@@ -2141,6 +2155,9 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
           .mode-pill {
             flex: 1;
             text-align: center;
+          }
+          .chunk-card {
+            padding: 0.6rem 0.75rem;
           }
         }
       `}</style>

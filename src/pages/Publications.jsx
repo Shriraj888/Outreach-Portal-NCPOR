@@ -1644,18 +1644,34 @@ export default function Publications({ navigateTo }) {
           .sort-dropdown-wrap {
             min-width: 100%;
           }
+          .category-chips-list {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            flex-wrap: nowrap;
+            width: 100%;
+            padding-bottom: 3px;
+          }
+          .category-chips-list::-webkit-scrollbar {
+            display: none;
+          }
+          .category-pill-btn {
+            white-space: nowrap;
+            flex-shrink: 0;
+          }
         }
 
         @media (max-width: 768px) {
           .publications-page-container {
-            padding: 1.5rem 1rem 4rem;
-            gap: 1.5rem;
+            padding: 1.25rem 0.75rem 4rem;
+            gap: 1.25rem;
           }
           .pub-stats-ribbon {
             width: 100%;
-            justify-content: space-around;
-            gap: 1rem;
-            padding: 0.75rem 1rem;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+            padding: 0.85rem 1rem;
           }
           .stat-divider {
             display: none;
@@ -1664,6 +1680,10 @@ export default function Publications({ navigateTo }) {
             width: 100%;
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+          }
+          .view-mode-tabs::-webkit-scrollbar {
+            display: none;
           }
           .mode-tab {
             flex: 1;
@@ -1671,17 +1691,22 @@ export default function Publications({ navigateTo }) {
             padding: 0.55rem 0.75rem;
             font-size: 0.8rem;
             white-space: nowrap;
+            min-height: 40px;
           }
           .card-actions-bar {
             flex-direction: column;
             align-items: flex-start;
+            gap: 0.75rem;
           }
           .action-buttons-group {
             width: 100%;
+            display: flex;
+            gap: 0.45rem;
           }
           .btn-secondary-action, .btn-download-primary, .btn-primary-view {
             flex: 1;
             justify-content: center;
+            min-height: 42px;
           }
         }
 
@@ -1692,6 +1717,12 @@ export default function Publications({ navigateTo }) {
           .category-pill-btn {
             font-size: 0.75rem;
             padding: 0.3rem 0.65rem;
+          }
+          .action-buttons-group {
+            flex-direction: column;
+          }
+          .btn-secondary-action, .btn-download-primary, .btn-primary-view {
+            width: 100%;
           }
         }
       `}</style>

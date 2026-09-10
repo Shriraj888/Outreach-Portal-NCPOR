@@ -1212,11 +1212,17 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
         /* Nav Tabs */
         .detail-nav-tabs-wrapper {
           position: sticky;
-          top: 69px;
+          top: 66px;
           z-index: 50;
           background: #ffffff;
           border-bottom: 1px solid var(--border-subtle);
           box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+        }
+
+        @media (max-width: 860px) {
+          .detail-nav-tabs-wrapper {
+            top: 56px;
+          }
         }
 
         .detail-nav-tabs {
@@ -1236,7 +1242,7 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
           display: flex;
           align-items: center;
           gap: 0.5rem;
-          padding: 0.75rem 1.25rem;
+          padding: 0.65rem 1.15rem;
           background: transparent;
           border: 1px solid transparent;
           color: var(--text-secondary);
@@ -1246,6 +1252,8 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
           border-radius: var(--radius-sm);
           transition: all 0.15s ease;
           white-space: nowrap;
+          flex-shrink: 0;
+          min-height: 42px;
         }
 
         .detail-tab:hover {
@@ -2939,41 +2947,86 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
           .ai-card-header {
             flex-direction: column;
             align-items: flex-start;
+            gap: 0.75rem;
+          }
+          .ai-header-actions {
+            width: 100%;
+          }
+          .btn-outreach-action {
+            width: 100%;
+            justify-content: center;
+            min-height: 40px;
           }
           .outreach-drafts-panel {
             flex-direction: column;
             align-items: stretch;
+            gap: 0.85rem;
           }
           .outreach-drafts-left {
             flex-direction: column;
             align-items: flex-start;
             width: 100%;
+            gap: 0.65rem;
           }
           .draft-buttons-group {
             width: 100%;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.45rem;
           }
           .social-draft-btn {
-            flex: 1;
             justify-content: center;
+            min-height: 40px;
+            font-size: 0.75rem;
+            padding: 0.4rem 0.6rem;
           }
           .btn-open-studio-pill {
             width: 100%;
             justify-content: center;
+            min-height: 42px;
           }
           .report-card-main-row {
             flex-direction: column;
             align-items: flex-start;
-            gap: 1rem;
+            gap: 0.85rem;
+            padding: 1rem;
+          }
+          .report-doc-info {
+            min-width: 100%;
           }
           .report-card-actions {
             width: 100%;
             display: flex;
             flex-direction: column;
+            gap: 0.45rem;
           }
           .btn-rep-toggle-stream,
           .btn-rep-download-primary {
             width: 100%;
             justify-content: center;
+            min-height: 42px;
+          }
+          .pub-card-top {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.65rem;
+          }
+          .pub-card-actions {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 0.45rem;
+          }
+          .btn-pub-cite, .btn-pub-doi-link {
+            width: 100%;
+            justify-content: center;
+            min-height: 40px;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .draft-buttons-group {
+            grid-template-columns: 1fr;
           }
         }
       `}</style>

@@ -151,22 +151,41 @@ button, input, select, textarea {
 }
 ::-webkit-scrollbar-thumb:hover { background: #64748b; }
 
+img, video, iframe {
+  max-width: 100%;
+  height: auto;
+}
+
 /* Layout */
 .container {
   max-width: 1280px;
   margin: 0 auto;
   padding: 0 1.5rem;
+  padding-left: max(1.5rem, env(safe-area-inset-left));
+  padding-right: max(1.5rem, env(safe-area-inset-right));
+}
+
+@media (max-width: 1024px) {
+  .container {
+    padding: 0 1.25rem;
+    padding-left: max(1.25rem, env(safe-area-inset-left));
+    padding-right: max(1.25rem, env(safe-area-inset-right));
+  }
 }
 
 @media (max-width: 640px) {
   .container {
     padding: 0 1rem;
+    padding-left: max(1rem, env(safe-area-inset-left));
+    padding-right: max(1rem, env(safe-area-inset-right));
   }
 }
 
 @media (max-width: 380px) {
   .container {
     padding: 0 0.75rem;
+    padding-left: max(0.75rem, env(safe-area-inset-left));
+    padding-right: max(0.75rem, env(safe-area-inset-right));
   }
 }
 
@@ -454,13 +473,35 @@ button, input, select, textarea {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
+  overscroll-behavior-x: contain;
 }
 .touch-scroll-x::-webkit-scrollbar {
   display: none;
 }
 
+/* Scroll snap helper for horizontal pill carousels */
+.scroll-snap-x {
+  scroll-snap-type: x mandatory;
+}
+.scroll-snap-item {
+  scroll-snap-align: start;
+}
+
+/* Responsive Table Container */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  position: relative;
+}
+
+.table-responsive table {
+  min-width: 600px;
+}
+
 @media (max-width: 640px) {
   .btn-primary, .btn-secondary, .btn-navy, .btn-ai, .btn-saffron {
-    min-height: 42px;
+    min-height: 44px;
+    padding: 0.65rem 1.15rem;
   }
 }

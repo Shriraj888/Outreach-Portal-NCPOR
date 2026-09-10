@@ -1366,34 +1366,40 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
 
         @media (max-width: 768px) {
           .admin-dashboard-page {
-            padding-top: 1.5rem;
-            padding-bottom: 3.5rem;
+            padding: 1.25rem 0.75rem 3.5rem;
+            gap: 1.25rem;
           }
-          .page-header-row {
+          .admin-header-row {
             flex-direction: column;
             align-items: flex-start;
             gap: 1rem;
           }
-          .header-actions {
+          .admin-header-actions {
             width: 100%;
             display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
+            flex-direction: column;
+            gap: 0.6rem;
           }
-          .header-actions button {
-            flex: 1;
-            min-height: 40px;
+          .admin-header-actions button {
+            width: 100%;
+            min-height: 44px;
             justify-content: center;
+          }
+          .upload-focus-banner {
+            padding: 1rem 0.85rem;
           }
           .admin-kpi-grid {
             grid-template-columns: repeat(2, 1fr);
             gap: 0.75rem;
           }
           .kpi-card {
-            padding: 1rem;
+            padding: 0.85rem;
           }
           .kpi-val {
-            font-size: 1.5rem;
+            font-size: 1.4rem;
+          }
+          .table-card {
+            padding: 1rem 0.75rem;
           }
           .table-toolbar {
             flex-direction: column;
@@ -1402,15 +1408,21 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
           }
           .table-filters {
             width: 100%;
+            flex-direction: column;
+            align-items: stretch;
           }
           .table-search-wrap {
             width: 100%;
+            min-width: 0;
           }
           .table-search-input {
             width: 100%;
           }
           .table-select {
-            flex: 1;
+            width: 100%;
+          }
+          .admin-table {
+            min-width: 750px;
           }
         }
 
@@ -1421,8 +1433,8 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
           .admin-kpi-grid {
             grid-template-columns: 1fr;
           }
-          .header-actions button {
-            flex: 1 1 100%;
+          .admin-header-actions button {
+            width: 100%;
           }
         }
       `}</style>

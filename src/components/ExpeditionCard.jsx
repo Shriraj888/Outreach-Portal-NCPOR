@@ -273,24 +273,23 @@ export default function ExpeditionCard({ expedition, onSelect }) {
         .card-meta {
           display: flex;
           align-items: center;
-          gap: 0.75rem;
+          gap: 0.5rem;
+          flex-wrap: wrap;
           color: #64748b;
           font-size: 0.74rem;
           font-weight: 600;
           margin-bottom: 0.65rem;
-          min-height: 1.25rem;
         }
 
         .meta-item {
           display: inline-flex;
           align-items: center;
-          gap: 0.3rem;
+          gap: 0.28rem;
           min-width: 0;
-          flex-shrink: 1;
         }
 
         .meta-icon {
-          color: #0284c7;
+          color: #94a3b8;
           flex-shrink: 0;
         }
 
@@ -298,22 +297,24 @@ export default function ExpeditionCard({ expedition, onSelect }) {
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
+          max-width: 140px;
         }
 
         .card-desc {
-          font-size: 0.8rem;
+          font-size: 0.82rem;
           color: #475569;
-          line-height: 1.45;
+          line-height: 1.5;
           margin-bottom: 0.75rem;
           display: -webkit-box;
           -webkit-line-clamp: 2;
           -webkit-box-orient: vertical;
           overflow: hidden;
-          min-height: 2.35rem;
+          flex: 1;
         }
 
         .card-tags {
           display: flex;
+          align-items: center;
           flex-wrap: wrap;
           gap: 0.35rem;
           margin-bottom: 0.75rem;
@@ -371,14 +372,17 @@ export default function ExpeditionCard({ expedition, onSelect }) {
 
         @media (max-width: 640px) {
           .card-image-wrap {
-            height: 165px;
+            height: 175px;
           }
           .card-body {
-            padding: 0.95rem;
+            padding: 1rem;
           }
           .card-title {
             font-size: 0.98rem;
-            min-height: 2.6rem;
+            min-height: auto;
+          }
+          .meta-text {
+            max-width: 120px;
           }
         }
       `}</style>

@@ -49,6 +49,17 @@ export default function Header({ currentRoute, navigateTo }) {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mobileMenuOpen]);
+
   const navItems = [
     { id: 'home', label: t.nav.home, icon: Compass },
     { id: 'expeditions', label: t.nav.expeditions, icon: Layers },
@@ -232,82 +243,132 @@ export default function Header({ currentRoute, navigateTo }) {
         </div>
       </div>
 
-      {/* Mobile Drawer Menu */}
+      {/* Mobile Drawer Menu & Overlay */}
       {mobileMenuOpen && (
-        <div className="mobile-drawer">
-          <div className="mobile-drawer-content">
-            {/* Mobile Search Bar */}
-            <div className="mobile-search-row">
-              <Search size={16} className="mobile-search-icon" />
-              <input
-                type="text"
-                placeholder={lang === 'hi' ? "मिशन या स्टेशन खोजें..." : "Search missions, stations..."}
-                value={searchQuery}
-                onChange={(e) => {
-                  setSearchQuery(e.target.value);
-                  if (currentRoute !== 'expeditions' && e.target.value.length > 0) {
-                    handleNav('expeditions');
-                  }
-                }}
-                className="mobile-search-input"
-              />
-              {searchQuery && (
-                <button 
-                  className="mobile-clear-btn"
-                  onClick={() => setSearchQuery('')}
-                  aria-label="Clear search"
-                >
-                  <X size={14} />
-                </button>
-              )}
-            </div>
-
-            <div className="mobile-nav-list">
-              {navItems.map((item) => {
-                const Icon = item.icon;
-                const isActive = currentRoute === item.id;
-                return (
-                  <button
-                    key={item.id}
-                    className={`mobile-nav-item ${isActive ? 'active' : ''}`}
-                    onClick={() => handleNav(item.id)}
+        <>
+          <div 
+            className="mobile-drawer-backdrop" 
+            onClick={() => setMobileMenuOpen(false)} 
+            aria-hidden="true"
+          />
+          <div className="mobile-drawer" role="dialog" aria-modal="true" aria-label="Mobile Navigation">
+            <div className="mobile-drawer-content">
+              {/* Mobile Search Bar */}
+              <div className="mobile-search-row">
+                <Search size={16} className="mobile-search-icon" />
+                <input
+                  type="text"
+                  placeholder={lang === 'hi' ? "मिशन या स्टेशन खोजें..." : "Search missions, stations..."}
+                  value={searchQuery}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    if (currentRoute !== 'expeditions' && e.target.value.length > 0) {
+                      handleNav('expeditions');
+                    }
+                  }}
+                  className="mobile-search-input"
+                />
+                {searchQuery && (
+                  <button 
+                    className="mobile-clear-btn" 
+                    onClick={() => setSearchQuery('')}
+                    aria-label="Clear search"
                   >
-                    <Icon size={18} />
-                    <span>{item.label}</span>
+                    <X size={14} />
                   </button>
-                );
-              })}
+                )}
+              </div>
 
-              <div className="mobile-divider"></div>
+              <div className="mobile-nav-list">
+                {navItems.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = currentRoute === item.id;
+                  return (
+                    <button
+                      key={item.id}
+                      className={`mobile-nav-item ${isActive ? 'active' : ''}`}
+                      onClick={() => handleNav(item.id)}
+                    >
+                      <Icon size={18} />
+                      <span>{item.label}</span>
+                    </button>
+                  );
+                })}
 
-              {auth.isAuthenticated ? (
-                <>
-                  <button
-                    className="mobile-nav-item admin-active"
-                    onClick={() => handleNav('admin-dashboard')}
-                  >
-                    <Sparkles size={18} />
-                    <span>Admin Studio Dashboard</span>
-                  </button>
+                <div className="mobile-divider"></div>
+
+                {auth.isAuthenticated ? (
+                  <>
+                    <button
+                      className="mobile-nav-item admin-active"
+                      onClick={() => handleNav('admin-dashboard')}
+                    >
+                      <Sparkles size={18} />
+                      <span>Admin Studio Dashboard</span>
+                    </button>
+                    <button
+                      className="mobile-nav-item"
+                      onClick={() => {
+                        logout();
+                        setMobileMenuOpen(false);
+                      }}
+                    >
+                      <span>Sign Out</span>
+                    </button> 
+                  </>
+                ) : (
                   <button
                     className="mobile-nav-item"
-                    onClick={logout}
+                    onClick={() => handleNav('admin-login')}
                   >
-                    <span>Sign Out</span>
-                  </button> 
-                </>
-              ) : (
-                <button
-                  className="mobile-nav-item"
-                  onClick={() => handleNav('admin-login')}
-                >
-                  <Lock size={18} />
-                  <span>NCPOR Staff Login</span>
+                    <Lock size={18} />
+                    <span>NCPOR Staff Login</span>
+                  </button>
+                )}
+              </div>
+
+              {/* Mobile Quick Accessibility & Language Footer Bar */}
+              <div className="mobile-drawer-footer">
+                <div className="drawer-a11y-row">
+                  <div className="a11y-group">
+                    <span className="a11y-label">Size:</span>
+                    <button 
+                      className={`a11y-btn ${a11y.fontSize === 'normal' ? 'active' : ''}`}
+                      onClick={() => setFontSize('normal')}
+                    >
+                      A
+                    </button>
+                    <button 
+                      className={`a11y-btn ${a11y.fontSize === 'large' ? 'active' : ''}`}
+                      onClick={() => setFontSize('large')}
+                    >
+                      A+
+                    </button>
+                    <button 
+                      className={`a11y-btn ${a11y.fontSize === 'larger' ? 'active' : ''}`}
+                      onClick={() => setFontSize('larger')}
+                    >
+                      A++
+                    </button>
+                  </div>
+
+                  <button 
+                    className={`a11y-toggle ${a11y.highContrast ? 'active' : ''}`}
+                    onClick={toggleHighContrast}
+                  >
+                    <Sun size={13} />
+                    <span>{a11y.highContrast ? 'High Contrast ON' : 'Contrast'}</span>
+                  </button>
+                </div>
+
+                <button className="mobile-lang-btn" onClick={toggleLang}>
+                  <Globe2 size={14} />
+                  <span>{lang === 'en' ? 'हिन्दी में देखें (HI)' : 'Switch to English (EN)'}</span>
                 </button>
-              )}
+              </div>
             </div>
           </div>
-        </div>
+        </>
       )}
 
       <style>{`
@@ -659,18 +720,59 @@ export default function Header({ currentRoute, navigateTo }) {
 
         .mobile-menu-toggle {
           display: none;
-          background: transparent;
-          border: none;
+          background: #f8fafc;
+          border: 1px solid #cbd5e1;
           color: var(--navy);
           cursor: pointer;
-          padding: 0.25rem;
+          width: 44px;
+          height: 44px;
+          border-radius: 8px;
+          align-items: center;
+          justify-content: center;
+          transition: all 0.15s ease;
+        }
+
+        .mobile-menu-toggle:hover {
+          background: #e2e8f0;
+        }
+
+        .mobile-drawer-backdrop {
+          position: fixed;
+          inset: 0;
+          top: 0;
+          background: rgba(15, 23, 42, 0.45);
+          backdrop-filter: blur(4px);
+          -webkit-backdrop-filter: blur(4px);
+          z-index: 140;
         }
 
         .mobile-drawer {
+          position: absolute;
+          top: 100%;
+          left: 0;
+          right: 0;
           background: #ffffff;
           border-top: 1px solid var(--border-subtle);
+          border-bottom: 1px solid var(--border-subtle);
           padding: 1rem;
-          box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+          box-shadow: 0 16px 36px rgba(15, 23, 42, 0.16);
+          max-height: calc(100vh - 75px);
+          max-height: calc(100dvh - 75px);
+          overflow-y: auto;
+          -webkit-overflow-scrolling: touch;
+          z-index: 150;
+          animation: mobileDrawerSlide 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes mobileDrawerSlide {
+          from {
+            opacity: 0;
+            transform: translateY(-8px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
         }
 
         .mobile-search-row {
@@ -695,6 +797,7 @@ export default function Header({ currentRoute, navigateTo }) {
           padding: 0.65rem 2.2rem 0.65rem 2.5rem;
           font-size: 0.9rem;
           color: var(--text-primary);
+          min-height: 44px;
         }
 
         .mobile-search-input:focus {
@@ -714,7 +817,7 @@ export default function Header({ currentRoute, navigateTo }) {
           display: flex;
           align-items: center;
           justify-content: center;
-          padding: 4px;
+          padding: 6px;
         }
 
         .mobile-nav-list {
@@ -733,17 +836,22 @@ export default function Header({ currentRoute, navigateTo }) {
           border: 1px solid var(--border-subtle);
           color: var(--text-primary);
           font-size: 0.92rem;
-          font-weight: 500;
+          font-weight: 600;
           text-align: left;
           cursor: pointer;
-          min-height: 46px;
+          min-height: 48px;
+          transition: background 0.15s ease, border-color 0.15s ease;
+        }
+
+        .mobile-nav-item:active {
+          transform: scale(0.99);
         }
 
         .mobile-nav-item.active {
           background: #eff6ff;
           border-color: #bfdbfe;
           color: var(--navy);
-          font-weight: 600;
+          font-weight: 700;
         }
 
         .mobile-nav-item.admin-active {
@@ -759,16 +867,43 @@ export default function Header({ currentRoute, navigateTo }) {
           margin: 0.5rem 0;
         }
 
+        .mobile-drawer-footer {
+          margin-top: 1rem;
+          padding-top: 1rem;
+          border-top: 1px solid var(--border-subtle);
+          display: flex;
+          flex-direction: column;
+          gap: 0.75rem;
+        }
+
+        .drawer-a11y-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 0.5rem;
+          flex-wrap: wrap;
+        }
+
+        .mobile-lang-btn {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.5rem;
+          width: 100%;
+          background: #f1f5f9;
+          border: 1px solid var(--border-subtle);
+          padding: 0.65rem 1rem;
+          border-radius: var(--radius-sm);
+          font-size: 0.88rem;
+          font-weight: 600;
+          color: var(--navy);
+          cursor: pointer;
+          min-height: 44px;
+        }
+
         @media (max-width: 1024px) {
           .desktop-nav {
             display: none;
-          }
-          .mobile-menu-toggle {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-width: 40px;
-            min-height: 40px;
           }
           .header-search-input {
             width: 140px;
@@ -779,8 +914,17 @@ export default function Header({ currentRoute, navigateTo }) {
         }
 
         @media (max-width: 860px) {
+          .desktop-nav {
+            display: none;
+          }
+          .mobile-menu-toggle {
+            display: flex;
+          }
           .search-input-wrapper {
             display: none;
+          }
+          .btn-admin, .admin-logged-group {
+            display: none !important;
           }
           .brand-secondary, .brand-tagline {
             display: none;
@@ -788,6 +932,9 @@ export default function Header({ currentRoute, navigateTo }) {
         }
 
         @media (max-width: 640px) {
+          .gov-strip-content {
+            gap: 0.35rem;
+          }
           .gov-text-full {
             display: none;
           }
@@ -795,7 +942,8 @@ export default function Header({ currentRoute, navigateTo }) {
             display: inline;
           }
           .gov-title {
-            font-size: 0.7rem;
+            font-size: 0.68rem;
+            max-width: 100%;
           }
           .brand-primary {
             font-size: 1.05rem;
@@ -808,7 +956,7 @@ export default function Header({ currentRoute, navigateTo }) {
             display: none;
           }
           .a11y-toolbar {
-            gap: 0.35rem;
+            gap: 0.25rem;
           }
           .a11y-toggle span {
             display: none;
@@ -820,19 +968,27 @@ export default function Header({ currentRoute, navigateTo }) {
 
         @media (max-width: 480px) {
           .nav-container {
-            gap: 0.75rem;
+            gap: 0.5rem;
           }
-          .btn-admin span {
-            display: none;
+          .brand-lockup {
+            gap: 0.5rem;
           }
-          .btn-admin {
-            padding: 0.45rem 0.55rem;
+        }
+
+        @media (max-width: 380px) {
+          .gov-strip {
+            padding: 0.3rem 0;
           }
-          .admin-logged-group .btn-admin span {
-            display: none;
+          .gov-title {
+            font-size: 0.65rem;
           }
-          .btn-logout {
-            padding: 0.45rem 0.55rem;
+          .a11y-btn {
+            padding: 2px 4px;
+            font-size: 0.68rem;
+          }
+          .lang-toggle-btn {
+            padding: 2px 6px;
+            font-size: 0.68rem;
           }
         }
       `}</style>

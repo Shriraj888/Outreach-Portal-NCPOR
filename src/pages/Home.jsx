@@ -1773,31 +1773,32 @@ export default function Home({ navigateTo, onSelectExpedition }) {
             gap: 3rem;
           }
           .telemetry-bar {
-            margin-bottom: -3rem;
+            margin-bottom: -2rem;
           }
           .hero-stations-hub {
-            max-width: 580px;
+            max-width: 100%;
           }
           .hero-stations-grid {
             grid-template-columns: repeat(2, 1fr);
             gap: 0.75rem;
           }
           .hero-metrics-strip {
-            gap: 1.25rem;
-            padding: 0.75rem 1.4rem;
+            gap: 1rem;
+            padding: 0.75rem 1.25rem;
           }
           .pillars-grid {
             grid-template-columns: 1fr;
           }
           .pillar-card {
-            height: 350px;
+            height: auto;
+            min-height: 320px;
           }
           .spotlight-grid {
             grid-template-columns: 1fr;
             gap: 1.5rem;
           }
           .activities-grid {
-            grid-template-columns: 1fr;
+            grid-template-columns: repeat(2, 1fr);
           }
         }
 
@@ -1812,9 +1813,13 @@ export default function Home({ navigateTo, onSelectExpedition }) {
             overflow-x: auto;
             white-space: nowrap;
             scrollbar-width: none;
+            -webkit-overflow-scrolling: touch;
           }
           .station-filter-pills::-webkit-scrollbar {
             display: none;
+          }
+          .activities-grid {
+            grid-template-columns: 1fr;
           }
         }
 
@@ -1823,17 +1828,21 @@ export default function Home({ navigateTo, onSelectExpedition }) {
             gap: 2.25rem;
           }
           .telemetry-bar {
-            margin-bottom: -2.25rem;
+            margin-bottom: 0;
+            padding: 0.45rem 0;
+          }
+          .telemetry-inner {
+            gap: 0.85rem;
           }
           .hero-section {
-            padding: 2.5rem 0 1.75rem;
+            padding: 2rem 0 1.5rem;
           }
           .masthead-rule {
             display: none;
           }
           .masthead-entity {
             font-size: 0.68rem;
-            letter-spacing: 0.1em;
+            letter-spacing: 0.08em;
             text-align: center;
           }
           .masthead-institute-node {
@@ -1841,69 +1850,135 @@ export default function Home({ navigateTo, onSelectExpedition }) {
             justify-content: center;
             font-size: 0.68rem;
             text-align: center;
+            gap: 0.35rem;
           }
           .hero-heading {
-            font-size: clamp(1.85rem, 6.2vw + 0.2rem, 2.45rem);
+            font-size: clamp(1.75rem, 6.2vw, 2.35rem);
+            margin-bottom: 0.65rem;
           }
           .hero-tagline {
             font-size: 0.95rem;
+            margin-bottom: 0.45rem;
           }
           .hero-subtext {
             font-size: 0.88rem;
             margin-bottom: 1.15rem;
           }
+          .hero-cta-group {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 520px;
+            margin-left: auto;
+            margin-right: auto;
+            gap: 0.65rem;
+          }
+          .hero-cta-group .hero-btn {
+            flex: 1 1 0;
+            width: auto;
+            min-width: 0;
+            min-height: 44px;
+            padding: 0.65rem 0.75rem;
+            font-size: clamp(0.74rem, 2.7vw, 0.88rem);
+            gap: 0.45rem;
+            justify-content: center;
+            text-align: center;
+            white-space: nowrap;
+          }
           .hero-metrics-strip {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 0.85rem;
+            gap: 0.75rem;
             width: 100%;
-            padding: 0.9rem;
+            padding: 0.85rem;
           }
           .metric-divider {
             display: none;
           }
           .hero-stations-hub {
-            max-width: 330px;
-            margin: 1rem auto 0;
+            max-width: 100%;
+            margin: 1.25rem 0 0;
           }
           .hero-stations-grid {
-            grid-template-columns: 1fr;
-            max-width: 320px;
-            margin: 0 auto;
+            grid-template-columns: repeat(2, 1fr);
+            max-width: 100%;
+            margin: 0;
+            gap: 0.65rem;
           }
           .pillar-card {
-            height: 330px;
+            height: auto;
+            min-height: 280px;
           }
           .spotlight-card {
             padding: 1.25rem;
           }
           .spotlight-media {
-            height: 200px;
+            height: 190px;
           }
           .spotlight-title {
-            font-size: 1.35rem;
+            font-size: 1.25rem;
           }
           .activity-card {
             padding: 1.15rem;
           }
-        }
-
-        @media (max-width: 480px) {
-          .hero-cta-group {
-            flex-direction: column;
-            width: 100%;
-          }
-          .hero-cta-group .hero-btn {
-            width: 100%;
-          }
           .spotlight-actions {
             flex-direction: column;
             align-items: stretch;
+            gap: 0.65rem;
           }
           .spotlight-actions .btn-saffron,
           .spotlight-actions .btn-secondary {
             width: 100%;
+            justify-content: center;
+            min-height: 44px;
             text-align: center;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .hero-stations-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.5rem;
+          }
+          .hero-metrics-strip {
+            grid-template-columns: 1fr;
+            gap: 0.5rem;
+          }
+          .station-ops-card {
+            border-radius: 10px;
+          }
+          .station-card-media {
+            height: 64px;
+          }
+          .station-card-body {
+            padding: 0.5rem 0.55rem 0.6rem;
+            gap: 0.4rem;
+          }
+          .station-card-name {
+            font-size: 0.82rem;
+          }
+          .station-comm-year {
+            font-size: 0.58rem;
+          }
+          .station-coords-badge {
+            font-size: 0.58rem;
+          }
+          .station-card-footer {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0.35rem;
+            padding: 0.3rem 0.4rem;
+          }
+          .station-telemetry-strip {
+            justify-content: space-between;
+          }
+          .station-3d-btn {
+            justify-content: center;
+            width: 100%;
+            font-size: 0.64rem;
+            padding: 0.2rem 0.35rem;
           }
         }
       `}</style>
