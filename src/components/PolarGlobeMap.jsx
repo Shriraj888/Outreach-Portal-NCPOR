@@ -861,6 +861,19 @@ export default function PolarGlobeMap({
     };
   }, [draw]);
 
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  // Lock body scroll when fullscreen is active
+  useEffect(() => {
+    if (isFullscreen) {
+      const prevOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = prevOverflow;
+      };
+    }
+  }, [isFullscreen]);
+
   // ── Responsive Canvas Resizing ─────────────────────────────────────────────
   useEffect(() => {
     const handleResize = () => {
@@ -868,26 +881,35 @@ export default function PolarGlobeMap({
       const container = containerRef.current;
       if (!canvas || !container) return;
 
-      const w = container.clientWidth;
-      const h = w < 640 
-        ? Math.max(320, Math.min(460, Math.round(w * 0.95))) 
-        : Math.max(480, Math.min(640, Math.round(w * 0.62)));
+      const w = isFullscreen 
+        ? (window.innerWidth || container.clientWidth) 
+        : container.clientWidth;
+      const h = isFullscreen
+        ? (window.innerHeight || container.clientHeight)
+        : (w < 640 
+            ? Math.max(320, Math.min(460, Math.round(w * 0.95))) 
+            : Math.max(480, Math.min(640, Math.round(w * 0.62))));
       const dpr = window.devicePixelRatio || 1;
 
-      canvas.width = w * dpr;
-      canvas.height = h * dpr;
+      canvas.width = Math.round(w * dpr);
+      canvas.height = Math.round(h * dpr);
       canvas.style.width = `${w}px`;
       canvas.style.height = `${h}px`;
     };
 
     handleResize();
+    window.addEventListener('resize', handleResize);
+    window.addEventListener('orientationchange', handleResize);
     const ro = new ResizeObserver(handleResize);
     if (containerRef.current) ro.observe(containerRef.current);
-    return () => ro.disconnect();
-  }, []);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('orientationchange', handleResize);
+      ro.disconnect();
+    };
+  }, [isFullscreen]);
 
   // ── Native Mobile Multi-Touch (Pinch-to-Zoom & Rotate) Handlers ─────────
-  const [isFullscreen, setIsFullscreen] = useState(false);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -1329,7 +1351,12 @@ export default function PolarGlobeMap({
           z-index: 9999;
           border-radius: 0;
           width: 100vw;
+          width: 100dvw;
           height: 100vh;
+          height: 100dvh;
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
 
         .pg-canvas {
