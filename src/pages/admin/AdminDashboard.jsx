@@ -204,23 +204,25 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
         </div>
 
         <div className="admin-header-actions">
+          <div className="admin-primary-actions-row">
+            <button 
+              className="btn-selective-ai-header"
+              onClick={() => navigateTo('admin-selective-ai')}
+              title="Synthesize targeted outreach releases from selected data chunks"
+            >
+              <Layers size={16} />
+              <span>Selective AI Studio</span>
+            </button>
+            <button 
+              className="btn-primary-upload"
+              onClick={() => navigateTo('admin-upload')}
+            >
+              <UploadCloud size={18} />
+              <span>Upload New Polar Asset</span>
+            </button>
+          </div>
           <button 
-            className="btn-selective-ai-header"
-            onClick={() => navigateTo('admin-selective-ai')}
-            title="Synthesize targeted outreach releases from selected data chunks"
-          >
-            <Layers size={16} />
-            <span>Selective AI Studio</span>
-          </button>
-          <button 
-            className="btn-primary-upload"
-            onClick={() => navigateTo('admin-upload')}
-          >
-            <UploadCloud size={18} />
-            <span>Upload New Polar Asset</span>
-          </button>
-          <button 
-            className="btn-secondary"
+            className="btn-secondary btn-reset-seed"
             onClick={() => {
               if (window.confirm("Reset all portal data back to original authentic polar datasets?")) {
                 resetToDefaultData();
@@ -639,6 +641,13 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
           display: flex;
           align-items: center;
           gap: 0.75rem;
+          flex-wrap: wrap;
+        }
+
+        .admin-primary-actions-row {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
         }
 
         .btn-selective-ai-header {
@@ -724,7 +733,7 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
 
         .quick-upload-grid {
           display: grid;
-          grid-template-columns: repeat(3, 1fr);
+          grid-template-columns: repeat(2, 1fr);
           gap: 1rem;
         }
 
@@ -798,6 +807,17 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
           border-radius: var(--radius-md);
         }
 
+        .quick-icon-box {
+          width: 38px;
+          height: 38px;
+          border-radius: 9px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+          border: none !important;
+        }
+
         .kpi-icon-box {
           width: 46px;
           height: 46px;
@@ -806,42 +826,43 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
           align-items: center;
           justify-content: center;
           flex-shrink: 0;
+          border: none !important;
         }
 
         .bg-blue {
           background: #eff6ff;
-          color: #2563eb;
-          border: 1px solid #bfdbfe;
+          color: #0284c7;
+          border: none;
         }
 
         .bg-green {
           background: #ecfdf5;
           color: #059669;
-          border: 1px solid #a7f3d0;
+          border: none;
         }
 
         .bg-purple {
           background: #f5f3ff;
           color: #7c3aed;
-          border: 1px solid #ddd6fe;
+          border: none;
         }
 
         .bg-amber {
           background: #fffbeb;
           color: #d97706;
-          border: 1px solid #fde68a;
+          border: none;
         }
 
         .bg-cyan {
-          background: #f0fdfa;
-          color: #0d9488;
-          border: 1px solid #99f6e4;
+          background: #f0fdf4;
+          color: #16a34a;
+          border: none;
         }
 
         .bg-red {
           background: #fef2f2;
           color: #dc2626;
-          border: 1px solid #fecaca;
+          border: none;
         }
 
         .kpi-val {
@@ -1380,20 +1401,47 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
             flex-direction: column;
             gap: 0.6rem;
           }
-          .admin-header-actions button {
+          .admin-primary-actions-row {
+            width: 100%;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.6rem;
+          }
+          .admin-primary-actions-row button {
             width: 100%;
             min-height: 44px;
+            padding: 0.55rem 0.5rem;
+            font-size: clamp(0.74rem, 2.4vw, 0.85rem);
+            justify-content: center;
+            text-align: center;
+            white-space: nowrap;
+          }
+          .btn-reset-seed {
+            width: 100%;
+            min-height: 42px;
             justify-content: center;
           }
           .upload-focus-banner {
             padding: 1rem 0.85rem;
           }
+          .quick-upload-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+          }
+          .quick-upload-card {
+            padding: 0.75rem 0.75rem;
+            gap: 0.65rem;
+          }
           .admin-kpi-grid {
             grid-template-columns: repeat(2, 1fr);
             gap: 0.75rem;
           }
+          .admin-kpi-grid .kpi-card:last-child {
+            grid-column: span 2;
+          }
           .kpi-card {
             padding: 0.85rem;
+            gap: 0.75rem;
           }
           .kpi-val {
             font-size: 1.4rem;
@@ -1427,14 +1475,67 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
         }
 
         @media (max-width: 480px) {
+          .admin-primary-actions-row {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.45rem;
+          }
+          .admin-primary-actions-row button {
+            min-height: 40px;
+            padding: 0.45rem 0.35rem;
+            font-size: 0.72rem;
+            gap: 0.35rem;
+          }
+          .btn-reset-seed {
+            min-height: 38px;
+            font-size: 0.76rem;
+          }
           .quick-upload-grid {
-            grid-template-columns: 1fr;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.5rem;
+          }
+          .quick-upload-card {
+            padding: 0.65rem 0.5rem;
+            gap: 0.45rem;
+          }
+          .quick-icon-box {
+            width: 32px;
+            height: 32px;
+            min-width: 32px;
+          }
+          .quick-card-text h4 {
+            font-size: 0.76rem;
+            line-height: 1.2;
+          }
+          .quick-card-text p {
+            font-size: 0.62rem;
+            line-height: 1.25;
+          }
+          .btn-quick-plus {
+            display: none;
           }
           .admin-kpi-grid {
-            grid-template-columns: 1fr;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.5rem;
           }
-          .admin-header-actions button {
-            width: 100%;
+          .admin-kpi-grid .kpi-card:last-child {
+            grid-column: span 2;
+          }
+          .kpi-card {
+            padding: 0.65rem 0.6rem;
+            gap: 0.55rem;
+          }
+          .kpi-icon-box {
+            width: 34px;
+            height: 34px;
+            min-width: 34px;
+            border-radius: 8px;
+          }
+          .kpi-val {
+            font-size: 1.2rem;
+          }
+          .kpi-lbl {
+            font-size: 0.64rem;
+            line-height: 1.2;
           }
         }
       `}</style>
