@@ -254,7 +254,7 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
             )}
 
             {expedition.stations && expedition.stations.length > 0 && (
-              <div className="meta-card">
+              <div className="meta-card meta-card-location">
                 <MapPin size={16} className="meta-card-icon" />
                 <div>
                   <div className="meta-card-label">Research Stations / Locations</div>
@@ -1174,8 +1174,8 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
 
         .detail-meta-grid {
           display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 1.25rem;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 1rem;
           max-width: 1000px;
         }
 
@@ -1187,6 +1187,11 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
           display: flex;
           align-items: flex-start;
           gap: 0.75rem;
+          box-sizing: border-box;
+        }
+
+        .meta-card.meta-card-location {
+          grid-column: 1 / -1;
         }
 
         .meta-card-icon {
@@ -2928,22 +2933,313 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
           .detail-content-body {
             padding: 1.5rem 0 3.5rem;
           }
+          .section-intro-flex {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.75rem;
+          }
+          .pubs-section-header {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 1rem;
+          }
         }
 
         @media (max-width: 640px) {
           .detail-meta-grid {
-            grid-template-columns: 1fr;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.5rem;
+          }
+          .meta-card {
+            padding: 0.65rem 0.75rem;
+            gap: 0.5rem;
+          }
+          .meta-card-label {
+            font-size: 0.68rem;
+          }
+          .meta-card-val {
+            font-size: 0.8rem;
+            word-break: break-word;
+          }
+          .meta-card.meta-card-location {
+            grid-column: 1 / -1;
+          }
+
+          /* Reports Tab Mobile */
+          .reports-tab-container {
+            gap: 1.15rem;
+          }
+          .reports-section-title-wrap h3 {
+            font-size: 1.18rem;
+          }
+          .reports-header-text p {
+            font-size: 0.82rem;
+          }
+          .report-card-refined {
+            border-radius: 12px;
+          }
+          .report-card-main-row {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0.85rem;
+            padding: 0.95rem;
+          }
+          .report-doc-info {
+            width: 100%;
+            min-width: 0;
             gap: 0.75rem;
           }
-          .lightbox-backdrop {
+          .report-pdf-badge-icon {
+            width: 40px;
+            height: 44px;
+            border-radius: 8px;
+          }
+          .report-doc-title {
+            font-size: 0.94rem;
+            word-break: break-word;
+          }
+          .report-doc-meta-pills {
+            gap: 0.35rem;
+          }
+          .doc-meta-pill {
+            font-size: 0.7rem;
+            padding: 0.12rem 0.45rem;
+          }
+          .report-card-actions {
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+          }
+          .btn-rep-toggle-stream,
+          .btn-rep-download-primary {
+            width: 100%;
+            justify-content: center;
+            min-height: 40px;
+            font-size: 0.75rem;
+            padding: 0.4rem 0.6rem;
+            box-sizing: border-box;
+          }
+          .btn-rep-toggle-stream span,
+          .btn-rep-download-primary span {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+          .inspector-top-bar {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0.45rem;
+            padding: 0.55rem 0.75rem;
+          }
+          .inspector-title {
+            flex-wrap: wrap;
+            gap: 0.35rem;
+            font-size: 0.72rem;
+          }
+          .inspector-stats-badge {
+            margin-left: 0;
+          }
+          .btn-copy-stream-code {
+            width: 100%;
+            justify-content: center;
+            min-height: 36px;
+            font-size: 0.74rem;
+          }
+          .inspector-code-body {
             padding: 0.75rem;
+            max-height: 220px;
+          }
+          .inspector-pre-text {
+            font-size: 0.74rem;
+            word-break: break-word;
+          }
+
+          /* Media Gallery Tab Mobile */
+          .section-intro-flex {
+            margin-bottom: 1.25rem;
+            gap: 0.65rem;
+          }
+          .section-intro-flex h3 {
+            font-size: 1.18rem;
+          }
+          .section-intro-flex p {
+            font-size: 0.82rem;
+          }
+          .a11y-verified-badge {
+            font-size: 0.72rem;
+            padding: 0.3rem 0.65rem;
+          }
+          .media-grid {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+          }
+          .media-card-item {
+            border-radius: 12px;
+          }
+          .media-img-wrap {
+            height: 210px;
+          }
+          .media-info {
+            padding: 0.85rem;
+            gap: 0.55rem;
+          }
+          .media-caption {
+            font-size: 0.84rem;
+          }
+          .alt-text-box {
+            padding: 0.65rem;
+          }
+          .alt-text-val {
+            font-size: 0.75rem;
+          }
+
+          /* Lightbox Mobile */
+          .lightbox-backdrop {
+            padding: 0.65rem;
+          }
+          .lightbox-modal {
+            max-width: 100%;
+            width: 100%;
+            max-height: 90vh;
+            border-radius: 12px;
           }
           .lightbox-full-img {
-            max-height: 48vh;
+            max-height: 44vh;
           }
           .lightbox-caption {
-            padding: 1rem;
+            padding: 0.85rem;
           }
+
+          /* Publications Tab Mobile */
+          .pubs-tab-container {
+            gap: 1.15rem;
+          }
+          .pubs-header-text h3 {
+            font-size: 1.18rem;
+          }
+          .pubs-header-text p {
+            font-size: 0.82rem;
+          }
+          .pubs-stats-summary {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.45rem;
+            width: 100%;
+          }
+          .pub-stat-card {
+            padding: 0.5rem 0.55rem;
+            gap: 0.45rem;
+            border-radius: 8px;
+          }
+          .pub-stat-icon-wrap {
+            width: 26px;
+            height: 26px;
+            border-radius: 6px;
+          }
+          .pub-stat-num {
+            font-size: 0.95rem;
+          }
+          .pub-stat-label {
+            font-size: 0.6rem;
+            letter-spacing: 0.01em;
+          }
+          .pubs-toolbar-bar {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0.65rem;
+            padding: 0.65rem;
+            border-radius: 10px;
+          }
+          .pub-search-input-wrap {
+            min-width: 100%;
+            width: 100%;
+          }
+          .pub-category-pills {
+            display: flex;
+            overflow-x: auto;
+            width: 100%;
+            flex-wrap: nowrap;
+            -webkit-overflow-scrolling: touch;
+            gap: 0.35rem;
+            scrollbar-width: none;
+            padding-bottom: 2px;
+          }
+          .pub-category-pills::-webkit-scrollbar {
+            display: none;
+          }
+          .pub-filter-btn {
+            flex-shrink: 0;
+            white-space: nowrap;
+            font-size: 0.72rem;
+            padding: 0.3rem 0.6rem;
+          }
+          .pubs-list-grid {
+            gap: 1rem;
+          }
+          .pub-card-premium {
+            padding: 0.95rem;
+            border-radius: 12px;
+            gap: 0.75rem;
+          }
+          .pub-card-top {
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.45rem;
+          }
+          .pub-meta-tags-left {
+            gap: 0.35rem;
+          }
+          .pub-category-tag,
+          .pub-year-tag,
+          .pub-peer-verified,
+          .pub-citation-badge {
+            font-size: 0.68rem;
+            padding: 0.15rem 0.45rem;
+          }
+          .pub-heading {
+            font-size: 0.98rem;
+            line-height: 1.35;
+          }
+          .pub-credentials-box {
+            padding: 0.65rem;
+            gap: 0.35rem;
+          }
+          .pub-authors-line {
+            font-size: 0.76rem;
+            word-break: break-word;
+          }
+          .pub-journal-line {
+            font-size: 0.74rem;
+            word-break: break-word;
+          }
+          .pub-abstract-block {
+            padding: 0.65rem;
+          }
+          .pub-abstract-text {
+            font-size: 0.78rem;
+          }
+          .pub-card-footer {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0.45rem;
+            padding-top: 0.65rem;
+          }
+          .pub-footer-left-actions,
+          .pub-footer-right-actions {
+            width: 100%;
+          }
+          .btn-pub-cite,
+          .btn-pub-doi-link {
+            width: 100%;
+            justify-content: center;
+            min-height: 40px;
+            font-size: 0.76rem;
+            box-sizing: border-box;
+          }
+
+          /* Overview / AI Studio elements on mobile */
           .ai-card-header {
             flex-direction: column;
             align-items: flex-start;
@@ -2973,60 +3269,64 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 0.45rem;
+            box-sizing: border-box;
           }
           .social-draft-btn {
-            justify-content: center;
-            min-height: 40px;
-            font-size: 0.75rem;
-            padding: 0.4rem 0.6rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 0.45rem;
+            min-height: 42px;
+            font-size: 0.74rem;
+            font-weight: 600;
+            padding: 0.45rem 0.55rem;
+            width: 100%;
+            box-sizing: border-box;
+            white-space: nowrap;
+          }
+          .draft-btn-text {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-size: 0.72rem;
           }
           .btn-open-studio-pill {
             width: 100%;
             justify-content: center;
             min-height: 42px;
           }
-          .report-card-main-row {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 0.85rem;
-            padding: 1rem;
-          }
-          .report-doc-info {
-            min-width: 100%;
-          }
-          .report-card-actions {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            gap: 0.45rem;
-          }
-          .btn-rep-toggle-stream,
-          .btn-rep-download-primary {
-            width: 100%;
-            justify-content: center;
-            min-height: 42px;
-          }
-          .pub-card-top {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 0.65rem;
-          }
-          .pub-card-actions {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            gap: 0.45rem;
-          }
-          .btn-pub-cite, .btn-pub-doi-link {
-            width: 100%;
-            justify-content: center;
-            min-height: 40px;
-          }
         }
 
         @media (max-width: 480px) {
-          .draft-buttons-group {
+          .detail-meta-grid {
+            gap: 0.4rem;
+          }
+          .meta-card {
+            padding: 0.55rem 0.65rem;
+          }
+          .meta-card-label {
+            font-size: 0.64rem;
+          }
+          .meta-card-val {
+            font-size: 0.76rem;
+          }
+          .report-card-actions {
             grid-template-columns: 1fr;
+          }
+          .draft-buttons-group {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.4rem;
+          }
+          .social-draft-btn {
+            padding: 0.4rem 0.45rem;
+            min-height: 40px;
+          }
+          .social-icon-wrapper {
+            width: 20px;
+            height: 20px;
+          }
+          .draft-btn-text {
+            font-size: 0.7rem;
           }
         }
       `}</style>
