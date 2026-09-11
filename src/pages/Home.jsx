@@ -49,38 +49,63 @@ export default function Home({ navigateTo, onSelectExpedition }) {
         <div className="container telemetry-inner">
           <div className="telemetry-label" onClick={() => navigateTo('map')} title="Open Live Polar Map" role="button" tabIndex={0}>
             <Radio size={14} className="telemetry-pulse-icon" />
-            <span>LIVE POLAR TELEMETRY</span>
+            <span className="telemetry-label-text">LIVE POLAR TELEMETRY</span>
           </div>
 
           <div className="telemetry-divider"></div>
 
-          <div className="telemetry-stations">
-            {stations.slice(0, 4).map((st) => (
-              <div 
-                key={st.id} 
-                className="station-ticker-item"
-                onClick={() => navigateTo('map')}
-                title={`View ${st.name} live telemetry on 3D map`}
-                role="button"
-                tabIndex={0}
-              >
-                <span className="st-name">{st.name.replace(' Station', '')}</span>
-                <span className="st-temp">
-                  <ThermometerSnowflake size={13} />
-                  <span>{st.temp}</span>
-                </span>
-                <span className="st-dot">•</span>
-                <span className="st-wind">
-                  <Wind size={13} />
-                  <span>{st.wind}</span>
-                </span>
+          <div className="telemetry-stations-wrapper">
+            <div className="telemetry-stations-track">
+              {/* Primary list */}
+              <div className="telemetry-stations-group">
+                {stations.slice(0, 4).map((st) => (
+                  <div 
+                    key={`st-main-${st.id}`} 
+                    className="station-ticker-item"
+                    onClick={() => navigateTo('map')}
+                    title={`View ${st.name} live telemetry on 3D map`}
+                    role="button"
+                    tabIndex={0}
+                  >
+                    <span className="st-name">{st.name.replace(' Station', '')}</span>
+                    <span className="st-temp">
+                      <ThermometerSnowflake size={13} />
+                      <span>{st.temp}</span>
+                    </span>
+                    <span className="st-dot">•</span>
+                    <span className="st-wind">
+                      <Wind size={13} />
+                      <span>{st.wind}</span>
+                    </span>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
 
-          <div className="telemetry-action" onClick={() => navigateTo('map')} role="button" tabIndex={0} title="View all bases on 3D map">
-            <span>3D Map</span>
-            <ArrowRight size={13} />
+              {/* Duplicate list for continuous mobile marquee loop */}
+              <div className="telemetry-stations-group telemetry-stations-duplicate" aria-hidden="true">
+                {stations.slice(0, 4).map((st) => (
+                  <div 
+                    key={`st-dup-${st.id}`} 
+                    className="station-ticker-item"
+                    onClick={() => navigateTo('map')}
+                    title={`View ${st.name} live telemetry on 3D map`}
+                    role="button"
+                    tabIndex={0}
+                  >
+                    <span className="st-name">{st.name.replace(' Station', '')}</span>
+                    <span className="st-temp">
+                      <ThermometerSnowflake size={13} />
+                      <span>{st.temp}</span>
+                    </span>
+                    <span className="st-dot">•</span>
+                    <span className="st-wind">
+                      <Wind size={13} />
+                      <span>{st.wind}</span>
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -527,20 +552,15 @@ export default function Home({ navigateTo, onSelectExpedition }) {
           padding: 0.5rem 0;
           font-size: 0.84rem;
           margin-bottom: calc(-1 * var(--home-section-gap));
+          position: relative;
+          z-index: 10;
         }
 
         .telemetry-inner {
           display: flex;
           align-items: center;
           gap: 1.15rem;
-          overflow-x: auto;
-          white-space: nowrap;
-          scrollbar-width: none;
-          -ms-overflow-style: none;
-        }
-
-        .telemetry-inner::-webkit-scrollbar {
-          display: none;
+          width: 100%;
         }
 
         .telemetry-label {
@@ -553,6 +573,7 @@ export default function Home({ navigateTo, onSelectExpedition }) {
           letter-spacing: 0.04em;
           flex-shrink: 0;
           cursor: pointer;
+          white-space: nowrap;
         }
 
         .telemetry-pulse-icon {
@@ -566,11 +587,29 @@ export default function Home({ navigateTo, onSelectExpedition }) {
           flex-shrink: 0;
         }
 
-        .telemetry-stations {
+        .telemetry-stations-wrapper {
+          display: flex;
+          align-items: center;
+          flex: 1;
+          min-width: 0;
+          overflow: hidden;
+        }
+
+        .telemetry-stations-track {
+          display: flex;
+          align-items: center;
+          width: 100%;
+        }
+
+        .telemetry-stations-group {
           display: flex;
           align-items: center;
           gap: 0.85rem;
-          flex: 1;
+          flex-shrink: 0;
+        }
+
+        .telemetry-stations-duplicate {
+          display: none;
         }
 
         .station-ticker-item {
@@ -581,6 +620,7 @@ export default function Home({ navigateTo, onSelectExpedition }) {
           border-radius: 6px;
           cursor: pointer;
           transition: background 0.15s ease, transform 0.15s ease;
+          white-space: nowrap;
         }
 
         .station-ticker-item:hover {
@@ -615,24 +655,6 @@ export default function Home({ navigateTo, onSelectExpedition }) {
           align-items: center;
           gap: 0.2rem;
           font-size: 0.80rem;
-        }
-
-        .telemetry-action {
-          display: inline-flex;
-          align-items: center;
-          gap: 0.3rem;
-          font-size: 0.78rem;
-          font-weight: 700;
-          color: #0369a1;
-          cursor: pointer;
-          margin-left: auto;
-          flex-shrink: 0;
-          transition: opacity 0.15s ease, transform 0.15s ease;
-        }
-
-        .telemetry-action:hover {
-          opacity: 0.8;
-          transform: translateX(2px);
         }
 
         /* Hero Section */
@@ -1803,7 +1825,77 @@ export default function Home({ navigateTo, onSelectExpedition }) {
           }
         }
 
+        @keyframes telemetryMarqueeRoll {
+          0% {
+            transform: translate3d(0, 0, 0);
+          }
+          100% {
+            transform: translate3d(-50%, 0, 0);
+          }
+        }
+
         @media (max-width: 768px) {
+          .telemetry-bar {
+            overflow: hidden;
+            padding: 0.4rem 0;
+          }
+
+          .telemetry-inner {
+            gap: 0.65rem;
+            padding: 0 0.75rem;
+            overflow: hidden;
+            position: relative;
+          }
+
+          .telemetry-label {
+            font-size: 0.72rem;
+            z-index: 3;
+            background: #dfe4ea;
+            box-shadow: 4px 0 8px -2px #dfe4ea;
+            padding-right: 0.2rem;
+          }
+
+          .telemetry-divider {
+            z-index: 3;
+          }
+
+          .telemetry-stations-wrapper {
+            position: relative;
+            overflow: hidden;
+            mask-image: linear-gradient(to right, transparent 0%, black 14px, black calc(100% - 14px), transparent 100%);
+            -webkit-mask-image: linear-gradient(to right, transparent 0%, black 14px, black calc(100% - 14px), transparent 100%);
+          }
+
+          .telemetry-stations-track {
+            display: flex;
+            width: max-content;
+            animation: telemetryMarqueeRoll 20s linear infinite;
+            will-change: transform;
+          }
+
+          .telemetry-stations-track:hover,
+          .telemetry-stations-track:active {
+            animation-play-state: paused;
+          }
+
+          .telemetry-stations-group {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding-right: 0.75rem;
+            flex-shrink: 0;
+          }
+
+          .telemetry-stations-duplicate {
+            display: flex;
+          }
+
+          .station-ticker-item {
+            padding: 0.18rem 0.45rem;
+            background: rgba(255, 255, 255, 0.45);
+            border: 1px solid rgba(203, 213, 225, 0.6);
+          }
+
           .stations-hub-header {
             flex-direction: column;
             align-items: flex-start;
@@ -1830,10 +1922,10 @@ export default function Home({ navigateTo, onSelectExpedition }) {
           }
           .telemetry-bar {
             margin-bottom: calc(-1 * var(--home-section-gap));
-            padding: 0.45rem 0;
+            padding: 0.4rem 0;
           }
           .telemetry-inner {
-            gap: 0.85rem;
+            gap: 0.5rem;
           }
           .hero-section {
             padding: 2rem 0 1.5rem;
