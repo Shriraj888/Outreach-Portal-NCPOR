@@ -456,7 +456,8 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
           </div>
         </div>
 
-        <div className="table-responsive">
+        {/* Desktop Table View */}
+        <div className="table-responsive desktop-table-view">
           <table className="admin-table">
             <thead>
               <tr>
@@ -618,6 +619,150 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
               )}
             </tbody>
           </table>
+        </div>
+
+        {/* Mobile Responsive Cards View */}
+        <div className="admin-mobile-cards-view">
+          {filteredArchives.length > 0 ? (
+            filteredArchives.map((item) => (
+              <div className="admin-mobile-card" key={`mob-${item.type}-${item.id}`}>
+                {/* Header: Thumbnail + Title + Type + Region/Year */}
+                <div className="mobile-card-header">
+                  <img src={item.heroImage} alt={item.title} className="mobile-card-thumb" />
+                  <div className="mobile-card-info">
+                    <div className="mobile-card-type-tags">
+                      <span className={`pill-type ${item.type}`}>
+                        {getTypeIcon(item.type)}
+                        <span>{item.typeLabel}</span>
+                      </span>
+                      <span className={`badge ${getRegionClass(item.region)}`}>{item.region}</span>
+                      {item.year && <span className="mobile-card-year">{item.year}</span>}
+                    </div>
+                    <h4 className="mobile-card-title">{item.title}</h4>
+                    {item.metaInfo && <div className="mobile-card-meta">{item.metaInfo}</div>}
+                  </div>
+                </div>
+
+                {/* Details / Lead Scientist */}
+                {item.authorOrChief && (
+                  <div className="mobile-card-author-row">
+                    <span className="mobile-card-lbl">Lead / Params:</span>
+                    <span className="mobile-card-val">{item.authorOrChief}</span>
+                  </div>
+                )}
+
+                {/* Status Row */}
+                <div className="mobile-card-status-row">
+                  <div className="mobile-status-item">
+                    {item.aiReady ? (
+                      <div className="ai-status-badge ready" title="AI summary, social pack, and alt text generated">
+                        <Sparkles size={12} />
+                        <span>Ready (AI Pack)</span>
+                      </div>
+                    ) : (
+                      <div className="ai-status-badge pending" title="Needs AI generation">
+                        <AlertCircle size={12} />
+                        <span>Pending AI</span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="mobile-status-item">
+                    <button 
+                      className={`status-toggle-btn ${item.status}`}
+                      onClick={() => toggleStatus(item)}
+                      title="Click to toggle status"
+                    >
+                      {item.status === 'published' ? (
+                        <>
+                          <CheckCircle2 size={12} />
+                          <span>Published</span>
+                        </>
+                      ) : (
+                        <>
+                          <Clock size={12} />
+                          <span>Draft Review</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Actions Row */}
+                <div className="mobile-card-actions">
+                  <button 
+                    className="btn-action ai"
+                    onClick={() => navigateTo(`admin-generate-${item.id}`)}
+                    title="Open AI Studio"
+                  >
+                    <Sparkles size={13} />
+                    <span>AI Studio</span>
+                  </button>
+
+                  <button 
+                    className="btn-action selective-ai"
+                    onClick={() => navigateTo(`admin-selective-ai-${item.id}`)}
+                    title="Selective Chunk AI"
+                  >
+                    <Layers size={13} />
+                    <span>Chunk AI</span>
+                  </button>
+
+                  <div className="mobile-card-icon-actions">
+                    {item.type === 'report' ? (
+                      <button 
+                        className="btn-action icon-btn view"
+                        onClick={() => onSelectExpedition(item.id)}
+                        title="View Public Expedition"
+                      >
+                        <Eye size={14} />
+                      </button>
+                    ) : (
+                      <button 
+                        className="btn-action icon-btn view"
+                        onClick={() => navigateTo(item.type === 'dataset' || item.type === 'publication' ? 'publications' : 'home')}
+                        title="View on Portal"
+                      >
+                        <Eye size={14} />
+                      </button>
+                    )}
+
+                    <button 
+                      className="btn-action icon-btn edit"
+                      onClick={() => navigateTo(`admin-edit-${item.id}`)}
+                      title="Edit Asset"
+                    >
+                      <Edit size={14} />
+                    </button>
+
+                    <button 
+                      className="btn-action icon-btn delete"
+                      onClick={() => handleDelete(item)}
+                      title="Delete Asset"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="empty-table-content" style={{ padding: '2rem 1rem' }}>
+              <Search size={24} className="empty-table-icon" />
+              <p>No archived records match your filter criteria.</p>
+              <button 
+                className="btn-table-reset"
+                onClick={() => {
+                  setSearchTable('');
+                  setFilterRegion('All');
+                  setFilterStatus('All');
+                  setActiveTab('all');
+                }}
+              >
+                Reset Filters
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
@@ -1307,6 +1452,151 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
           color: #b91c1c;
         }
 
+        .desktop-table-view {
+          display: block;
+        }
+
+        .admin-mobile-cards-view {
+          display: none;
+        }
+
+        .admin-mobile-card {
+          background: #ffffff;
+          border: 1px solid #e2e8f0;
+          border-radius: var(--radius-md);
+          padding: 0.85rem;
+          display: flex;
+          flex-direction: column;
+          gap: 0.65rem;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+          transition: all 0.15s ease;
+        }
+
+        .admin-mobile-card:hover {
+          border-color: #cbd5e1;
+          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.07);
+        }
+
+        .mobile-card-header {
+          display: flex;
+          gap: 0.75rem;
+          align-items: flex-start;
+        }
+
+        .mobile-card-thumb {
+          width: 52px;
+          height: 52px;
+          border-radius: 8px;
+          object-fit: cover;
+          flex-shrink: 0;
+          background: #f1f5f9;
+          border: 1px solid #e2e8f0;
+        }
+
+        .mobile-card-info {
+          display: flex;
+          flex-direction: column;
+          gap: 0.25rem;
+          flex: 1;
+          min-width: 0;
+        }
+
+        .mobile-card-type-tags {
+          display: flex;
+          align-items: center;
+          gap: 0.35rem;
+          flex-wrap: wrap;
+        }
+
+        .mobile-card-year {
+          font-size: 0.72rem;
+          color: #64748b;
+          font-weight: 600;
+          background: #f1f5f9;
+          padding: 1px 6px;
+          border-radius: 4px;
+        }
+
+        .mobile-card-title {
+          font-size: 0.88rem;
+          font-weight: 700;
+          color: var(--navy);
+          line-height: 1.3;
+          margin: 0;
+          word-break: break-word;
+        }
+
+        .mobile-card-meta {
+          font-size: 0.74rem;
+          color: #64748b;
+        }
+
+        .mobile-card-author-row {
+          display: flex;
+          align-items: center;
+          gap: 0.4rem;
+          font-size: 0.75rem;
+          background: #f8fafc;
+          padding: 0.35rem 0.6rem;
+          border-radius: 6px;
+          border: 1px solid #f1f5f9;
+          word-break: break-word;
+        }
+
+        .mobile-card-lbl {
+          color: #64748b;
+          font-weight: 500;
+          flex-shrink: 0;
+        }
+
+        .mobile-card-val {
+          color: var(--navy);
+          font-weight: 600;
+        }
+
+        .mobile-card-status-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 0.5rem;
+          flex-wrap: wrap;
+          padding-top: 0.15rem;
+        }
+
+        .mobile-card-actions {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 0.4rem;
+          padding-top: 0.5rem;
+          border-top: 1px solid #f1f5f9;
+          flex-wrap: wrap;
+        }
+
+        .mobile-card-actions .btn-action.ai,
+        .mobile-card-actions .btn-action.selective-ai {
+          flex: 1;
+          justify-content: center;
+          min-height: 34px;
+          padding: 0.35rem 0.5rem;
+          font-size: 0.74rem;
+        }
+
+        .mobile-card-icon-actions {
+          display: flex;
+          align-items: center;
+          gap: 0.3rem;
+        }
+
+        .mobile-card-icon-actions .btn-action.icon-btn {
+          width: 34px;
+          height: 34px;
+          padding: 0;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+        }
+
         .table-empty-row {
           text-align: center;
           padding: 3rem 1rem !important;
@@ -1337,39 +1627,6 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
 
         .btn-table-reset:hover {
           background: #1e293b;
-        }
-
-        .btn-action.view {
-          background: #f8fafc;
-          border: 1px solid var(--border-subtle);
-          color: var(--text-secondary);
-        }
-
-        .btn-action.view:hover {
-          background: #f1f5f9;
-          color: var(--navy);
-        }
-
-        .btn-action.edit {
-          background: #e0f2fe;
-          color: #0369a1;
-          border-color: #bae6fd;
-        }
-
-        .btn-action.edit:hover {
-          background: #bae6fd;
-          color: #0284c7;
-        }
-
-        .btn-action.delete {
-          background: #fef2f2;
-          color: #dc2626;
-          border-color: #fecaca;
-        }
-
-        .btn-action.delete:hover {
-          background: #fee2e2;
-          color: #b91c1c;
         }
 
         .text-right {
@@ -1469,8 +1726,14 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
           .table-select {
             width: 100%;
           }
-          .admin-table {
-            min-width: 750px;
+          .desktop-table-view {
+            display: none !important;
+          }
+          .admin-mobile-cards-view {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            width: 100%;
           }
         }
 
@@ -1536,6 +1799,16 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
           .kpi-lbl {
             font-size: 0.64rem;
             line-height: 1.2;
+          }
+          .mobile-card-actions .btn-action.ai,
+          .mobile-card-actions .btn-action.selective-ai {
+            font-size: 0.7rem;
+            padding: 0.35rem 0.35rem;
+            gap: 0.25rem;
+          }
+          .mobile-card-icon-actions .btn-action.icon-btn {
+            width: 30px;
+            height: 30px;
           }
         }
       `}</style>
