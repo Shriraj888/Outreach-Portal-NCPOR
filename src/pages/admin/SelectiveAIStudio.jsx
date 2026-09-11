@@ -18,7 +18,6 @@ import {
   SlidersHorizontal, 
   Info, 
   Check, 
-  BookOpen,
   Image as ImageIcon,
   Video,
   Play,
@@ -28,7 +27,7 @@ import {
   Share2,
   Volume2
 } from 'lucide-react';
-import { TwitterIcon, InstagramIcon, LinkedinIcon } from '../../components/SocialIcons';
+import SocialCardPreview from '../../components/SocialCardPreview';
 
 export default function SelectiveAIStudio({ initialAssetId, onBack }) {
   const { 
@@ -129,7 +128,6 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
 
   // Main output category tabs: 'article' | 'image' | 'video' | 'socials' | 'summary' | 'inspector'
   const [outputTab, setOutputTab] = useState('article');
-  const [socialSubTab, setSocialSubTab] = useState('twitter'); // 'twitter' | 'instagram' | 'linkedin' | 'factCards'
 
   // Generated package state
   const [generatedResult, setGeneratedResult] = useState(null);
@@ -865,121 +863,45 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
                     </div>
                   )}
 
-                  {/* TAB 4: SOCIAL MEDIA PACK */}
+                  {/* TAB 4: SOCIAL MEDIA PACK & INTERACTIVE FEED MOCKUP */}
                   {outputTab === 'socials' && (
                     <div className="output-tab-content">
-                      <div className="social-subtabs-row">
-                        <button 
-                          type="button" 
-                          className={`social-subtab ${socialSubTab === 'twitter' ? 'active' : ''}`}
-                          onClick={() => setSocialSubTab('twitter')}
-                        >
-                          <TwitterIcon size={12} />
-                          <span>X / Twitter</span>
-                        </button>
-                        <button 
-                          type="button" 
-                          className={`social-subtab ${socialSubTab === 'instagram' ? 'active' : ''}`}
-                          onClick={() => setSocialSubTab('instagram')}
-                        >
-                          <InstagramIcon size={12} />
-                          <span>Instagram</span>
-                        </button>
-                        <button 
-                          type="button" 
-                          className={`social-subtab ${socialSubTab === 'linkedin' ? 'active' : ''}`}
-                          onClick={() => setSocialSubTab('linkedin')}
-                        >
-                          <LinkedinIcon size={12} />
-                          <span>LinkedIn</span>
-                        </button>
-                        <button 
-                          type="button" 
-                          className={`social-subtab ${socialSubTab === 'factCards' ? 'active' : ''}`}
-                          onClick={() => setSocialSubTab('factCards')}
-                        >
-                          <BookOpen size={12} />
-                          <span>Fact Cards ({draftFactCards.length})</span>
-                        </button>
-                      </div>
+                      <SocialCardPreview 
+                        aiContent={{
+                          socialCaptions: {
+                            twitter: draftTwitter,
+                            instagram: draftInstagram,
+                            linkedin: draftLinkedin,
+                            facebook: `❄️ Scientific outreach bulletin from ${currentAsset.title || 'Polar Expedition'} in ${currentAsset.region || 'Polar Region'}.\n\n🔬 Key Highlights:\n${draftFactCards.map(f => `• ${f}`).join('\n')}\n\n👉 Follow NCPOR for open polar data access.\n\n#NCPOR #MoES #PolarScience #IndiaInAntarctica`,
+                            blog: `# ${draftArticle?.title || currentAsset.title}\n\n${draftArticle?.lead || ''}\n\n${draftArticle?.sections?.map(s => `### ${s.heading}\n\n${s.body}`).join('\n\n') || ''}\n\n### Climate Impact & Subcontinent Teleconnections\n${draftArticle?.climateImpact || ''}`,
+                            article: `PRESS RELEASE / NATIONAL SCIENCE DISPATCH\n\nDATELINE: GOA / NEW DELHI — MINISTRY OF EARTH SCIENCES, GOVT. OF INDIA\n\nSUBJECT: NCPOR Issues Scientific Report on ${currentAsset.title || 'Polar Expedition'}\n\n${draftArticle?.lead || ''}\n\nKey Highlights:\n${draftFactCards.map((f, i) => `${i + 1}. ${f}`).join('\n')}\n\nThe complete archive is publicly accessible on the NCPOR Outreach Portal.`
+                          }
+                        }}
+                        expeditionTitle={currentAsset.title}
+                        region={currentAsset.region}
+                        mediaUrl={draftImageGen?.imageUrl || currentAsset.heroImage || 'https://images.unsplash.com/photo-1517411032315-54ef2cb783bb?auto=format&fit=crop&w=800&q=80'}
+                        mediaList={[
+                          {
+                            url: draftImageGen?.imageUrl || currentAsset.heroImage,
+                            caption: draftImageGen?.subject || currentAsset.title,
+                            altText: draftImageGen?.prompt || currentAsset.title
+                          }
+                        ]}
+                        defaultViewMode="mock"
+                        defaultPlatform="linkedin"
+                      />
 
-                      {socialSubTab === 'twitter' && (
-                        <div>
+                      {draftFactCards.length > 0 && (
+                        <div style={{ marginTop: '1.5rem' }}>
                           <div className="content-meta-bar">
-                            <span className="tag-pill">X / Twitter Thread Hook ({draftTwitter.length} chars)</span>
-                            <button 
-                              type="button" 
-                              className="btn-copy"
-                              onClick={() => handleCopy(draftTwitter, 'twitter')}
-                            >
-                              {copiedKey === 'twitter' ? <Check size={13} /> : <Copy size={13} />}
-                              <span>{copiedKey === 'twitter' ? 'Copied Tweet' : 'Copy Tweet'}</span>
-                            </button>
-                          </div>
-                          <textarea 
-                            className="output-textarea"
-                            rows={6}
-                            value={draftTwitter}
-                            onChange={(e) => setDraftTwitter(e.target.value)}
-                          />
-                        </div>
-                      )}
-
-                      {socialSubTab === 'instagram' && (
-                        <div>
-                          <div className="content-meta-bar">
-                            <span className="tag-pill">Instagram Narrative & Hashtags</span>
-                            <button 
-                              type="button" 
-                              className="btn-copy"
-                              onClick={() => handleCopy(draftInstagram, 'instagram')}
-                            >
-                              {copiedKey === 'instagram' ? <Check size={13} /> : <Copy size={13} />}
-                              <span>{copiedKey === 'instagram' ? 'Copied Post' : 'Copy Post'}</span>
-                            </button>
-                          </div>
-                          <textarea 
-                            className="output-textarea"
-                            rows={10}
-                            value={draftInstagram}
-                            onChange={(e) => setDraftInstagram(e.target.value)}
-                          />
-                        </div>
-                      )}
-
-                      {socialSubTab === 'linkedin' && (
-                        <div>
-                          <div className="content-meta-bar">
-                            <span className="tag-pill">LinkedIn Professional Press Announcement</span>
-                            <button 
-                              type="button" 
-                              className="btn-copy"
-                              onClick={() => handleCopy(draftLinkedin, 'linkedin')}
-                            >
-                              {copiedKey === 'linkedin' ? <Check size={13} /> : <Copy size={13} />}
-                              <span>{copiedKey === 'linkedin' ? 'Copied Announcement' : 'Copy Announcement'}</span>
-                            </button>
-                          </div>
-                          <textarea 
-                            className="output-textarea"
-                            rows={11}
-                            value={draftLinkedin}
-                            onChange={(e) => setDraftLinkedin(e.target.value)}
-                          />
-                        </div>
-                      )}
-
-                      {socialSubTab === 'factCards' && (
-                        <div>
-                          <div className="content-meta-bar">
-                            <span className="tag-pill">Key Takeaway Fact Cards</span>
+                            <span className="tag-pill">Polar Fact Cards Series ({draftFactCards.length})</span>
                             <button 
                               type="button" 
                               className="btn-copy"
                               onClick={() => handleCopy(draftFactCards.join('\n\n'), 'facts')}
                             >
                               {copiedKey === 'facts' ? <Check size={13} /> : <Copy size={13} />}
-                              <span>{copiedKey === 'facts' ? 'Copied All' : 'Copy All'}</span>
+                              <span>{copiedKey === 'facts' ? 'Copied Fact Cards' : 'Copy Fact Cards'}</span>
                             </button>
                           </div>
 

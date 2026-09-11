@@ -1,13 +1,13 @@
 import { useState } from 'react';
-import { 
-  Copy, 
+import {
+  Copy,
   Check,
-  Sparkles, 
-  Share2, 
-  MessageCircle, 
-  Heart, 
-  Repeat, 
-  Bookmark, 
+  Sparkles,
+  Share2,
+  MessageCircle,
+  Heart,
+  Repeat,
+  Bookmark,
   ThumbsUp,
   Download,
   ExternalLink,
@@ -24,23 +24,50 @@ import {
 } from 'lucide-react';
 import { TwitterIcon, InstagramIcon, LinkedinIcon, FacebookIcon, BlogIcon, ArticleIcon } from './SocialIcons';
 
-export default function SocialCardPreview({ aiContent, expeditionTitle, region, mediaUrl, mediaList = [] }) {
-  const [activePlatform, setActivePlatform] = useState('twitter');
-  const [viewMode, setViewMode] = useState('grid'); // 'grid' (all side-by-side) or 'mock' (single platform mock)
-  const [selectedMediaUrl, setSelectedMediaUrl] = useState(mediaUrl || (mediaList[0]?.url) || '');
+export default function SocialCardPreview({
+  aiContent,
+  expeditionTitle,
+  region,
+  mediaUrl,
+  mediaList = [],
+  defaultViewMode = 'mock',
+  defaultPlatform = 'linkedin'
+}) {
+  const [activePlatform, setActivePlatform] = useState(defaultPlatform || 'linkedin');
+  const [viewMode, setViewMode] = useState(defaultViewMode || 'mock'); // 'mock' (Interactive Feed Mockup) or 'grid'
+  const [customCaptions, setCustomCaptions] = useState({});
+  const [selectedMediaOverride, setSelectedMediaOverride] = useState(null);
   const [copiedKey, setCopiedKey] = useState(null);
   const [editingPlatform, setEditingPlatform] = useState(null);
 
-  const initialCaptions = {
-    twitter: aiContent?.socialCaptions?.twitter || "❄️ Setting sail for scientific discovery! The Indian Scientific Expedition #NCPOR #MoES has deployed critical cryosphere & climate monitoring assets. 🇮🇳🇦🇶 #PolarScience",
-    instagram: aiContent?.socialCaptions?.instagram || "Into the White Wilderness! 🇦🇶✨\n\nNCPOR researchers are advancing frontline polar science—from autonomous weather buoys to ice-core climate archives!\n\n#Antarctica #NCPOR #PolarExploration #ClimateScience #IndiaInAntarctica",
-    linkedin: aiContent?.socialCaptions?.linkedin || "The National Centre for Polar and Ocean Research (NCPOR), Ministry of Earth Sciences, presents scientific updates on polar expedition operations.\n\nKey Milestones:\n🔹 Autonomous cryospheric sensor arrays deployed.\n🔹 Paleoclimate data records logged.\n🔹 Zero-emission station energy systems tested.",
-    facebook: aiContent?.socialCaptions?.facebook || `❄️ Exploring the Ends of the Earth! 🌏 Discover how Indian scientists with the National Centre for Polar and Ocean Research (NCPOR) conducted vital research during the ${expeditionTitle || 'mission'} in ${region || 'Polar regions'}.\n\n🔬 Highlights of the Mission:\n• In-situ baseline recording under extreme conditions\n• Deployment of real-time telemetry sensor arrays\n• Uncovering critical links between polar weather and the Indian monsoon\n\n👉 Share this to celebrate Indian science! 🇮🇳\n\n#NCPOR #MoES #PolarScience #IndiaInAntarctica`,
-    blog: aiContent?.socialCaptions?.blog || `## Exploring the Frontiers of Polar Science: Insights from ${expeditionTitle || 'Polar Mission'}\n\n**By NCPOR Science Outreach Division**\n\nPolar regions may feel a world away, but the groundbreaking work conducted during **${expeditionTitle || 'the expedition'}** in ${region || 'the polar frontier'} directly influences our global climate and the Indian monsoon system.\n\n### Key Mission Milestones\n- **In-situ Cryospheric Probing**: High-resolution ice profiling across polar margins.\n- **Atmospheric Physics**: Continuous baseline monitoring of polar air masses.\n- **Green Hybrid Power Integration**: Reducing fuel dependency in sub-zero environments.\n\n### Why This Matters for India\nWhat happens at the poles drives deep oceanic and atmospheric teleconnections. By deploying cutting-edge instrumentation and retrieving unblemished climate records, Indian researchers are safeguarding our future and cementing India's leadership in the Antarctic Treaty System.\n\n*Explore open datasets and reports on the NCPOR Portal.*`,
-    article: aiContent?.socialCaptions?.article || `PRESS RELEASE / NATIONAL SCIENCE DISPATCH\n\nDATELINE: GOA / NEW DELHI — MINISTRY OF EARTH SCIENCES, GOVT. OF INDIA\n\nSUBJECT: NCPOR Issues Scientific Report on ${expeditionTitle || 'Polar Expedition'}\n\nThe National Centre for Polar and Ocean Research (NCPOR), Ministry of Earth Sciences, announces the successful archival and validation of technical logs from ${expeditionTitle || 'the expedition'} in ${region || 'the polar region'}.\n\nKey Achievements:\n1. Recovery of benchmark scientific logs from extreme polar terrain.\n2. Deployment of autonomous sensor buoys with satellite links.\n3. Validation of cold-tolerant renewable microgrids.\n\nThe complete archive, comprising peer-reviewed papers, open datasets, and outreach multimedia, is publicly accessible on the NCPOR Outreach Portal.`
+  const defaultCaptions = {
+    twitter: "❄️ Setting sail for scientific discovery! The Indian Scientific Expedition #NCPOR #MoES has deployed critical cryosphere & climate monitoring assets. 🇮🇳🇦🇶 #PolarScience",
+    instagram: "Into the White Wilderness! 🇦🇶✨\n\nNCPOR researchers are advancing frontline polar science—from autonomous weather buoys to ice-core climate archives!\n\n#Antarctica #NCPOR #PolarExploration #ClimateScience #IndiaInAntarctica",
+    linkedin: "The National Centre for Polar and Ocean Research (NCPOR), Ministry of Earth Sciences, presents scientific updates on polar expedition operations.\n\nKey Milestones:\n🔹 Autonomous cryospheric sensor arrays deployed.\n🔹 Paleoclimate data records logged.\n🔹 Zero-emission station energy systems tested.",
+    facebook: `❄️ Exploring the Ends of the Earth! 🌏 Discover how Indian scientists with the National Centre for Polar and Ocean Research (NCPOR) conducted vital research during the ${expeditionTitle || 'mission'} in ${region || 'Polar regions'}.\n\n🔬 Highlights of the Mission:\n• In-situ baseline recording under extreme conditions\n• Deployment of real-time telemetry sensor arrays\n• Uncovering critical links between polar weather and the Indian monsoon\n\n👉 Share this to celebrate Indian science! 🇮🇳\n\n#NCPOR #MoES #PolarScience #IndiaInAntarctica`,
+    blog: `## Exploring the Frontiers of Polar Science: Insights from ${expeditionTitle || 'Polar Mission'}\n\n**By NCPOR Science Outreach Division**\n\nPolar regions may feel a world away, but the groundbreaking work conducted during **${expeditionTitle || 'the expedition'}** in ${region || 'the polar frontier'} directly influences our global climate and the Indian monsoon system.\n\n### Key Mission Milestones\n- **In-situ Cryospheric Probing**: High-resolution ice profiling across polar margins.\n- **Atmospheric Physics**: Continuous baseline monitoring of polar air masses.\n- **Green Hybrid Power Integration**: Reducing fuel dependency in sub-zero environments.\n\n### Why This Matters for India\nWhat happens at the poles drives deep oceanic and atmospheric teleconnections. By deploying cutting-edge instrumentation and retrieving unblemished climate records, Indian researchers are safeguarding our future and cementing India's leadership in the Antarctic Treaty System.\n\n*Explore open datasets and reports on the NCPOR Portal.*`,
+    article: `PRESS RELEASE / NATIONAL SCIENCE DISPATCH\n\nDATELINE: GOA / NEW DELHI — MINISTRY OF EARTH SCIENCES, GOVT. OF INDIA\n\nSUBJECT: NCPOR Issues Scientific Report on ${expeditionTitle || 'Polar Expedition'}\n\nThe National Centre for Polar and Ocean Research (NCPOR), Ministry of Earth Sciences, announces the successful archival and validation of technical logs from ${expeditionTitle || 'the expedition'} in ${region || 'the polar region'}.\n\nKey Achievements:\n1. Recovery of benchmark scientific logs from extreme polar terrain.\n2. Deployment of autonomous sensor buoys with satellite links.\n3. Validation of cold-tolerant renewable microgrids.\n\nThe complete archive, comprising peer-reviewed papers, open datasets, and outreach multimedia, is publicly accessible on the NCPOR Outreach Portal.`
   };
 
-  const [captions, setCaptions] = useState(initialCaptions);
+  const captions = {
+    ...defaultCaptions,
+    ...(aiContent?.socialCaptions || {}),
+    ...customCaptions
+  };
+
+  const selectedMediaUrl = selectedMediaOverride ?? mediaUrl ?? (mediaList[0]?.url) ?? '';
+
+  const setCaptions = (updater) => {
+    if (typeof updater === 'function') {
+      setCustomCaptions(prev => updater({ ...captions, ...prev }));
+    } else {
+      setCustomCaptions(prev => ({ ...prev, ...updater }));
+    }
+  };
+
+  const setSelectedMediaUrl = (url) => {
+    setSelectedMediaOverride(url);
+  };
 
   if (!aiContent || !aiContent.socialCaptions) {
     return (
@@ -122,10 +149,11 @@ Caption: ${selectedMediaObj.caption || ''}
   };
 
   const handleResetCaption = (platform) => {
-    setCaptions(prev => ({
-      ...prev,
-      [platform]: initialCaptions[platform]
-    }));
+    setCustomCaptions(prev => {
+      const next = { ...prev };
+      delete next[platform];
+      return next;
+    });
     setEditingPlatform(null);
   };
 
@@ -164,7 +192,7 @@ Caption: ${selectedMediaObj.caption || ''}
         </div>
 
         <div className="exec-actions-right">
-          <button 
+          <button
             className="btn-exec-download"
             onClick={handleDownloadKit}
             title="Download Social Media & Press Kit text file"
@@ -622,11 +650,14 @@ Caption: ${selectedMediaObj.caption || ''}
             {platforms.map(p => (
               <button
                 key={p.id}
+                type="button"
                 className={`platform-btn ${p.id} ${activePlatform === p.id ? 'active' : ''}`}
                 onClick={() => setActivePlatform(p.id)}
               >
-                {p.icon}
-                <span>{p.label}</span>
+                <span className={`platform-btn-icon ${p.id}`}>
+                  {p.icon}
+                </span>
+                <span className="platform-btn-label">{p.label}</span>
                 <span className="char-badge">{p.badge}</span>
               </button>
             ))}
@@ -1378,51 +1409,90 @@ Caption: ${selectedMediaObj.caption || ''}
         }
 
         .platform-tab-bar {
-          display: flex;
+          display: grid;
+          grid-template-columns: repeat(6, 1fr);
+          gap: 0.5rem;
+          padding: 0.85rem 1.5rem;
           background: #f8fafc;
           border-bottom: 1px solid var(--border-subtle);
-          overflow-x: auto;
-          -webkit-overflow-scrolling: touch;
-          scrollbar-width: none;
-        }
-
-        .platform-tab-bar::-webkit-scrollbar {
-          display: none;
+          box-sizing: border-box;
+          width: 100%;
         }
 
         .platform-btn {
-          display: flex;
+          display: inline-flex;
+          flex-direction: row;
           align-items: center;
-          gap: 0.5rem;
-          padding: 0.85rem 1.15rem;
-          background: transparent;
-          border: none;
-          border-bottom: 2px solid transparent;
-          color: var(--text-secondary);
-          font-size: 0.82rem;
+          justify-content: flex-start;
+          gap: 0.45rem;
+          padding: 0.5rem 0.65rem;
+          background: #ffffff;
+          border: 1px solid #e2e8f0;
+          border-radius: 8px;
+          color: #334155;
+          font-size: 0.78rem;
           font-weight: 600;
           cursor: pointer;
           transition: all 0.15s ease;
-          white-space: nowrap;
+          box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+          box-sizing: border-box;
+          width: 100%;
+          min-height: 42px;
         }
 
         .platform-btn:hover {
-          color: var(--navy);
-          background: #f1f5f9;
+          background: #f8fafc;
+          border-color: #cbd5e1;
+          color: #0f172a;
+          transform: translateY(-1px);
         }
 
         .platform-btn.active {
-          color: var(--navy);
-          background: #ffffff;
-          border-bottom-color: var(--navy);
+          background: #0f172a;
+          color: #ffffff;
+          border-color: #0f172a;
+          box-shadow: 0 2px 8px rgba(15, 23, 42, 0.25);
+        }
+
+        .platform-btn-icon {
+          width: 24px;
+          height: 24px;
+          border-radius: 6px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+          background: #f1f5f9;
+          color: #334155;
+          transition: all 0.15s ease;
+        }
+
+        .platform-btn.active .platform-btn-icon {
+          background: rgba(255, 255, 255, 0.2);
+          color: #ffffff;
+        }
+
+        .platform-btn-label {
+          font-weight: 700;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
         }
 
         .char-badge {
-          font-size: 0.68rem;
-          background: #e2e8f0;
-          color: var(--text-muted);
-          padding: 1px 6px;
+          margin-left: auto;
+          font-size: 0.64rem;
+          font-weight: 600;
+          background: #f1f5f9;
+          color: #64748b;
+          padding: 0.1rem 0.35rem;
           border-radius: 4px;
+          flex-shrink: 0;
+        }
+
+        .platform-btn.active .char-badge {
+          background: rgba(255, 255, 255, 0.2);
+          color: #ffffff;
         }
 
         .platform-card-wrapper {
@@ -1732,16 +1802,24 @@ Caption: ${selectedMediaObj.caption || ''}
           .social-command-center {
             width: 100%;
             overflow-x: hidden;
+            border-radius: 12px;
           }
           .social-executive-bar {
-            padding: 1rem 0.85rem;
+            padding: 0.85rem 0.75rem;
             flex-direction: column;
             align-items: stretch;
-            gap: 0.75rem;
+            gap: 0.65rem;
           }
           .exec-left-info {
             min-width: 0;
             width: 100%;
+          }
+          .social-pack-ready-badge {
+            font-size: 0.75rem;
+            flex-wrap: wrap;
+          }
+          .exec-desc {
+            font-size: 0.78rem;
           }
           .exec-actions-right {
             width: 100%;
@@ -1749,13 +1827,14 @@ Caption: ${selectedMediaObj.caption || ''}
           .btn-exec-download {
             width: 100%;
             justify-content: center;
-            min-height: 42px;
+            min-height: 40px;
+            font-size: 0.78rem;
           }
           .social-control-strip {
-            padding: 0.75rem 0.85rem;
+            padding: 0.75rem;
             flex-direction: column;
             align-items: stretch;
-            gap: 0.75rem;
+            gap: 0.65rem;
           }
           .view-mode-selector {
             width: 100%;
@@ -1771,8 +1850,9 @@ Caption: ${selectedMediaObj.caption || ''}
             flex: 1;
             justify-content: center;
             text-align: center;
-            padding: 0.45rem 0.4rem;
+            padding: 0.5rem 0.35rem;
             font-size: 0.72rem;
+            min-height: 36px;
           }
           .media-selector-box {
             width: 100%;
@@ -1788,11 +1868,11 @@ Caption: ${selectedMediaObj.caption || ''}
           }
           .social-grid-6col {
             grid-template-columns: 1fr;
-            padding: 0.85rem 0.65rem;
-            gap: 1rem;
+            padding: 0.75rem 0.6rem;
+            gap: 0.85rem;
           }
           .channel-column-card {
-            padding: 1rem 0.75rem;
+            padding: 0.85rem 0.75rem;
             border-radius: 10px;
             width: 100%;
             box-sizing: border-box;
@@ -1809,34 +1889,154 @@ Caption: ${selectedMediaObj.caption || ''}
           }
           .main-copy-share-btns {
             width: 100%;
-            display: flex;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
             gap: 0.4rem;
           }
           .btn-channel-copy, .btn-channel-share {
-            flex: 1;
+            width: 100%;
             justify-content: center;
             min-height: 38px;
-          }
-          .platform-card-wrapper {
-            padding: 1rem 0.5rem;
+            font-size: 0.72rem;
+            padding: 0.4rem 0.5rem;
+            text-align: center;
           }
           .platform-tab-bar {
-            overflow-x: auto;
-            scrollbar-width: none;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.5rem;
+            padding: 0.65rem 0.75rem;
+            background: #f1f5f9;
+            border-bottom: 1px solid var(--border-subtle);
+            width: 100%;
+            box-sizing: border-box;
           }
           .platform-btn {
-            flex-shrink: 0;
-            padding: 0.65rem 0.85rem;
-            font-size: 0.76rem;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 0.5rem;
+            padding: 0.5rem 0.65rem;
+            font-size: 0.75rem;
+            text-align: left;
             white-space: nowrap;
+            min-height: 42px;
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            box-sizing: border-box;
+          }
+          .platform-btn.active {
+            background: #0f172a;
+            color: #ffffff;
+            border-color: #0f172a;
+            box-shadow: 0 3px 8px rgba(15, 23, 42, 0.3);
+          }
+          .platform-btn-icon {
+            width: 22px;
+            height: 22px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            background: #f1f5f9;
+            color: #1e293b;
+          }
+          .platform-btn.active .platform-btn-icon {
+            background: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+          }
+          .platform-btn-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+          .char-badge {
+            display: none;
+          }
+          .platform-card-wrapper {
+            padding: 0.85rem 0.5rem;
           }
           .mock-card {
             max-width: 100%;
+            border-radius: 10px;
+          }
+          .mock-twitter, .mock-facebook, .mock-linkedin {
+            padding: 0.85rem 0.75rem;
+          }
+          .mock-blog-full, .mock-article-full {
+            padding: 0.85rem 0.75rem;
+          }
+          .avatar-ncpor, .insta-avatar, .li-avatar, .fb-avatar {
+            width: 34px;
+            height: 34px;
+            font-size: 0.75rem;
+          }
+          .user-name-row, .fb-name-row {
+            font-size: 0.82rem;
+            gap: 0.25rem;
+          }
+          .user-handle, .post-time, .post-subtitle, .fb-time, .li-followers {
+            font-size: 0.72rem;
+          }
+          .tweet-text, .fb-text, .li-text {
+            font-size: 0.84rem;
+            line-height: 1.5;
+            word-break: break-word;
+            overflow-wrap: anywhere;
+          }
+          .mock-post-img, .fb-img, .li-img, .insta-image-box img {
+            max-height: 200px;
+          }
+          .twitter-actions, .fb-action-bar, .li-action-bar {
+            font-size: 0.72rem;
+            padding: 0.4rem 0 0;
+            gap: 0.25rem;
+          }
+          .li-action-bar span, .fb-action-bar span, .twitter-actions span {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.2rem;
+            font-size: 0.7rem;
+          }
+          .insta-top-bar, .insta-actions-row, .insta-caption-box, .insta-likes {
+            padding-left: 0.75rem;
+            padding-right: 0.75rem;
+          }
+          .insta-caption-text {
+            font-size: 0.8rem;
+            word-break: break-word;
+            overflow-wrap: anywhere;
+          }
+          .blog-full-pre, .article-full-pre {
+            font-size: 0.76rem;
+            padding: 0.75rem;
+            max-height: 260px;
+            word-break: break-word;
+            overflow-wrap: anywhere;
+          }
+          .copy-action-bar {
+            margin-top: 0.75rem;
+            padding-top: 0.65rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.4rem;
+            width: 100%;
           }
           .btn-copy-caption, .btn-direct-post-action {
             width: 100%;
             justify-content: center;
-            min-height: 40px;
+            min-height: 38px;
+            font-size: 0.74rem;
+            padding: 0.45rem 0.5rem;
+            text-align: center;
+            box-sizing: border-box;
           }
         }
       `}</style>
