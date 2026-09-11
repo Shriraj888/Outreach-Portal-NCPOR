@@ -892,32 +892,154 @@ export default function AIGenerateStudio({ expeditionId, onBack, onSelectExpedit
           .studio-social-layout, .prompt-grid, .alt-text-grid, .compare-grid {
             grid-template-columns: 1fr;
           }
+          .studio-mission-bar {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 1rem;
+          }
+          .mission-bar-right {
+            justify-content: space-between;
+          }
         }
 
         @media (max-width: 768px) {
           .ai-studio-page {
-            padding: 1.5rem 0 3.5rem;
+            padding: 1.25rem 0.75rem 4rem;
+            gap: 1.25rem;
+          }
+          .studio-top-bar {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0.75rem;
+          }
+          .studio-top-bar .btn-back {
+            align-self: flex-start;
+          }
+          .studio-title-badge {
+            font-size: clamp(0.68rem, 2.8vw, 0.78rem);
+            padding: 0.35rem 0.75rem;
+            text-align: center;
+            justify-content: center;
+          }
+          .btn-text-action {
+            align-self: flex-end;
+          }
+          .studio-mission-bar {
+            padding: 1rem 0.85rem;
+          }
+          .mission-bar-left {
+            gap: 0.75rem;
+          }
+          .mission-bar-thumb {
+            width: 46px;
+            height: 46px;
+          }
+          .mission-bar-title {
+            font-size: 1.05rem;
+          }
+          .mission-bar-right {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0.75rem;
+          }
+          .tone-selector-wrap {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.35rem;
+            width: 100%;
+          }
+          .tone-select-field {
+            width: 100%;
+          }
+          .generate-btn {
+            width: 100%;
+            justify-content: center;
+            min-height: 44px;
+          }
+          .studio-tabs-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.5rem;
+            overflow: visible;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+            width: 100%;
+          }
+          .studio-tab {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            padding: 0.6rem 0.5rem;
+            font-size: 0.76rem;
+            font-weight: 600;
+            text-align: center;
+            white-space: normal;
+            min-height: 42px;
+            width: 100%;
+            box-sizing: border-box;
+          }
+          .studio-editor-card {
+            padding: 1rem 0.85rem;
+          }
+          .editor-card-header {
+            flex-direction: column;
+            gap: 0.4rem;
+          }
+          .social-editor-pane {
+            padding: 1rem 0.85rem;
+          }
+          .alt-text-studio-card {
+            padding: 1rem 0.85rem;
           }
           .alt-item-card {
             flex-direction: column;
+            padding: 0.85rem;
           }
           .alt-item-thumb {
             width: 100%;
-            height: 160px;
+            height: 180px;
+          }
+          .compare-pane {
+            padding: 1rem 0.85rem;
+          }
+          .publish-success-alert {
+            flex-direction: column;
+            align-items: stretch;
+            padding: 1rem 0.85rem;
+          }
+          .publish-success-alert button {
+            width: 100%;
+            justify-content: center;
           }
           .studio-footer-bar {
             flex-direction: column;
             align-items: stretch;
             gap: 0.85rem;
+            padding: 1rem 0.85rem;
           }
           .footer-action-btns {
             flex-direction: column;
             width: 100%;
+            gap: 0.5rem;
           }
           .footer-action-btns button {
             width: 100%;
             justify-content: center;
-            min-height: 40px;
+            min-height: 44px;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .mission-bar-title {
+            font-size: 0.95rem;
+          }
+          .prompt-inspector-card {
+            padding: 1rem 0.75rem;
+          }
+          .prompt-code-block {
+            font-size: 0.7rem;
+            padding: 0.75rem;
           }
         }
       `}</style>

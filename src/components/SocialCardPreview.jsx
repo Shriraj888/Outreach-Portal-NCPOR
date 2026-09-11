@@ -1728,26 +1728,110 @@ Caption: ${selectedMediaObj.caption || ''}
           color: #0284c7;
         }
 
-        @media (max-width: 640px) {
-          .social-grid-6col {
-            padding: 1rem 0.75rem;
+        @media (max-width: 768px) {
+          .social-command-center {
+            width: 100%;
+            overflow-x: hidden;
           }
           .social-executive-bar {
-            padding: 1rem;
+            padding: 1rem 0.85rem;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0.75rem;
+          }
+          .exec-left-info {
+            min-width: 0;
+            width: 100%;
           }
           .exec-actions-right {
             width: 100%;
           }
-          .btn-exec-bulk, .btn-exec-download {
+          .btn-exec-download {
+            width: 100%;
+            justify-content: center;
+            min-height: 42px;
+          }
+          .social-control-strip {
+            padding: 0.75rem 0.85rem;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0.75rem;
+          }
+          .view-mode-selector {
+            width: 100%;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.35rem;
+          }
+          .view-mode-buttons {
+            width: 100%;
+            display: flex;
+          }
+          .btn-mode {
             flex: 1;
             justify-content: center;
+            text-align: center;
+            padding: 0.45rem 0.4rem;
+            font-size: 0.72rem;
+          }
+          .media-selector-box {
+            width: 100%;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.35rem;
+          }
+          .media-thumb-pills {
+            width: 100%;
+            overflow-x: auto;
+            scrollbar-width: none;
+            padding-bottom: 0.2rem;
+          }
+          .social-grid-6col {
+            grid-template-columns: 1fr;
+            padding: 0.85rem 0.65rem;
+            gap: 1rem;
+          }
+          .channel-column-card {
+            padding: 1rem 0.75rem;
+            border-radius: 10px;
+            width: 100%;
+            box-sizing: border-box;
+          }
+          .channel-actions-footer {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0.5rem;
+          }
+          .edit-reset-actions {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+          }
+          .main-copy-share-btns {
+            width: 100%;
+            display: flex;
+            gap: 0.4rem;
+          }
+          .btn-channel-copy, .btn-channel-share {
+            flex: 1;
+            justify-content: center;
+            min-height: 38px;
           }
           .platform-card-wrapper {
-            padding: 1rem 0.65rem;
+            padding: 1rem 0.5rem;
+          }
+          .platform-tab-bar {
+            overflow-x: auto;
+            scrollbar-width: none;
           }
           .platform-btn {
+            flex-shrink: 0;
             padding: 0.65rem 0.85rem;
-            font-size: 0.78rem;
+            font-size: 0.76rem;
+            white-space: nowrap;
+          }
+          .mock-card {
+            max-width: 100%;
           }
           .btn-copy-caption, .btn-direct-post-action {
             width: 100%;

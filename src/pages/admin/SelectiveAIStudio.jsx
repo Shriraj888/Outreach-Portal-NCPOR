@@ -125,6 +125,7 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
   const [audience, setAudience] = useState('general');
   const [customFocus, setCustomFocus] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
+  const [mobileTab, setMobileTab] = useState('input'); // 'input' | 'output'
 
   // Main output category tabs: 'article' | 'image' | 'video' | 'socials' | 'summary' | 'inspector'
   const [outputTab, setOutputTab] = useState('article');
@@ -197,6 +198,7 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
       setDraftImageGen(res.imageGen);
       setDraftVideoGen(res.videoGen);
       setOutputTab('article');
+      setMobileTab('output'); // auto-switch to output suite on mobile
     } catch (err) {
       console.error(err);
     } finally {
@@ -256,10 +258,36 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
         </div>
       </div>
 
+      {/* Mobile Step/View Switcher (visible only on mobile <= 900px) */}
+      <div className="mobile-studio-switcher">
+        <button 
+          type="button"
+          className={`mobile-switch-btn ${mobileTab === 'input' ? 'active' : ''}`}
+          onClick={() => setMobileTab('input')}
+        >
+          <SlidersHorizontal size={15} />
+          <span>1. Setup & Chunks</span>
+          <span className="mobile-switch-badge">{activeSelectedChunks.length}</span>
+        </button>
+        <button 
+          type="button"
+          className={`mobile-switch-btn ${mobileTab === 'output' ? 'active' : ''}`}
+          onClick={() => setMobileTab('output')}
+        >
+          <Sparkles size={15} />
+          <span>2. AI Media Suite</span>
+          {generatedResult ? (
+            <span className="mobile-switch-badge success">Ready</span>
+          ) : (
+            <span className="mobile-switch-badge pending">Draft</span>
+          )}
+        </button>
+      </div>
+
       {/* Main Studio Grid: Left Configuration & Right Output */}
       <div className="studio-layout-grid">
         {/* Left Column: Source Selection & Chunk Manager */}
-        <div className="studio-col-left">
+        <div className={`studio-col-left ${mobileTab !== 'input' ? 'mobile-hidden' : ''}`}>
           {/* 1. Source Asset Selector */}
           <div className="glass-panel studio-card">
             <div className="card-header-bar">
@@ -469,7 +497,19 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
         </div>
 
         {/* Right Column: Synthesized Media & Content Suite */}
-        <div className="studio-col-right">
+        <div className={`studio-col-right ${mobileTab !== 'output' ? 'mobile-hidden' : ''}`}>
+          {/* Mobile Back Banner to switch back to setup */}
+          <div className="mobile-only-back-banner">
+            <button 
+              type="button" 
+              className="btn-back-to-chunks"
+              onClick={() => setMobileTab('input')}
+            >
+              <SlidersHorizontal size={14} />
+              <span>← Back to Document & Chunks Configuration</span>
+            </button>
+          </div>
+
           <div className="glass-panel studio-card output-card">
             <div className="card-header-bar">
               <div className="card-title-group">
@@ -814,8 +854,7 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
 
                               <p className="scene-visual"><strong>Visual:</strong> {scene.visual}</p>
                               <p className="scene-narration"><strong>Voiceover:</strong> "{scene.narration}"</p>
-                              
-                              <div className="scene-tags-row">
+                                                 <div className="scene-tags-row">
                                 <span className="sfx-tag">🔊 {scene.soundFx}</span>
                                 <span className="kinetic-tag">💬 {scene.onScreenText.replace('\n', ' ')}</span>
                               </div>
@@ -1053,6 +1092,9 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
           display: flex;
           flex-direction: column;
           gap: 1.5rem;
+          max-width: 100%;
+          box-sizing: border-box;
+          overflow-x: hidden;
         }
 
         .page-top-bar {
@@ -1091,12 +1133,17 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
           grid-template-columns: 1fr 1.25fr;
           gap: 1.75rem;
           align-items: start;
+          width: 100%;
+          box-sizing: border-box;
         }
 
         .studio-col-left, .studio-col-right {
           display: flex;
           flex-direction: column;
           gap: 1.5rem;
+          min-width: 0;
+          width: 100%;
+          box-sizing: border-box;
         }
 
         .studio-card {
@@ -1105,6 +1152,8 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
           border: 1px solid var(--border-card);
           border-radius: var(--radius-md);
           box-shadow: var(--shadow-xs);
+          box-sizing: border-box;
+          min-width: 0;
         }
 
         .card-header-bar {
@@ -1114,6 +1163,8 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
           margin-bottom: 1rem;
           padding-bottom: 0.75rem;
           border-bottom: 1px solid var(--border-subtle);
+          gap: 0.5rem;
+          flex-wrap: wrap;
         }
 
         .card-title-group {
@@ -1131,28 +1182,39 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
 
         .text-emerald { color: #059669; }
 
+        /* Mobile Segmented Switcher */
+        .mobile-studio-switcher {
+          display: none;
+        }
+
+        .mobile-only-back-banner {
+          display: none;
+        }
+
         .input-mode-pills {
           display: flex;
           background: #f1f5f9;
-          padding: 0.2rem;
-          border-radius: var(--radius-full);
-          gap: 0.2rem;
+          border-radius: var(--radius-sm);
+          padding: 3px;
+          gap: 3px;
         }
 
         .mode-pill {
           background: transparent;
           border: none;
-          font-size: 0.72rem;
+          font-size: 0.76rem;
           font-weight: 600;
-          color: var(--text-secondary);
-          padding: 0.25rem 0.65rem;
-          border-radius: var(--radius-full);
+          color: #475569;
+          padding: 0.35rem 0.75rem;
+          border-radius: 4px;
           cursor: pointer;
+          transition: all 0.15s ease;
         }
 
         .mode-pill.active {
-          background: var(--navy);
+          background: #0f172a;
           color: #ffffff;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
         }
 
         .field-label {
@@ -1165,20 +1227,31 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
 
         .select-full {
           width: 100%;
+          min-height: 42px;
           padding: 0.55rem 0.85rem;
           border: 1px solid var(--border-subtle);
           border-radius: var(--radius-sm);
           font-size: 0.82rem;
           background: #f8fafc;
+          color: var(--text-primary);
+          box-sizing: border-box;
         }
 
         .asset-meta-strip {
           display: flex;
           align-items: center;
-          gap: 1.25rem;
-          margin-top: 0.75rem;
-          font-size: 0.75rem;
-          color: var(--text-muted);
+          gap: 0.5rem;
+          flex-wrap: wrap;
+          margin-top: 0.65rem;
+        }
+
+        .asset-meta-strip span {
+          background: #f1f5f9;
+          border: 1px solid #e2e8f0;
+          padding: 0.2rem 0.55rem;
+          border-radius: 4px;
+          font-size: 0.72rem;
+          color: #334155;
         }
 
         .input-row-2 {
@@ -1190,11 +1263,13 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
 
         .text-input, .custom-textarea {
           width: 100%;
-          padding: 0.5rem 0.75rem;
+          padding: 0.55rem 0.75rem;
           border: 1px solid var(--border-subtle);
           border-radius: var(--radius-sm);
           font-size: 0.82rem;
           background: #f8fafc;
+          color: var(--text-primary);
+          box-sizing: border-box;
         }
 
         /* Chunk Manager */
@@ -1208,14 +1283,15 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
           display: inline-flex;
           align-items: center;
           gap: 0.3rem;
-          background: #f1f5f9;
-          border: 1px solid var(--border-subtle);
-          padding: 0.25rem 0.55rem;
-          border-radius: var(--radius-sm);
-          font-size: 0.72rem;
+          background: #f8fafc;
+          border: 1px solid #e2e8f0;
+          padding: 0.3rem 0.65rem;
+          border-radius: 6px;
+          font-size: 0.74rem;
           font-weight: 600;
           cursor: pointer;
-          color: var(--text-secondary);
+          color: #334155;
+          transition: all 0.15s ease;
         }
 
         .btn-chip:hover {
@@ -1227,16 +1303,18 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          background: #f8fafc;
-          border: 1px solid #e2e8f0;
-          padding: 0.4rem 0.75rem;
-          border-radius: var(--radius-sm);
+          background: #eff6ff;
+          border: 1px solid #bfdbfe;
+          padding: 0.5rem 0.75rem;
+          border-radius: 6px;
           margin-bottom: 0.85rem;
-          font-size: 0.75rem;
+          font-size: 0.76rem;
+          gap: 0.5rem;
+          flex-wrap: wrap;
         }
 
         .stat-count { color: var(--navy); }
-        .stat-words { color: #059669; font-weight: 600; }
+        .stat-words { color: #0284c7; font-weight: 600; }
 
         .chunks-scroll-list {
           display: flex;
@@ -1244,16 +1322,18 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
           gap: 0.65rem;
           max-height: 380px;
           overflow-y: auto;
+          -webkit-overflow-scrolling: touch;
           padding-right: 0.35rem;
         }
 
         .chunk-card {
           border: 1px solid #e2e8f0;
-          border-radius: var(--radius-sm);
-          padding: 0.65rem 0.85rem;
+          border-radius: 8px;
+          padding: 0.75rem 0.85rem;
           background: #ffffff;
           cursor: pointer;
           transition: all 0.15s ease;
+          box-sizing: border-box;
         }
 
         .chunk-card:hover {
@@ -1272,31 +1352,38 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
           align-items: center;
           justify-content: space-between;
           margin-bottom: 0.35rem;
+          gap: 0.5rem;
         }
 
         .chunk-checkbox-wrap {
           display: flex;
           align-items: center;
           gap: 0.45rem;
+          min-width: 0;
         }
 
         .chunk-title {
-          font-size: 0.8rem;
+          font-size: 0.82rem;
           font-weight: 700;
           color: var(--navy);
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
         }
 
         .chunk-word-badge {
           font-size: 0.68rem;
-          color: var(--text-muted);
-          background: #f1f5f9;
+          font-weight: 600;
+          color: #059669;
+          background: #d1fae5;
           padding: 0.15rem 0.45rem;
           border-radius: 4px;
+          flex-shrink: 0;
         }
 
         .chunk-preview {
-          font-size: 0.74rem;
-          color: var(--text-secondary);
+          font-size: 0.75rem;
+          color: #475569;
           line-height: 1.45;
           display: -webkit-box;
           -webkit-line-clamp: 2;
@@ -1324,20 +1411,27 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
         }
 
         .audience-pills-row {
-          display: flex;
-          gap: 0.4rem;
-          flex-wrap: wrap;
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 0.5rem;
         }
 
         .audience-pill {
           background: #f8fafc;
-          border: 1px solid var(--border-subtle);
-          color: var(--text-secondary);
-          font-size: 0.74rem;
+          border: 1px solid #e2e8f0;
+          color: #334155;
+          font-size: 0.76rem;
           font-weight: 600;
-          padding: 0.35rem 0.75rem;
-          border-radius: var(--radius-full);
+          padding: 0.55rem 0.65rem;
+          border-radius: 6px;
           cursor: pointer;
+          text-align: center;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          min-height: 42px;
+          transition: all 0.15s ease;
+          box-sizing: border-box;
         }
 
         .audience-pill:hover {
@@ -1346,9 +1440,10 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
         }
 
         .audience-pill.active {
-          background: var(--navy);
-          border-color: var(--navy);
+          background: #0f172a;
+          border-color: #0f172a;
           color: #ffffff;
+          box-shadow: 0 2px 4px rgba(15, 23, 42, 0.15);
         }
 
         .btn-synthesize {
@@ -1357,24 +1452,38 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
           justify-content: center;
           gap: 0.5rem;
           width: 100%;
-          padding: 0.8rem;
-          font-size: 0.92rem;
+          min-height: 48px;
+          padding: 0.85rem 1rem;
+          font-size: 0.9rem;
           font-weight: 700;
-          border-radius: var(--radius-sm);
+          border-radius: 8px;
           cursor: pointer;
-          box-shadow: var(--shadow-sm);
+          background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);
+          color: #ffffff;
+          border: none;
+          box-shadow: 0 4px 14px rgba(234, 88, 12, 0.35);
+          transition: all 0.15s ease;
+          box-sizing: border-box;
+        }
+
+        .btn-synthesize:hover:not(:disabled) {
+          transform: translateY(-1px);
+          box-shadow: 0 6px 18px rgba(234, 88, 12, 0.45);
         }
 
         .btn-synthesize:disabled {
           opacity: 0.6;
           cursor: not-allowed;
+          box-shadow: none;
         }
 
-        /* Output Card */
+        /* Output Card (AI Media Suite) */
         .output-card {
           min-height: 640px;
           display: flex;
           flex-direction: column;
+          box-sizing: border-box;
+          width: 100%;
         }
 
         .timestamp-badge {
@@ -1384,33 +1493,40 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
           padding: 0.2rem 0.5rem;
           border-radius: var(--radius-full);
           font-weight: 600;
+          flex-shrink: 0;
         }
 
         .output-tabs-strip {
           display: flex;
-          gap: 0.35rem;
+          gap: 0.4rem;
           border-bottom: 1px solid var(--border-subtle);
           padding-bottom: 0.65rem;
           margin-bottom: 1rem;
           overflow-x: auto;
           scrollbar-width: none;
+          -webkit-overflow-scrolling: touch;
+          width: 100%;
+          box-sizing: border-box;
         }
 
         .output-tabs-strip::-webkit-scrollbar { display: none; }
 
         .output-tab-btn {
+          flex-shrink: 0;
           display: inline-flex;
           align-items: center;
           gap: 0.35rem;
-          background: transparent;
-          border: none;
-          color: var(--text-muted);
+          background: #f8fafc;
+          border: 1px solid #e2e8f0;
+          color: #475569;
           font-size: 0.76rem;
           font-weight: 600;
-          padding: 0.4rem 0.65rem;
-          border-radius: var(--radius-sm);
+          padding: 0.45rem 0.75rem;
+          border-radius: 6px;
           cursor: pointer;
           white-space: nowrap;
+          transition: all 0.15s ease;
+          box-sizing: border-box;
         }
 
         .output-tab-btn:hover {
@@ -1419,21 +1535,29 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
         }
 
         .output-tab-btn.active {
-          color: var(--navy);
-          background: #e2e8f0;
+          color: #ffffff;
+          background: #0f172a;
+          border-color: #0f172a;
           font-weight: 700;
+          box-shadow: 0 1px 4px rgba(15, 23, 42, 0.2);
         }
 
         .output-body {
           flex: 1;
           display: flex;
           flex-direction: column;
+          width: 100%;
+          min-width: 0;
+          box-sizing: border-box;
         }
 
         .output-tab-content {
           flex: 1;
           display: flex;
           flex-direction: column;
+          width: 100%;
+          min-width: 0;
+          box-sizing: border-box;
         }
 
         .content-meta-bar {
@@ -1441,6 +1565,10 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
           align-items: center;
           justify-content: space-between;
           margin-bottom: 0.75rem;
+          gap: 0.5rem;
+          flex-wrap: wrap;
+          width: 100%;
+          box-sizing: border-box;
         }
 
         .btn-group-sm {
@@ -1458,6 +1586,12 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
           border-radius: 4px;
         }
 
+        .tag-pill.format {
+          background: #f0fdf4;
+          color: #166534;
+          border: 1px solid #bbf7d0;
+        }
+
         .btn-copy {
           display: inline-flex;
           align-items: center;
@@ -1471,6 +1605,7 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
           border-radius: var(--radius-sm);
           cursor: pointer;
           text-decoration: none;
+          box-sizing: border-box;
         }
 
         .btn-copy:hover {
@@ -1483,6 +1618,7 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
           display: flex;
           align-items: center;
           gap: 0.5rem;
+          flex-wrap: wrap;
         }
 
         .category-tag {
@@ -1502,6 +1638,10 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
           padding: 1.5rem;
           max-height: 520px;
           overflow-y: auto;
+          -webkit-overflow-scrolling: touch;
+          box-sizing: border-box;
+          width: 100%;
+          overflow-x: hidden;
         }
 
         .article-title {
@@ -1510,6 +1650,7 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
           color: var(--navy);
           margin-bottom: 0.4rem;
           line-height: 1.3;
+          word-break: break-word;
         }
 
         .article-subtitle {
@@ -1517,6 +1658,7 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
           color: var(--text-secondary);
           margin-bottom: 0.75rem;
           font-style: italic;
+          word-break: break-word;
         }
 
         .article-byline {
@@ -1528,6 +1670,7 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
           padding-bottom: 1rem;
           margin-bottom: 1rem;
           border-bottom: 1px solid #e2e8f0;
+          flex-wrap: wrap;
         }
 
         .article-lead-box {
@@ -1536,6 +1679,7 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
           color: var(--navy);
           font-weight: 500;
           margin-bottom: 1.25rem;
+          word-break: break-word;
         }
 
         .article-inline-image {
@@ -1544,6 +1688,8 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
           overflow: hidden;
           border: 1px solid #e2e8f0;
           background: #ffffff;
+          width: 100%;
+          box-sizing: border-box;
         }
 
         .article-inline-image img {
@@ -1558,6 +1704,7 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
           color: var(--text-muted);
           padding: 0.5rem 0.75rem;
           background: #f8fafc;
+          word-break: break-word;
         }
 
         .article-sections-list {
@@ -1565,6 +1712,8 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
           flex-direction: column;
           gap: 1.25rem;
           margin-bottom: 1.5rem;
+          width: 100%;
+          box-sizing: border-box;
         }
 
         .article-section-block h3 {
@@ -1572,6 +1721,7 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
           font-weight: 700;
           color: var(--navy);
           margin-bottom: 0.35rem;
+          word-break: break-word;
         }
 
         .article-section-block p {
@@ -1579,6 +1729,7 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
           line-height: 1.65;
           color: var(--text-secondary);
           margin: 0;
+          word-break: break-word;
         }
 
         .climate-impact-card {
@@ -1587,6 +1738,8 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
           padding: 1rem;
           border-radius: 4px;
           margin-bottom: 1.25rem;
+          box-sizing: border-box;
+          word-break: break-word;
         }
 
         .climate-impact-card h4 {
@@ -1601,6 +1754,7 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
           line-height: 1.55;
           color: #047857;
           margin: 0;
+          word-break: break-word;
         }
 
         .article-takeaways-box {
@@ -1608,6 +1762,8 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
           border: 1px solid #e2e8f0;
           padding: 1rem;
           border-radius: var(--radius-sm);
+          box-sizing: border-box;
+          word-break: break-word;
         }
 
         .article-takeaways-box h4 {
@@ -1625,11 +1781,18 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
           color: var(--text-secondary);
         }
 
+        .article-takeaways-box li {
+          margin-bottom: 0.3rem;
+          word-break: break-word;
+        }
+
         /* 2. Image Workspace Styles */
         .image-gen-workspace {
           display: flex;
           flex-direction: column;
           gap: 1.25rem;
+          width: 100%;
+          box-sizing: border-box;
         }
 
         .image-preview-frame {
@@ -1638,7 +1801,10 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
           overflow: hidden;
           border: 1px solid #cbd5e1;
           background: #0f172a;
+          width: 100%;
+          aspect-ratio: 16/9;
           max-height: 320px;
+          box-sizing: border-box;
         }
 
         .rendered-polar-img {
@@ -1654,42 +1820,50 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
           bottom: 0.75rem;
           right: 0.75rem;
           background: rgba(15, 23, 42, 0.75);
-          backdrop-filter: blur(4px);
           color: #ffffff;
-          padding: 0.25rem 0.6rem;
+          font-size: 0.7rem;
+          font-weight: 700;
+          padding: 0.2rem 0.5rem;
           border-radius: 4px;
-          font-size: 0.72rem;
-          font-weight: 600;
         }
 
         .prompt-spec-panel {
           display: flex;
           flex-direction: column;
           gap: 0.85rem;
-          background: #f8fafc;
-          border: 1px solid #e2e8f0;
-          padding: 1rem;
-          border-radius: var(--radius-sm);
+          width: 100%;
+          box-sizing: border-box;
+        }
+
+        .spec-row {
+          display: flex;
+          flex-direction: column;
+          gap: 0.35rem;
+          width: 100%;
+          box-sizing: border-box;
         }
 
         .spec-label {
           font-size: 0.75rem;
           font-weight: 700;
           color: var(--navy);
-          display: block;
-          margin-bottom: 0.35rem;
         }
 
         .spec-code-box {
-          background: #ffffff;
+          background: #f8fafc;
           border: 1px solid #cbd5e1;
-          padding: 0.65rem;
+          padding: 0.75rem;
           border-radius: 4px;
-          font-size: 0.76rem;
-          line-height: 1.45;
-          color: #334155;
           font-family: monospace;
+          font-size: 0.75rem;
+          color: #334155;
+          line-height: 1.45;
+          max-height: 120px;
+          overflow-y: auto;
+          white-space: pre-wrap;
           word-break: break-word;
+          overflow-wrap: anywhere;
+          box-sizing: border-box;
         }
 
         .spec-code-box.negative {
@@ -1708,6 +1882,16 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
           border-radius: 4px;
           font-size: 0.78rem;
           color: var(--text-secondary);
+          box-sizing: border-box;
+          gap: 0.5rem;
+          word-break: break-word;
+          overflow-wrap: anywhere;
+        }
+
+        .spec-input-box p {
+          margin: 0;
+          word-break: break-word;
+          overflow-wrap: anywhere;
         }
 
         /* 3. Video Studio Styles */
@@ -1716,6 +1900,8 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
           grid-template-columns: 1fr 1.15fr;
           gap: 1.25rem;
           align-items: start;
+          width: 100%;
+          box-sizing: border-box;
         }
 
         .video-player-card {
@@ -1723,6 +1909,8 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
           border: 1px solid #e2e8f0;
           border-radius: var(--radius-sm);
           overflow: hidden;
+          width: 100%;
+          box-sizing: border-box;
         }
 
         .video-viewport-wrapper {
@@ -1730,6 +1918,7 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
           aspect-ratio: 16/9;
           background: #0f172a;
           overflow: hidden;
+          width: 100%;
         }
 
         .video-sim-img {
@@ -1737,6 +1926,7 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
           height: 100%;
           object-fit: cover;
           opacity: 0.85;
+          display: block;
         }
 
         .video-overlay-hud {
@@ -1808,6 +1998,7 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
           border-radius: 4px;
           font-size: 0.76rem;
           font-weight: 700;
+          word-break: break-word;
         }
 
         .video-kinetic-text p {
@@ -1827,6 +2018,7 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
           color: var(--navy);
           font-style: italic;
           line-height: 1.4;
+          word-break: break-word;
         }
 
         .active-narration-box p {
@@ -1839,6 +2031,9 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
           gap: 0.75rem;
           max-height: 440px;
           overflow-y: auto;
+          -webkit-overflow-scrolling: touch;
+          width: 100%;
+          box-sizing: border-box;
         }
 
         .storyboard-item {
@@ -1848,6 +2043,8 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
           padding: 0.75rem;
           cursor: pointer;
           transition: all 0.15s ease;
+          box-sizing: border-box;
+          width: 100%;
         }
 
         .storyboard-item:hover {
@@ -1866,6 +2063,7 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
           align-items: center;
           justify-content: space-between;
           margin-bottom: 0.35rem;
+          gap: 0.5rem;
         }
 
         .scene-badge {
@@ -1888,6 +2086,7 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
           color: var(--text-secondary);
           margin-bottom: 0.35rem;
           line-height: 1.4;
+          word-break: break-word;
         }
 
         .scene-narration {
@@ -1896,6 +2095,7 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
           font-style: italic;
           margin-bottom: 0.45rem;
           line-height: 1.4;
+          word-break: break-word;
         }
 
         .scene-tags-row {
@@ -1911,6 +2111,7 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
           background: #f1f5f9;
           padding: 0.15rem 0.45rem;
           border-radius: 4px;
+          word-break: break-word;
         }
 
         /* 4. Social Tabs Styles */
@@ -1920,7 +2121,14 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
           margin-bottom: 0.85rem;
           border-bottom: 1px solid #e2e8f0;
           padding-bottom: 0.5rem;
+          overflow-x: auto;
+          scrollbar-width: none;
+          -webkit-overflow-scrolling: touch;
+          width: 100%;
+          box-sizing: border-box;
         }
+
+        .social-subtabs-row::-webkit-scrollbar { display: none; }
 
         .social-subtab {
           display: inline-flex;
@@ -1931,9 +2139,13 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
           color: var(--text-secondary);
           font-size: 0.74rem;
           font-weight: 600;
-          padding: 0.3rem 0.65rem;
+          padding: 0.35rem 0.75rem;
           border-radius: var(--radius-sm);
           cursor: pointer;
+          white-space: nowrap;
+          transition: all 0.15s ease;
+          flex-shrink: 0;
+          box-sizing: border-box;
         }
 
         .social-subtab:hover {
@@ -1942,56 +2154,67 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
         }
 
         .social-subtab.active {
-          background: var(--navy);
+          background: #0f172a;
           color: #ffffff;
-          border-color: var(--navy);
+          border-color: #0f172a;
+          font-weight: 700;
         }
 
         .output-textarea {
           width: 100%;
+          font-family: inherit;
+          font-size: 0.86rem;
+          line-height: 1.55;
+          color: var(--text-primary);
+          background: #ffffff;
           border: 1px solid var(--border-subtle);
           border-radius: var(--radius-sm);
-          padding: 0.85rem;
-          font-size: 0.85rem;
-          line-height: 1.6;
-          background: #fafbfc;
-          color: var(--text-primary);
-          font-family: inherit;
+          padding: 0.75rem;
+          box-sizing: border-box;
           resize: vertical;
         }
 
+        /* Fact Cards Grid & Items */
         .fact-cards-grid {
-          display: flex;
-          flex-direction: column;
-          gap: 0.75rem;
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+          gap: 0.85rem;
+          margin-top: 0.85rem;
+          width: 100%;
+          box-sizing: border-box;
         }
 
         .fact-card-item {
-          display: flex;
-          gap: 0.75rem;
-          align-items: flex-start;
-          background: #f8fafc;
+          background: #ffffff;
           border: 1px solid #e2e8f0;
-          padding: 0.75rem;
           border-radius: var(--radius-sm);
+          padding: 0.85rem;
+          display: flex;
+          flex-direction: column;
+          gap: 0.4rem;
+          box-sizing: border-box;
+          word-break: break-word;
         }
 
         .fact-num {
-          font-size: 0.85rem;
+          font-size: 0.72rem;
           font-weight: 800;
-          color: #059669;
-          background: #ecfdf5;
-          padding: 0.2rem 0.45rem;
+          color: #0284c7;
+          background: #e0f2fe;
+          padding: 0.15rem 0.5rem;
           border-radius: 4px;
+          align-self: flex-start;
         }
 
         .fact-card-item p {
-          margin: 0;
-          font-size: 0.82rem;
+          font-size: 0.78rem;
           color: var(--text-secondary);
           line-height: 1.5;
+          margin: 0;
+          word-break: break-word;
         }
 
+        /* 5. Chunk Inspector */
         .inspector-box {
           background: #f8fafc;
           border: 1px solid #e2e8f0;
@@ -1999,35 +2222,51 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
           border-radius: var(--radius-sm);
           max-height: 400px;
           overflow-y: auto;
+          -webkit-overflow-scrolling: touch;
+          box-sizing: border-box;
+          width: 100%;
         }
 
         .inspector-intro {
           font-size: 0.78rem;
           color: var(--text-muted);
           margin-bottom: 0.75rem;
+          word-break: break-word;
         }
 
         .inspector-chunk {
           margin-bottom: 1rem;
           padding-bottom: 0.75rem;
           border-bottom: 1px dashed #cbd5e1;
+          box-sizing: border-box;
+        }
+
+        .inspector-chunk:last-child {
+          border-bottom: none;
+          margin-bottom: 0;
+          padding-bottom: 0;
         }
 
         .inspector-chunk h4 {
           font-size: 0.78rem;
           color: var(--navy);
           margin-bottom: 0.35rem;
+          word-break: break-word;
         }
 
         .inspector-chunk pre {
           font-size: 0.72rem;
           white-space: pre-wrap;
+          word-break: break-word;
+          overflow-wrap: anywhere;
           color: #475569;
           font-family: monospace;
           background: #ffffff;
           padding: 0.5rem;
           border: 1px solid #e2e8f0;
           border-radius: 4px;
+          line-height: 1.45;
+          box-sizing: border-box;
         }
 
         .output-actions-bar {
@@ -2037,6 +2276,38 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
           margin-top: 1.25rem;
           padding-top: 1rem;
           border-top: 1px solid var(--border-subtle);
+          width: 100%;
+          box-sizing: border-box;
+        }
+
+        .btn-apply-archive {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.45rem;
+          background: #059669;
+          color: #ffffff;
+          border: none;
+          font-size: 0.86rem;
+          font-weight: 700;
+          padding: 0.65rem 1.25rem;
+          border-radius: var(--radius-sm);
+          cursor: pointer;
+          box-shadow: var(--shadow-sm);
+          transition: all 0.15s ease;
+          box-sizing: border-box;
+        }
+
+        .btn-apply-archive:hover {
+          background: #047857;
+        }
+
+        .applied-pill {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.35rem;
+          font-size: 0.78rem;
+          color: #059669;
+          font-weight: 600;
         }
 
         .empty-workspace-state {
@@ -2048,6 +2319,7 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
           text-align: center;
           padding: 3.5rem 1.5rem;
           color: var(--text-muted);
+          box-sizing: border-box;
         }
 
         .empty-icon-wrap {
@@ -2092,48 +2364,328 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
           }
         }
 
+        @media (max-width: 900px) {
+          .mobile-studio-switcher {
+            display: flex;
+            gap: 6px;
+            background: #e2e8f0;
+            padding: 4px;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            width: 100%;
+            box-sizing: border-box;
+          }
+          .mobile-switch-btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.45rem;
+            padding: 0.65rem 0.5rem;
+            font-size: 0.82rem;
+            font-weight: 700;
+            border: none;
+            background: transparent;
+            color: #475569;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            min-height: 42px;
+            box-sizing: border-box;
+          }
+          .mobile-switch-btn.active {
+            background: #0f172a;
+            color: #ffffff;
+            box-shadow: 0 2px 6px rgba(15, 23, 42, 0.2);
+          }
+          .mobile-switch-badge {
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.1rem 0.45rem;
+            border-radius: 10px;
+            background: #cbd5e1;
+            color: #1e293b;
+          }
+          .mobile-switch-btn.active .mobile-switch-badge {
+            background: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+          }
+          .mobile-switch-badge.success {
+            background: #059669;
+            color: #ffffff;
+          }
+          .mobile-switch-badge.pending {
+            background: #cbd5e1;
+            color: #475569;
+          }
+          .mobile-hidden {
+            display: none !important;
+          }
+          .mobile-only-back-banner {
+            display: block;
+            margin-bottom: 0.85rem;
+            width: 100%;
+            box-sizing: border-box;
+          }
+          .btn-back-to-chunks {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.45rem;
+            padding: 0.65rem 0.85rem;
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            color: #0284c7;
+            border-radius: 8px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            cursor: pointer;
+            min-height: 44px;
+            transition: all 0.15s ease;
+            box-sizing: border-box;
+          }
+          .btn-back-to-chunks:hover {
+            background: #dbeafe;
+          }
+        }
+
         @media (max-width: 768px) {
           .selective-ai-page {
-            padding: 1.25rem 0.75rem 3.5rem;
-            gap: 1.25rem;
+            padding: 1.25rem 0.75rem 4rem;
+            gap: 1rem;
+          }
+          .page-title {
+            font-size: clamp(1.15rem, 4vw, 1.45rem);
+            line-height: 1.3;
+          }
+          .page-sub {
+            font-size: 0.82rem;
+            line-height: 1.5;
           }
           .studio-card {
             padding: 1rem 0.85rem;
           }
           .output-card {
             min-height: auto;
+            padding: 1rem 0.85rem;
+          }
+          .card-header-bar {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0.5rem;
           }
           .output-tabs-strip {
-            -webkit-overflow-scrolling: touch;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.5rem;
+            overflow: visible;
+            padding-bottom: 0.75rem;
+            margin-bottom: 1rem;
+            width: 100%;
+          }
+          .output-tab-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            padding: 0.55rem 0.5rem;
+            font-size: 0.76rem;
+            font-weight: 600;
+            border-radius: 6px;
+            white-space: normal;
+            text-align: center;
+            min-height: 42px;
+            width: 100%;
+            box-sizing: border-box;
           }
           .social-subtabs-row {
-            flex-wrap: wrap;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.45rem;
+            overflow: visible;
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.75rem;
+            width: 100%;
+          }
+          .social-subtab {
+            display: flex;
+            align-items: center;
+            justify-content: center;
             gap: 0.35rem;
+            padding: 0.5rem 0.4rem;
+            font-size: 0.74rem;
+            font-weight: 600;
+            white-space: normal;
+            text-align: center;
+            min-height: 40px;
+            width: 100%;
+            box-sizing: border-box;
           }
           .input-row-2 {
             grid-template-columns: 1fr;
           }
           .content-meta-bar {
             flex-direction: column;
-            align-items: flex-start;
-            gap: 0.5rem;
+            align-items: stretch;
+            gap: 0.6rem;
+            margin-bottom: 0.75rem;
+          }
+          .article-meta-tags, .video-meta-tags {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 0.4rem;
+            flex-wrap: wrap;
+          }
+          .btn-group-sm {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            width: 100%;
+            gap: 0.4rem;
+          }
+          .btn-group-sm .btn-copy,
+          .btn-group-sm button,
+          .btn-group-sm a {
+            justify-content: center;
+            min-height: 38px;
+            font-size: 0.76rem;
+            padding: 0.4rem 0.5rem;
+            text-align: center;
+          }
+          .content-meta-bar > .btn-copy {
+            width: 100%;
+            justify-content: center;
+            min-height: 38px;
+            font-size: 0.76rem;
           }
           .output-actions-bar {
             flex-direction: column;
             align-items: stretch;
-            gap: 0.5rem;
+            gap: 0.6rem;
+            margin-top: 1.25rem;
+            padding-top: 1rem;
           }
           .output-actions-bar button {
             width: 100%;
             justify-content: center;
-            min-height: 44px;
+            min-height: 46px;
+            font-size: 0.86rem;
           }
           .article-preview-container {
-            max-height: 420px;
+            max-height: none;
             padding: 0.85rem;
           }
           .article-title {
             font-size: 1.15rem;
+            line-height: 1.35;
+          }
+          .article-subtitle {
+            font-size: 0.85rem;
+          }
+          .article-lead-box {
+            font-size: 0.85rem;
+            line-height: 1.6;
+            padding: 0.75rem;
+          }
+          .article-inline-image img {
+            max-height: 220px;
+          }
+          .article-section-block h3 {
+            font-size: 0.95rem;
+          }
+          .article-section-block p {
+            font-size: 0.82rem;
+            line-height: 1.55;
+          }
+          .image-preview-frame {
+            max-height: 240px;
+          }
+          .rendered-polar-img {
+            max-height: 240px;
+          }
+          .spec-code-box {
+            font-size: 0.72rem;
+            padding: 0.6rem;
+            max-height: 100px;
+          }
+          .spec-input-box {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0.4rem;
+          }
+          .spec-input-box .btn-chip {
+            align-self: flex-start;
+          }
+          .video-studio-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+          }
+          .video-viewport-wrapper {
+            max-height: 220px;
+          }
+          .btn-play-circle {
+            width: 44px;
+            height: 44px;
+          }
+          .storyboard-list {
+            max-height: 320px;
+          }
+          .storyboard-item {
+            padding: 0.65rem;
+          }
+          .output-textarea {
+            font-size: 0.84rem;
+            line-height: 1.5;
+            padding: 0.65rem;
+          }
+          .fact-cards-grid {
+            grid-template-columns: 1fr;
+            gap: 0.6rem;
+          }
+          .fact-card-item {
+            padding: 0.65rem;
+          }
+          .inspector-box {
+            padding: 0.65rem;
+          }
+          .inspector-chunk pre {
+            font-size: 0.7rem;
+            padding: 0.45rem;
+          }
+          .empty-workspace-state {
+            padding: 2.25rem 0.85rem;
+          }
+          .empty-icon-wrap {
+            width: 52px;
+            height: 52px;
+            margin-bottom: 0.75rem;
+          }
+          .empty-workspace-state h3 {
+            font-size: 1.05rem;
+          }
+          .empty-workspace-state p {
+            font-size: 0.8rem;
+            line-height: 1.5;
+          }
+          .audience-pills-row {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.4rem;
+          }
+          .audience-pill {
+            padding: 0.45rem 0.5rem;
+            font-size: 0.74rem;
+            min-height: 40px;
+          }
+          .chunks-stat-banner {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.25rem;
+          }
+          .asset-meta-strip {
+            flex-wrap: wrap;
+            gap: 0.35rem;
           }
         }
 
@@ -2150,17 +2702,47 @@ export default function SelectiveAIStudio({ initialAssetId, onBack }) {
           }
           .input-mode-pills {
             width: 100%;
-            justify-content: space-between;
+            display: flex;
           }
           .mode-pill {
             flex: 1;
             text-align: center;
+            padding: 0.35rem 0.5rem;
+            font-size: 0.72rem;
           }
           .chunk-card {
-            padding: 0.6rem 0.75rem;
+            padding: 0.65rem 0.75rem;
           }
-        }
+          .chunk-controls-group {
+            width: 100%;
+            display: flex;
+          }
+          .chunk-controls-group .btn-chip {
+            flex: 1;
+            justify-content: center;
+          }
+          .btn-synthesize {
+            font-size: 0.84rem;
+            padding: 0.75rem 0.6rem;
+          }
+          .btn-group-sm {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.4rem;
+            width: 100%;
+          }
+          .btn-group-sm .btn-copy,
+          .btn-group-sm button,
+          .btn-group-sm a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.45rem 0.35rem;
+            font-size: 0.74rem;
+            white-space: nowrap;
+          }
       `}</style>
     </div>
   );
 }
+
