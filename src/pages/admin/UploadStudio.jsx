@@ -951,9 +951,10 @@ The voyage departed Cape Town with 48 scientists from MoES institutes, Survey of
 
         .pillar-tab {
           display: flex;
-          flex-direction: column;
-          gap: 0.4rem;
-          padding: 1rem 0.85rem;
+          flex-direction: row;
+          align-items: center;
+          gap: 0.65rem;
+          padding: 0.85rem 0.95rem;
           background: #ffffff;
           border: 1px solid var(--border-card);
           border-radius: var(--radius-md);
@@ -978,20 +979,42 @@ The voyage departed Cape Town with 48 scientists from MoES institutes, Survey of
         }
 
         .pillar-tab-icon {
+          width: 34px;
+          height: 34px;
+          border-radius: 8px;
+          background: #f0f9ff;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
           color: #0284c7;
         }
 
+        .pillar-tab.active .pillar-tab-icon {
+          background: #0284c7;
+          color: #ffffff;
+        }
+
+        .pillar-tab-info {
+          flex: 1;
+          min-width: 0;
+        }
+
         .pillar-tab-title {
-          font-size: 0.85rem;
+          font-size: 0.82rem;
           font-weight: 700;
-          line-height: 1.2;
+          line-height: 1.25;
           color: var(--navy);
         }
 
         .pillar-tab-desc {
-          font-size: 0.7rem;
+          font-size: 0.68rem;
           color: var(--text-muted);
           line-height: 1.2;
+          margin-top: 2px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
         }
 
         /* Upload Grid */
@@ -1364,8 +1387,16 @@ The voyage departed Cape Town with 48 scientists from MoES institutes, Survey of
             gap: 0.5rem;
           }
           .pillar-tab {
-            padding: 0.75rem 0.65rem;
-            min-height: 52px;
+            padding: 0.65rem 0.6rem;
+            gap: 0.5rem;
+            min-height: 48px;
+          }
+          .pillar-tab-icon {
+            width: 30px;
+            height: 30px;
+          }
+          .pillar-tab-title {
+            font-size: 0.76rem;
           }
           .pillar-tab-desc {
             display: none;
@@ -1397,7 +1428,19 @@ The voyage departed Cape Town with 48 scientists from MoES institutes, Survey of
 
         @media (max-width: 420px) {
           .pillar-nav-bar {
-            grid-template-columns: 1fr;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.45rem;
+          }
+          .pillar-tab {
+            padding: 0.55rem 0.45rem;
+            gap: 0.4rem;
+          }
+          .pillar-tab-icon {
+            width: 26px;
+            height: 26px;
+          }
+          .pillar-tab-title {
+            font-size: 0.70rem;
           }
         }
       `}</style>
