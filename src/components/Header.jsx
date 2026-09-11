@@ -11,7 +11,8 @@ import {
   Sun, 
   Menu, 
   X,
-  Sparkles
+  Sparkles,
+  ChevronRight
 } from 'lucide-react';
 
 import IndiaFlag from './IndiaFlag';
@@ -259,7 +260,7 @@ export default function Header({ currentRoute, navigateTo }) {
             <div className="mobile-drawer-content">
               {/* Mobile Search Bar */}
               <div className="mobile-search-row">
-                <Search size={16} className="mobile-search-icon" />
+                <Search size={15} className="mobile-search-icon" />
                 <input
                   type="text"
                   placeholder={lang === 'hi' ? "मिशन या स्टेशन खोजें..." : "Search missions, stations..."}
@@ -283,91 +284,118 @@ export default function Header({ currentRoute, navigateTo }) {
                 )}
               </div>
 
-              <div className="mobile-nav-list">
+              {/* Main Navigation Card */}
+              <div className="mobile-nav-group">
                 {navItems.map((item) => {
                   const Icon = item.icon;
                   const isActive = currentRoute === item.id;
                   return (
                     <button
                       key={item.id}
-                      className={`mobile-nav-item ${isActive ? 'active' : ''}`}
+                      className={`mobile-nav-link ${isActive ? 'active' : ''}`}
                       onClick={() => handleNav(item.id)}
                     >
-                      <Icon size={18} />
-                      <span>{item.label}</span>
+                      <div className={`mobile-nav-icon-wrap nav-icon-${item.id}`}>
+                        <Icon size={16} />
+                      </div>
+                      <span className="mobile-nav-label">{item.label}</span>
+                      <ChevronRight size={15} className="mobile-nav-arrow" />
                     </button>
                   );
                 })}
+              </div>
 
-                <div className="mobile-divider"></div>
-
+              {/* Staff / Admin Access Card */}
+              <div className="mobile-staff-card">
                 {auth.isAuthenticated ? (
-                  <>
+                  <div className="mobile-auth-logged">
                     <button
-                      className="mobile-nav-item admin-active"
+                      className="mobile-staff-btn admin-active"
                       onClick={() => handleNav('admin-dashboard')}
                     >
-                      <Sparkles size={18} />
-                      <span>Admin Studio Dashboard</span>
+                      <div className="mobile-staff-icon-wrap admin-icon">
+                        <Sparkles size={15} />
+                      </div>
+                      <div className="mobile-staff-text">
+                        <span className="staff-title">Admin Studio Dashboard</span>
+                        <span className="staff-sub">Manage & Edit Portal</span>
+                      </div>
+                      <ChevronRight size={15} className="mobile-nav-arrow" />
                     </button>
                     <button
-                      className="mobile-nav-item"
+                      className="mobile-signout-btn"
                       onClick={() => {
                         logout();
                         setMobileMenuOpen(false);
                       }}
                     >
                       <span>Sign Out</span>
-                    </button> 
-                  </>
+                    </button>
+                  </div>
                 ) : (
                   <button
-                    className="mobile-nav-item"
+                    className="mobile-staff-btn"
                     onClick={() => handleNav('admin-login')}
                   >
-                    <Lock size={18} />
-                    <span>NCPOR Staff Login</span>
+                    <div className="mobile-staff-icon-wrap lock-icon">
+                      <Lock size={15} />
+                    </div>
+                    <div className="mobile-staff-text">
+                      <span className="staff-title">NCPOR Staff Login</span>
+                      <span className="staff-sub">Official Portal Access</span>
+                    </div>
+                    <span className="staff-badge">Staff</span>
+                    <ChevronRight size={15} className="mobile-nav-arrow" />
                   </button>
                 )}
               </div>
 
-              {/* Mobile Quick Accessibility & Language Footer Bar */}
-              <div className="mobile-drawer-footer">
-                <div className="drawer-a11y-row">
-                  <div className="a11y-group">
-                    <span className="a11y-label">Size:</span>
+              {/* Mobile Quick Accessibility & Language Controls */}
+              <div className="mobile-controls-panel">
+                <div className="mobile-controls-row">
+                  {/* Font Size Selector */}
+                  <div className="mobile-control-chip-group">
                     <button 
-                      className={`a11y-btn ${a11y.fontSize === 'normal' ? 'active' : ''}`}
+                      className={`mobile-a11y-pill ${a11y.fontSize === 'normal' ? 'active' : ''}`}
                       onClick={() => setFontSize('normal')}
+                      title="Normal font size"
                     >
                       A
                     </button>
                     <button 
-                      className={`a11y-btn ${a11y.fontSize === 'large' ? 'active' : ''}`}
+                      className={`mobile-a11y-pill ${a11y.fontSize === 'large' ? 'active' : ''}`}
                       onClick={() => setFontSize('large')}
+                      title="Large font size"
                     >
                       A+
                     </button>
                     <button 
-                      className={`a11y-btn ${a11y.fontSize === 'larger' ? 'active' : ''}`}
+                      className={`mobile-a11y-pill ${a11y.fontSize === 'larger' ? 'active' : ''}`}
                       onClick={() => setFontSize('larger')}
+                      title="Larger font size"
                     >
                       A++
                     </button>
                   </div>
 
+                  {/* Contrast Toggle */}
                   <button 
-                    className={`a11y-toggle ${a11y.highContrast ? 'active' : ''}`}
+                    className={`mobile-contrast-btn ${a11y.highContrast ? 'active' : ''}`}
                     onClick={toggleHighContrast}
+                    title="Toggle High Contrast"
                   >
                     <Sun size={13} />
                     <span>{a11y.highContrast ? 'High Contrast ON' : 'Contrast'}</span>
                   </button>
                 </div>
 
-                <button className="mobile-lang-btn" onClick={toggleLang}>
-                  <Globe2 size={14} />
-                  <span>{lang === 'en' ? 'हिन्दी में देखें (HI)' : 'Switch to English (EN)'}</span>
+                {/* Language Switcher */}
+                <button className="mobile-lang-chip" onClick={toggleLang}>
+                  <div className="lang-chip-left">
+                    <Globe2 size={14} />
+                    <span>{lang === 'en' ? 'हिन्दी में देखें' : 'Switch to English'}</span>
+                  </div>
+                  <span className="lang-tag">{lang === 'en' ? 'HI' : 'EN'}</span>
                 </button>
               </div>
             </div>
@@ -751,8 +779,8 @@ export default function Header({ currentRoute, navigateTo }) {
           inset: 0;
           top: 0;
           background: rgba(15, 23, 42, 0.45);
-          backdrop-filter: blur(4px);
-          -webkit-backdrop-filter: blur(4px);
+          backdrop-filter: blur(5px);
+          -webkit-backdrop-filter: blur(5px);
           z-index: 140;
         }
 
@@ -761,13 +789,13 @@ export default function Header({ currentRoute, navigateTo }) {
           top: 100%;
           left: 0;
           right: 0;
-          background: #ffffff;
-          border-top: 1px solid var(--border-subtle);
-          border-bottom: 1px solid var(--border-subtle);
-          padding: 1rem;
-          box-shadow: 0 16px 36px rgba(15, 23, 42, 0.16);
-          max-height: calc(100vh - 75px);
-          max-height: calc(100dvh - 75px);
+          background: #f8fafc;
+          border-top: 1px solid #e2e8f0;
+          border-bottom: 1px solid #cbd5e1;
+          padding: 0.75rem 0.85rem 0.95rem;
+          box-shadow: 0 20px 35px -8px rgba(15, 23, 42, 0.16);
+          max-height: calc(100vh - 70px);
+          max-height: calc(100dvh - 70px);
           overflow-y: auto;
           -webkit-overflow-scrolling: touch;
           z-index: 150;
@@ -785,41 +813,50 @@ export default function Header({ currentRoute, navigateTo }) {
           }
         }
 
+        .mobile-drawer-content {
+          display: flex;
+          flex-direction: column;
+          gap: 0.6rem;
+          max-width: 480px;
+          margin: 0 auto;
+        }
+
+        /* Search Row */
         .mobile-search-row {
           position: relative;
           display: flex;
           align-items: center;
-          margin-bottom: 0.85rem;
         }
 
         .mobile-search-icon {
           position: absolute;
-          left: 0.85rem;
-          color: var(--text-muted);
+          left: 0.8rem;
+          color: #0284c7;
           pointer-events: none;
         }
 
         .mobile-search-input {
           width: 100%;
-          background: #f8fafc;
-          border: 1px solid var(--border-subtle);
-          border-radius: var(--radius-sm);
-          padding: 0.65rem 2.2rem 0.65rem 2.5rem;
-          font-size: 0.9rem;
+          background: #ffffff;
+          border: 1px solid #cbd5e1;
+          border-radius: 10px;
+          padding: 0.5rem 2rem 0.5rem 2.3rem;
+          font-size: 0.86rem;
           color: var(--text-primary);
-          min-height: 44px;
+          min-height: 40px;
+          box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+          transition: all 0.15s ease;
         }
 
         .mobile-search-input:focus {
           outline: none;
-          border-color: var(--ice);
-          background: #ffffff;
-          box-shadow: 0 0 0 3px var(--ice-glow);
+          border-color: #0284c7;
+          box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
         }
 
         .mobile-clear-btn {
           position: absolute;
-          right: 0.75rem;
+          right: 0.6rem;
           background: none;
           border: none;
           color: var(--text-muted);
@@ -827,88 +864,290 @@ export default function Header({ currentRoute, navigateTo }) {
           display: flex;
           align-items: center;
           justify-content: center;
-          padding: 6px;
+          padding: 4px;
         }
 
-        .mobile-nav-list {
+        /* Main Navigation Group */
+        .mobile-nav-group {
+          background: #ffffff;
+          border: 1px solid #e2e8f0;
+          border-radius: 12px;
+          overflow: hidden;
+          box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
           display: flex;
           flex-direction: column;
-          gap: 0.5rem;
         }
 
-        .mobile-nav-item {
+        .mobile-nav-link {
           display: flex;
           align-items: center;
           gap: 0.75rem;
-          padding: 0.8rem 1rem;
-          border-radius: var(--radius-sm);
-          background: #f8fafc;
-          border: 1px solid var(--border-subtle);
-          color: var(--text-primary);
-          font-size: 0.92rem;
-          font-weight: 600;
+          padding: 0.65rem 0.85rem;
+          border: none;
+          background: #ffffff;
           text-align: left;
           cursor: pointer;
-          min-height: 48px;
-          transition: background 0.15s ease, border-color 0.15s ease;
+          min-height: 44px;
+          border-bottom: 1px solid #f1f5f9;
+          transition: background 0.15s ease, transform 0.1s ease;
         }
 
-        .mobile-nav-item:active {
-          transform: scale(0.99);
+        .mobile-nav-link:last-child {
+          border-bottom: none;
         }
 
-        .mobile-nav-item.active {
-          background: #eff6ff;
-          border-color: #bfdbfe;
-          color: var(--navy);
+        .mobile-nav-link:active {
+          background: #f8fafc;
+        }
+
+        .mobile-nav-link.active {
+          background: #f0f9ff;
+        }
+
+        .mobile-nav-icon-wrap {
+          width: 30px;
+          height: 30px;
+          border-radius: 8px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+          transition: transform 0.15s ease;
+        }
+
+        .nav-icon-home { background: #eff6ff; color: #0284c7; }
+        .nav-icon-expeditions { background: #f0fdf4; color: #16a34a; }
+        .nav-icon-map { background: #f5f3ff; color: #7c3aed; }
+        .nav-icon-publications { background: #fffbeb; color: #d97706; }
+
+        .mobile-nav-link.active .nav-icon-home { background: #0284c7; color: #ffffff; }
+        .mobile-nav-link.active .nav-icon-expeditions { background: #16a34a; color: #ffffff; }
+        .mobile-nav-link.active .nav-icon-map { background: #7c3aed; color: #ffffff; }
+        .mobile-nav-link.active .nav-icon-publications { background: #d97706; color: #ffffff; }
+
+        .mobile-nav-label {
+          font-size: 0.88rem;
+          font-weight: 600;
+          color: #1e293b;
+          flex: 1;
+        }
+
+        .mobile-nav-link.active .mobile-nav-label {
+          color: #0369a1;
           font-weight: 700;
         }
 
-        .mobile-nav-item.admin-active {
+        .mobile-nav-arrow {
+          color: #94a3b8;
+          flex-shrink: 0;
+          transition: transform 0.15s ease, color 0.15s ease;
+        }
+
+        .mobile-nav-link:hover .mobile-nav-arrow,
+        .mobile-nav-link.active .mobile-nav-arrow {
+          color: #0369a1;
+          transform: translateX(2px);
+        }
+
+        /* Staff / Admin Card */
+        .mobile-staff-card {
+          background: #ffffff;
+          border: 1px solid #e2e8f0;
+          border-radius: 12px;
+          overflow: hidden;
+          box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+        }
+
+        .mobile-staff-btn {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          width: 100%;
+          padding: 0.6rem 0.85rem;
+          border: none;
+          background: #ffffff;
+          text-align: left;
+          cursor: pointer;
+          min-height: 44px;
+          transition: background 0.15s ease;
+        }
+
+        .mobile-staff-btn:active {
+          background: #f8fafc;
+        }
+
+        .mobile-staff-icon-wrap {
+          width: 30px;
+          height: 30px;
+          border-radius: 8px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+        }
+
+        .lock-icon {
+          background: #f1f5f9;
+          color: #475569;
+        }
+
+        .admin-icon {
           background: #ecfdf5;
-          border-color: #a7f3d0;
-          color: #047857;
-          font-weight: 700;
+          color: #059669;
         }
 
-        .mobile-divider {
-          height: 1px;
-          background: var(--border-subtle);
-          margin: 0.5rem 0;
-        }
-
-        .mobile-drawer-footer {
-          margin-top: 1rem;
-          padding-top: 1rem;
-          border-top: 1px solid var(--border-subtle);
+        .mobile-staff-text {
           display: flex;
           flex-direction: column;
-          gap: 0.75rem;
+          gap: 0.1rem;
+          flex: 1;
         }
 
-        .drawer-a11y-row {
+        .staff-title {
+          font-size: 0.84rem;
+          font-weight: 700;
+          color: #0f172a;
+        }
+
+        .staff-sub {
+          font-size: 0.70rem;
+          color: #64748b;
+        }
+
+        .staff-badge {
+          font-size: 0.68rem;
+          font-weight: 700;
+          background: #e0f2fe;
+          color: #0369a1;
+          padding: 2px 7px;
+          border-radius: 6px;
+          margin-right: 0.25rem;
+        }
+
+        .mobile-auth-logged {
+          display: flex;
+          flex-direction: column;
+        }
+
+        .mobile-signout-btn {
+          background: #fef2f2;
+          border: none;
+          border-top: 1px solid #fee2e2;
+          color: #dc2626;
+          padding: 0.45rem 0.85rem;
+          font-size: 0.76rem;
+          font-weight: 600;
+          cursor: pointer;
+          text-align: center;
+          transition: background 0.15s ease;
+        }
+
+        .mobile-signout-btn:active {
+          background: #fee2e2;
+        }
+
+        /* Controls Panel */
+        .mobile-controls-panel {
+          background: #ffffff;
+          border: 1px solid #e2e8f0;
+          border-radius: 12px;
+          padding: 0.5rem 0.75rem;
+          display: flex;
+          flex-direction: column;
+          gap: 0.45rem;
+          box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+        }
+
+        .mobile-controls-row {
           display: flex;
           align-items: center;
           justify-content: space-between;
           gap: 0.5rem;
-          flex-wrap: wrap;
         }
 
-        .mobile-lang-btn {
+        .mobile-control-chip-group {
+          display: inline-flex;
+          align-items: center;
+          background: #f1f5f9;
+          padding: 2px;
+          border-radius: 7px;
+          gap: 2px;
+        }
+
+        .mobile-a11y-pill {
+          border: none;
+          background: transparent;
+          padding: 3px 9px;
+          font-size: 0.74rem;
+          font-weight: 700;
+          color: #475569;
+          border-radius: 5px;
+          cursor: pointer;
+          transition: all 0.15s ease;
+        }
+
+        .mobile-a11y-pill.active {
+          background: #ffffff;
+          color: #0284c7;
+          box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
+        }
+
+        .mobile-contrast-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.35rem;
+          background: #f1f5f9;
+          border: 1px solid #e2e8f0;
+          padding: 4px 9px;
+          border-radius: 7px;
+          font-size: 0.74rem;
+          font-weight: 600;
+          color: #475569;
+          cursor: pointer;
+          transition: all 0.15s ease;
+        }
+
+        .mobile-contrast-btn.active {
+          background: #0f172a;
+          color: #f8fafc;
+          border-color: #0f172a;
+        }
+
+        .mobile-lang-chip {
           display: flex;
           align-items: center;
-          justify-content: center;
-          gap: 0.5rem;
+          justify-content: space-between;
           width: 100%;
-          background: #f1f5f9;
-          border: 1px solid var(--border-subtle);
-          padding: 0.65rem 1rem;
-          border-radius: var(--radius-sm);
-          font-size: 0.88rem;
+          background: #f8fafc;
+          border: 1px solid #e2e8f0;
+          padding: 0.45rem 0.75rem;
+          border-radius: 8px;
+          font-size: 0.78rem;
           font-weight: 600;
-          color: var(--navy);
+          color: #0369a1;
           cursor: pointer;
-          min-height: 44px;
+          transition: all 0.15s ease;
+        }
+
+        .mobile-lang-chip:hover,
+        .mobile-lang-chip:active {
+          background: #f0f9ff;
+          border-color: #bae6fd;
+        }
+
+        .lang-chip-left {
+          display: flex;
+          align-items: center;
+          gap: 0.45rem;
+        }
+
+        .lang-tag {
+          font-size: 0.68rem;
+          font-weight: 800;
+          background: #e0f2fe;
+          color: #0284c7;
+          padding: 1px 6px;
+          border-radius: 4px;
         }
 
         @media (max-width: 1024px) {
