@@ -10,7 +10,6 @@ import {
   LayoutGrid,
   List,
   ArrowUpDown,
-  Sparkles,
   FileText,
   Image as ImageIcon,
   MapPin,
@@ -389,12 +388,6 @@ export default function Expeditions({ onSelectExpedition, navigateTo }) {
                   </div>
 
                   <div className="list-item-action">
-                    {exp.aiGeneratedContent && (
-                      <span className="list-ai-badge">
-                        <Sparkles size={11} />
-                        <span>Outreach Ready</span>
-                      </span>
-                    )}
                     <button className="list-open-btn">
                       <span>Explore</span>
                       <ArrowRight size={14} />

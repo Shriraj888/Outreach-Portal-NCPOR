@@ -162,12 +162,6 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
             <span className="detail-year-tag">
               <Calendar size={13} /> {expedition.year}
             </span>
-            {expedition.aiGeneratedContent && (
-              <span className="badge-ai-ready">
-                <Sparkles size={12} />
-                <span>{auth.isAuthenticated ? 'Outreach Pack Ready' : 'Verified Summary Ready'}</span>
-              </span>
-            )}
           </div>
 
           <h1 className="detail-hero-title">{title}</h1>
