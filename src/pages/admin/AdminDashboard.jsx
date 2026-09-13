@@ -236,24 +236,35 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
         </div>
       </div>
 
-      {/* Upload Focus Action Cards: 6 Problem Statement Pillars */}
+      {/* Upload Focus Action Cards */}
       <div className="upload-focus-banner glass-panel">
         <div className="upload-focus-header">
           <div className="upload-focus-title">
             <UploadCloud size={20} className="pulse-glow" />
-            <h3>Quick Archival Ingestion Center</h3>
+            <h3>Polar Archival Ingestion Center</h3>
           </div>
-          <span className="upload-focus-sub">Select an asset type to upload and trigger AI content generation:</span>
+          <span className="upload-focus-sub">Choose a complete expedition pipeline or upload individual publications and scientific datasets:</span>
         </div>
 
-        <div className="quick-upload-grid">
-          <div className="quick-upload-card" onClick={() => navigateTo('admin-upload-reports')}>
+        <div className="quick-upload-grid three-col">
+          <div className="quick-upload-card highlighted-card" onClick={() => navigateTo('admin-upload-expedition')}>
             <div className="quick-icon-box bg-blue">
-              <FileText size={20} />
+              <Compass size={20} />
             </div>
             <div className="quick-card-text">
-              <h4>Expedition Reports</h4>
-              <p>PDF/DOCX Cruise Reports & Logs</p>
+              <h4>Complete Expedition Pipeline</h4>
+              <p>Expedition → Media Gallery (Photos & Videos) → Publications</p>
+            </div>
+            <span className="btn-quick-plus"><Plus size={14} /></span>
+          </div>
+
+          <div className="quick-upload-card" onClick={() => navigateTo('admin-upload-publications')}>
+            <div className="quick-icon-box bg-amber">
+              <BookOpen size={20} />
+            </div>
+            <div className="quick-card-text">
+              <h4>Publications & Papers</h4>
+              <p>Standalone Peer-reviewed Journals & Bulletins</p>
             </div>
             <span className="btn-quick-plus"><Plus size={14} /></span>
           </div>
@@ -265,50 +276,6 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
             <div className="quick-card-text">
               <h4>Scientific Datasets</h4>
               <p>NetCDF, CSV, GeoJSON & Sensor Telemetry</p>
-            </div>
-            <span className="btn-quick-plus"><Plus size={14} /></span>
-          </div>
-
-          <div className="quick-upload-card" onClick={() => navigateTo('admin-upload-publications')}>
-            <div className="quick-icon-box bg-amber">
-              <BookOpen size={20} />
-            </div>
-            <div className="quick-card-text">
-              <h4>Publications & Papers</h4>
-              <p>Peer-reviewed Journals & Bulletins</p>
-            </div>
-            <span className="btn-quick-plus"><Plus size={14} /></span>
-          </div>
-
-          <div className="quick-upload-card" onClick={() => navigateTo('admin-upload-photos')}>
-            <div className="quick-icon-box bg-cyan">
-              <ImageIcon size={20} />
-            </div>
-            <div className="quick-card-text">
-              <h4>Photographs (WCAG-AA)</h4>
-              <p>High-Res Field Imagery with AI Alt-Tags</p>
-            </div>
-            <span className="btn-quick-plus"><Plus size={14} /></span>
-          </div>
-
-          <div className="quick-upload-card" onClick={() => navigateTo('admin-upload-videos')}>
-            <div className="quick-icon-box bg-red">
-              <Video size={20} />
-            </div>
-            <div className="quick-card-text">
-              <h4>Videos & Drone Logs</h4>
-              <p>Field Documentary & Transcripts</p>
-            </div>
-            <span className="btn-quick-plus"><Plus size={14} /></span>
-          </div>
-
-          <div className="quick-upload-card" onClick={() => navigateTo('admin-upload-activities')}>
-            <div className="quick-icon-box bg-green">
-              <Calendar size={20} />
-            </div>
-            <div className="quick-card-text">
-              <h4>Institutional Activities</h4>
-              <p>School Outreach, Webinars & Events</p>
             </div>
             <span className="btn-quick-plus"><Plus size={14} /></span>
           </div>

@@ -3,322 +3,395 @@ import { usePortal } from '../../context/PortalContext';
 import { autoGenerateImageAlt } from '../../services/aiService';
 import { 
   ArrowLeft, 
-  UploadCloud, 
-  FileText, 
   Database, 
   BookOpen, 
   Image as ImageIcon, 
-  Video, 
-  Calendar, 
+  Video,
   Sparkles, 
   CheckCircle2, 
   Plus, 
-  Save, 
-  Zap, 
   Tag, 
-  Check, 
-  FileCode, 
+  Check,
   MapPin, 
-  HelpCircle 
+  Compass, 
+  ArrowRight, 
+  Trash2, 
+  User, 
+  Film 
 } from 'lucide-react';
 
-export default function UploadStudio({ onBack, navigateTo, initialCategory = 'reports' }) {
+export default function UploadStudio({ onBack, navigateTo, initialCategory = 'expedition' }) {
   const { 
+    expeditions,
     addExpedition, 
     addDataset, 
     addPublication, 
-    addMediaArchive, 
-    addActivity 
+    addMediaArchive 
   } = usePortal();
 
-  const [activeCategory, setActiveCategory] = useState(initialCategory);
-  const [dragActive, setDragActive] = useState(false);
-  const [uploadedFile, setUploadedFile] = useState(null);
-  const [parsingProgress, setParsingProgress] = useState(0);
-  const [isParsing, setIsParsing] = useState(false);
+  // Normalize initial category
+  const getNormalizedMode = (cat) => {
+    if (cat === 'publications' || cat === 'publication') return 'publication';
+    if (cat === 'datasets' || cat === 'dataset') return 'dataset';
+    return 'expedition';
+  };
+
+  const [activeMode, setActiveMode] = useState(() => getNormalizedMode(initialCategory));
+  const [expeditionStep, setExpeditionStep] = useState(1); // 1: Expedition, 2: Media Gallery, 3: Publications
+
   const [successToast, setSuccessToast] = useState(null);
 
-  // Common Form States
-  const [title, setTitle] = useState('');
-  const [region, setRegion] = useState('Antarctica');
-  const [year, setYear] = useState(new Date().getFullYear());
-  const [expeditionId, setExpeditionId] = useState('isea-43');
-  const [summary, setSummary] = useState('');
+  // ==========================================
+  // 1. EXPEDITION STEP 1: Core Details
+  // ==========================================
+  const [expTitle, setExpTitle] = useState('44th Indian Scientific Expedition to Antarctica (ISEA)');
+  const [expRegion, setExpRegion] = useState('Antarctica');
+  const [expYear, setExpYear] = useState(2024);
+  const [expStartDate, setExpStartDate] = useState('Nov 2023');
+  const [expEndDate, setExpEndDate] = useState('Apr 2024');
+  const [expChiefScientist, setExpChiefScientist] = useState('Dr. Rahul Sengupta (Senior Scientist, NCPOR)');
+  const [expVessel, setExpVessel] = useState('MV Vasiliy Golovnin (Chartered Ice-Class)');
+  const [expStations, setExpStations] = useState(['Maitri Station', 'Bharati Station', 'Dome C Margin']);
+  const [expStationInput, setExpStationInput] = useState('');
+  const [expLat, setExpLat] = useState(-69.406);
+  const [expLng, setExpLng] = useState(76.190);
+  const [expLocationLabel, setExpLocationLabel] = useState('Larsemann Hills, East Antarctica');
+  const [expSummary, setExpSummary] = useState('Comprehensive multi-disciplinary expedition log covering deep glaciological ice coring, boundary layer aerosol dynamics, autonomous buoys, and polar clean microgrids.');
+  const [expAbstract, setExpAbstract] = useState('The 44th ISEA mission focused on executing high-latitude paleoclimate ice core extraction, assessing atmospheric black carbon flux at Bharati, and upgrading Maitri research station environmental telemetry.');
+  const [expHeroImage, setExpHeroImage] = useState('https://images.unsplash.com/photo-1517999144091-3d9dca6d1e43?auto=format&fit=crop&w=1600&q=80');
+  const [expTags, setExpTags] = useState(['Glaciology', 'Aerosol Physics', 'Green Microgrid', 'Climate Dynamics']);
+  const [expTagInput, setExpTagInput] = useState('');
 
-  // 1. Report Specific
-  const [chiefScientist, setChiefScientist] = useState('');
-  const [vessel, setVessel] = useState('');
-  const [stationLogs, setStationLogs] = useState(['Maitri Station', 'Bharati Station']);
-  const [stationInput, setStationInput] = useState('');
-  const [reportRawText, setReportRawText] = useState('');
-  const [heroImage] = useState('https://data.ncpor.res.in/static/images/slider/bharati/IMG_(17).JPG');
-
-  // 2. Dataset Specific
-  const [datasetFormat, setDatasetFormat] = useState('CSV (.csv)');
-  const [parameters, setParameters] = useState(['Depth (m)', 'δ18O (‰)', 'Dust Concentration (ppb)']);
-  const [paramInput, setParamInput] = useState('');
-  const [doi, setDoi] = useState('10.5281/zenodo.10892301');
-  const [license] = useState('CC-BY 4.0 Open Science');
-  const [spatialCoverage, setSpatialCoverage] = useState("75°06'S, 123°21'E (East Antarctica)");
-  const [temporalCoverage, setTemporalCoverage] = useState('7,800 BP - 2024 CE');
-  const [fileSize] = useState('42.8 MB');
-
-  // 3. Publication Specific
-  const [journal, setJournal] = useState('Polar Science & Cryosphere Letters');
-  const [authors, setAuthors] = useState(['Dr. A. K. Sharma', 'Dr. Rahul Sengupta', 'NCPOR Science Corps']);
-  const [authorInput, setAuthorInput] = useState('');
-  const [pubCategory, setPubCategory] = useState('Glaciology & Paleoclimate');
-  const [citations, setCitations] = useState(0);
-
-  // 4. Photo Specific
-  const [photoUrl, setPhotoUrl] = useState('https://data.ncpor.res.in/static/images/slider/bharati/IMG_(17).JPG');
-  const [photoCaption, setPhotoCaption] = useState('');
-  const [photoAltText, setPhotoAltText] = useState('');
-  const [resolution] = useState('4K UHD (3840x2160)');
-  const [photoTags, setPhotoTags] = useState(['Fieldwork', 'Antarctica', 'Station']);
-
-  // 5. Video Specific
-  const [videoUrl] = useState('https://data.ncpor.res.in/static/images/slider/himadri/IMG_3.JPG');
-  const [videoStreamUrl, setVideoStreamUrl] = useState('https://www.youtube.com/watch?v=sample');
-  const [duration, setDuration] = useState('4 min 20 sec');
-  const [transcript, setTranscript] = useState('');
-
-  // 6. Institutional Activity Specific
-  const [activityType, setActivityType] = useState('Smart Education');
-  const [badgeText, setBadgeText] = useState('Student Outreach');
-  const [eventDate, setEventDate] = useState('August 2024');
-
-  // Pre-load Authentic Demo Assets for 1-Click Evaluation
-  const handleLoadPreset = (category) => {
-    if (category === 'reports') {
-      setTitle('44th Indian Scientific Expedition to Antarctica (ISEA) Preliminary Cruise Dossier');
-      setRegion('Antarctica');
-      setYear(2024);
-      setChiefScientist('Dr. Rahul Sengupta (Senior Scientist, NCPOR)');
-      setVessel('MV Vasiliy Golovnin (Chartered Ice-Class Vessel)');
-      setStationLogs(['Maitri Station', 'Bharati Station', 'Dome C Margin']);
-      setSummary('Preliminary technical and scientific expedition log covering deep glaciological drilling, aerosol sampling, and green microgrid trials.');
-      setReportRawText(`NATIONAL CENTRE FOR POLAR AND OCEAN RESEARCH (NCPOR)
-Ministry of Earth Sciences, Govt. of India
-REPORT ON THE 44TH INDIAN SCIENTIFIC EXPEDITION TO ANTARCTICA (2024)
-
-Executive Summary:
-The voyage departed Cape Town with 48 scientists from MoES institutes, Survey of India, and IITs. Core missions include high-resolution aerosol monitoring at Bharati, permafrost temperature logging at Maitri, and testing cold-hardened autonomous glaciology buoys.`);
-      setUploadedFile({ name: 'ISEA_44_Cruise_Report_Official.pdf', size: 15518920, type: 'application/pdf' });
-    } else if (category === 'datasets') {
-      setTitle('Kongsfjorden Fjord Subsurface CTD & Ocean Carbon Flux Time-Series');
-      setRegion('Arctic');
-      setYear(2024);
-      setExpeditionId('arctic-2024');
-      setDatasetFormat('NetCDF (.nc)');
-      setParameters(['Water Temperature (°C)', 'Practical Salinity (PSU)', 'pCO2 (μatm)', 'Dissolved Oxygen (mg/L)', 'Current Velocity (m/s)']);
-      setDoi('10.5281/zenodo.10984420');
-      setSpatialCoverage("78°59'N, 11°48'E (Kongsfjorden Fjord, Ny-Ålesund)");
-      setTemporalCoverage('March 2023 - October 2024');
-      setSummary('Continuous subsurface oceanographic time-series monitoring Atlantic water intrusion and biogeochemical fluxes in the Arctic IndARC observatory.');
-      setUploadedFile({ name: 'IndARC_Kongsfjorden_CTD_2024.nc', size: 193566720, type: 'application/x-netcdf' });
-    } else if (category === 'publications') {
-      setTitle('Atmospheric aerosol optical depths and black carbon transport over East Antarctic coast');
-      setRegion('Antarctica');
-      setYear(2024);
-      setPubCategory('Atmospheric Sciences');
-      setJournal('Journal of Geophysical Research: Atmospheres');
-      setAuthors(['Dr. P. R. Sinha', 'Dr. Alok Kumar Sharma', 'Dr. M. M. Nambiar']);
-      setDoi('10.1029/2024JD039821');
-      setCitations(14);
-      setSummary('Simultaneous multi-wavelength aethalometer observations demonstrate pristine baseline aerosol optical depth punctuated by rare biomass burning plumes.');
-      setUploadedFile({ name: 'Atmospheric_Aerosols_JGR_2024.pdf', size: 3565158, type: 'application/pdf' });
-    } else if (category === 'photos') {
-      setTitle('Bharati Station Green Microgrid Array under Midnight Sun');
-      setRegion('Antarctica');
-      setYear(2024);
-      setPhotoUrl('https://images.unsplash.com/photo-1517411032315-54ef2cb783bb?auto=format&fit=crop&w=1600&q=80');
-      setPhotoCaption('High-efficiency photovoltaic and wind microgrid providing clean auxiliary energy at India’s Bharati Station.');
-      setPhotoAltText('Modern elevated Antarctic research base Bharati bathed in bright midnight sunlight with snow-covered rocky oasis in background.');
-      setPhotoTags(['Bharati', 'Solar Energy', 'Clean Tech', 'Infrastructure']);
-      setSummary('High-resolution documentary photograph showcasing green energy transition in polar habitats.');
-      setUploadedFile({ name: 'Bharati_Solar_Array_4K.jpg', size: 8598320, type: 'image/jpeg' });
-    } else if (category === 'videos') {
-      setTitle('Drone Survey: Kronebreen Glacier Terminus Retreat & IndARC Mooring');
-      setRegion('Arctic');
-      setYear(2024);
-      setVideoStreamUrl('https://www.youtube.com/watch?v=sample-arctic');
-      setDuration('5 min 14 sec');
-      setTranscript('Field audio log: Deployed DJI Matrice 300 RTF drone over Kronebreen glacier calving front. Air temp -6°C, wind 12 knots. Measuring terminus retreat rate.');
-      setSummary('4K aerial drone survey documenting rapid fjord ice calving dynamics in high Arctic Ny-Ålesund.');
-      setUploadedFile({ name: 'Drone_Kronebreen_Glacier_4K.mp4', size: 252182528, type: 'video/mp4' });
-    } else if (category === 'activities') {
-      setTitle('MoES-NCPOR National Polar Science School Outreach Reaches 25,000 Students');
-      setRegion('Antarctica');
-      setYear(2024);
-      setActivityType('Smart Education');
-      setBadgeText('Student Outreach');
-      setEventDate('August 2024');
-      setSummary('Interactive virtual webinars and classroom ice core kits distributed across Kendriya Vidyalayas and Navodaya Vidyalayas nationwide.');
-      setUploadedFile({ name: 'MoES_School_Outreach_Circular.pdf', size: 2202009, type: 'application/pdf' });
+  // ==========================================
+  // 2. EXPEDITION STEP 2: Media Gallery (Photos + Videos)
+  // ==========================================
+  const [galleryItems, setGalleryItems] = useState([
+    {
+      id: 'g-1',
+      type: 'photo',
+      url: 'https://images.unsplash.com/photo-1517999144091-3d9dca6d1e43?auto=format&fit=crop&w=1200&q=80',
+      caption: 'Glaciologists preparing electromechanical drill at Dronning Maud Land ice shelf margin.',
+      altText: 'Polar researchers in red parkas assembling ice core drill rig on Antarctic snow plain under clear blue sky.',
+      tags: ['Glaciology', 'Fieldwork', 'Antarctica']
+    },
+    {
+      id: 'g-2',
+      type: 'photo',
+      url: 'https://images.unsplash.com/photo-1517411032315-54ef2cb783bb?auto=format&fit=crop&w=1200&q=80',
+      caption: 'Bharati Research Base elevated station module bathed in 24-hour midnight summer sunlight.',
+      altText: 'Modern elevated research base Bharati with solar arrays overlooking snow and turquoise icebergs.',
+      tags: ['Bharati', 'Clean Energy', 'Infrastructure']
+    },
+    {
+      id: 'g-3',
+      type: 'video',
+      url: 'https://images.unsplash.com/photo-1548366086-7f1b76106622?auto=format&fit=crop&w=1200&q=80',
+      videoStreamUrl: 'https://www.youtube.com/watch?v=sample-polar',
+      duration: '4 min 12 sec',
+      caption: 'Aerial 4K Drone Footage: Continental ice sheet calving dynamics and weather balloon deployment.',
+      altText: 'Drone video recording ice sheet flow and atmospheric radiosonde launch into polar troposphere.',
+      tags: ['Drone Log', 'Atmosphere', '4K Video']
     }
+  ]);
 
-    setSuccessToast(`Loaded preset demo for ${category.toUpperCase()}`);
-    setTimeout(() => setSuccessToast(null), 3000);
-  };
+  // Temporary Media Add Inputs
+  const [mediaTypeToAdd, setMediaTypeToAdd] = useState('photo'); // photo | video
+  const [newMediaUrl, setNewMediaUrl] = useState('');
+  const [newVideoStreamUrl, setNewVideoStreamUrl] = useState('');
+  const [newMediaDuration, setNewMediaDuration] = useState('3 min 45 sec');
+  const [newMediaCaption, setNewMediaCaption] = useState('');
+  const [newMediaAltText, setNewMediaAltText] = useState('');
+  const [newMediaTags, setNewMediaTags] = useState('Fieldwork, Antarctica');
 
-  const handleDrop = (e) => {
-    e.preventDefault();
-    setDragActive(false);
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      processFile(e.dataTransfer.files[0]);
+  // ==========================================
+  // 3. EXPEDITION STEP 3: Linked Publications
+  // ==========================================
+  const [expAttachedPubs, setExpAttachedPubs] = useState([
+    {
+      id: 'pub-isea44-init-1',
+      title: 'High-resolution 8,000-year paleoclimate reconstruction from East Antarctic ice core records',
+      authors: ['Dr. A. K. Sharma', 'Dr. R. Thamban', 'Dr. Rahul Sengupta'],
+      journal: 'Journal of Glaciology & Climate Dynamics',
+      year: 2024,
+      doi: '10.1017/jog.2024.108',
+      category: 'Glaciology & Paleoclimate',
+      abstract: 'We present a continuous, high-resolution isotopic and chemical profile from a 122m ice core extracted near Dome C margin during the 44th ISEA.',
+      citations: 18
+    }
+  ]);
+
+  // Temporary Pub Add Inputs
+  const [newPubTitle, setNewPubTitle] = useState('');
+  const [newPubAuthors, setNewPubAuthors] = useState('');
+  const [newPubJournal, setNewPubJournal] = useState('Polar Science & Cryosphere Letters');
+  const [newPubYear, setNewPubYear] = useState(2024);
+  const [newPubDoi, setNewPubDoi] = useState('10.1016/j.polar.2024.1042');
+  const [newPubCategory, setNewPubCategory] = useState('Glaciology & Paleoclimate');
+  const [newPubAbstract, setNewPubAbstract] = useState('');
+  const [newPubCitations, setNewPubCitations] = useState(0);
+
+  // ==========================================
+  // STANDALONE PUBLICATION / PAPER STATES
+  // ==========================================
+  const [standalonePubTitle, setStandalonePubTitle] = useState('Atmospheric aerosol optical depths and black carbon transport over East Antarctic coast');
+  const [standalonePubAuthors, setStandalonePubAuthors] = useState('Dr. P. R. Sinha, Dr. Alok Kumar Sharma, Dr. M. M. Nambiar');
+  const [standalonePubJournal, setStandalonePubJournal] = useState('Journal of Geophysical Research: Atmospheres');
+  const [standalonePubYear, setStandalonePubYear] = useState(2024);
+  const [standalonePubDoi, setStandalonePubDoi] = useState('10.1029/2024JD039821');
+  const [standalonePubCategory, setStandalonePubCategory] = useState('Atmospheric Sciences');
+  const [standalonePubExpId, setStandalonePubExpId] = useState('isea-43');
+  const [standalonePubAbstract, setStandalonePubAbstract] = useState('Simultaneous multi-wavelength aethalometer observations demonstrate pristine baseline aerosol optical depth punctuated by rare biomass burning plumes transported across Southern Ocean trajectories.');
+  const [standalonePubCitations, setStandalonePubCitations] = useState(14);
+
+  // ==========================================
+  // STANDALONE DATASET STATES
+  // ==========================================
+  const [dsTitle, setDsTitle] = useState('Kongsfjorden Fjord Subsurface CTD & Ocean Carbon Flux Time-Series');
+  const [dsRegion, setDsRegion] = useState('Arctic');
+  const [dsYear, setDsYear] = useState(2024);
+  const [dsExpId, setDsExpId] = useState('arctic-2024');
+  const [dsFormat, setDsFormat] = useState('NetCDF (.nc)');
+  const [dsParams, setDsParams] = useState(['Water Temperature (°C)', 'Practical Salinity (PSU)', 'pCO2 (μatm)', 'Dissolved Oxygen (mg/L)']);
+  const [dsParamInput, setDsParamInput] = useState('');
+  const [dsDoi, setDsDoi] = useState('10.5281/zenodo.10984420');
+  const [dsSpatial, setDsSpatial] = useState("78°59'N, 11°48'E (Kongsfjorden Fjord, Ny-Ålesund)");
+  const [dsTemporal, setDsTemporal] = useState('March 2023 - October 2024');
+  const [dsFileSize, setDsFileSize] = useState('42.8 MB');
+  const [dsSummary, setDsSummary] = useState('Continuous subsurface oceanographic time-series monitoring Atlantic water intrusion and biogeochemical fluxes in the Arctic IndARC observatory.');
+
+  // Tag helper
+  const handleAddStation = () => {
+    if (expStationInput.trim() && !expStations.includes(expStationInput.trim())) {
+      setExpStations([...expStations, expStationInput.trim()]);
+      setExpStationInput('');
     }
   };
 
-  const handleFileSelect = (e) => {
-    if (e.target.files && e.target.files[0]) {
-      processFile(e.target.files[0]);
+  const handleRemoveStation = (index) => {
+    setExpStations(expStations.filter((_, i) => i !== index));
+  };
+
+  const handleAddExpTag = () => {
+    if (expTagInput.trim() && !expTags.includes(expTagInput.trim())) {
+      setExpTags([...expTags, expTagInput.trim()]);
+      setExpTagInput('');
     }
   };
 
-  const processFile = (file) => {
-    setUploadedFile(file);
-    setIsParsing(true);
-    setParsingProgress(20);
-
-    setTimeout(() => setParsingProgress(60), 300);
-    setTimeout(() => {
-      setParsingProgress(100);
-      setIsParsing(false);
-      
-      if (!title) {
-        const cleanName = file.name.replace(/\.[^/.]+$/, "").replace(/_/g, " ");
-        setTitle(cleanName.charAt(0).toUpperCase() + cleanName.slice(1));
-      }
-    }, 700);
+  const handleRemoveExpTag = (index) => {
+    setExpTags(expTags.filter((_, i) => i !== index));
   };
 
-  const handleAutoAlt = () => {
-    const generated = autoGenerateImageAlt(photoCaption || title, region, `Resolution: ${resolution}`);
-    setPhotoAltText(generated);
+  // Add media item to expedition gallery
+  const handleAddGalleryItem = () => {
+    if (!newMediaCaption && !newMediaUrl) {
+      alert('Please provide a media URL or caption.');
+      return;
+    }
+
+    const fallbackPhoto = 'https://images.unsplash.com/photo-1517999144091-3d9dca6d1e43?auto=format&fit=crop&w=1200&q=80';
+    const fallbackVideoThumb = 'https://images.unsplash.com/photo-1548366086-7f1b76106622?auto=format&fit=crop&w=1200&q=80';
+
+    const newItem = {
+      id: `gallery-${Date.now()}`,
+      type: mediaTypeToAdd,
+      url: newMediaUrl || (mediaTypeToAdd === 'video' ? fallbackVideoThumb : fallbackPhoto),
+      videoStreamUrl: mediaTypeToAdd === 'video' ? (newVideoStreamUrl || 'https://www.youtube.com/watch?v=sample') : undefined,
+      duration: mediaTypeToAdd === 'video' ? newMediaDuration : undefined,
+      caption: newMediaCaption || (mediaTypeToAdd === 'video' ? 'Polar Field Documentary Video' : 'Polar Research Field Photograph'),
+      altText: newMediaAltText || autoGenerateImageAlt(newMediaCaption || expTitle, expRegion),
+      tags: newMediaTags.split(',').map(t => t.trim()).filter(Boolean)
+    };
+
+    setGalleryItems([...galleryItems, newItem]);
+    setNewMediaUrl('');
+    setNewVideoStreamUrl('');
+    setNewMediaCaption('');
+    setNewMediaAltText('');
+    setNewMediaTags('Fieldwork, Polar');
+    setSuccessToast(`Added ${mediaTypeToAdd === 'video' ? 'Video' : 'Photo'} to Expedition Gallery!`);
+    setTimeout(() => setSuccessToast(null), 2500);
   };
 
-  const handleSave = () => {
-    if (activeCategory === 'reports') {
-      addExpedition({
-        title: title || 'Polar Scientific Mission Report',
-        region,
-        year: Number(year),
-        chiefScientist,
-        vessel,
-        stations: stationLogs,
-        heroImage,
-        summary,
-        tags: ['Glaciology', 'Aerosol Physics', 'Green Microgrid', 'Autonomous Buoys'],
-        scientificAbstract: reportRawText,
-        keyFindings: [
-          'High-latitude baseline telemetry validated.',
-          'Atmospheric aerosol and greenhouse gas monitoring completed.',
-          'Zero-waste environmental protocol executed.'
-        ],
-        reports: [
-          {
-            id: `rep-${Date.now()}`,
-            title: `Official Report: ${title}`,
-            fileUrl: '#',
-            fileSize: uploadedFile?.size ? `${(uploadedFile.size / (1024*1024)).toFixed(1)} MB` : '14.2 MB',
-            rawText: reportRawText
-          }
-        ],
-        media: [
-          {
-            id: `m-${Date.now()}-1`,
-            type: 'photo',
-            url: heroImage,
-            caption: title,
-            altText: autoGenerateImageAlt(title, region),
-            tags: ['Fieldwork', 'Antarctica']
-          },
-          {
-            id: `m-${Date.now()}-2`,
-            type: 'photo',
-            url: 'https://images.unsplash.com/photo-1517999144091-3d9dca6d1e43?auto=format&fit=crop&w=1200&q=80',
-            caption: 'Glaciologist preparing electromechanical drill at Dronning Maud Land margin.',
-            altText: 'Scientist in polar parka assembling drill apparatus on snow field.',
-            tags: ['Glaciology', 'Fieldwork']
-          },
-          {
-            id: `m-${Date.now()}-3`,
-            type: 'photo',
-            url: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80',
-            caption: 'Schirmacher Oasis nunataks surrounding India\'s Maitri research station.',
-            altText: 'Rugged rocky hills jutting above surrounding continental ice sheet under clear sky.',
-            tags: ['Maitri', 'Landscape']
-          }
-        ],
-        publications: ['pub-101', 'pub-104']
-      });
-    } else if (activeCategory === 'datasets') {
-      addDataset({
-        title: title || 'Polar Scientific Dataset',
-        region,
-        year: Number(year),
-        expeditionId,
-        category: 'Glaciology & Paleoclimate',
-        format: datasetFormat,
-        fileSize: uploadedFile?.size ? `${(uploadedFile.size / (1024*1024)).toFixed(1)} MB` : fileSize,
-        parameters,
-        doi,
-        license,
-        spatialCoverage,
-        temporalCoverage,
-        summary: summary || 'Comprehensive verified polar dataset collected by NCPOR researchers.'
-      });
-    } else if (activeCategory === 'publications') {
-      addPublication({
-        title: title || 'Polar Science Publication',
-        authors,
-        journal,
-        year: Number(year),
-        doi,
-        category: pubCategory,
-        expeditionId,
-        abstract: summary || 'Peer-reviewed research detailing high-latitude scientific observations.',
-        citations: Number(citations) || 0
-      });
-    } else if (activeCategory === 'photos' || activeCategory === 'videos') {
+  const handleRemoveGalleryItem = (id) => {
+    setGalleryItems(galleryItems.filter(item => item.id !== id));
+  };
+
+  // Add publication to expedition
+  const handleAddExpPub = () => {
+    if (!newPubTitle.trim()) {
+      alert('Please enter a publication title.');
+      return;
+    }
+
+    const authorsList = newPubAuthors.trim() 
+      ? newPubAuthors.split(',').map(a => a.trim()).filter(Boolean)
+      : ['NCPOR Scientific Corps'];
+
+    const newPub = {
+      id: `pub-${Date.now()}`,
+      title: newPubTitle,
+      authors: authorsList,
+      journal: newPubJournal,
+      year: Number(newPubYear) || 2024,
+      doi: newPubDoi,
+      category: newPubCategory,
+      abstract: newPubAbstract || 'Original research collected during this polar scientific expedition.',
+      citations: Number(newPubCitations) || 0
+    };
+
+    setExpAttachedPubs([...expAttachedPubs, newPub]);
+    setNewPubTitle('');
+    setNewPubAuthors('');
+    setNewPubAbstract('');
+    setSuccessToast('Attached research publication to expedition!');
+    setTimeout(() => setSuccessToast(null), 2500);
+  };
+
+  const handleRemoveExpPub = (id) => {
+    setExpAttachedPubs(expAttachedPubs.filter(p => p.id !== id));
+  };
+
+  // Add parameter to dataset
+  const handleAddDsParam = () => {
+    if (dsParamInput.trim() && !dsParams.includes(dsParamInput.trim())) {
+      setDsParams([...dsParams, dsParamInput.trim()]);
+      setDsParamInput('');
+    }
+  };
+
+  // ==========================================
+  // SAVE / PUBLISH ACTIONS
+  // ==========================================
+
+  // 1. Submit Full Expedition Flow
+  const handleSaveFullExpedition = () => {
+    const newExpId = `isea-${Date.now().toString().slice(-4)}`;
+    
+    // Save all attached publications into global publications registry as well
+    const createdPubIds = [];
+    expAttachedPubs.forEach(pub => {
+      const pubItem = {
+        ...pub,
+        expeditionId: newExpId
+      };
+      addPublication(pubItem);
+      createdPubIds.push(pub.id);
+    });
+
+    // Save all gallery media items
+    galleryItems.forEach(item => {
       addMediaArchive({
-        type: activeCategory === 'videos' ? 'video' : 'photo',
-        title: title || 'Polar Media Archive',
-        region,
-        expeditionId,
-        year: Number(year),
-        url: activeCategory === 'videos' ? videoUrl : photoUrl,
-        videoStreamUrl,
-        duration,
-        caption: photoCaption || title,
-        altText: photoAltText || autoGenerateImageAlt(title, region),
-        tags: photoTags,
-        category: activeCategory === 'videos' ? 'Videos' : 'Photographs',
-        resolution,
-        transcript
+        type: item.type,
+        title: item.caption,
+        region: expRegion,
+        expeditionId: newExpId,
+        year: Number(expYear),
+        url: item.url,
+        videoStreamUrl: item.videoStreamUrl,
+        duration: item.duration,
+        caption: item.caption,
+        altText: item.altText,
+        tags: item.tags,
+        category: item.type === 'video' ? 'Videos' : 'Photographs'
       });
-    } else if (activeCategory === 'activities') {
-      addActivity({
-        title: title || 'Institutional Outreach Activity',
-        date: `${eventDate} ${year}`,
-        type: activityType,
-        badge: badgeText,
-        summary: summary || 'MoES-NCPOR polar science outreach and education campaign.'
-      });
-    }
+    });
 
-    navigateTo('admin-dashboard');
+    // Create full expedition record
+    addExpedition({
+      id: newExpId,
+      title: expTitle,
+      region: expRegion,
+      year: Number(expYear),
+      startDate: expStartDate,
+      endDate: expEndDate,
+      chiefScientist: expChiefScientist,
+      vessel: expVessel,
+      stations: expStations,
+      coordinates: {
+        lat: Number(expLat),
+        lng: Number(expLng),
+        label: expLocationLabel
+      },
+      heroImage: expHeroImage,
+      summary: expSummary,
+      scientificAbstract: expAbstract,
+      tags: expTags,
+      status: 'published',
+      media: galleryItems.map(item => ({
+        id: item.id,
+        type: item.type,
+        url: item.url,
+        caption: item.caption,
+        altText: item.altText
+      })),
+      publications: createdPubIds
+    });
+
+    setSuccessToast(`Successfully published ${expTitle}! Redirecting to Expeditions...`);
+    setTimeout(() => {
+      navigateTo('expeditions');
+    }, 1200);
   };
 
-  const categories = [
-    { id: 'reports', label: '1. Expedition Reports', icon: FileText, desc: 'Cruise dossiers, PDF reports & mission logs' },
-    { id: 'datasets', label: '2. Scientific Datasets', icon: Database, desc: 'NetCDF, CSV, GeoJSON & sensor telemetry' },
-    { id: 'publications', label: '3. Publications & Papers', icon: BookOpen, desc: 'Peer-reviewed journals & MoES bulletins' },
-    { id: 'photos', label: '4. Photographs (WCAG-AA)', icon: ImageIcon, desc: 'High-res imagery with AI alt-text' },
-    { id: 'videos', label: '5. Videos & Drone Logs', icon: Video, desc: 'Field documentary & drone footage' },
-    { id: 'activities', label: '6. Institutional Activities', icon: Calendar, desc: 'School outreach, webinars & MoES events' }
-  ];
+  // 2. Submit Standalone Publication
+  const handleSaveStandalonePublication = () => {
+    if (!standalonePubTitle.trim()) {
+      alert('Please provide a publication title.');
+      return;
+    }
+
+    const authorsList = standalonePubAuthors.split(',').map(a => a.trim()).filter(Boolean);
+
+    addPublication({
+      title: standalonePubTitle,
+      authors: authorsList.length > 0 ? authorsList : ['NCPOR Scientific Team'],
+      journal: standalonePubJournal,
+      year: Number(standalonePubYear) || 2024,
+      doi: standalonePubDoi,
+      category: standalonePubCategory,
+      expeditionId: standalonePubExpId || undefined,
+      abstract: standalonePubAbstract,
+      citations: Number(standalonePubCitations) || 0,
+      status: 'published'
+    });
+
+    setSuccessToast(`Published "${standalonePubTitle.substring(0, 35)}..." to Publications Archive!`);
+    setTimeout(() => {
+      navigateTo('publications');
+    }, 1200);
+  };
+
+  // 3. Submit Standalone Dataset
+  const handleSaveStandaloneDataset = () => {
+    if (!dsTitle.trim()) {
+      alert('Please provide a dataset title.');
+      return;
+    }
+
+    addDataset({
+      title: dsTitle,
+      region: dsRegion,
+      year: Number(dsYear),
+      expeditionId: dsExpId,
+      category: 'Glaciology & Paleoclimate',
+      format: dsFormat,
+      fileSize: dsFileSize || '12.4 MB',
+      parameters: dsParams,
+      doi: dsDoi,
+      spatialCoverage: dsSpatial,
+      temporalCoverage: dsTemporal,
+      summary: dsSummary,
+      status: 'published'
+    });
+
+    setSuccessToast(`Published dataset to Open Research Archive!`);
+    setTimeout(() => {
+      navigateTo('publications');
+    }, 1200);
+  };
+
+
 
   return (
     <div className="container upload-studio-page">
@@ -330,22 +403,12 @@ The voyage departed Cape Town with 48 scientists from MoES institutes, Survey of
         </button>
 
         <div className="upload-header-text">
-          <div className="section-eyebrow">UNIVERSAL ARCHIVAL & INGESTION HUB</div>
-          <h1 className="page-title">Upload & Archive Polar Science</h1>
+          <div className="section-eyebrow">NCPOR SCIENTIFIC INGESTION PIPELINE</div>
+          <h1 className="page-title">Admin Science Upload Studio</h1>
           <p className="page-sub">
-            Archive multi-format scientific assets to fulfill the MoES National Polar Outreach mandate and generate automated multi-channel social media campaigns.
+            Create complete expedition packages (Expedition ➔ Media Gallery ➔ Publications) or upload individual research papers and scientific datasets directly to the public repository.
           </p>
         </div>
-
-        {/* Quick Demo Preloader */}
-        <button 
-          className="btn-preset-load"
-          onClick={() => handleLoadPreset(activeCategory)}
-          title="Instantly pre-fill authentic polar data for SIH evaluation"
-        >
-          <Zap size={15} />
-          <span>⚡ Load Demo {activeCategory.slice(0, -1)} Asset</span>
-        </button>
       </div>
 
       {successToast && (
@@ -355,117 +418,914 @@ The voyage departed Cape Town with 48 scientists from MoES institutes, Survey of
         </div>
       )}
 
-      {/* 6 Problem Statement Asset Pillars Bar */}
-      <div className="pillar-nav-bar">
-        {categories.map((cat) => {
-          const Icon = cat.icon;
-          const isActive = activeCategory === cat.id;
-          return (
-            <button
-              key={cat.id}
-              className={`pillar-tab ${isActive ? 'active' : ''}`}
-              onClick={() => {
-                setActiveCategory(cat.id);
-                setUploadedFile(null);
-              }}
-            >
-              <div className="pillar-tab-icon">
-                <Icon size={18} />
-              </div>
-              <div className="pillar-tab-info">
-                <div className="pillar-tab-title">{cat.label}</div>
-                <div className="pillar-tab-desc">{cat.desc}</div>
-              </div>
-            </button>
-          );
-        })}
+      {/* Main Mode Navigation Bar */}
+      <div className="mode-selection-bar">
+        <button 
+          className={`mode-tab-card ${activeMode === 'expedition' ? 'active' : ''}`}
+          onClick={() => setActiveMode('expedition')}
+        >
+          <div className="mode-card-header">
+            <div className="mode-icon-box bg-blue">
+              <Compass size={20} />
+            </div>
+            <div>
+              <div className="mode-title">Complete Expedition Pipeline</div>
+              <div className="mode-flow-badge">Expedition ➔ Media Gallery ➔ Publication</div>
+            </div>
+          </div>
+          <p className="mode-desc">Structured 3-step pipeline to ingest an expedition with photos, videos, and linked papers.</p>
+        </button>
+
+        <button 
+          className={`mode-tab-card ${activeMode === 'publication' ? 'active' : ''}`}
+          onClick={() => setActiveMode('publication')}
+        >
+          <div className="mode-card-header">
+            <div className="mode-icon-box bg-amber">
+              <BookOpen size={20} />
+            </div>
+            <div>
+              <div className="mode-title">Individual Publication / Paper</div>
+              <div className="mode-flow-badge standalone">Main Publications Page</div>
+            </div>
+          </div>
+          <p className="mode-desc">Directly upload a standalone peer-reviewed paper or journal article to the public repository.</p>
+        </button>
+
+        <button 
+          className={`mode-tab-card ${activeMode === 'dataset' ? 'active' : ''}`}
+          onClick={() => setActiveMode('dataset')}
+        >
+          <div className="mode-card-header">
+            <div className="mode-icon-box bg-purple">
+              <Database size={20} />
+            </div>
+            <div>
+              <div className="mode-title">Individual Scientific Dataset</div>
+              <div className="mode-flow-badge standalone">Open Data Archive</div>
+            </div>
+          </div>
+          <p className="mode-desc">Upload NetCDF, CSV, or sensor telemetry datasets with DOIs to Open Data repository.</p>
+        </button>
       </div>
 
-      {/* Main Drag-and-Drop & Form Grid */}
-      <div className="upload-grid-container">
-        {/* Left Column: Drag & Drop Dropzone + File Preview */}
-        <div className="dropzone-column">
-          <div 
-            className={`glass-panel dropzone-card ${dragActive ? 'drag-active' : ''}`}
-            onDragEnter={(e) => { e.preventDefault(); setDragActive(true); }}
-            onDragLeave={(e) => { e.preventDefault(); setDragActive(false); }}
-            onDragOver={(e) => { e.preventDefault(); }}
-            onDrop={handleDrop}
-          >
-            <input 
-              type="file" 
-              id="file-upload-input" 
-              className="hidden-file-input"
-              onChange={handleFileSelect}
-            />
-            <label htmlFor="file-upload-input" className="dropzone-content-label">
-              <div className="dropzone-icon-box">
-                <UploadCloud size={36} className="upload-cloud-icon" />
+      {/* ========================================================================= */}
+      {/* MODE 1: COMPLETE EXPEDITION PIPELINE (Expedition -> Media -> Publication) */}
+      {/* ========================================================================= */}
+      {activeMode === 'expedition' && (
+        <div className="expedition-pipeline-container">
+          {/* Step Progress Indicator */}
+          <div className="pipeline-steps-bar glass-panel">
+            <button 
+              className={`pipeline-step-btn ${expeditionStep === 1 ? 'active' : ''} ${expeditionStep > 1 ? 'completed' : ''}`}
+              onClick={() => setExpeditionStep(1)}
+            >
+              <div className="step-num-circle">
+                {expeditionStep > 1 ? <Check size={14} /> : '1'}
               </div>
-              <h4>Drag & Drop or Browse Files</h4>
-              <p>Supports PDF, DOCX, CSV, NetCDF (.nc), GeoJSON, JPG, PNG, MP4</p>
-              <span className="btn-browse-file">Choose Local File</span>
-            </label>
+              <div className="step-text-wrap">
+                <span className="step-label">Step 1</span>
+                <span className="step-heading">Expedition Details</span>
+              </div>
+            </button>
 
-            {isParsing && (
-              <div className="parsing-progress-box">
-                <div className="progress-bar-track">
-                  <div className="progress-bar-fill" style={{ width: `${parsingProgress}%` }}></div>
-                </div>
-                <div className="progress-status-text">
-                  <Sparkles size={12} className="spin-slow" />
-                  <span>Ingesting and extracting polar metadata ({parsingProgress}%)...</span>
-                </div>
-              </div>
-            )}
+            <div className={`step-connector ${expeditionStep >= 2 ? 'active' : ''}`} />
 
-            {uploadedFile && !isParsing && (
-              <div className="uploaded-file-chip">
-                <FileCode size={18} className="file-chip-icon" />
-                <div className="file-chip-info">
-                  <div className="file-chip-name">{uploadedFile.name}</div>
-                  <div className="file-chip-meta">{uploadedFile.type || 'Binary Document'} • {uploadedFile.size ? `${(uploadedFile.size / 1024).toFixed(1)} KB` : '12.4 MB'}</div>
-                </div>
-                <div className="file-chip-status">
-                  <Check size={14} />
-                  <span>Parsed</span>
-                </div>
+            <button 
+              className={`pipeline-step-btn ${expeditionStep === 2 ? 'active' : ''} ${expeditionStep > 2 ? 'completed' : ''}`}
+              onClick={() => setExpeditionStep(2)}
+            >
+              <div className="step-num-circle">
+                {expeditionStep > 2 ? <Check size={14} /> : '2'}
               </div>
-            )}
+              <div className="step-text-wrap">
+                <span className="step-label">Step 2</span>
+                <span className="step-heading">Media Gallery ({galleryItems.length} items)</span>
+              </div>
+            </button>
+
+            <div className={`step-connector ${expeditionStep >= 3 ? 'active' : ''}`} />
+
+            <button 
+              className={`pipeline-step-btn ${expeditionStep === 3 ? 'active' : ''}`}
+              onClick={() => setExpeditionStep(3)}
+            >
+              <div className="step-num-circle">3</div>
+              <div className="step-text-wrap">
+                <span className="step-label">Step 3</span>
+                <span className="step-heading">Publications ({expAttachedPubs.length})</span>
+              </div>
+            </button>
           </div>
 
-          {/* Guidelines Box */}
-          <div className="glass-panel guidelines-card">
-            <h4 className="guide-title">
-              <HelpCircle size={15} />
-              <span>NCPOR Archival Standard Guidelines</span>
-            </h4>
-            <ul className="guide-list">
-              <li><strong>Open Data Mandate:</strong> Datasets comply with FAIR (Findable, Accessible, Interoperable, Reusable) polar data standards.</li>
-              <li><strong>Accessibility:</strong> All photographs & media archives automatically undergo WCAG-AA compliant alt-tagging.</li>
-              <li><strong>Immediate AI Outreach:</strong> Once archived, launch the 1-Click AI Studio to generate Twitter, Instagram & LinkedIn social campaigns.</li>
-            </ul>
-          </div>
+          {/* STEP 1: EXPEDITION CORE DETAILS */}
+          {expeditionStep === 1 && (
+            <div className="glass-panel step-content-panel">
+              <div className="step-panel-header">
+                <div>
+                  <h2 className="step-title">1. Expedition Mission Details</h2>
+                  <p className="step-subtitle">Configure expedition metadata, research vessel, stations, and scientific abstract.</p>
+                </div>
+                <span className="step-badge">Stage 1 of 3</span>
+              </div>
+
+              <div className="form-two-col-layout">
+                {/* Left Fields */}
+                <div className="form-col">
+                  <div className="form-group">
+                    <label>Official Expedition Title *</label>
+                    <input 
+                      type="text" 
+                      value={expTitle} 
+                      onChange={(e) => setExpTitle(e.target.value)} 
+                      className="form-input"
+                      placeholder="e.g. 44th Indian Scientific Expedition to Antarctica"
+                      required
+                    />
+                  </div>
+
+                  <div className="form-grid-2">
+                    <div className="form-group">
+                      <label>Polar Region *</label>
+                      <select value={expRegion} onChange={(e) => setExpRegion(e.target.value)} className="form-input">
+                        <option value="Antarctica">Antarctica (ISEA)</option>
+                        <option value="Arctic">Arctic (Himadri / IndARC)</option>
+                        <option value="Himalaya">Himalayan Cryosphere (Himansh)</option>
+                        <option value="Southern Ocean">Southern Ocean</option>
+                      </select>
+                    </div>
+
+                    <div className="form-group">
+                      <label>Year / Season *</label>
+                      <input 
+                        type="number" 
+                        value={expYear} 
+                        onChange={(e) => setExpYear(e.target.value)} 
+                        className="form-input" 
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form-grid-2">
+                    <div className="form-group">
+                      <label>Start Date / Month</label>
+                      <input 
+                        type="text" 
+                        value={expStartDate} 
+                        onChange={(e) => setExpStartDate(e.target.value)} 
+                        className="form-input"
+                        placeholder="e.g. Nov 2023"
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label>End Date / Month</label>
+                      <input 
+                        type="text" 
+                        value={expEndDate} 
+                        onChange={(e) => setExpEndDate(e.target.value)} 
+                        className="form-input"
+                        placeholder="e.g. Apr 2024"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form-group">
+                    <label>Chief Scientist / Mission Leader</label>
+                    <input 
+                      type="text" 
+                      value={expChiefScientist} 
+                      onChange={(e) => setExpChiefScientist(e.target.value)} 
+                      className="form-input"
+                      placeholder="e.g. Dr. Rahul Sengupta (Senior Scientist, NCPOR)"
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label>Research Vessel / Aircraft / Transport</label>
+                    <input 
+                      type="text" 
+                      value={expVessel} 
+                      onChange={(e) => setExpVessel(e.target.value)} 
+                      className="form-input"
+                      placeholder="e.g. MV Vasiliy Golovnin (Chartered Ice-Class Vessel)"
+                    />
+                  </div>
+                </div>
+
+                {/* Right Fields */}
+                <div className="form-col">
+                  <div className="form-group">
+                    <label>Research Stations & Deployment Bases</label>
+                    <div className="tag-input-row">
+                      <input 
+                        type="text" 
+                        value={expStationInput} 
+                        onChange={(e) => setExpStationInput(e.target.value)}
+                        onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddStation(); }}}
+                        placeholder="Type station name and press Add (e.g. Bharati Station)"
+                        className="form-input"
+                      />
+                      <button type="button" className="btn-add-tag" onClick={handleAddStation}>
+                        <Plus size={14} /> Add
+                      </button>
+                    </div>
+                    <div className="tags-pills-list">
+                      {expStations.map((st, i) => (
+                        <span key={i} className="station-pill">
+                          <MapPin size={11} />
+                          <span>{st}</span>
+                          <button type="button" onClick={() => handleRemoveStation(i)}>×</button>
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="form-grid-2">
+                    <div className="form-group">
+                      <label>Latitude (°)</label>
+                      <input 
+                        type="number" 
+                        step="0.001"
+                        value={expLat} 
+                        onChange={(e) => setExpLat(e.target.value)} 
+                        className="form-input" 
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Longitude (°)</label>
+                      <input 
+                        type="number" 
+                        step="0.001"
+                        value={expLng} 
+                        onChange={(e) => setExpLng(e.target.value)} 
+                        className="form-input" 
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form-group">
+                    <label>Geographic Region Label</label>
+                    <input 
+                      type="text" 
+                      value={expLocationLabel} 
+                      onChange={(e) => setExpLocationLabel(e.target.value)} 
+                      className="form-input"
+                      placeholder="e.g. Larsemann Hills, East Antarctica"
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label>Hero Image URL</label>
+                    <input 
+                      type="text" 
+                      value={expHeroImage} 
+                      onChange={(e) => setExpHeroImage(e.target.value)} 
+                      className="form-input"
+                      placeholder="https://..."
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label>Scientific Disciplines / Keywords</label>
+                    <div className="tag-input-row">
+                      <input 
+                        type="text" 
+                        value={expTagInput} 
+                        onChange={(e) => setExpTagInput(e.target.value)}
+                        onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddExpTag(); }}}
+                        placeholder="Add tag (e.g. Paleoclimate) and press Add"
+                        className="form-input"
+                      />
+                      <button type="button" className="btn-add-tag" onClick={handleAddExpTag}>
+                        <Plus size={14} /> Add
+                      </button>
+                    </div>
+                    <div className="tags-pills-list">
+                      {expTags.map((tag, i) => (
+                        <span key={i} className="discipline-pill">
+                          <Tag size={11} />
+                          <span>{tag}</span>
+                          <button type="button" onClick={() => handleRemoveExpTag(i)}>×</button>
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="form-group full-width" style={{ marginTop: '1rem' }}>
+                <label>Mission Summary & Plain Language Overview</label>
+                <textarea 
+                  rows={2} 
+                  value={expSummary} 
+                  onChange={(e) => setExpSummary(e.target.value)}
+                  className="form-input"
+                  placeholder="Summary describing goals and operations..."
+                />
+              </div>
+
+              <div className="form-group full-width" style={{ marginTop: '1rem' }}>
+                <label>Scientific Abstract & Mission Objectives</label>
+                <textarea 
+                  rows={3} 
+                  value={expAbstract} 
+                  onChange={(e) => setExpAbstract(e.target.value)}
+                  className="form-input"
+                  placeholder="Comprehensive scientific abstract..."
+                />
+              </div>
+
+              <div className="step-actions-footer">
+                <div></div>
+                <button 
+                  className="btn-primary-step" 
+                  onClick={() => setExpeditionStep(2)}
+                >
+                  <span>Continue to Media Gallery</span>
+                  <ArrowRight size={16} />
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* STEP 2: MEDIA GALLERY (PHOTOS & VIDEOS) */}
+          {expeditionStep === 2 && (
+            <div className="glass-panel step-content-panel">
+              <div className="step-panel-header">
+                <div>
+                  <h2 className="step-title">2. Expedition Media Gallery (Photos & Videos)</h2>
+                  <p className="step-subtitle">Attach high-resolution photos and documentary videos with WCAG-AA alt-tagging to this expedition.</p>
+                </div>
+                <span className="step-badge">Stage 2 of 3</span>
+              </div>
+
+              {/* Add Media Creator Box */}
+              <div className="media-creator-box glass-panel">
+                <div className="media-creator-header">
+                  <div className="media-type-selector">
+                    <button 
+                      type="button" 
+                      className={`type-toggle-btn ${mediaTypeToAdd === 'photo' ? 'active' : ''}`}
+                      onClick={() => setMediaTypeToAdd('photo')}
+                    >
+                      <ImageIcon size={15} />
+                      <span>Add Photograph</span>
+                    </button>
+                    <button 
+                      type="button" 
+                      className={`type-toggle-btn ${mediaTypeToAdd === 'video' ? 'active' : ''}`}
+                      onClick={() => setMediaTypeToAdd('video')}
+                    >
+                      <Video size={15} />
+                      <span>Add Video / Drone Log</span>
+                    </button>
+                  </div>
+                  <span className="media-mode-hint">Include photos and videos in one unified gallery</span>
+                </div>
+
+                <div className="form-two-col-layout" style={{ marginTop: '1rem' }}>
+                  <div className="form-col">
+                    <div className="form-group">
+                      <label>{mediaTypeToAdd === 'video' ? 'Video Thumbnail Image URL *' : 'Image Asset URL *'}</label>
+                      <input 
+                        type="text" 
+                        value={newMediaUrl} 
+                        onChange={(e) => setNewMediaUrl(e.target.value)}
+                        placeholder="https://images.unsplash.com/..." 
+                        className="form-input"
+                      />
+                    </div>
+
+                    {mediaTypeToAdd === 'video' && (
+                      <div className="form-grid-2">
+                        <div className="form-group">
+                          <label>Video Stream / YouTube URL</label>
+                          <input 
+                            type="text" 
+                            value={newVideoStreamUrl} 
+                            onChange={(e) => setNewVideoStreamUrl(e.target.value)}
+                            placeholder="https://youtube.com/watch?v=..." 
+                            className="form-input"
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label>Duration</label>
+                          <input 
+                            type="text" 
+                            value={newMediaDuration} 
+                            onChange={(e) => setNewMediaDuration(e.target.value)}
+                            placeholder="e.g. 4 min 20 sec" 
+                            className="form-input"
+                          />
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="form-group">
+                      <label>Caption / Title *</label>
+                      <input 
+                        type="text" 
+                        value={newMediaCaption} 
+                        onChange={(e) => setNewMediaCaption(e.target.value)}
+                        placeholder="Descriptive caption of field activities..." 
+                        className="form-input"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form-col">
+                    <div className="form-group">
+                      <div className="label-with-action">
+                        <label>WCAG-AA Accessibility Alt-Text</label>
+                        <button 
+                          type="button" 
+                          className="btn-auto-alt"
+                          onClick={() => {
+                            const alt = autoGenerateImageAlt(newMediaCaption || expTitle, expRegion);
+                            setNewMediaAltText(alt);
+                          }}
+                        >
+                          <Sparkles size={12} />
+                          <span>Auto-Generate</span>
+                        </button>
+                      </div>
+                      <textarea 
+                        rows={2} 
+                        value={newMediaAltText} 
+                        onChange={(e) => setNewMediaAltText(e.target.value)}
+                        placeholder="Detailed visual description for screen readers and accessibility..."
+                        className="form-input"
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label>Tags (Comma separated)</label>
+                      <input 
+                        type="text" 
+                        value={newMediaTags} 
+                        onChange={(e) => setNewMediaTags(e.target.value)}
+                        placeholder="Fieldwork, Antarctica, Glacier" 
+                        className="form-input"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="media-add-action-row">
+                  <button 
+                    type="button" 
+                    className="btn-add-media-item"
+                    onClick={handleAddGalleryItem}
+                  >
+                    <Plus size={15} />
+                    <span>Add {mediaTypeToAdd === 'video' ? 'Video' : 'Photo'} to Expedition Gallery</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Current Queued Media List */}
+              <div className="queued-media-section">
+                <div className="queued-section-header">
+                  <h3>Attached Expedition Gallery Assets ({galleryItems.length})</h3>
+                  <span className="queued-count-badge">{galleryItems.filter(i => i.type === 'photo').length} Photos • {galleryItems.filter(i => i.type === 'video').length} Videos</span>
+                </div>
+
+                {galleryItems.length > 0 ? (
+                  <div className="queued-media-grid">
+                    {galleryItems.map((item) => (
+                      <div key={item.id} className="queued-media-card">
+                        <div className="queued-thumb-wrap">
+                          <img src={item.url} alt={item.altText || item.caption} />
+                          <span className={`media-type-badge ${item.type}`}>
+                            {item.type === 'video' ? <Film size={11} /> : <ImageIcon size={11} />}
+                            <span>{item.type.toUpperCase()}</span>
+                          </span>
+                        </div>
+                        <div className="queued-media-info">
+                          <div className="queued-media-caption">{item.caption}</div>
+                          {item.altText && (
+                            <div className="queued-alt-preview">
+                              <strong>Alt:</strong> {item.altText.substring(0, 60)}...
+                            </div>
+                          )}
+                          <div className="queued-card-footer">
+                            <span className="queued-tags-count">{(item.tags || []).join(', ')}</span>
+                            <button 
+                              type="button" 
+                              className="btn-remove-media"
+                              onClick={() => handleRemoveGalleryItem(item.id)}
+                              title="Remove asset"
+                            >
+                              <Trash2 size={13} />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="empty-queued-box">
+                    <ImageIcon size={28} className="empty-icon" />
+                    <p>No media added yet. Use the form above to attach photographs and videos to this expedition.</p>
+                  </div>
+                )}
+              </div>
+
+              <div className="step-actions-footer">
+                <button 
+                  className="btn-step-back" 
+                  onClick={() => setExpeditionStep(1)}
+                >
+                  <ArrowLeft size={16} />
+                  <span>Back to Expedition Details</span>
+                </button>
+
+                <button 
+                  className="btn-primary-step" 
+                  onClick={() => setExpeditionStep(3)}
+                >
+                  <span>Continue to Publications</span>
+                  <ArrowRight size={16} />
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* STEP 3: LINKED PUBLICATIONS */}
+          {expeditionStep === 3 && (
+            <div className="glass-panel step-content-panel">
+              <div className="step-panel-header">
+                <div>
+                  <h2 className="step-title">3. Link Publications & Finalize Package</h2>
+                  <p className="step-subtitle">Attach peer-reviewed papers produced under this expedition. They will be linked to the mission and displayed in the main Publications repository.</p>
+                </div>
+                <span className="step-badge">Stage 3 of 3</span>
+              </div>
+
+              {/* Add Publication Box */}
+              <div className="media-creator-box glass-panel">
+                <div className="media-creator-header">
+                  <div className="media-type-selector">
+                    <span className="section-inline-title">
+                      <BookOpen size={16} />
+                      <span>Attach Research Publication to Expedition</span>
+                    </span>
+                  </div>
+                </div>
+
+                <div className="form-two-col-layout" style={{ marginTop: '1rem' }}>
+                  <div className="form-col">
+                    <div className="form-group">
+                      <label>Publication Title *</label>
+                      <input 
+                        type="text" 
+                        value={newPubTitle} 
+                        onChange={(e) => setNewPubTitle(e.target.value)}
+                        placeholder="e.g. Decadal mass balance and surface velocity changes of benchmark glaciers..."
+                        className="form-input"
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label>Authors (Comma separated)</label>
+                      <input 
+                        type="text" 
+                        value={newPubAuthors} 
+                        onChange={(e) => setNewPubAuthors(e.target.value)}
+                        placeholder="Dr. A. K. Sharma, Dr. R. Thamban, Dr. P. Sharma"
+                        className="form-input"
+                      />
+                    </div>
+
+                    <div className="form-grid-2">
+                      <div className="form-group">
+                        <label>Journal Name</label>
+                        <input 
+                          type="text" 
+                          value={newPubJournal} 
+                          onChange={(e) => setNewPubJournal(e.target.value)}
+                          className="form-input"
+                        />
+                      </div>
+                      <div className="form-group">
+                        <label>Year</label>
+                        <input 
+                          type="number" 
+                          value={newPubYear} 
+                          onChange={(e) => setNewPubYear(e.target.value)}
+                          className="form-input"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="form-col">
+                    <div className="form-grid-2">
+                      <div className="form-group">
+                        <label>DOI Identifier *</label>
+                        <input 
+                          type="text" 
+                          value={newPubDoi} 
+                          onChange={(e) => setNewPubDoi(e.target.value)}
+                          placeholder="10.1017/jog.2024.108"
+                          className="form-input"
+                        />
+                      </div>
+
+                      <div className="form-group">
+                        <label>Scientific Discipline</label>
+                        <select 
+                          value={newPubCategory} 
+                          onChange={(e) => setNewPubCategory(e.target.value)}
+                          className="form-input"
+                        >
+                          <option value="Glaciology & Paleoclimate">Glaciology & Paleoclimate</option>
+                          <option value="Oceanography">Oceanography</option>
+                          <option value="Atmospheric Sciences">Atmospheric Sciences</option>
+                          <option value="Himalayan Cryosphere">Himalayan Cryosphere</option>
+                          <option value="Polar Biology">Polar Biology</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className="form-group">
+                      <label>Abstract & Key Findings</label>
+                      <textarea 
+                        rows={2} 
+                        value={newPubAbstract} 
+                        onChange={(e) => setNewPubAbstract(e.target.value)}
+                        placeholder="Abstract describing discoveries and data..."
+                        className="form-input"
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label>Indexed Citations</label>
+                      <input 
+                        type="number" 
+                        value={newPubCitations} 
+                        onChange={(e) => setNewPubCitations(e.target.value)}
+                        className="form-input"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="media-add-action-row">
+                  <button 
+                    type="button" 
+                    className="btn-add-media-item"
+                    onClick={handleAddExpPub}
+                  >
+                    <Plus size={15} />
+                    <span>Attach Paper to Expedition</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Attached Publications List */}
+              <div className="queued-media-section">
+                <div className="queued-section-header">
+                  <h3>Attached Research Papers ({expAttachedPubs.length})</h3>
+                  <span className="queued-count-badge">Will appear in both Expedition & Main Publications Repository</span>
+                </div>
+
+                {expAttachedPubs.length > 0 ? (
+                  <div className="attached-pubs-list">
+                    {expAttachedPubs.map((pub) => (
+                      <div key={pub.id} className="attached-pub-card">
+                        <div className="attached-pub-icon">
+                          <BookOpen size={20} />
+                        </div>
+                        <div className="attached-pub-details">
+                          <div className="attached-pub-top">
+                            <span className="attached-pub-cat">{pub.category}</span>
+                            <span className="attached-pub-year">{pub.year}</span>
+                            <span className="attached-pub-doi">DOI: {pub.doi}</span>
+                          </div>
+                          <h4 className="attached-pub-title">{pub.title}</h4>
+                          <div className="attached-pub-authors">
+                            <User size={12} />
+                            <span>{(pub.authors || []).join(', ')} • <em>{pub.journal}</em></span>
+                          </div>
+                        </div>
+                        <button 
+                          type="button" 
+                          className="btn-remove-pub"
+                          onClick={() => handleRemoveExpPub(pub.id)}
+                          title="Remove publication"
+                        >
+                          <Trash2 size={15} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="empty-queued-box">
+                    <BookOpen size={28} className="empty-icon" />
+                    <p>No publications attached yet. You can attach papers now or publish the expedition directly.</p>
+                  </div>
+                )}
+              </div>
+
+              <div className="step-actions-footer">
+                <button 
+                  className="btn-step-back" 
+                  onClick={() => setExpeditionStep(2)}
+                >
+                  <ArrowLeft size={16} />
+                  <span>Back to Media Gallery</span>
+                </button>
+
+                <button 
+                  className="btn-publish-all" 
+                  onClick={handleSaveFullExpedition}
+                >
+                  <Sparkles size={16} />
+                  <span>🚀 Publish Complete Expedition Package</span>
+                </button>
+              </div>
+            </div>
+          )}
         </div>
+      )}
 
-        {/* Right Column: Dynamic Metadata Form */}
-        <div className="metadata-column">
-          <div className="glass-panel metadata-card">
-            <h3 className="meta-card-title">
-              <span>{categories.find(c => c.id === activeCategory)?.label} Metadata</span>
-              <span className="pill-badge">{region}</span>
-            </h3>
+      {/* ========================================================================= */}
+      {/* MODE 2: STANDALONE PUBLICATION / RESEARCH PAPER UPLOAD                    */}
+      {/* ========================================================================= */}
+      {activeMode === 'publication' && (
+        <div className="glass-panel standalone-card">
+          <div className="standalone-header-row">
+            <div>
+              <div className="section-eyebrow">STANDALONE RESEARCH INGESTION</div>
+              <h2 className="standalone-title">Upload Individual Publication / Paper</h2>
+              <p className="standalone-subtitle">Directly add peer-reviewed research papers or MoES science bulletins to the main public Publications repository.</p>
+            </div>
+            <div className="standalone-dest-badge">
+              <CheckCircle2 size={14} />
+              <span>Visible on Main Publications Page</span>
+            </div>
+          </div>
 
-            <div className="meta-form-body">
-              {/* Universal Fields */}
+          <div className="form-two-col-layout" style={{ marginTop: '1.25rem' }}>
+            <div className="form-col">
               <div className="form-group">
-                <label>Official Title / Mission Headline *</label>
+                <label>Publication Title *</label>
                 <input 
                   type="text" 
-                  value={title} 
-                  onChange={(e) => setTitle(e.target.value)}
-                  placeholder={`e.g. ${activeCategory === 'datasets' ? 'Kongsfjorden Subsurface CTD Timeseries' : '44th Indian Scientific Expedition to Antarctica'}`}
+                  value={standalonePubTitle} 
+                  onChange={(e) => setStandalonePubTitle(e.target.value)}
                   className="form-input"
+                  placeholder="e.g. High-latitude black carbon measurements..."
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Authors (Comma separated) *</label>
+                <input 
+                  type="text" 
+                  value={standalonePubAuthors} 
+                  onChange={(e) => setStandalonePubAuthors(e.target.value)}
+                  className="form-input"
+                  placeholder="Dr. P. R. Sinha, Dr. Alok Kumar Sharma, Dr. M. M. Nambiar"
+                  required
+                />
+              </div>
+
+              <div className="form-grid-2">
+                <div className="form-group">
+                  <label>Journal / Bulletin *</label>
+                  <input 
+                    type="text" 
+                    value={standalonePubJournal} 
+                    onChange={(e) => setStandalonePubJournal(e.target.value)}
+                    className="form-input"
+                    placeholder="Journal of Geophysical Research"
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Year of Publication *</label>
+                  <input 
+                    type="number" 
+                    value={standalonePubYear} 
+                    onChange={(e) => setStandalonePubYear(e.target.value)}
+                    className="form-input"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="form-grid-2">
+                <div className="form-group">
+                  <label>Digital Object Identifier (DOI) *</label>
+                  <input 
+                    type="text" 
+                    value={standalonePubDoi} 
+                    onChange={(e) => setStandalonePubDoi(e.target.value)}
+                    className="form-input"
+                    placeholder="10.1029/2024JD039821"
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Discipline / Category *</label>
+                  <select 
+                    value={standalonePubCategory} 
+                    onChange={(e) => setStandalonePubCategory(e.target.value)}
+                    className="form-input"
+                  >
+                    <option value="Glaciology & Paleoclimate">Glaciology & Paleoclimate</option>
+                    <option value="Oceanography">Oceanography</option>
+                    <option value="Atmospheric Sciences">Atmospheric Sciences</option>
+                    <option value="Himalayan Cryosphere">Himalayan Cryosphere</option>
+                    <option value="Polar Biology">Polar Biology</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div className="form-col">
+              <div className="form-group">
+                <label>Linked Expedition (Optional)</label>
+                <select 
+                  value={standalonePubExpId} 
+                  onChange={(e) => setStandalonePubExpId(e.target.value)}
+                  className="form-input"
+                >
+                  <option value="">None (Independent Study)</option>
+                  {expeditions.map(exp => (
+                    <option key={exp.id} value={exp.id}>{exp.title} ({exp.year})</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label>Abstract & Scientific Deliverables</label>
+                <textarea 
+                  rows={4} 
+                  value={standalonePubAbstract} 
+                  onChange={(e) => setStandalonePubAbstract(e.target.value)}
+                  className="form-input"
+                  placeholder="Full abstract text..."
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Indexed Academic Citations</label>
+                <input 
+                  type="number" 
+                  value={standalonePubCitations} 
+                  onChange={(e) => setStandalonePubCitations(e.target.value)}
+                  className="form-input"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="standalone-footer-actions">
+            <button className="btn-secondary" onClick={onBack}>
+              Cancel
+            </button>
+            <button className="btn-primary-publish" onClick={handleSaveStandalonePublication}>
+              <BookOpen size={16} />
+              <span>Publish Paper to Main Repository</span>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* MODE 3: STANDALONE SCIENTIFIC DATASET UPLOAD                              */}
+      {/* ========================================================================= */}
+      {activeMode === 'dataset' && (
+        <div className="glass-panel standalone-card">
+          <div className="standalone-header-row">
+            <div>
+              <div className="section-eyebrow">OPEN DATA ARCHIVE INGESTION</div>
+              <h2 className="standalone-title">Upload Individual Scientific Dataset</h2>
+              <p className="standalone-subtitle">Publish NetCDF (.nc), CSV, or sensor telemetry datasets directly into the open-access portal.</p>
+            </div>
+            <div className="standalone-dest-badge purple">
+              <Database size={14} />
+              <span>Visible on Main Datasets & Publications Page</span>
+            </div>
+          </div>
+
+          <div className="form-two-col-layout" style={{ marginTop: '1.25rem' }}>
+            <div className="form-col">
+              <div className="form-group">
+                <label>Dataset Title *</label>
+                <input 
+                  type="text" 
+                  value={dsTitle} 
+                  onChange={(e) => setDsTitle(e.target.value)}
+                  className="form-input"
+                  placeholder="e.g. Kongsfjorden CTD Timeseries"
                   required
                 />
               </div>
@@ -473,7 +1333,7 @@ The voyage departed Cape Town with 48 scientists from MoES institutes, Survey of
               <div className="form-grid-2">
                 <div className="form-group">
                   <label>Polar Region *</label>
-                  <select value={region} onChange={(e) => setRegion(e.target.value)} className="form-input">
+                  <select value={dsRegion} onChange={(e) => setDsRegion(e.target.value)} className="form-input">
                     <option value="Antarctica">Antarctica (ISEA)</option>
                     <option value="Arctic">Arctic (Himadri / IndARC)</option>
                     <option value="Himalaya">Himalayan Cryosphere (Himansh)</option>
@@ -482,764 +1342,429 @@ The voyage departed Cape Town with 48 scientists from MoES institutes, Survey of
                 </div>
 
                 <div className="form-group">
-                  <label>Year / Campaign Date *</label>
+                  <label>Year *</label>
                   <input 
                     type="number" 
-                    value={year} 
-                    onChange={(e) => setYear(e.target.value)} 
-                    className="form-input" 
+                    value={dsYear} 
+                    onChange={(e) => setDsYear(e.target.value)}
+                    className="form-input"
                   />
                 </div>
               </div>
 
-              {/* 1. REPORT FIELDS */}
-              {activeCategory === 'reports' && (
-                <>
-                  <div className="form-grid-2">
-                    <div className="form-group">
-                      <label>Chief Scientist / Mission Leader</label>
-                      <input 
-                        type="text" 
-                        value={chiefScientist} 
-                        onChange={(e) => setChiefScientist(e.target.value)}
-                        placeholder="e.g. Dr. Rahul Sengupta (NCPOR)"
-                        className="form-input"
-                      />
-                    </div>
+              <div className="form-grid-2">
+                <div className="form-group">
+                  <label>Dataset Format *</label>
+                  <select value={dsFormat} onChange={(e) => setDsFormat(e.target.value)} className="form-input">
+                    <option value="NetCDF (.nc)">NetCDF (.nc)</option>
+                    <option value="CSV (.csv)">CSV (.csv)</option>
+                    <option value="GeoJSON (.geojson)">GeoJSON (.geojson)</option>
+                    <option value="ASCII / Tab (.dat)">ASCII / Tab (.dat)</option>
+                  </select>
+                </div>
 
-                    <div className="form-group">
-                      <label>Vessel / Transport Logistics</label>
-                      <input 
-                        type="text" 
-                        value={vessel} 
-                        onChange={(e) => setVessel(e.target.value)}
-                        placeholder="e.g. MV Vasiliy Golovnin"
-                        className="form-input"
-                      />
-                    </div>
-                  </div>
+                <div className="form-group">
+                  <label>File Size / Volume</label>
+                  <input 
+                    type="text" 
+                    value={dsFileSize} 
+                    onChange={(e) => setDsFileSize(e.target.value)}
+                    className="form-input"
+                    placeholder="e.g. 42.8 MB"
+                  />
+                </div>
+              </div>
 
-                  <div className="form-group">
-                    <label>Station / Field Deployment Locations</label>
-                    <div className="tag-input-row">
-                      <input 
-                        type="text" 
-                        value={stationInput}
-                        onChange={(e) => setStationInput(e.target.value)}
-                        placeholder="e.g. Bharati Station, Larsemann Hills"
-                        className="form-input"
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') {
-                            e.preventDefault();
-                            if (stationInput.trim() && !stationLogs.includes(stationInput.trim())) {
-                              setStationLogs([...stationLogs, stationInput.trim()]);
-                              setStationInput('');
-                            }
-                          }
-                        }}
-                      />
-                      <button 
-                        type="button" 
-                        className="btn-secondary"
-                        onClick={() => {
-                          if (stationInput.trim() && !stationLogs.includes(stationInput.trim())) {
-                            setStationLogs([...stationLogs, stationInput.trim()]);
-                            setStationInput('');
-                          }
-                        }}
-                      >
-                        <Plus size={14} /> Add
-                      </button>
-                    </div>
-                    <div className="tags-container">
-                      {stationLogs.map((st, idx) => (
-                        <span key={idx} className="tag-pill">
-                          <MapPin size={11} /> {st}
-                          <button type="button" onClick={() => setStationLogs(stationLogs.filter(s => s !== st))}>×</button>
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="form-group">
-                    <label>Extracted Technical Report Text (Ingested by AI Engine)</label>
-                    <textarea 
-                      rows={5}
-                      value={reportRawText}
-                      onChange={(e) => setReportRawText(e.target.value)}
-                      placeholder="Paste raw cruise reports, progress logs, or executive summaries for LLM prompt ingestion..."
-                      className="form-textarea font-mono"
-                    />
-                  </div>
-                </>
-              )}
-
-              {/* 2. DATASET FIELDS */}
-              {activeCategory === 'datasets' && (
-                <>
-                  <div className="form-grid-2">
-                    <div className="form-group">
-                      <label>Dataset Format *</label>
-                      <select value={datasetFormat} onChange={(e) => setDatasetFormat(e.target.value)} className="form-input">
-                        <option value="NetCDF (.nc)">NetCDF (.nc)</option>
-                        <option value="CSV (.csv)">CSV (.csv)</option>
-                        <option value="GeoJSON (.json)">GeoJSON (.json)</option>
-                        <option value="ASCII / TXT">ASCII / TXT</option>
-                      </select>
-                    </div>
-
-                    <div className="form-group">
-                      <label>Digital Object Identifier (DOI)</label>
-                      <input 
-                        type="text" 
-                        value={doi} 
-                        onChange={(e) => setDoi(e.target.value)}
-                        placeholder="10.5281/zenodo.10892301"
-                        className="form-input"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="form-grid-2">
-                    <div className="form-group">
-                      <label>Spatial Coordinates / Coverage</label>
-                      <input 
-                        type="text" 
-                        value={spatialCoverage} 
-                        onChange={(e) => setSpatialCoverage(e.target.value)}
-                        placeholder="e.g. 75°06'S, 123°21'E (Dome C Margin)"
-                        className="form-input"
-                      />
-                    </div>
-
-                    <div className="form-group">
-                      <label>Temporal Coverage</label>
-                      <input 
-                        type="text" 
-                        value={temporalCoverage} 
-                        onChange={(e) => setTemporalCoverage(e.target.value)}
-                        placeholder="e.g. 7,800 BP - 2024 CE"
-                        className="form-input"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="form-group">
-                    <label>Parameter Variables Measured (Columns/Layers)</label>
-                    <div className="tag-input-row">
-                      <input 
-                        type="text" 
-                        value={paramInput}
-                        onChange={(e) => setParamInput(e.target.value)}
-                        placeholder="e.g. Water Temperature (°C), Salinity (PSU)"
-                        className="form-input"
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') {
-                            e.preventDefault();
-                            if (paramInput.trim() && !parameters.includes(paramInput.trim())) {
-                              setParameters([...parameters, paramInput.trim()]);
-                              setParamInput('');
-                            }
-                          }
-                        }}
-                      />
-                      <button 
-                        type="button" 
-                        className="btn-secondary"
-                        onClick={() => {
-                          if (paramInput.trim() && !parameters.includes(paramInput.trim())) {
-                            setParameters([...parameters, paramInput.trim()]);
-                            setParamInput('');
-                          }
-                        }}
-                      >
-                        <Plus size={14} /> Add Parameter
-                      </button>
-                    </div>
-                    <div className="tags-container">
-                      {parameters.map((p, idx) => (
-                        <span key={idx} className="tag-pill param-pill">
-                          <Tag size={11} /> {p}
-                          <button type="button" onClick={() => setParameters(parameters.filter(item => item !== p))}>×</button>
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </>
-              )}
-
-              {/* 3. PUBLICATION FIELDS */}
-              {activeCategory === 'publications' && (
-                <>
-                  <div className="form-grid-2">
-                    <div className="form-group">
-                      <label>Journal / Proceedings</label>
-                      <input 
-                        type="text" 
-                        value={journal} 
-                        onChange={(e) => setJournal(e.target.value)}
-                        placeholder="e.g. Global Biogeochemical Cycles"
-                        className="form-input"
-                      />
-                    </div>
-
-                    <div className="form-group">
-                      <label>Scientific Category</label>
-                      <select value={pubCategory} onChange={(e) => setPubCategory(e.target.value)} className="form-input">
-                        <option value="Glaciology & Paleoclimate">Glaciology & Paleoclimate</option>
-                        <option value="Oceanography">Oceanography</option>
-                        <option value="Himalayan Cryosphere">Himalayan Cryosphere</option>
-                        <option value="Atmospheric Sciences">Atmospheric Sciences</option>
-                        <option value="Polar Biology">Polar Biology</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div className="form-group">
-                    <label>Authors List</label>
-                    <div className="tag-input-row">
-                      <input 
-                        type="text" 
-                        value={authorInput}
-                        onChange={(e) => setAuthorInput(e.target.value)}
-                        placeholder="e.g. Dr. A. K. Sharma"
-                        className="form-input"
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') {
-                            e.preventDefault();
-                            if (authorInput.trim() && !authors.includes(authorInput.trim())) {
-                              setAuthors([...authors, authorInput.trim()]);
-                              setAuthorInput('');
-                            }
-                          }
-                        }}
-                      />
-                      <button 
-                        type="button" 
-                        className="btn-secondary"
-                        onClick={() => {
-                          if (authorInput.trim() && !authors.includes(authorInput.trim())) {
-                            setAuthors([...authors, authorInput.trim()]);
-                            setAuthorInput('');
-                          }
-                        }}
-                      >
-                        <Plus size={14} /> Add Author
-                      </button>
-                    </div>
-                    <div className="tags-container">
-                      {authors.map((a, idx) => (
-                        <span key={idx} className="tag-pill">
-                          {a}
-                          <button type="button" onClick={() => setAuthors(authors.filter(item => item !== a))}>×</button>
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </>
-              )}
-
-              {/* 4. PHOTO FIELDS */}
-              {activeCategory === 'photos' && (
-                <>
-                  <div className="form-group">
-                    <label>Image Source URL</label>
-                    <input 
-                      type="url" 
-                      value={photoUrl} 
-                      onChange={(e) => setPhotoUrl(e.target.value)}
-                      className="form-input"
-                    />
-                  </div>
-
-                  <div className="form-group">
-                    <label>Caption</label>
-                    <input 
-                      type="text" 
-                      value={photoCaption} 
-                      onChange={(e) => setPhotoCaption(e.target.value)}
-                      placeholder="e.g. Bharati Station under midnight sun"
-                      className="form-input"
-                    />
-                  </div>
-
-                  <div className="form-group">
-                    <div className="alt-label-row">
-                      <label>WCAG-AA Accessibility Alt-Text</label>
-                      <button 
-                        type="button" 
-                        className="btn-auto-alt"
-                        onClick={handleAutoAlt}
-                      >
-                        <Sparkles size={12} />
-                        <span>AI Auto-Generate Alt</span>
-                      </button>
-                    </div>
-                    <textarea 
-                      rows={2}
-                      value={photoAltText}
-                      onChange={(e) => setPhotoAltText(e.target.value)}
-                      placeholder="Descriptive text for screen readers..."
-                      className="form-textarea"
-                    />
-                  </div>
-                </>
-              )}
-
-              {/* 5. VIDEO FIELDS */}
-              {activeCategory === 'videos' && (
-                <>
-                  <div className="form-grid-2">
-                    <div className="form-group">
-                      <label>Video Stream / Embed URL (YouTube/MoES)</label>
-                      <input 
-                        type="url" 
-                        value={videoStreamUrl} 
-                        onChange={(e) => setVideoStreamUrl(e.target.value)}
-                        placeholder="https://www.youtube.com/watch?v=..."
-                        className="form-input"
-                      />
-                    </div>
-
-                    <div className="form-group">
-                      <label>Duration</label>
-                      <input 
-                        type="text" 
-                        value={duration} 
-                        onChange={(e) => setDuration(e.target.value)}
-                        placeholder="e.g. 4 min 20 sec"
-                        className="form-input"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="form-group">
-                    <label>Field Audio Transcript / Key Science Markers</label>
-                    <textarea 
-                      rows={3}
-                      value={transcript}
-                      onChange={(e) => setTranscript(e.target.value)}
-                      placeholder="Spoken dialog, scientific observation notes, or key timestamps..."
-                      className="form-textarea"
-                    />
-                  </div>
-                </>
-              )}
-
-              {/* 6. INSTITUTIONAL ACTIVITY FIELDS */}
-              {activeCategory === 'activities' && (
-                <>
-                  <div className="form-grid-2">
-                    <div className="form-group">
-                      <label>Activity Category</label>
-                      <select value={activityType} onChange={(e) => setActivityType(e.target.value)} className="form-input">
-                        <option value="Smart Education">Smart Education (School/College)</option>
-                        <option value="Research Milestone">Research Milestone</option>
-                        <option value="Expedition Flag-off">Expedition Flag-off</option>
-                        <option value="Science Day">National Polar Science Day</option>
-                      </select>
-                    </div>
-
-                    <div className="form-group">
-                      <label>Badge Label</label>
-                      <input 
-                        type="text" 
-                        value={badgeText} 
-                        onChange={(e) => setBadgeText(e.target.value)}
-                        placeholder="e.g. Student Outreach"
-                        className="form-input"
-                      />
-                    </div>
-                  </div>
-                </>
-              )}
-
-              {/* Description / Summary */}
               <div className="form-group">
-                <label>Archival Summary & Abstract</label>
-                <textarea 
-                  rows={3}
-                  value={summary}
-                  onChange={(e) => setSummary(e.target.value)}
-                  placeholder="Summary of this polar asset to be indexed across the public outreach portal..."
-                  className="form-textarea"
+                <label>Persistent DOI</label>
+                <input 
+                  type="text" 
+                  value={dsDoi} 
+                  onChange={(e) => setDsDoi(e.target.value)}
+                  className="form-input"
+                  placeholder="10.5281/zenodo.10984420"
                 />
               </div>
 
-              {/* Action Buttons */}
-              <div className="meta-actions-bar">
-                <button type="button" className="btn-secondary" onClick={onBack}>
-                  Cancel
-                </button>
+              <div className="form-group">
+                <label>Linked Expedition</label>
+                <select value={dsExpId} onChange={(e) => setDsExpId(e.target.value)} className="form-input">
+                  {expeditions.map(exp => (
+                    <option key={exp.id} value={exp.id}>{exp.title} ({exp.year})</option>
+                  ))}
+                </select>
+              </div>
+            </div>
 
-                <div className="meta-actions-right">
-                  <button 
-                    type="button" 
-                    className="btn-saffron"
-                    onClick={() => handleSave()}
-                  >
-                    <Save size={16} />
-                    <span>Save to Archive Repository</span>
+            <div className="form-col">
+              <div className="form-group">
+                <label>Measured Parameters</label>
+                <div className="tag-input-row">
+                  <input 
+                    type="text" 
+                    value={dsParamInput} 
+                    onChange={(e) => setDsParamInput(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddDsParam(); }}}
+                    placeholder="Add parameter (e.g. Salinity) and press Add"
+                    className="form-input"
+                  />
+                  <button type="button" className="btn-add-tag" onClick={handleAddDsParam}>
+                    <Plus size={14} /> Add
                   </button>
                 </div>
+                <div className="tags-pills-list">
+                  {dsParams.map((p, i) => (
+                    <span key={i} className="station-pill">
+                      <span>{p}</span>
+                      <button type="button" onClick={() => setDsParams(dsParams.filter((_, idx) => idx !== i))}>×</button>
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              <div className="form-grid-2">
+                <div className="form-group">
+                  <label>Spatial Coverage</label>
+                  <input 
+                    type="text" 
+                    value={dsSpatial} 
+                    onChange={(e) => setDsSpatial(e.target.value)}
+                    className="form-input"
+                    placeholder="e.g. 78°59'N, 11°48'E"
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Temporal Coverage</label>
+                  <input 
+                    type="text" 
+                    value={dsTemporal} 
+                    onChange={(e) => setDsTemporal(e.target.value)}
+                    className="form-input"
+                    placeholder="e.g. 2023 - 2024"
+                  />
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label>Dataset Summary</label>
+                <textarea 
+                  rows={3} 
+                  value={dsSummary} 
+                  onChange={(e) => setDsSummary(e.target.value)}
+                  className="form-input"
+                  placeholder="Detailed dataset summary and instrumentation..."
+                />
               </div>
             </div>
           </div>
-        </div>
-      </div>
 
+          <div className="standalone-footer-actions">
+            <button className="btn-secondary" onClick={onBack}>
+              Cancel
+            </button>
+            <button className="btn-primary-publish bg-purple-btn" onClick={handleSaveStandaloneDataset}>
+              <Database size={16} />
+              <span>Publish Dataset to Open Archive</span>
+            </button>
+          </div>
+        </div>
+      )}
+
+
+
+      {/* Embedded Styles */}
       <style>{`
         .upload-studio-page {
-          padding: 2.5rem 1.5rem 5rem;
-          display: flex;
-          flex-direction: column;
-          gap: 2rem;
+          padding-top: 1.5rem;
+          padding-bottom: 4rem;
         }
 
         .upload-header-row {
           display: flex;
           align-items: flex-start;
-          justify-content: space-between;
+          gap: 1.5rem;
+          margin-bottom: 2rem;
           flex-wrap: wrap;
-          gap: 1.25rem;
+        }
+
+        .btn-back {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.5rem;
+          background: #ffffff;
+          border: 1px solid #cbd5e1;
+          color: #334155;
+          padding: 0.5rem 0.9rem;
+          border-radius: var(--radius-sm);
+          font-size: 0.85rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.15s ease;
+        }
+
+        .btn-back:hover {
+          background: #f8fafc;
+          border-color: #94a3b8;
+          color: var(--navy);
         }
 
         .upload-header-text {
           flex: 1;
         }
 
-        .btn-preset-load {
-          display: flex;
-          align-items: center;
-          gap: 0.45rem;
-          background: #fffbeb;
-          border: 1px solid #fde68a;
-          color: #b45309;
-          padding: 0.65rem 1.1rem;
-          border-radius: var(--radius-sm);
-          font-size: 0.85rem;
-          font-weight: 700;
-          cursor: pointer;
-          transition: all 0.15s ease;
-        }
-
-        .btn-preset-load:hover {
-          background: #fef3c7;
-          border-color: #f59e0b;
-          transform: translateY(-1px);
-        }
-
-        .toast-notification {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          background: #ecfdf5;
-          border: 1px solid #a7f3d0;
-          color: #047857;
-          padding: 0.75rem 1.25rem;
-          border-radius: var(--radius-sm);
-          font-size: 0.85rem;
-          font-weight: 600;
-        }
-
-        /* 6 Pillar Tabs */
-        .pillar-nav-bar {
-          display: grid;
-          grid-template-columns: repeat(6, 1fr);
-          gap: 0.75rem;
-        }
-
-        .pillar-tab {
-          display: flex;
-          flex-direction: row;
-          align-items: center;
-          gap: 0.65rem;
-          padding: 0.85rem 0.95rem;
-          background: #ffffff;
-          border: 1px solid var(--border-card);
-          border-radius: var(--radius-md);
-          color: var(--text-secondary);
-          text-align: left;
-          cursor: pointer;
-          transition: all 0.15s ease;
-          box-shadow: var(--shadow-sm);
-        }
-
-        .pillar-tab:hover {
-          background: #f8fafc;
-          color: var(--navy);
-          border-color: #cbd5e1;
-        }
-
-        .pillar-tab.active {
-          background: #eff6ff;
-          border-color: #bfdbfe;
-          color: var(--navy);
-          box-shadow: 0 0 0 1px #bfdbfe;
-        }
-
-        .pillar-tab-icon {
-          width: 34px;
-          height: 34px;
-          border-radius: 8px;
-          background: #f0f9ff;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          flex-shrink: 0;
+        .section-eyebrow {
+          font-size: 0.72rem;
+          font-weight: 800;
           color: #0284c7;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          margin-bottom: 0.25rem;
         }
 
-        .pillar-tab.active .pillar-tab-icon {
-          background: #0284c7;
-          color: #ffffff;
-        }
-
-        .pillar-tab-info {
-          flex: 1;
-          min-width: 0;
-        }
-
-        .pillar-tab-title {
-          font-size: 0.82rem;
-          font-weight: 700;
-          line-height: 1.25;
+        .page-title {
+          font-size: 2rem;
+          font-weight: 800;
           color: var(--navy);
+          margin: 0 0 0.5rem;
+          letter-spacing: -0.02em;
         }
 
-        .pillar-tab-desc {
-          font-size: 0.68rem;
-          color: var(--text-muted);
-          line-height: 1.2;
-          margin-top: 2px;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
-
-        /* Upload Grid */
-        .upload-grid-container {
-          display: grid;
-          grid-template-columns: 340px 1fr;
-          gap: 1.5rem;
-        }
-
-        .dropzone-column {
-          display: flex;
-          flex-direction: column;
-          gap: 1.25rem;
-        }
-
-        .dropzone-card {
-          padding: 2rem 1.5rem;
-          border: 2px dashed #cbd5e1;
-          border-radius: var(--radius-md);
-          text-align: center;
-          transition: all 0.15s ease;
-          background: #ffffff;
-          box-shadow: var(--shadow-sm);
-        }
-
-        .dropzone-card.drag-active {
-          border-color: #0284c7;
-          background: #eff6ff;
-        }
-
-        .hidden-file-input {
-          display: none;
-        }
-
-        .dropzone-content-label {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 0.6rem;
-          cursor: pointer;
-        }
-
-        .dropzone-icon-box {
-          width: 60px;
-          height: 60px;
-          border-radius: 50%;
-          background: #e0f2fe;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: #0284c7;
-        }
-
-        .dropzone-content-label h4 {
+        .page-sub {
           font-size: 0.95rem;
-          color: var(--navy);
+          color: var(--text-secondary);
           margin: 0;
-          font-weight: 700;
+          max-width: 850px;
+          line-height: 1.5;
         }
 
-        .dropzone-content-label p {
-          font-size: 0.72rem;
-          color: var(--text-muted);
-          margin: 0;
+        /* Mode Selection Cards Bar */
+        .mode-selection-bar {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+          gap: 1rem;
+          margin-bottom: 2rem;
         }
 
-        .btn-browse-file {
-          background: #f1f5f9;
-          border: 1px solid var(--border-subtle);
-          color: var(--navy);
-          padding: 0.4rem 0.85rem;
-          border-radius: var(--radius-sm);
-          font-size: 0.75rem;
-          font-weight: 600;
-          margin-top: 0.5rem;
-        }
-
-        .parsing-progress-box {
-          margin-top: 1.25rem;
-          padding-top: 1rem;
-          border-top: 1px solid var(--border-subtle);
-        }
-
-        .progress-bar-track {
-          width: 100%;
-          height: 6px;
-          background: #e2e8f0;
-          border-radius: 3px;
-          overflow: hidden;
-        }
-
-        .progress-bar-fill {
-          height: 100%;
-          background: #0284c7;
-          transition: width 0.3s ease;
-        }
-
-        .progress-status-text {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 0.4rem;
-          font-size: 0.72rem;
-          color: #0284c7;
-          margin-top: 0.5rem;
-          font-weight: 600;
-        }
-
-        .uploaded-file-chip {
-          display: flex;
-          align-items: center;
-          gap: 0.75rem;
-          background: #ecfdf5;
-          border: 1px solid #a7f3d0;
-          border-radius: var(--radius-sm);
-          padding: 0.75rem;
-          margin-top: 1.25rem;
-          text-align: left;
-        }
-
-        .file-chip-icon {
-          color: #059669;
-          flex-shrink: 0;
-        }
-
-        .file-chip-info {
-          flex: 1;
-          overflow: hidden;
-        }
-
-        .file-chip-name {
-          font-size: 0.82rem;
-          font-weight: 700;
-          color: var(--navy);
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
-
-        .file-chip-meta {
-          font-size: 0.7rem;
-          color: var(--text-muted);
-        }
-
-        .file-chip-status {
-          display: flex;
-          align-items: center;
-          gap: 0.25rem;
-          font-size: 0.7rem;
-          color: #047857;
-          font-weight: 700;
-        }
-
-        .guidelines-card {
-          padding: 1.25rem;
+        .mode-tab-card {
           background: #ffffff;
-          border: 1px solid var(--border-card);
-          box-shadow: var(--shadow-sm);
-        }
-
-        .guide-title {
-          font-size: 0.85rem;
-          color: var(--navy);
-          display: flex;
-          align-items: center;
-          gap: 0.4rem;
-          margin-bottom: 0.75rem;
-          font-weight: 700;
-        }
-
-        .guide-list {
-          list-style: none;
-          padding: 0;
-          margin: 0;
+          border: 2px solid #e2e8f0;
+          border-radius: 12px;
+          padding: 1.25rem;
+          text-align: left;
+          cursor: pointer;
+          transition: all 0.2s ease;
           display: flex;
           flex-direction: column;
           gap: 0.6rem;
-          font-size: 0.75rem;
-          color: var(--text-secondary);
         }
 
-        .guide-list li strong {
+        .mode-tab-card:hover {
+          border-color: #cbd5e1;
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+        }
+
+        .mode-tab-card.active {
+          border-color: #0284c7;
+          background: #f0f9ff;
+          box-shadow: 0 4px 16px rgba(2, 132, 199, 0.12);
+        }
+
+        .mode-card-header {
+          display: flex;
+          align-items: center;
+          gap: 0.85rem;
+        }
+
+        .mode-icon-box {
+          width: 40px;
+          height: 40px;
+          border-radius: 10px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #ffffff;
+          flex-shrink: 0;
+        }
+
+        .mode-icon-box.bg-blue { background: #0284c7; }
+        .mode-icon-box.bg-amber { background: #d97706; }
+        .mode-icon-box.bg-purple { background: #7c3aed; }
+        .mode-icon-box.bg-cyan { background: #0891b2; }
+
+        .mode-title {
+          font-size: 0.95rem;
+          font-weight: 700;
           color: var(--navy);
+          line-height: 1.3;
         }
 
-        /* Metadata Column */
-        .metadata-card {
-          padding: 1.75rem;
-          border-radius: var(--radius-md);
-          background: #ffffff;
-          border: 1px solid var(--border-card);
-          box-shadow: var(--shadow-sm);
+        .mode-flow-badge {
+          display: inline-block;
+          font-size: 0.68rem;
+          font-weight: 700;
+          color: #0369a1;
+          background: #e0f2fe;
+          padding: 0.15rem 0.5rem;
+          border-radius: 4px;
+          margin-top: 0.25rem;
         }
 
-        .meta-card-title {
-          font-size: 1.15rem;
-          color: var(--navy);
+        .mode-flow-badge.standalone {
+          color: #047857;
+          background: #ecfdf5;
+        }
+
+        .mode-desc {
+          font-size: 0.8rem;
+          color: #64748b;
+          margin: 0;
+          line-height: 1.45;
+        }
+
+        /* Pipeline Steps Bar */
+        .pipeline-steps-bar {
           display: flex;
           align-items: center;
           justify-content: space-between;
+          padding: 1rem 1.5rem;
+          border-radius: 14px;
           margin-bottom: 1.5rem;
-          padding-bottom: 0.75rem;
-          border-bottom: 1px solid var(--border-subtle);
-          font-weight: 700;
+          background: #ffffff;
+          border: 1px solid #e2e8f0;
+          flex-wrap: wrap;
+          gap: 0.75rem;
         }
 
-        .pill-badge {
-          font-size: 0.72rem;
-          padding: 0.2rem 0.6rem;
-          border-radius: var(--radius-full);
-          background: #eff6ff;
-          color: #0369a1;
-          border: 1px solid #bfdbfe;
-          font-weight: 600;
+        .pipeline-step-btn {
+          display: flex;
+          align-items: center;
+          gap: 0.85rem;
+          background: none;
+          border: none;
+          cursor: pointer;
+          padding: 0.5rem 0.85rem;
+          border-radius: 8px;
+          transition: all 0.15s ease;
+          text-align: left;
         }
 
-        .meta-form-body {
+        .pipeline-step-btn:hover {
+          background: #f8fafc;
+        }
+
+        .step-num-circle {
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: #e2e8f0;
+          color: #64748b;
+          font-size: 0.85rem;
+          font-weight: 800;
+          transition: all 0.2s ease;
+        }
+
+        .pipeline-step-btn.active .step-num-circle {
+          background: #0284c7;
+          color: #ffffff;
+          box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.18);
+        }
+
+        .pipeline-step-btn.completed .step-num-circle {
+          background: #059669;
+          color: #ffffff;
+        }
+
+        .step-text-wrap {
           display: flex;
           flex-direction: column;
-          gap: 1.25rem;
         }
 
-        .form-grid-2 {
+        .step-label {
+          font-size: 0.7rem;
+          color: #94a3b8;
+          font-weight: 700;
+          text-transform: uppercase;
+        }
+
+        .step-heading {
+          font-size: 0.88rem;
+          font-weight: 700;
+          color: #334155;
+        }
+
+        .pipeline-step-btn.active .step-heading {
+          color: #0284c7;
+        }
+
+        .step-connector {
+          flex: 1;
+          height: 2px;
+          background: #e2e8f0;
+          min-width: 30px;
+          max-width: 100px;
+          transition: background 0.3s ease;
+        }
+
+        .step-connector.active {
+          background: #059669;
+        }
+
+        /* Step Content Panels */
+        .step-content-panel {
+          background: #ffffff;
+          border: 1px solid #e2e8f0;
+          border-radius: 14px;
+          padding: 2rem;
+          box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+        }
+
+        .step-panel-header {
+          display: flex;
+          align-items: flex-start;
+          justify-content: space-between;
+          border-bottom: 1px solid #f1f5f9;
+          padding-bottom: 1.25rem;
+          margin-bottom: 1.5rem;
+          gap: 1rem;
+        }
+
+        .step-title {
+          font-size: 1.35rem;
+          font-weight: 800;
+          color: var(--navy);
+          margin: 0 0 0.25rem;
+        }
+
+        .step-subtitle {
+          font-size: 0.88rem;
+          color: #64748b;
+          margin: 0;
+        }
+
+        .step-badge {
+          font-size: 0.75rem;
+          font-weight: 700;
+          color: #0284c7;
+          background: #e0f2fe;
+          padding: 0.3rem 0.8rem;
+          border-radius: var(--radius-full);
+        }
+
+        /* Forms Layout */
+        .form-two-col-layout {
           display: grid;
-          grid-template-columns: 1fr 1fr;
+          grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+          gap: 1.5rem;
+        }
+
+        .form-col {
+          display: flex;
+          flex-direction: column;
           gap: 1rem;
         }
 
@@ -1250,30 +1775,55 @@ The voyage departed Cape Town with 48 scientists from MoES institutes, Survey of
         }
 
         .form-group label {
-          font-size: 0.8rem;
-          font-weight: 600;
-          color: var(--navy);
+          font-size: 0.82rem;
+          font-weight: 700;
+          color: #334155;
         }
 
-        .form-input, .form-textarea {
-          background: #f8fafc;
-          border: 1px solid var(--border-subtle);
-          border-radius: var(--radius-sm);
-          color: var(--text-primary);
-          padding: 0.6rem 0.8rem;
+        .label-with-action {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        }
+
+        .btn-auto-alt {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.3rem;
+          background: #e0f2fe;
+          border: 1px solid #bae6fd;
+          color: #0369a1;
+          font-size: 0.72rem;
+          font-weight: 700;
+          padding: 0.15rem 0.5rem;
+          border-radius: 4px;
+          cursor: pointer;
+        }
+
+        .btn-auto-alt:hover {
+          background: #bae6fd;
+        }
+
+        .form-input {
+          padding: 0.6rem 0.85rem;
+          border: 1px solid #cbd5e1;
+          border-radius: 8px;
           font-size: 0.88rem;
-          width: 100%;
-        }
-
-        .form-input:focus, .form-textarea:focus {
-          outline: none;
-          border-color: var(--ice);
+          color: #0f172a;
           background: #ffffff;
+          outline: none;
+          transition: border-color 0.15s ease, box-shadow 0.15s ease;
         }
 
-        .font-mono {
-          font-family: var(--font-mono);
-          font-size: 0.8rem;
+        .form-input:focus {
+          border-color: #0284c7;
+          box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.1);
+        }
+
+        .form-grid-2 {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 1rem;
         }
 
         .tag-input-row {
@@ -1281,167 +1831,527 @@ The voyage departed Cape Town with 48 scientists from MoES institutes, Survey of
           gap: 0.5rem;
         }
 
-        .tags-container {
+        .btn-add-tag {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.3rem;
+          background: #f1f5f9;
+          border: 1px solid #cbd5e1;
+          color: #334155;
+          padding: 0 0.85rem;
+          border-radius: 8px;
+          font-size: 0.8rem;
+          font-weight: 700;
+          cursor: pointer;
+          flex-shrink: 0;
+        }
+
+        .btn-add-tag:hover {
+          background: #e2e8f0;
+        }
+
+        .tags-pills-list {
           display: flex;
           flex-wrap: wrap;
           gap: 0.4rem;
           margin-top: 0.4rem;
         }
 
-        .tag-pill {
+        .station-pill, .discipline-pill {
           display: inline-flex;
           align-items: center;
           gap: 0.35rem;
-          background: #f1f5f9;
-          border: 1px solid #e2e8f0;
+          background: #f8fafc;
+          border: 1px solid #cbd5e1;
           padding: 0.2rem 0.55rem;
-          border-radius: var(--radius-full);
-          font-size: 0.72rem;
-          color: var(--text-secondary);
+          border-radius: 6px;
+          font-size: 0.76rem;
+          font-weight: 600;
+          color: #334155;
         }
 
-        .param-pill {
-          background: #f5f3ff;
-          border-color: #ddd6fe;
-          color: #6d28d9;
-        }
-
-        .tag-pill button {
+        .station-pill button, .discipline-pill button {
           background: none;
           border: none;
-          color: var(--text-muted);
+          color: #94a3b8;
           cursor: pointer;
-          font-weight: 700;
+          font-size: 1rem;
+          line-height: 1;
+          padding: 0;
+          margin-left: 2px;
         }
 
-        .alt-label-row {
+        .station-pill button:hover, .discipline-pill button:hover {
+          color: #dc2626;
+        }
+
+        /* Media Creator Box inside Step 2 */
+        .media-creator-box {
+          background: #f8fafc;
+          border: 1px solid #e2e8f0;
+          border-radius: 12px;
+          padding: 1.5rem;
+          margin-bottom: 2rem;
+        }
+
+        .media-creator-header {
           display: flex;
+          align-items: center;
           justify-content: space-between;
-          align-items: center;
+          flex-wrap: wrap;
+          gap: 0.75rem;
+          border-bottom: 1px solid #e2e8f0;
+          padding-bottom: 0.85rem;
         }
 
-        .btn-auto-alt {
+        .media-type-selector {
+          display: flex;
+          gap: 0.5rem;
+        }
+
+        .type-toggle-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.4rem;
+          background: #ffffff;
+          border: 1px solid #cbd5e1;
+          color: #475569;
+          font-size: 0.82rem;
+          font-weight: 700;
+          padding: 0.45rem 0.9rem;
+          border-radius: 8px;
+          cursor: pointer;
+          transition: all 0.15s ease;
+        }
+
+        .type-toggle-btn.active {
+          background: #0284c7;
+          border-color: #0284c7;
+          color: #ffffff;
+        }
+
+        .media-mode-hint {
+          font-size: 0.78rem;
+          font-weight: 600;
+          color: #059669;
+        }
+
+        .media-add-action-row {
+          margin-top: 1rem;
+          display: flex;
+          justify-content: flex-end;
+        }
+
+        .btn-add-media-item {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.4rem;
+          background: #059669;
+          border: 1px solid #047857;
+          color: #ffffff;
+          padding: 0.55rem 1.25rem;
+          border-radius: 8px;
+          font-size: 0.85rem;
+          font-weight: 700;
+          cursor: pointer;
+          transition: all 0.15s ease;
+        }
+
+        .btn-add-media-item:hover {
+          background: #047857;
+          transform: translateY(-1px);
+        }
+
+        /* Queued Media Grid */
+        .queued-media-section {
+          margin-top: 1.5rem;
+        }
+
+        .queued-section-header {
           display: flex;
           align-items: center;
-          gap: 0.3rem;
-          background: #eff6ff;
-          color: #0284c7;
-          border: 1px solid #bfdbfe;
-          padding: 2px 7px;
+          justify-content: space-between;
+          margin-bottom: 1rem;
+        }
+
+        .queued-section-header h3 {
+          font-size: 1.1rem;
+          font-weight: 800;
+          color: var(--navy);
+          margin: 0;
+        }
+
+        .queued-count-badge {
+          font-size: 0.78rem;
+          font-weight: 700;
+          color: #0369a1;
+          background: #e0f2fe;
+          padding: 0.25rem 0.65rem;
+          border-radius: 6px;
+        }
+
+        .queued-media-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+          gap: 1rem;
+        }
+
+        .queued-media-card {
+          background: #ffffff;
+          border: 1px solid #e2e8f0;
+          border-radius: 10px;
+          overflow: hidden;
+          display: flex;
+          flex-direction: column;
+          box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+        }
+
+        .queued-thumb-wrap {
+          position: relative;
+          height: 140px;
+          background: #0f172a;
+        }
+
+        .queued-thumb-wrap img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+
+        .media-type-badge {
+          position: absolute;
+          top: 8px;
+          left: 8px;
+          display: inline-flex;
+          align-items: center;
+          gap: 0.25rem;
+          font-size: 0.68rem;
+          font-weight: 800;
+          padding: 0.2rem 0.5rem;
           border-radius: 4px;
-          font-size: 0.72rem;
-          cursor: pointer;
+          color: #ffffff;
+        }
+
+        .media-type-badge.photo { background: rgba(2, 132, 199, 0.9); }
+        .media-type-badge.video { background: rgba(220, 38, 38, 0.9); }
+
+        .queued-media-info {
+          padding: 0.85rem 1rem;
+          display: flex;
+          flex-direction: column;
+          gap: 0.4rem;
+          flex: 1;
+        }
+
+        .queued-media-caption {
+          font-size: 0.85rem;
+          font-weight: 700;
+          color: #1e293b;
+          line-height: 1.35;
+        }
+
+        .queued-alt-preview {
+          font-size: 0.74rem;
+          color: #64748b;
+          line-height: 1.3;
+        }
+
+        .queued-card-footer {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-top: auto;
+          padding-top: 0.5rem;
+          border-top: 1px solid #f1f5f9;
+        }
+
+        .queued-tags-count {
+          font-size: 0.7rem;
+          color: #94a3b8;
           font-weight: 600;
         }
 
-        .meta-actions-bar {
+        .btn-remove-media, .btn-remove-pub {
+          background: #fee2e2;
+          border: 1px solid #fecaca;
+          color: #dc2626;
+          padding: 0.25rem 0.45rem;
+          border-radius: 4px;
+          cursor: pointer;
+        }
+
+        .btn-remove-media:hover, .btn-remove-pub:hover {
+          background: #fecaca;
+        }
+
+        /* Attached Pubs List */
+        .attached-pubs-list {
+          display: flex;
+          flex-direction: column;
+          gap: 0.75rem;
+        }
+
+        .attached-pub-card {
+          background: #ffffff;
+          border: 1px solid #e2e8f0;
+          border-radius: 10px;
+          padding: 1rem 1.25rem;
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+        }
+
+        .attached-pub-icon {
+          width: 38px;
+          height: 38px;
+          border-radius: 8px;
+          background: #fef3c7;
+          color: #d97706;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+        }
+
+        .attached-pub-details {
+          flex: 1;
+        }
+
+        .attached-pub-top {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          flex-wrap: wrap;
+          margin-bottom: 0.2rem;
+        }
+
+        .attached-pub-cat {
+          font-size: 0.7rem;
+          font-weight: 700;
+          color: #047857;
+          background: #ecfdf5;
+          padding: 0.1rem 0.4rem;
+          border-radius: 4px;
+        }
+
+        .attached-pub-year {
+          font-size: 0.7rem;
+          font-weight: 700;
+          color: #64748b;
+        }
+
+        .attached-pub-doi {
+          font-size: 0.7rem;
+          color: #0284c7;
+          font-family: var(--font-mono, monospace);
+        }
+
+        .attached-pub-title {
+          font-size: 0.92rem;
+          font-weight: 700;
+          color: var(--navy);
+          margin: 0 0 0.25rem;
+        }
+
+        .attached-pub-authors {
+          display: flex;
+          align-items: center;
+          gap: 0.35rem;
+          font-size: 0.78rem;
+          color: #64748b;
+        }
+
+        .empty-queued-box {
+          background: #f8fafc;
+          border: 2px dashed #cbd5e1;
+          border-radius: 10px;
+          padding: 2rem;
+          text-align: center;
+          color: #94a3b8;
+        }
+
+        .empty-icon {
+          margin: 0 auto 0.5rem;
+        }
+
+        /* Step Actions Footer */
+        .step-actions-footer {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          margin-top: 1rem;
-          padding-top: 1.5rem;
-          border-top: 1px solid var(--border-subtle);
+          margin-top: 2rem;
+          padding-top: 1.25rem;
+          border-top: 1px solid #f1f5f9;
+        }
+
+        .btn-step-back {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.45rem;
+          background: #f1f5f9;
+          border: 1px solid #cbd5e1;
+          color: #334155;
+          padding: 0.6rem 1.25rem;
+          border-radius: 8px;
+          font-size: 0.85rem;
+          font-weight: 700;
+          cursor: pointer;
+        }
+
+        .btn-primary-step {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.45rem;
+          background: #0284c7;
+          border: 1px solid #0284c7;
+          color: #ffffff;
+          padding: 0.65rem 1.5rem;
+          border-radius: 8px;
+          font-size: 0.9rem;
+          font-weight: 700;
+          cursor: pointer;
+          transition: all 0.15s ease;
+        }
+
+        .btn-primary-step:hover {
+          background: #0369a1;
+          transform: translateY(-1px);
+        }
+
+        .btn-publish-all {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.5rem;
+          background: linear-gradient(135deg, #059669 0%, #047857 100%);
+          border: 1px solid #047857;
+          color: #ffffff;
+          padding: 0.75rem 1.75rem;
+          border-radius: 8px;
+          font-size: 0.95rem;
+          font-weight: 800;
+          cursor: pointer;
+          box-shadow: 0 4px 12px rgba(5, 150, 105, 0.25);
+          transition: all 0.2s ease;
+        }
+
+        .btn-publish-all:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 16px rgba(5, 150, 105, 0.35);
+        }
+
+        /* Standalone Cards */
+        .standalone-card {
+          background: #ffffff;
+          border: 1px solid #e2e8f0;
+          border-radius: 14px;
+          padding: 2rem;
+          box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+        }
+
+        .standalone-header-row {
+          display: flex;
+          align-items: flex-start;
+          justify-content: space-between;
+          border-bottom: 1px solid #f1f5f9;
+          padding-bottom: 1.25rem;
           flex-wrap: wrap;
           gap: 1rem;
         }
 
-        .meta-actions-right {
+        .standalone-title {
+          font-size: 1.35rem;
+          font-weight: 800;
+          color: var(--navy);
+          margin: 0 0 0.25rem;
+        }
+
+        .standalone-subtitle {
+          font-size: 0.88rem;
+          color: #64748b;
+          margin: 0;
+          max-width: 750px;
+        }
+
+        .standalone-dest-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.35rem;
+          font-size: 0.78rem;
+          font-weight: 700;
+          color: #047857;
+          background: #ecfdf5;
+          padding: 0.35rem 0.85rem;
+          border-radius: var(--radius-full);
+          border: 1px solid #a7f3d0;
+        }
+
+        .standalone-dest-badge.purple {
+          color: #6d28d9;
+          background: #f5f3ff;
+          border-color: #ddd6fe;
+        }
+
+        .standalone-footer-actions {
           display: flex;
           align-items: center;
-          gap: 0.75rem;
-          flex-wrap: wrap;
+          justify-content: flex-end;
+          gap: 1rem;
+          margin-top: 2rem;
+          padding-top: 1.25rem;
+          border-top: 1px solid #f1f5f9;
         }
 
-        @media (max-width: 1200px) {
-          .pillar-nav-bar {
-            grid-template-columns: repeat(3, 1fr);
-          }
+        .btn-primary-publish {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.5rem;
+          background: #0284c7;
+          border: 1px solid #0284c7;
+          color: #ffffff;
+          padding: 0.65rem 1.5rem;
+          border-radius: 8px;
+          font-size: 0.9rem;
+          font-weight: 700;
+          cursor: pointer;
+          transition: all 0.15s ease;
         }
 
-        @media (max-width: 900px) {
-          .upload-grid-container {
-            grid-template-columns: 1fr;
-          }
-          .pillar-nav-bar {
-            grid-template-columns: repeat(2, 1fr);
-          }
+        .btn-primary-publish:hover {
+          background: #0369a1;
+          transform: translateY(-1px);
         }
 
-        @media (max-width: 640px) {
-          .upload-studio-page {
-            padding: 1.25rem 0.75rem 3.5rem;
-            gap: 1.25rem;
-          }
-          .upload-header-row {
-            flex-direction: column;
-            align-items: stretch;
-            gap: 1rem;
-          }
-          .btn-preset-load {
-            width: 100%;
-            justify-content: center;
-            min-height: 44px;
-          }
-          .pillar-nav-bar {
-            grid-template-columns: repeat(2, 1fr);
-            gap: 0.5rem;
-          }
-          .pillar-tab {
-            padding: 0.65rem 0.6rem;
-            gap: 0.5rem;
-            min-height: 48px;
-          }
-          .pillar-tab-icon {
-            width: 30px;
-            height: 30px;
-          }
-          .pillar-tab-title {
-            font-size: 0.76rem;
-          }
-          .pillar-tab-desc {
-            display: none;
-          }
-          .form-grid-2 {
-            grid-template-columns: 1fr;
-          }
-          .dropzone-card {
-            padding: 1.5rem 1rem;
-          }
-          .metadata-card {
-            padding: 1.25rem 0.85rem;
-          }
-          .meta-actions-bar {
-            flex-direction: column;
-            align-items: stretch;
-            gap: 0.75rem;
-          }
-          .meta-actions-right {
-            flex-direction: column;
-            width: 100%;
-          }
-          .meta-actions-right button {
-            width: 100%;
-            justify-content: center;
-            min-height: 44px;
-          }
+        .btn-primary-publish.bg-purple-btn {
+          background: #7c3aed;
+          border-color: #6d28d9;
+        }
+        .btn-primary-publish.bg-purple-btn:hover {
+          background: #6d28d9;
         }
 
-        @media (max-width: 420px) {
-          .pillar-nav-bar {
-            grid-template-columns: repeat(2, 1fr);
-            gap: 0.45rem;
-          }
-          .pillar-tab {
-            padding: 0.55rem 0.45rem;
-            gap: 0.4rem;
-          }
-          .pillar-tab-icon {
-            width: 26px;
-            height: 26px;
-          }
-          .pillar-tab-title {
-            font-size: 0.70rem;
-          }
+        .btn-primary-publish.bg-cyan-btn {
+          background: #0891b2;
+          border-color: #0e7490;
+        }
+        .btn-primary-publish.bg-cyan-btn:hover {
+          background: #0e7490;
+        }
+
+        .toast-notification {
+          position: fixed;
+          bottom: 24px;
+          right: 24px;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          background: #0f172a;
+          color: #ffffff;
+          padding: 0.75rem 1.25rem;
+          border-radius: 8px;
+          box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+          z-index: 999;
+          font-size: 0.88rem;
+          font-weight: 600;
         }
       `}</style>
     </div>
