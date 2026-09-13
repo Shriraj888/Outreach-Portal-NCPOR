@@ -675,7 +675,7 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
 
                       <div className="action-buttons-group">
                         <button 
-                          className={`btn-secondary-action ${copiedDoiId === ds.id ? 'active-copied' : ''}`}
+                          className={`btn-ghost-action ${copiedDoiId === ds.id ? 'active-copied' : ''}`}
                           onClick={() => copyDoi(ds.doi, ds.id)}
                           title="Copy direct DOI"
                         >
@@ -844,7 +844,7 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
 
                       <div className="action-buttons-group">
                         <button 
-                          className={`btn-secondary-action ${copiedId === pub.id ? 'active-copied' : ''}`}
+                          className={`btn-ghost-action ${copiedId === pub.id ? 'active-copied' : ''}`}
                           onClick={() => copyCitation(pub)}
                           title="Copy APA formatted citation"
                         >
@@ -870,7 +870,7 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
                         )}
 
                         <button 
-                          className="btn-download-secondary"
+                          className="btn-ghost-action"
                           onClick={() => handleDownloadPub(pub)}
                           title="Download summary report"
                         >
@@ -1733,104 +1733,122 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
           gap: 1.25rem;
         }
 
-        /* --- Modern Record Card --- */
+        /* =========================================================
+           MODERN PREMIUM CARD STYLES — Dataset & Publication
+           ========================================================= */
+
         .pub-card-modern {
           background: #ffffff;
-          border: 1px solid #e2e8f0;
-          border-radius: 14px;
+          border: 1px solid #e8ecf0;
+          border-radius: 18px;
           overflow: hidden;
           position: relative;
-          box-shadow: 0 2px 6px -1px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(15, 23, 42, 0.02);
-          transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+          box-shadow:
+            0 1px 3px rgba(15, 23, 42, 0.04),
+            0 4px 12px rgba(15, 23, 42, 0.03);
+          transition: box-shadow 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+                      border-color 0.28s ease,
+                      transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
           display: flex;
           flex-direction: column;
         }
 
         .pub-card-modern:hover {
-          box-shadow: 0 12px 28px -6px rgba(15, 23, 42, 0.09), 0 4px 12px -2px rgba(15, 23, 42, 0.04);
-          border-color: #cbd5e1;
-          transform: translateY(-2px);
+          box-shadow:
+            0 8px 24px -4px rgba(15, 23, 42, 0.11),
+            0 3px 10px -2px rgba(15, 23, 42, 0.06);
+          border-color: #c8d0db;
+          transform: translateY(-3px);
         }
 
+        /* Gradient accent bar — datasets (teal) */
         .dataset-card-style::before {
           content: '';
           position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          height: 3px;
-          background: linear-gradient(90deg, #059669 0%, #10b981 100%);
+          top: 0; left: 0; right: 0;
+          height: 4px;
+          background: linear-gradient(90deg, #059669 0%, #34d399 55%, #6ee7b7 100%);
+          border-radius: 18px 18px 0 0;
         }
 
+        /* Gradient accent bar — publications (blue) */
         .publication-card-style::before {
           content: '';
           position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          height: 3px;
-          background: linear-gradient(90deg, #0284c7 0%, #3b82f6 100%);
+          top: 0; left: 0; right: 0;
+          height: 4px;
+          background: linear-gradient(90deg, #2563eb 0%, #60a5fa 55%, #93c5fd 100%);
+          border-radius: 18px 18px 0 0;
         }
 
         .pub-card-main {
-          padding: 1.5rem 1.75rem 1.25rem;
+          padding: 1.55rem 1.8rem 1.2rem;
           display: flex;
           flex-direction: column;
-          gap: 0.85rem;
+          gap: 0.9rem;
         }
 
+        /* ---- Badge ribbon ---- */
         .card-top-ribbon {
           display: flex;
           align-items: center;
           justify-content: space-between;
           flex-wrap: wrap;
-          gap: 0.5rem;
+          gap: 0.55rem;
         }
 
         .badge-cluster {
           display: flex;
           align-items: center;
           flex-wrap: wrap;
-          gap: 0.45rem;
+          gap: 0.4rem;
         }
 
+        /* Primary type tags */
         .card-primary-tag {
           display: inline-flex;
           align-items: center;
-          gap: 0.35rem;
-          font-size: 0.74rem;
+          gap: 0.32rem;
+          font-size: 0.72rem;
           font-weight: 700;
-          padding: 0.2rem 0.6rem;
-          border-radius: 6px;
+          padding: 0.22rem 0.62rem;
+          border-radius: 7px;
+          letter-spacing: 0.01em;
+          text-transform: uppercase;
         }
 
         .dataset-primary-tag {
-          background: #ecfdf5;
-          color: #047857;
-          border: 1px solid #a7f3d0;
+          background: linear-gradient(135deg, #d1fae5, #ecfdf5);
+          color: #065f46;
+          border: 1px solid #6ee7b7;
+          box-shadow: 0 1px 3px rgba(5, 150, 105, 0.12);
         }
 
         .oa-primary-tag {
-          background: #f0fdf4;
+          background: linear-gradient(135deg, #d1fae5, #f0fdf4);
           color: #15803d;
-          border: 1px solid #bbf7d0;
+          border: 1px solid #86efac;
+          box-shadow: 0 1px 3px rgba(21, 128, 61, 0.12);
         }
 
         .pub-primary-tag {
-          background: #f0f9ff;
-          color: #0369a1;
-          border: 1px solid #bae6fd;
+          background: linear-gradient(135deg, #dbeafe, #eff6ff);
+          color: #1d4ed8;
+          border: 1px solid #93c5fd;
+          box-shadow: 0 1px 3px rgba(37, 99, 235, 0.12);
         }
 
+        /* Category badge pill */
         .card-category-badge {
           display: inline-flex;
           align-items: center;
-          gap: 0.35rem;
-          font-size: 0.74rem;
+          gap: 0.32rem;
+          font-size: 0.73rem;
           font-weight: 700;
-          padding: 0.2rem 0.65rem;
+          padding: 0.22rem 0.68rem;
           border-radius: 9999px;
           border: 1px solid transparent;
+          letter-spacing: 0.01em;
         }
 
         .badge-dot {
@@ -1838,175 +1856,197 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
           height: 6px;
           border-radius: 50%;
           display: inline-block;
-        }
-
-        .card-meta-pill {
-          display: inline-flex;
-          align-items: center;
-          gap: 0.3rem;
-          background: #f8fafc;
-          color: #475569;
-          border: 1px solid #e2e8f0;
-          font-size: 0.74rem;
-          font-weight: 600;
-          padding: 0.2rem 0.55rem;
-          border-radius: 6px;
-        }
-
-        .card-journal-badge {
-          font-size: 0.76rem;
-          color: #475569;
-          background: #f8fafc;
-          border: 1px solid #e2e8f0;
-          padding: 0.2rem 0.6rem;
-          border-radius: 6px;
-        }
-
-        .card-metric-badge {
-          display: inline-flex;
-          align-items: center;
-          gap: 0.35rem;
-          font-size: 0.76rem;
-          padding: 0.25rem 0.7rem;
-          border-radius: 9999px;
-          font-weight: 500;
-        }
-
-        .card-metric-badge strong {
-          font-weight: 700;
-        }
-
-        .citation-metric {
-          background: #fffbeb;
-          border: 1px solid #fef3c7;
-          color: #b45309;
-        }
-
-        .dataset-metric {
-          background: #ecfdf5;
-          border: 1px solid #d1fae5;
-          color: #047857;
-        }
-
-        .metric-icon {
           flex-shrink: 0;
         }
 
-        .card-title-text {
-          font-size: 1.18rem;
-          font-weight: 700;
-          color: #0f172a;
-          line-height: 1.4;
-          margin: 0.15rem 0;
-          letter-spacing: -0.015em;
+        /* Small meta pills (format, year, license) */
+        .card-meta-pill {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.28rem;
+          background: #f4f6f9;
+          color: #52677c;
+          border: 1px solid #e0e6ed;
+          font-size: 0.72rem;
+          font-weight: 600;
+          padding: 0.2rem 0.55rem;
+          border-radius: 6px;
+          letter-spacing: 0.005em;
         }
 
+        /* Journal badge */
+        .card-journal-badge {
+          font-size: 0.74rem;
+          color: #52677c;
+          background: #f4f6f9;
+          border: 1px solid #e0e6ed;
+          padding: 0.2rem 0.6rem;
+          border-radius: 6px;
+          font-style: normal;
+          max-width: 280px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        /* Metric badge (citations / downloads) */
+        .card-metric-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.32rem;
+          font-size: 0.75rem;
+          padding: 0.28rem 0.75rem;
+          border-radius: 9999px;
+          font-weight: 500;
+          flex-shrink: 0;
+        }
+
+        .card-metric-badge strong {
+          font-weight: 800;
+          letter-spacing: -0.01em;
+        }
+
+        .citation-metric {
+          background: linear-gradient(135deg, #fef3c7, #fffbeb);
+          border: 1px solid #fde68a;
+          color: #92400e;
+          box-shadow: 0 1px 3px rgba(217, 119, 6, 0.1);
+        }
+
+        .gold-spark { color: #d97706; }
+
+        .dataset-metric {
+          background: linear-gradient(135deg, #d1fae5, #ecfdf5);
+          border: 1px solid #6ee7b7;
+          color: #065f46;
+          box-shadow: 0 1px 3px rgba(5, 150, 105, 0.1);
+        }
+
+        .metric-icon { flex-shrink: 0; }
+
+        /* ---- Card title ---- */
+        .card-title-text {
+          font-size: 1.15rem;
+          font-weight: 750;
+          color: #0d1929;
+          line-height: 1.45;
+          margin: 0.1rem 0;
+          letter-spacing: -0.02em;
+        }
+
+        /* ---- Dataset meta grid ---- */
         .card-meta-grid {
           display: flex;
           align-items: center;
           flex-wrap: wrap;
-          gap: 0.65rem 1.1rem;
-          padding: 0.25rem 0;
+          gap: 0.55rem 1rem;
+          padding: 0.2rem 0;
         }
 
         .meta-chip {
           display: inline-flex;
           align-items: center;
           gap: 0.35rem;
-          font-size: 0.82rem;
+          font-size: 0.81rem;
           background: #f8fafc;
-          border: 1px solid #f1f5f9;
-          padding: 0.25rem 0.6rem;
-          border-radius: 6px;
+          border: 1px solid #eaeff4;
+          padding: 0.28rem 0.7rem;
+          border-radius: 8px;
         }
 
-        .meta-icon {
-          flex-shrink: 0;
-        }
-
-        .geo-icon { color: #0284c7; }
+        .meta-icon { flex-shrink: 0; }
+        .geo-icon  { color: #2563eb; }
         .time-icon { color: #d97706; }
         .size-icon { color: #059669; }
 
         .meta-label {
-          color: #94a3b8;
-          font-size: 0.72rem;
-          font-weight: 600;
+          color: #8fa0b4;
+          font-size: 0.68rem;
+          font-weight: 700;
           text-transform: uppercase;
-          letter-spacing: 0.03em;
+          letter-spacing: 0.04em;
         }
 
         .meta-value {
-          font-weight: 600;
-          color: #1e293b;
+          font-weight: 650;
+          color: #1a2c42;
+          font-size: 0.82rem;
         }
 
+        /* ---- Variable / parameter chips ---- */
         .parameters-container {
           display: flex;
           align-items: flex-start;
           flex-wrap: wrap;
-          gap: 0.5rem;
-          margin-top: 0.15rem;
+          gap: 0.45rem;
+          margin-top: 0.1rem;
         }
 
         .params-title {
           display: inline-flex;
           align-items: center;
           gap: 0.3rem;
-          font-size: 0.74rem;
+          font-size: 0.7rem;
           font-weight: 700;
           color: #64748b;
           text-transform: uppercase;
-          letter-spacing: 0.03em;
-          padding-top: 0.2rem;
+          letter-spacing: 0.04em;
+          padding-top: 0.25rem;
+          flex-shrink: 0;
         }
 
         .params-chips-wrap {
           display: flex;
           flex-wrap: wrap;
-          gap: 0.35rem;
+          gap: 0.3rem;
         }
 
         .variable-chip {
-          background: #f1f5f9;
-          border: 1px solid #cbd5e1;
-          color: #334155;
-          font-size: 0.75rem;
+          background: #eef2f7;
+          border: 1px solid #d8e0eb;
+          color: #2d4260;
+          font-size: 0.74rem;
           font-weight: 600;
-          padding: 0.18rem 0.55rem;
-          border-radius: 5px;
-          letter-spacing: -0.01em;
+          padding: 0.2rem 0.6rem;
+          border-radius: 6px;
+          letter-spacing: -0.005em;
+          transition: background 0.15s ease, border-color 0.15s ease;
         }
 
+        .variable-chip:hover {
+          background: #e1eaf5;
+          border-color: #b8c9de;
+        }
+
+        /* ---- Authors bar ---- */
         .card-authors-bar {
           display: flex;
-          align-items: center;
+          align-items: flex-start;
           gap: 0.45rem;
           font-size: 0.86rem;
           color: #334155;
+          line-height: 1.5;
         }
 
-        .author-glyph {
-          color: #0284c7;
-          flex-shrink: 0;
-        }
+        .author-glyph { color: #2563eb; flex-shrink: 0; margin-top: 1px; }
 
         .author-names {
           font-weight: 500;
-          color: #475569;
+          color: #445568;
         }
 
+        /* ---- NCPOR affiliation strip ---- */
         .ncpor-affiliation-strip {
           display: flex;
           align-items: center;
           flex-wrap: wrap;
-          gap: 0.55rem;
-          background: linear-gradient(135deg, rgba(240, 253, 244, 0.85), rgba(248, 250, 252, 0.95));
-          border: 1px solid #bbf7d0;
+          gap: 0.5rem;
+          background: linear-gradient(135deg, rgba(236, 253, 245, 0.9), rgba(248, 250, 252, 0.95));
+          border: 1px solid #a7f3d0;
           border-left: 3px solid #059669;
-          border-radius: 8px;
-          padding: 0.45rem 0.85rem;
-          margin-top: 0.1rem;
+          border-radius: 9px;
+          padding: 0.45rem 0.9rem;
+          margin-top: 0.05rem;
           font-size: 0.82rem;
         }
 
@@ -2016,17 +2056,14 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
           gap: 0.35rem;
         }
 
-        .ncpor-shield-icon {
-          color: #059669;
-          flex-shrink: 0;
-        }
+        .ncpor-shield-icon { color: #059669; flex-shrink: 0; }
 
         .ncpor-strip-label {
           font-weight: 700;
           color: #065f46;
-          font-size: 0.76rem;
+          font-size: 0.72rem;
           text-transform: uppercase;
-          letter-spacing: 0.03em;
+          letter-spacing: 0.04em;
         }
 
         .ncpor-strip-names {
@@ -2036,50 +2073,61 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
 
         .ncpor-inst-tag {
           margin-left: auto;
-          font-size: 0.7rem;
+          font-size: 0.68rem;
           font-weight: 700;
           color: #047857;
           background: #dcfce7;
           padding: 0.15rem 0.5rem;
-          border-radius: 4px;
+          border-radius: 5px;
           letter-spacing: 0.02em;
+          border: 1px solid #bbf7d0;
         }
 
+        /* ---- Keyword chips ---- */
         .pub-keywords-row {
           display: flex;
           flex-wrap: wrap;
-          gap: 0.35rem;
+          gap: 0.3rem;
           margin-top: 0.1rem;
         }
 
         .keyword-chip {
-          font-size: 0.73rem;
-          background: #f8fafc;
-          border: 1px solid #e2e8f0;
-          color: #64748b;
-          padding: 0.15rem 0.5rem;
+          font-size: 0.72rem;
+          background: #f0f4f8;
+          border: 1px solid #dce4ef;
+          color: #5a748c;
+          padding: 0.16rem 0.52rem;
           border-radius: 5px;
           font-weight: 500;
+          transition: background 0.12s ease;
         }
 
-        /* --- Expanded Details Drawer --- */
+        .keyword-chip:hover {
+          background: #e3edf7;
+          color: #2d4260;
+        }
+
+        /* =========================================================
+           EXPANDED DRAWER
+           ========================================================= */
+
         .expanded-details-drawer {
-          background: #f8fafc;
-          border-top: 1px solid #e2e8f0;
-          border-bottom: 1px solid #e2e8f0;
-          padding: 1.25rem 1.75rem;
-          animation: expandFade 0.2s ease-out;
+          background: linear-gradient(180deg, #f7f9fc 0%, #f0f4f8 100%);
+          border-top: 1px solid #e4eaf0;
+          border-bottom: 1px solid #e4eaf0;
+          padding: 1.3rem 1.8rem;
+          animation: expandFade 0.22s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         @keyframes expandFade {
-          from { opacity: 0; transform: translateY(-6px); }
-          to { opacity: 1; transform: translateY(0); }
+          from { opacity: 0; transform: translateY(-8px); }
+          to   { opacity: 1; transform: translateY(0); }
         }
 
         .drawer-inner {
           display: flex;
           flex-direction: column;
-          gap: 0.85rem;
+          gap: 0.9rem;
         }
 
         .drawer-header {
@@ -2089,18 +2137,18 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
         }
 
         .drawer-title {
-          font-size: 0.8rem;
-          font-weight: 700;
-          color: #0f172a;
+          font-size: 0.72rem;
+          font-weight: 800;
+          color: #4a6080;
           text-transform: uppercase;
-          letter-spacing: 0.05em;
+          letter-spacing: 0.07em;
           margin: 0;
         }
 
         .drawer-description {
-          font-size: 0.88rem;
-          line-height: 1.65;
-          color: #334155;
+          font-size: 0.875rem;
+          line-height: 1.7;
+          color: #374151;
           margin: 0;
         }
 
@@ -2111,9 +2159,10 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
           flex-wrap: wrap;
           gap: 0.75rem;
           background: #ffffff;
-          padding: 0.7rem 0.95rem;
-          border-radius: 8px;
-          border: 1px solid #e2e8f0;
+          padding: 0.72rem 1rem;
+          border-radius: 10px;
+          border: 1px solid #dce4ef;
+          box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
         }
 
         .doi-info {
@@ -2124,18 +2173,18 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
         }
 
         .doi-prefix {
-          font-size: 0.76rem;
+          font-size: 0.73rem;
           color: #64748b;
           font-weight: 600;
         }
 
         .doi-code-box {
           font-family: var(--font-mono);
-          font-size: 0.8rem;
+          font-size: 0.78rem;
           color: #047857;
           background: #ecfdf5;
-          padding: 0.2rem 0.5rem;
-          border-radius: 4px;
+          padding: 0.22rem 0.55rem;
+          border-radius: 5px;
           border: 1px solid #a7f3d0;
         }
 
@@ -2143,19 +2192,20 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
           display: flex;
           align-items: center;
           gap: 0.35rem;
-          background: #f1f5f9;
-          border: 1px solid #cbd5e1;
+          background: #f4f6f9;
+          border: 1px solid #d8e0eb;
           color: #334155;
           font-size: 0.76rem;
           font-weight: 600;
-          padding: 0.3rem 0.7rem;
-          border-radius: 6px;
+          padding: 0.32rem 0.75rem;
+          border-radius: 7px;
           cursor: pointer;
           transition: all 0.15s ease;
         }
 
         .btn-doi-copy:hover {
-          background: #e2e8f0;
+          background: #e8edf4;
+          border-color: #b8c9de;
           color: #0f172a;
         }
 
@@ -2169,161 +2219,184 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
           display: inline-flex;
           align-items: center;
           gap: 0.35rem;
-          background: #eff6ff;
-          border: 1px solid #bfdbfe;
+          background: linear-gradient(135deg, #dbeafe, #eff6ff);
+          border: 1px solid #93c5fd;
           color: #1d4ed8;
           font-size: 0.76rem;
           font-weight: 600;
-          padding: 0.3rem 0.7rem;
-          border-radius: 6px;
+          padding: 0.32rem 0.75rem;
+          border-radius: 7px;
           text-decoration: none;
           transition: all 0.15s ease;
         }
 
         .btn-publisher-link:hover {
-          background: #dbeafe;
+          background: linear-gradient(135deg, #bfdbfe, #dbeafe);
+          border-color: #60a5fa;
         }
 
-        /* --- Actions Toolbar --- */
+        /* =========================================================
+           CARD ACTIONS BAR — modern frosted bar
+           ========================================================= */
+
         .card-actions-bar {
-          padding: 0.8rem 1.75rem;
-          background: #fafbfc;
-          border-top: 1px solid #f1f5f9;
+          padding: 0.85rem 1.8rem;
+          background: linear-gradient(180deg, #f9fafb 0%, #f4f6f9 100%);
+          border-top: 1px solid #e8ecf0;
           display: flex;
           align-items: center;
           justify-content: space-between;
           flex-wrap: wrap;
-          gap: 0.85rem;
+          gap: 0.75rem;
         }
 
+        /* Expand/collapse toggle */
         .btn-expand-toggle {
           display: inline-flex;
           align-items: center;
           gap: 0.4rem;
-          background: #ffffff;
-          border: 1px solid #e2e8f0;
-          color: #475569;
-          padding: 0.4rem 0.8rem;
-          border-radius: 7px;
+          background: transparent;
+          border: 1px solid #d8e0eb;
+          color: #52677c;
+          padding: 0.38rem 0.85rem;
+          border-radius: 8px;
           font-size: 0.8rem;
           font-weight: 600;
           cursor: pointer;
           transition: all 0.18s ease;
-          box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
         }
 
         .btn-expand-toggle:hover {
-          background: #f8fafc;
-          border-color: #cbd5e1;
+          background: #eef2f7;
+          border-color: #b8c9de;
           color: #0f172a;
         }
 
         .btn-expand-toggle.active-expanded {
-          background: #f0fdf4;
-          border-color: #bbf7d0;
+          background: #ecfdf5;
+          border-color: #6ee7b7;
           color: #047857;
         }
 
+        /* Action buttons group */
         .action-buttons-group {
           display: flex;
           align-items: center;
-          gap: 0.55rem;
+          gap: 0.45rem;
           flex-wrap: wrap;
         }
 
-        .btn-secondary-action {
+        /* Ghost action button (cite, doi-link, summary) */
+        .btn-ghost-action {
           display: inline-flex;
           align-items: center;
-          gap: 0.4rem;
+          gap: 0.38rem;
           background: #ffffff;
-          border: 1px solid #cbd5e1;
-          color: #334155;
-          padding: 0.45rem 0.85rem;
-          border-radius: 7px;
-          font-size: 0.82rem;
+          border: 1px solid #d8e0eb;
+          color: #445568;
+          padding: 0.42rem 0.85rem;
+          border-radius: 8px;
+          font-size: 0.8rem;
           font-weight: 600;
           cursor: pointer;
-          transition: all 0.15s ease;
-          box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+          transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+          box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
         }
 
-        .btn-secondary-action:hover {
-          background: #f8fafc;
-          border-color: #94a3b8;
-          color: var(--navy);
+        .btn-ghost-action:hover {
+          background: #eef2f7;
+          border-color: #b8c9de;
+          color: #0d1929;
+          transform: translateY(-1px);
+          box-shadow: 0 3px 8px rgba(15, 23, 42, 0.09);
         }
 
-        .btn-secondary-action.active-copied {
+        .btn-ghost-action.active-copied {
           background: #ecfdf5;
+          border-color: #6ee7b7;
           color: #047857;
-          border-color: #a7f3d0;
         }
 
+        /* Dataset download button */
         .btn-download-primary {
           display: inline-flex;
           align-items: center;
-          gap: 0.45rem;
-          background: #059669;
+          gap: 0.42rem;
+          background: linear-gradient(135deg, #059669 0%, #10b981 100%);
           border: 1px solid #047857;
           color: #ffffff;
-          padding: 0.45rem 1rem;
-          border-radius: 7px;
-          font-size: 0.82rem;
-          font-weight: 600;
+          padding: 0.42rem 1.05rem;
+          border-radius: 8px;
+          font-size: 0.8rem;
+          font-weight: 700;
           cursor: pointer;
-          transition: all 0.18s ease;
-          box-shadow: 0 1px 3px rgba(5, 150, 105, 0.25);
+          transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+          box-shadow: 0 2px 6px rgba(5, 150, 105, 0.3), 0 1px 2px rgba(5, 150, 105, 0.15);
+          letter-spacing: 0.01em;
         }
 
         .btn-download-primary:hover {
-          background: #047857;
-          box-shadow: 0 3px 8px rgba(5, 150, 105, 0.35);
+          background: linear-gradient(135deg, #047857 0%, #059669 100%);
+          box-shadow: 0 4px 14px rgba(5, 150, 105, 0.4), 0 2px 4px rgba(5, 150, 105, 0.2);
           transform: translateY(-1px);
         }
 
-        .btn-download-secondary {
+        .btn-download-primary:active {
+          transform: translateY(0);
+          box-shadow: 0 1px 3px rgba(5, 150, 105, 0.2);
+        }
+
+        /* Open Access PDF button */
+        .btn-oa-pdf {
           display: inline-flex;
           align-items: center;
-          gap: 0.4rem;
-          background: #ffffff;
-          border: 1px solid #cbd5e1;
-          color: #334155;
-          padding: 0.45rem 0.85rem;
-          border-radius: 7px;
-          font-size: 0.82rem;
-          font-weight: 600;
-          cursor: pointer;
-          transition: all 0.15s ease;
-          box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+          gap: 0.38rem;
+          background: linear-gradient(135deg, #15803d 0%, #22c55e 100%);
+          border: 1px solid #15803d;
+          color: #ffffff;
+          padding: 0.42rem 0.95rem;
+          border-radius: 8px;
+          font-size: 0.8rem;
+          font-weight: 700;
+          text-decoration: none;
+          transition: all 0.2s ease;
+          box-shadow: 0 2px 6px rgba(21, 128, 61, 0.3);
+          letter-spacing: 0.01em;
         }
 
-        .btn-download-secondary:hover {
-          background: #f8fafc;
-          border-color: #94a3b8;
-          color: var(--navy);
+        .btn-oa-pdf:hover {
+          background: linear-gradient(135deg, #166534 0%, #16a34a 100%);
+          box-shadow: 0 4px 12px rgba(21, 128, 61, 0.4);
+          transform: translateY(-1px);
         }
 
+        /* View article / primary CTA */
         .btn-primary-view {
           display: inline-flex;
           align-items: center;
-          gap: 0.45rem;
-          background: #0f172a;
+          gap: 0.42rem;
+          background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
           border: 1px solid #0f172a;
           color: #ffffff;
-          padding: 0.45rem 1rem;
-          border-radius: 7px;
-          font-size: 0.82rem;
-          font-weight: 600;
+          padding: 0.42rem 1.05rem;
+          border-radius: 8px;
+          font-size: 0.8rem;
+          font-weight: 700;
           text-decoration: none;
           cursor: pointer;
-          transition: all 0.18s ease;
-          box-shadow: 0 1px 3px rgba(15, 23, 42, 0.2);
+          transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+          box-shadow: 0 2px 6px rgba(15, 23, 42, 0.25), 0 1px 2px rgba(15, 23, 42, 0.12);
+          letter-spacing: 0.01em;
         }
 
         .btn-primary-view:hover {
-          background: #1e293b;
+          background: linear-gradient(135deg, #334155 0%, #1e293b 100%);
+          box-shadow: 0 4px 14px rgba(15, 23, 42, 0.35), 0 2px 4px rgba(15, 23, 42, 0.15);
           transform: translateY(-1px);
-          box-shadow: 0 3px 8px rgba(15, 23, 42, 0.3);
+        }
+
+        .btn-primary-view:active {
+          transform: translateY(0);
         }
 
         /* --- Empty Results State --- */
@@ -2383,14 +2456,11 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
           background: #1e293b;
         }
 
-        /* --- Responsive Styles --- */
+        /* =========================================================
+           RESPONSIVE
+           ========================================================= */
+
         @media (max-width: 900px) {
-          .pub-hero-banner {
-            padding: 1.75rem;
-          }
-          .pub-hero-title {
-            font-size: 1.75rem;
-          }
           .search-sort-row {
             flex-direction: column;
             align-items: stretch;
@@ -2406,9 +2476,7 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
             width: 100%;
             padding-bottom: 3px;
           }
-          .category-chips-list::-webkit-scrollbar {
-            display: none;
-          }
+          .category-chips-list::-webkit-scrollbar { display: none; }
           .category-pill-btn {
             white-space: nowrap;
             flex-shrink: 0;
@@ -2424,30 +2492,13 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
             width: 100%;
             align-items: stretch;
           }
-          .ncpor-registry-corner-card {
-            min-width: unset;
-            max-width: 100%;
-            width: 100%;
-          }
-          .pub-stats-ribbon {
-            width: 100%;
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 0.75rem;
-            padding: 0.85rem 1rem;
-          }
-          .stat-divider {
-            display: none;
-          }
           .view-mode-tabs {
             width: 100%;
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
             scrollbar-width: none;
           }
-          .view-mode-tabs::-webkit-scrollbar {
-            display: none;
-          }
+          .view-mode-tabs::-webkit-scrollbar { display: none; }
           .mode-tab {
             flex: 1;
             justify-content: center;
@@ -2456,36 +2507,39 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
             white-space: nowrap;
             min-height: 40px;
           }
+          .pub-card-main {
+            padding: 1.25rem 1.25rem 1rem;
+          }
           .card-actions-bar {
+            padding: 0.75rem 1.25rem;
             flex-direction: column;
             align-items: flex-start;
-            gap: 0.75rem;
+            gap: 0.65rem;
           }
           .action-buttons-group {
             width: 100%;
             display: flex;
-            gap: 0.45rem;
+            gap: 0.4rem;
           }
-          .btn-secondary-action, .btn-download-primary, .btn-primary-view {
+          .btn-ghost-action, .btn-download-primary, .btn-primary-view, .btn-oa-pdf {
             flex: 1;
             justify-content: center;
-            min-height: 42px;
+            min-height: 40px;
           }
         }
 
         @media (max-width: 480px) {
-          .category-chips-list {
-            gap: 0.35rem;
-          }
+          .category-chips-list { gap: 0.35rem; }
           .category-pill-btn {
             font-size: 0.75rem;
             padding: 0.3rem 0.65rem;
           }
-          .action-buttons-group {
-            flex-direction: column;
-          }
-          .btn-secondary-action, .btn-download-primary, .btn-primary-view {
+          .action-buttons-group { flex-direction: column; }
+          .btn-ghost-action, .btn-download-primary, .btn-primary-view, .btn-oa-pdf {
             width: 100%;
+          }
+          .card-journal-badge {
+            max-width: 200px;
           }
         }
       `}</style>
