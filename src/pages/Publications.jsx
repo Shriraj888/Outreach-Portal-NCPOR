@@ -366,7 +366,7 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
 
       {/* Header */}
       <div className="page-header-row">
-        <div>
+        <div className="page-header-text">
           <div className="section-eyebrow">OPEN RESEARCH & DATA ARCHIVE</div>
           <h1 className="page-title">Polar Science Publications & Datasets</h1>
           <p className="page-sub">
@@ -374,67 +374,28 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
           </p>
         </div>
 
-        {auth.isAuthenticated && (
-          <div className="header-action-upload">
-            <button 
-              className="btn-upload-hub"
-              onClick={() => navigateTo('admin-upload')}
-            >
-              <Plus size={16} />
-              <span>Upload Dataset / Paper</span>
-            </button>
-          </div>
-        )}
-      </div>
-
-      {/* Live NCPOR Registry Status Banner */}
-      <div className="ncpor-registry-banner glass-panel">
-        <div className="registry-banner-left">
-          <div className="registry-status-indicator">
-            <span className="pulsing-live-dot" />
-            <span className="registry-live-label">OFFICIAL NCPOR RESEARCH REGISTRY</span>
-          </div>
-          <div className="registry-meta-details">
-            <span className="registry-authority-title">
-              OpenAlex & DataCite Connected • Institutional ROR: <code>05af1fm66</code>
-            </span>
-            <span className="registry-authority-sub">
-              Strictly filtered to National Centre for Polar and Ocean Research (NCPOR) affiliated scientists
-            </span>
-          </div>
-        </div>
-
-        <div className="registry-banner-stats">
-          <div className="registry-stat-pill">
-            <BookOpen size={14} className="stat-pill-icon" />
-            <span><strong>{totalPubsCount || dynamicPubs.length || '900+'}</strong> Papers Indexed</span>
-          </div>
-          <div className="registry-stat-pill">
-            <Database size={14} className="stat-pill-icon" />
-            <span><strong>{totalDatasetsCount || dynamicDatasets.length || '13+'}</strong> Datasets</span>
-          </div>
-          {apiStats?.citedByCount && (
-            <div className="registry-stat-pill citations-pill">
-              <Sparkles size={14} className="stat-pill-icon gold-spark" />
-              <span><strong>{apiStats.citedByCount.toLocaleString()}+</strong> Global Citations</span>
-            </div>
-          )}
-        </div>
-
-        <div className="registry-banner-actions">
+        <div className="page-header-corner">
+          {/* Refresh Data Button */}
           <button 
-            className={`btn-sync-registry ${isRefreshing ? 'spinning' : ''}`}
+            className={`btn-sync-action ${isRefreshing ? 'is-syncing' : ''}`}
             onClick={handleRefresh}
             disabled={isRefreshing || isLoading}
-            title="Fetch latest assets from live registry"
+            title={lastSynced ? `NCPOR Live Data (ROR: 05af1fm66)${apiStats?.citedByCount ? ` • ${apiStats.citedByCount.toLocaleString()}+ citations` : ''} • Last updated: ${lastSynced.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : 'Refresh data'}
           >
-            <RefreshCw size={14} className={isRefreshing ? 'icon-spin' : ''} />
-            <span>{isRefreshing ? 'Syncing...' : 'Sync Registry'}</span>
+            <RefreshCw size={14} className={`sync-icon ${isRefreshing ? 'icon-spin' : ''}`} />
+            <span>{isRefreshing ? 'Refreshing...' : 'Refresh Data'}</span>
           </button>
-          {lastSynced && (
-            <span className="last-synced-caption">
-              Synced {lastSynced.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-            </span>
+
+          {auth.isAuthenticated && (
+            <div className="header-action-upload">
+              <button 
+                className="btn-upload-hub"
+                onClick={() => navigateTo('admin-upload')}
+              >
+                <Plus size={15} />
+                <span>Upload Dataset / Paper</span>
+              </button>
+            </div>
           )}
         </div>
       </div>
@@ -1113,147 +1074,67 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
           background: #1e293b;
         }
 
-        /* --- Live NCPOR Registry Status Banner --- */
-        .ncpor-registry-banner {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          flex-wrap: wrap;
-          gap: 1.25rem;
-          background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(240, 249, 255, 0.85));
-          border: 1px solid rgba(186, 230, 253, 0.8);
-          border-left: 4px solid #0284c7;
-          border-radius: var(--radius-md);
-          padding: 1.1rem 1.4rem;
-          box-shadow: 0 4px 20px -2px rgba(2, 132, 199, 0.08);
+        .page-header-text {
+          flex: 1 1 520px;
+          max-width: 820px;
         }
 
-        .registry-banner-left {
-          display: flex;
-          flex-direction: column;
-          gap: 0.3rem;
-        }
-
-        .registry-status-indicator {
-          display: inline-flex;
-          align-items: center;
-          gap: 0.5rem;
-        }
-
-        .pulsing-live-dot {
-          width: 8px;
-          height: 8px;
-          border-radius: 50%;
-          background: #10b981;
-          box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
-          animation: pulseDot 2s infinite cubic-bezier(0.66, 0, 0, 1);
-        }
-
-        @keyframes pulseDot {
-          0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-          70% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
-          100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
-        }
-
-        .registry-live-label {
-          font-size: 0.75rem;
-          font-weight: 800;
-          letter-spacing: 0.07em;
-          color: #0369a1;
-          text-transform: uppercase;
-        }
-
-        .registry-authority-title {
-          font-size: 0.92rem;
-          font-weight: 700;
-          color: #0f172a;
-        }
-
-        .registry-authority-title code {
-          background: #e0f2fe;
-          color: #0369a1;
-          padding: 0.15rem 0.4rem;
-          border-radius: 4px;
-          font-size: 0.82rem;
-          font-family: monospace;
-          border: 1px solid #bae6fd;
-        }
-
-        .registry-authority-sub {
-          font-size: 0.8rem;
-          color: #64748b;
-        }
-
-        .registry-banner-stats {
+        .page-header-corner {
           display: flex;
           align-items: center;
           gap: 0.75rem;
+          flex-shrink: 0;
           flex-wrap: wrap;
         }
 
-        .registry-stat-pill {
+        /* --- Live Sync Registry Button (Refined & Unified) --- */
+        .btn-sync-action {
           display: inline-flex;
           align-items: center;
-          gap: 0.45rem;
+          gap: 0.5rem;
           background: #ffffff;
-          border: 1px solid #e2e8f0;
-          padding: 0.4rem 0.8rem;
-          border-radius: 9999px;
-          font-size: 0.82rem;
-          color: #334155;
-          font-weight: 500;
-          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-        }
-
-        .stat-pill-icon {
-          color: #0284c7;
-        }
-
-        .gold-spark {
-          color: #f59e0b;
-        }
-
-        .registry-banner-actions {
-          display: flex;
-          flex-direction: column;
-          align-items: flex-end;
-          gap: 0.35rem;
-        }
-
-        .btn-sync-registry {
-          display: inline-flex;
-          align-items: center;
-          gap: 0.45rem;
-          background: #ffffff;
-          color: #0284c7;
-          border: 1px solid #bae6fd;
-          padding: 0.45rem 0.95rem;
+          color: var(--navy);
+          border: 1px solid #cbd5e1;
+          padding: 0.65rem 1.15rem;
           border-radius: var(--radius-sm);
-          font-size: 0.82rem;
+          font-size: 0.85rem;
           font-weight: 600;
           cursor: pointer;
-          transition: all 0.2s ease;
-          box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+          transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+          box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+          white-space: nowrap;
         }
 
-        .btn-sync-registry:hover:not(:disabled) {
-          background: #f0f9ff;
+        .btn-sync-action:hover:not(:disabled) {
+          background: #f8fafc;
           border-color: #0284c7;
-          color: #0369a1;
+          color: #0284c7;
+          box-shadow: 0 3px 8px -1px rgba(2, 132, 199, 0.15);
+          transform: translateY(-1px);
         }
 
-        .btn-sync-registry:disabled {
-          opacity: 0.7;
+        .btn-sync-action:active:not(:disabled) {
+          transform: translateY(0);
+          box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+        }
+
+        .btn-sync-action:disabled {
+          opacity: 0.65;
           cursor: not-allowed;
         }
 
-        .last-synced-caption {
-          font-size: 0.72rem;
-          color: #94a3b8;
+        .btn-sync-action .sync-icon {
+          color: #0284c7;
+          transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
+        .btn-sync-action:hover:not(:disabled) .sync-icon {
+          transform: rotate(60deg);
+        }
+
+        .btn-sync-action.is-syncing .sync-icon,
         .icon-spin {
-          animation: spin 1s linear infinite;
+          animation: spin 0.9s linear infinite;
         }
 
         @keyframes spin {
@@ -2365,6 +2246,15 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
           .publications-page-container {
             padding: 1.25rem 0.75rem 4rem;
             gap: 1.25rem;
+          }
+          .page-header-corner {
+            width: 100%;
+            align-items: stretch;
+          }
+          .ncpor-registry-corner-card {
+            min-width: unset;
+            max-width: 100%;
+            width: 100%;
           }
           .pub-stats-ribbon {
             width: 100%;
