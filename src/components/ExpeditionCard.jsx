@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 
 export default function ExpeditionCard({ expedition, onSelect }) {
-  const { lang, t } = usePortal();
+  const { auth, lang, t } = usePortal();
 
   const getRegionBadgeClass = (region) => {
     switch (region) {
@@ -59,9 +59,9 @@ export default function ExpeditionCard({ expedition, onSelect }) {
             <span>{expedition.media?.length || 0} Photos</span>
           </div>
           {expedition.aiGeneratedContent && (
-            <div className="card-ai-pill" title="Outreach Package Ready">
+            <div className="card-ai-pill" title={auth?.isAuthenticated ? "Outreach Package Ready" : "AI Summary Available"}>
               <Sparkles size={11} />
-              <span>Outreach Ready</span>
+              <span>{auth?.isAuthenticated ? "Outreach Ready" : "Summary Ready"}</span>
             </div>
           )}
         </div>

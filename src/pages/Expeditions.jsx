@@ -130,7 +130,7 @@ export default function Expeditions({ onSelectExpedition, navigateTo }) {
           </div>
           <h1 className="page-title">Discover India's Polar Expeditions</h1>
           <p className="page-sub">
-            Browse scientific reports, high-resolution media galleries, and public outreach packages across Antarctica, Arctic, and Himalayas.
+            Browse polar missions, scientific overviews, high-resolution media galleries, and peer-reviewed publications across Antarctica, Arctic, and Himalayas.
           </p>
         </div>
 
@@ -196,8 +196,8 @@ export default function Expeditions({ onSelectExpedition, navigateTo }) {
                 aria-label="Filter by content type"
               >
                 <option value="all">All Content</option>
-                <option value="ai">Outreach Ready</option>
-                <option value="reports">With Reports</option>
+                {auth?.isAuthenticated && <option value="ai">Outreach Ready</option>}
+                {auth?.isAuthenticated && <option value="reports">With Reports</option>}
                 <option value="media">With Photos</option>
               </select>
             </div>
@@ -370,7 +370,7 @@ export default function Expeditions({ onSelectExpedition, navigateTo }) {
                           <span>{station}</span>
                         </div>
                       )}
-                      {exp.reports?.length > 0 && (
+                      {auth?.isAuthenticated && exp.reports?.length > 0 && (
                         <div className="list-meta-item">
                           <FileText size={12} className="meta-icon" />
                           <span>{exp.reports.length} Report{exp.reports.length > 1 ? 's' : ''}</span>

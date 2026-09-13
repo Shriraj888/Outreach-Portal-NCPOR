@@ -225,7 +225,7 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
             {expedition.aiGeneratedContent && (
               <span className="badge-ai-ready">
                 <Sparkles size={12} />
-                <span>Outreach Pack Ready</span>
+                <span>{auth.isAuthenticated ? 'Outreach Pack Ready' : 'Verified Summary Ready'}</span>
               </span>
             )}
           </div>
@@ -278,13 +278,15 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
               <span>Overview & Outreach Summary</span>
             </button>
 
-            <button
-              className={`detail-tab ${activeTab === 'reports' ? 'active' : ''}`}
-              onClick={() => setActiveTab('reports')}
-            >
-              <Download size={15} />
-              <span>Reports ({expedition.reports?.length || 0})</span>
-            </button>
+            {auth.isAuthenticated && (
+              <button
+                className={`detail-tab ${activeTab === 'reports' ? 'active' : ''}`}
+                onClick={() => setActiveTab('reports')}
+              >
+                <Download size={15} />
+                <span>Reports ({expedition.reports?.length || 0})</span>
+              </button>
+            )}
 
             <button
               className={`detail-tab ${activeTab === 'media' ? 'active' : ''}`}
@@ -302,14 +304,16 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
               <span>Publications ({linkedPubs.length})</span>
             </button>
 
-            <button
-              className={`detail-tab tab-social ${activeTab === 'social' ? 'active' : ''}`}
-              onClick={() => setActiveTab('social')}
-            >
-              <Sparkles size={16} className="tab-social-sparkle" />
-              <span className="tab-social-title">Social Outreach Pack</span>
-              <span className="tab-social-ready-badge">READY</span>
-            </button>
+            {auth.isAuthenticated && (
+              <button
+                className={`detail-tab tab-social ${activeTab === 'social' ? 'active' : ''}`}
+                onClick={() => setActiveTab('social')}
+              >
+                <Sparkles size={16} className="tab-social-sparkle" />
+                <span className="tab-social-title">Social Outreach Pack</span>
+                <span className="tab-social-ready-badge">READY</span>
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -351,110 +355,112 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
                     <p>{expedition.aiGeneratedContent.summary}</p>
                   </div>
 
-                  {/* Redesigned 1-Click Multi-Channel Outreach Bar */}
-                  <div className="outreach-drafts-panel">
-                    <div className="outreach-drafts-left">
-                      <div className="drafts-title-badge">
-                        <Share2 size={13} className="drafts-title-icon" />
-                        <span>1-Click Drafts</span>
+                  {/* Redesigned 1-Click Multi-Channel Outreach Bar (Admin Only) */}
+                  {auth.isAuthenticated && (
+                    <div className="outreach-drafts-panel">
+                      <div className="outreach-drafts-left">
+                        <div className="drafts-title-badge">
+                          <Share2 size={13} className="drafts-title-icon" />
+                          <span>1-Click Drafts</span>
+                        </div>
+
+                        <div className="draft-buttons-group">
+                          {expedition.aiGeneratedContent.socialCaptions?.twitter && (
+                            <button
+                              className={`social-draft-btn btn-twitter ${copiedTwitter ? 'copied' : ''}`}
+                              onClick={handleCopyTwitter}
+                              title="Copy 280-char X (Twitter) Post"
+                            >
+                              <span className="social-icon-wrapper twitter-icon-wrap">
+                                {copiedTwitter ? <Check size={13} /> : <TwitterIcon size={12} />}
+                              </span>
+                              <span className="draft-btn-text">
+                                {copiedTwitter ? 'Copied X Post!' : 'Copy X / Twitter Post'}
+                              </span>
+                            </button>
+                          )}
+
+                          {expedition.aiGeneratedContent.socialCaptions?.linkedin && (
+                            <button
+                              className={`social-draft-btn btn-linkedin ${copiedLinkedIn ? 'copied' : ''}`}
+                              onClick={handleCopyLinkedIn}
+                              title="Copy Professional LinkedIn Post"
+                            >
+                              <span className="social-icon-wrapper linkedin-icon-wrap">
+                                {copiedLinkedIn ? <Check size={13} /> : <LinkedinIcon size={12} />}
+                              </span>
+                              <span className="draft-btn-text">
+                                {copiedLinkedIn ? 'Copied LinkedIn!' : 'Copy LinkedIn Post'}
+                              </span>
+                            </button>
+                          )}
+
+                          {expedition.aiGeneratedContent.socialCaptions?.instagram && (
+                            <button
+                              className={`social-draft-btn btn-instagram ${copiedInstagram ? 'copied' : ''}`}
+                              onClick={handleCopyInstagram}
+                              title="Copy Instagram Caption"
+                            >
+                              <span className="social-icon-wrapper instagram-icon-wrap">
+                                {copiedInstagram ? <Check size={13} /> : <InstagramIcon size={12} />}
+                              </span>
+                              <span className="draft-btn-text">
+                                {copiedInstagram ? 'Copied IG!' : 'Copy Instagram'}
+                              </span>
+                            </button>
+                          )}
+
+                          <button
+                            className={`social-draft-btn btn-facebook ${copiedFacebook ? 'copied' : ''}`}
+                            onClick={handleCopyFacebook}
+                            title="Copy Facebook Community Post"
+                          >
+                            <span className="social-icon-wrapper facebook-icon-wrap">
+                              {copiedFacebook ? <Check size={13} /> : <FacebookIcon size={12} />}
+                            </span>
+                            <span className="draft-btn-text">
+                              {copiedFacebook ? 'Copied FB!' : 'Copy Facebook'}
+                            </span>
+                          </button>
+
+                          <button
+                            className={`social-draft-btn btn-blog ${copiedBlog ? 'copied' : ''}`}
+                            onClick={handleCopyBlog}
+                            title="Copy Science Blog Article (Markdown)"
+                          >
+                            <span className="social-icon-wrapper blog-icon-wrap">
+                              {copiedBlog ? <Check size={13} /> : <BlogIcon size={12} />}
+                            </span>
+                            <span className="draft-btn-text">
+                              {copiedBlog ? 'Copied Blog!' : 'Copy Blog Post'}
+                            </span>
+                          </button>
+
+                          <button
+                            className={`social-draft-btn btn-article ${copiedArticle ? 'copied' : ''}`}
+                            onClick={handleCopyArticle}
+                            title="Copy Official Press Release Article"
+                          >
+                            <span className="social-icon-wrapper article-icon-wrap">
+                              {copiedArticle ? <Check size={13} /> : <ArticleIcon size={12} />}
+                            </span>
+                            <span className="draft-btn-text">
+                              {copiedArticle ? 'Copied Article!' : 'Copy Press Article'}
+                            </span>
+                          </button>
+                        </div>
                       </div>
 
-                      <div className="draft-buttons-group">
-                        {expedition.aiGeneratedContent.socialCaptions?.twitter && (
-                          <button
-                            className={`social-draft-btn btn-twitter ${copiedTwitter ? 'copied' : ''}`}
-                            onClick={handleCopyTwitter}
-                            title="Copy 280-char X (Twitter) Post"
-                          >
-                            <span className="social-icon-wrapper twitter-icon-wrap">
-                              {copiedTwitter ? <Check size={13} /> : <TwitterIcon size={12} />}
-                            </span>
-                            <span className="draft-btn-text">
-                              {copiedTwitter ? 'Copied X Post!' : 'Copy X / Twitter Post'}
-                            </span>
-                          </button>
-                        )}
-
-                        {expedition.aiGeneratedContent.socialCaptions?.linkedin && (
-                          <button
-                            className={`social-draft-btn btn-linkedin ${copiedLinkedIn ? 'copied' : ''}`}
-                            onClick={handleCopyLinkedIn}
-                            title="Copy Professional LinkedIn Post"
-                          >
-                            <span className="social-icon-wrapper linkedin-icon-wrap">
-                              {copiedLinkedIn ? <Check size={13} /> : <LinkedinIcon size={12} />}
-                            </span>
-                            <span className="draft-btn-text">
-                              {copiedLinkedIn ? 'Copied LinkedIn!' : 'Copy LinkedIn Post'}
-                            </span>
-                          </button>
-                        )}
-
-                        {expedition.aiGeneratedContent.socialCaptions?.instagram && (
-                          <button
-                            className={`social-draft-btn btn-instagram ${copiedInstagram ? 'copied' : ''}`}
-                            onClick={handleCopyInstagram}
-                            title="Copy Instagram Caption"
-                          >
-                            <span className="social-icon-wrapper instagram-icon-wrap">
-                              {copiedInstagram ? <Check size={13} /> : <InstagramIcon size={12} />}
-                            </span>
-                            <span className="draft-btn-text">
-                              {copiedInstagram ? 'Copied IG!' : 'Copy Instagram'}
-                            </span>
-                          </button>
-                        )}
-
-                        <button
-                          className={`social-draft-btn btn-facebook ${copiedFacebook ? 'copied' : ''}`}
-                          onClick={handleCopyFacebook}
-                          title="Copy Facebook Community Post"
-                        >
-                          <span className="social-icon-wrapper facebook-icon-wrap">
-                            {copiedFacebook ? <Check size={13} /> : <FacebookIcon size={12} />}
-                          </span>
-                          <span className="draft-btn-text">
-                            {copiedFacebook ? 'Copied FB!' : 'Copy Facebook'}
-                          </span>
-                        </button>
-
-                        <button
-                          className={`social-draft-btn btn-blog ${copiedBlog ? 'copied' : ''}`}
-                          onClick={handleCopyBlog}
-                          title="Copy Science Blog Article (Markdown)"
-                        >
-                          <span className="social-icon-wrapper blog-icon-wrap">
-                            {copiedBlog ? <Check size={13} /> : <BlogIcon size={12} />}
-                          </span>
-                          <span className="draft-btn-text">
-                            {copiedBlog ? 'Copied Blog!' : 'Copy Blog Post'}
-                          </span>
-                        </button>
-
-                        <button
-                          className={`social-draft-btn btn-article ${copiedArticle ? 'copied' : ''}`}
-                          onClick={handleCopyArticle}
-                          title="Copy Official Press Release Article"
-                        >
-                          <span className="social-icon-wrapper article-icon-wrap">
-                            {copiedArticle ? <Check size={13} /> : <ArticleIcon size={12} />}
-                          </span>
-                          <span className="draft-btn-text">
-                            {copiedArticle ? 'Copied Article!' : 'Copy Press Article'}
-                          </span>
-                        </button>
-                      </div>
+                      <button
+                        className="btn-open-studio-pill"
+                        onClick={() => setActiveTab('social')}
+                      >
+                        <Sparkles size={13} className="studio-pill-sparkle" />
+                        <span>Full Social Studio</span>
+                        <ArrowRight size={13} />
+                      </button>
                     </div>
-
-                    <button
-                      className="btn-open-studio-pill"
-                      onClick={() => setActiveTab('social')}
-                    >
-                      <Sparkles size={13} className="studio-pill-sparkle" />
-                      <span>Full Social Studio</span>
-                      <ArrowRight size={13} />
-                    </button>
-                  </div>
+                  )}
 
                   <div className="ai-card-footer">
                     <div className="ai-verified-tag">
@@ -470,8 +476,8 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
                 </div>
               )}
 
-              {/* Key Discoveries & Milestones */}
-              {expedition.keyFindings && expedition.keyFindings.length > 0 && (
+              {/* Key Discoveries & Milestones (Admin Only) */}
+              {auth.isAuthenticated && expedition.keyFindings && expedition.keyFindings.length > 0 && (
                 <div className="glass-panel text-content-card">
                   <div className="section-card-header">
                     <div className="section-card-title">
@@ -527,12 +533,14 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
                     <span className="fact-label">Duration</span>
                     <span className="fact-val">{expedition.startDate} – {expedition.endDate}</span>
                   </div>
-                  <div className="sidebar-fact-row">
-                    <span className="fact-label">Technical Reports</span>
-                    <button className="fact-jump-link" onClick={() => setActiveTab('reports')}>
-                      {expedition.reports?.length || 0} Files →
-                    </button>
-                  </div>
+                  {auth.isAuthenticated && (
+                    <div className="sidebar-fact-row">
+                      <span className="fact-label">Technical Reports</span>
+                      <button className="fact-jump-link" onClick={() => setActiveTab('reports')}>
+                        {expedition.reports?.length || 0} Files →
+                      </button>
+                    </div>
+                  )}
                   <div className="sidebar-fact-row">
                     <span className="fact-label">Media Assets</span>
                     <button className="fact-jump-link" onClick={() => setActiveTab('media')}>
@@ -585,25 +593,27 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
                 </div>
               )}
 
-              {/* Fast Outreach Press Package Action */}
-              <div className="glass-panel press-action-card">
-                <Sparkles size={20} className="press-sparkle" />
-                <h4>Press & Outreach Package</h4>
-                <p>Ready-to-publish summary, verified social captions, and accessible photos for media and schools.</p>
-                <button
-                  className="btn-primary full-width press-btn"
-                  onClick={() => setActiveTab('social')}
-                >
-                  <Share2 size={14} />
-                  <span>Open Outreach Pack</span>
-                </button>
-              </div>
+              {/* Fast Outreach Press Package Action (Admin Only) */}
+              {auth.isAuthenticated && (
+                <div className="glass-panel press-action-card">
+                  <Sparkles size={20} className="press-sparkle" />
+                  <h4>Press & Outreach Package</h4>
+                  <p>Ready-to-publish summary, verified social captions, and accessible photos for media and schools.</p>
+                  <button
+                    className="btn-primary full-width press-btn"
+                    onClick={() => setActiveTab('social')}
+                  >
+                    <Share2 size={14} />
+                    <span>Open Outreach Pack</span>
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         )}
 
-        {/* Tab 2: Reports & Text Extraction */}
-        {activeTab === 'reports' && (
+        {/* Tab 2: Reports & Text Extraction (Admin Only) */}
+        {activeTab === 'reports' && auth.isAuthenticated && (
           <div className="reports-tab-container">
             <div className="reports-tab-header">
               <div className="reports-header-text">
@@ -976,23 +986,21 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
           </div>
         )}
 
-        {/* Tab 5: Social Media Studio Pack */}
-        {activeTab === 'social' && (
+        {/* Tab 5: Social Media Studio Pack (Admin Only) */}
+        {activeTab === 'social' && auth.isAuthenticated && (
           <div className="social-tab-container">
             <div className="section-intro-flex">
               <div>
                 <h3>Outreach & Social Media Content Pack</h3>
                 <p>Auto-generated platform-tailored copy for Twitter/X, Instagram, and LinkedIn. Ready for NCPOR comms teams to copy & post.</p>
               </div>
-              {auth.isAuthenticated && (
-                <button
-                  className="btn-ai"
-                  onClick={() => navigateTo(`admin-generate-${expedition.id}`)}
-                >
-                  <Sparkles size={16} />
-                  <span>Regenerate in AI Studio</span>
-                </button>
-              )}
+              <button
+                className="btn-ai"
+                onClick={() => navigateTo(`admin-generate-${expedition.id}`)}
+              >
+                <Sparkles size={16} />
+                <span>Regenerate in AI Studio</span>
+              </button>
             </div>
 
             <SocialCardPreview
