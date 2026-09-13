@@ -10,7 +10,6 @@ import {
   FileText,
   Image as ImageIcon,
   Download,
-  Share2,
   CheckCircle2,
   ExternalLink,
   Copy,
@@ -23,33 +22,19 @@ import {
   Compass,
   Globe2,
   ArrowRight,
-  Award,
   ChevronDown,
-  Eye,
-  EyeOff,
-  FileCode,
   BookOpen,
   TrendingUp,
   Quote,
   Search
 } from 'lucide-react';
-import SocialCardPreview from '../components/SocialCardPreview';
-import { TwitterIcon, InstagramIcon, LinkedinIcon, FacebookIcon, BlogIcon, ArticleIcon } from '../components/SocialIcons';
 import { downloadPublicationPDF } from '../utils/pdfGenerator';
 
 export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
   const { expeditions, publications, auth, lang } = usePortal();
-  const [activeTab, setActiveTab] = useState('overview'); // overview, reports, media, publications, social
+  const [activeTab, setActiveTab] = useState('overview'); // overview, media, publications
   const [lightboxImg, setLightboxImg] = useState(null);
   const [copiedSummary, setCopiedSummary] = useState(false);
-  const [copiedTwitter, setCopiedTwitter] = useState(false);
-  const [copiedLinkedIn, setCopiedLinkedIn] = useState(false);
-  const [copiedInstagram, setCopiedInstagram] = useState(false);
-  const [copiedFacebook, setCopiedFacebook] = useState(false);
-  const [copiedBlog, setCopiedBlog] = useState(false);
-  const [copiedArticle, setCopiedArticle] = useState(false);
-  const [expandedReports, setExpandedReports] = useState({});
-  const [copiedReportId, setCopiedReportId] = useState(null);
   const [pubSearchQuery, setPubSearchQuery] = useState('');
   const [pubCategoryFilter, setPubCategoryFilter] = useState('all');
   const [copiedCitationId, setCopiedCitationId] = useState(null);
@@ -122,61 +107,6 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
     navigator.clipboard.writeText(textToCopy);
     setCopiedSummary(true);
     setTimeout(() => setCopiedSummary(false), 2000);
-  };
-
-  const handleCopyTwitter = () => {
-    const tweet = expedition.aiGeneratedContent?.socialCaptions?.twitter || expedition.summary;
-    navigator.clipboard.writeText(tweet);
-    setCopiedTwitter(true);
-    setTimeout(() => setCopiedTwitter(false), 2000);
-  };
-
-  const handleCopyLinkedIn = () => {
-    const linkedin = expedition.aiGeneratedContent?.socialCaptions?.linkedin || expedition.summary;
-    navigator.clipboard.writeText(linkedin);
-    setCopiedLinkedIn(true);
-    setTimeout(() => setCopiedLinkedIn(false), 2000);
-  };
-
-  const handleCopyInstagram = () => {
-    const insta = expedition.aiGeneratedContent?.socialCaptions?.instagram || expedition.summary;
-    navigator.clipboard.writeText(insta);
-    setCopiedInstagram(true);
-    setTimeout(() => setCopiedInstagram(false), 2000);
-  };
-
-  const handleCopyFacebook = () => {
-    const fb = expedition.aiGeneratedContent?.socialCaptions?.facebook || expedition.summary;
-    navigator.clipboard.writeText(fb);
-    setCopiedFacebook(true);
-    setTimeout(() => setCopiedFacebook(false), 2000);
-  };
-
-  const handleCopyBlog = () => {
-    const blogText = expedition.aiGeneratedContent?.socialCaptions?.blog || expedition.summary;
-    navigator.clipboard.writeText(blogText);
-    setCopiedBlog(true);
-    setTimeout(() => setCopiedBlog(false), 2000);
-  };
-
-  const handleCopyArticle = () => {
-    const artText = expedition.aiGeneratedContent?.socialCaptions?.article || expedition.summary;
-    navigator.clipboard.writeText(artText);
-    setCopiedArticle(true);
-    setTimeout(() => setCopiedArticle(false), 2000);
-  };
-
-  const toggleReportExpanded = (repId) => {
-    setExpandedReports(prev => ({
-      ...prev,
-      [repId]: !prev[repId]
-    }));
-  };
-
-  const handleCopyReportText = (text, repId) => {
-    navigator.clipboard.writeText(text);
-    setCopiedReportId(repId);
-    setTimeout(() => setCopiedReportId(null), 2000);
   };
 
   const title = (lang === 'hi' && expedition.titleHi) ? expedition.titleHi : expedition.title;
@@ -288,16 +218,6 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
               <span>Overview & Outreach Summary</span>
             </button>
 
-            {auth.isAuthenticated && (
-              <button
-                className={`detail-tab ${activeTab === 'reports' ? 'active' : ''}`}
-                onClick={() => setActiveTab('reports')}
-              >
-                <Download size={15} />
-                <span>Reports ({expedition.reports?.length || 0})</span>
-              </button>
-            )}
-
             <button
               className={`detail-tab ${activeTab === 'media' ? 'active' : ''}`}
               onClick={() => setActiveTab('media')}
@@ -313,17 +233,6 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
               <Layers size={15} />
               <span>Publications ({linkedPubs.length})</span>
             </button>
-
-            {auth.isAuthenticated && (
-              <button
-                className={`detail-tab tab-social ${activeTab === 'social' ? 'active' : ''}`}
-                onClick={() => setActiveTab('social')}
-              >
-                <Sparkles size={16} className="tab-social-sparkle" />
-                <span className="tab-social-title">Social Outreach Pack</span>
-                <span className="tab-social-ready-badge">READY</span>
-              </button>
-            )}
           </div>
         </div>
       </div>
@@ -365,113 +274,6 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
                     <p>{expedition.aiGeneratedContent.summary}</p>
                   </div>
 
-                  {/* Redesigned 1-Click Multi-Channel Outreach Bar (Admin Only) */}
-                  {auth.isAuthenticated && (
-                    <div className="outreach-drafts-panel">
-                      <div className="outreach-drafts-left">
-                        <div className="drafts-title-badge">
-                          <Share2 size={13} className="drafts-title-icon" />
-                          <span>1-Click Drafts</span>
-                        </div>
-
-                        <div className="draft-buttons-group">
-                          {expedition.aiGeneratedContent.socialCaptions?.twitter && (
-                            <button
-                              className={`social-draft-btn btn-twitter ${copiedTwitter ? 'copied' : ''}`}
-                              onClick={handleCopyTwitter}
-                              title="Copy 280-char X (Twitter) Post"
-                            >
-                              <span className="social-icon-wrapper twitter-icon-wrap">
-                                {copiedTwitter ? <Check size={13} /> : <TwitterIcon size={12} />}
-                              </span>
-                              <span className="draft-btn-text">
-                                {copiedTwitter ? 'Copied X Post!' : 'Copy X / Twitter Post'}
-                              </span>
-                            </button>
-                          )}
-
-                          {expedition.aiGeneratedContent.socialCaptions?.linkedin && (
-                            <button
-                              className={`social-draft-btn btn-linkedin ${copiedLinkedIn ? 'copied' : ''}`}
-                              onClick={handleCopyLinkedIn}
-                              title="Copy Professional LinkedIn Post"
-                            >
-                              <span className="social-icon-wrapper linkedin-icon-wrap">
-                                {copiedLinkedIn ? <Check size={13} /> : <LinkedinIcon size={12} />}
-                              </span>
-                              <span className="draft-btn-text">
-                                {copiedLinkedIn ? 'Copied LinkedIn!' : 'Copy LinkedIn Post'}
-                              </span>
-                            </button>
-                          )}
-
-                          {expedition.aiGeneratedContent.socialCaptions?.instagram && (
-                            <button
-                              className={`social-draft-btn btn-instagram ${copiedInstagram ? 'copied' : ''}`}
-                              onClick={handleCopyInstagram}
-                              title="Copy Instagram Caption"
-                            >
-                              <span className="social-icon-wrapper instagram-icon-wrap">
-                                {copiedInstagram ? <Check size={13} /> : <InstagramIcon size={12} />}
-                              </span>
-                              <span className="draft-btn-text">
-                                {copiedInstagram ? 'Copied IG!' : 'Copy Instagram'}
-                              </span>
-                            </button>
-                          )}
-
-                          <button
-                            className={`social-draft-btn btn-facebook ${copiedFacebook ? 'copied' : ''}`}
-                            onClick={handleCopyFacebook}
-                            title="Copy Facebook Community Post"
-                          >
-                            <span className="social-icon-wrapper facebook-icon-wrap">
-                              {copiedFacebook ? <Check size={13} /> : <FacebookIcon size={12} />}
-                            </span>
-                            <span className="draft-btn-text">
-                              {copiedFacebook ? 'Copied FB!' : 'Copy Facebook'}
-                            </span>
-                          </button>
-
-                          <button
-                            className={`social-draft-btn btn-blog ${copiedBlog ? 'copied' : ''}`}
-                            onClick={handleCopyBlog}
-                            title="Copy Science Blog Article (Markdown)"
-                          >
-                            <span className="social-icon-wrapper blog-icon-wrap">
-                              {copiedBlog ? <Check size={13} /> : <BlogIcon size={12} />}
-                            </span>
-                            <span className="draft-btn-text">
-                              {copiedBlog ? 'Copied Blog!' : 'Copy Blog Post'}
-                            </span>
-                          </button>
-
-                          <button
-                            className={`social-draft-btn btn-article ${copiedArticle ? 'copied' : ''}`}
-                            onClick={handleCopyArticle}
-                            title="Copy Official Press Release Article"
-                          >
-                            <span className="social-icon-wrapper article-icon-wrap">
-                              {copiedArticle ? <Check size={13} /> : <ArticleIcon size={12} />}
-                            </span>
-                            <span className="draft-btn-text">
-                              {copiedArticle ? 'Copied Article!' : 'Copy Press Article'}
-                            </span>
-                          </button>
-                        </div>
-                      </div>
-
-                      <button
-                        className="btn-open-studio-pill"
-                        onClick={() => setActiveTab('social')}
-                      >
-                        <Sparkles size={13} className="studio-pill-sparkle" />
-                        <span>Full Social Studio</span>
-                        <ArrowRight size={13} />
-                      </button>
-                    </div>
-                  )}
-
                   <div className="ai-card-footer">
                     <div className="ai-verified-tag">
                       <ShieldCheck size={14} />
@@ -483,30 +285,6 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
                 <div className="glass-panel standard-summary-card">
                   <h3>Mission Overview</h3>
                   <p>{expedition.summary}</p>
-                </div>
-              )}
-
-              {/* Key Discoveries & Milestones (Admin Only) */}
-              {auth.isAuthenticated && expedition.keyFindings && expedition.keyFindings.length > 0 && (
-                <div className="glass-panel text-content-card">
-                  <div className="section-card-header">
-                    <div className="section-card-title">
-                      <Award size={18} className="title-icon icon-success" />
-                      <span>Key Discoveries & Scientific Deliverables</span>
-                    </div>
-                    <span className="findings-counter-badge">{expedition.keyFindings.length} Breakthroughs</span>
-                  </div>
-
-                  <div className="findings-grid">
-                    {expedition.keyFindings.map((finding, idx) => (
-                      <div key={idx} className="finding-card">
-                        <span className="finding-num">0{idx + 1}</span>
-                        <div className="finding-text">
-                          {finding}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
                 </div>
               )}
 
@@ -522,7 +300,7 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
               )}
             </div>
 
-            {/* Right Sidebar: Quick Facts, Polar Coordinates & Press Kit */}
+            {/* Right Sidebar: Quick Facts, Polar Coordinates & Disciplines */}
             <div className="detail-sidebar-col">
               {/* Mission Quick Facts */}
               <div className="glass-panel sidebar-card">
@@ -543,14 +321,6 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
                     <span className="fact-label">Duration</span>
                     <span className="fact-val">{expedition.startDate} – {expedition.endDate}</span>
                   </div>
-                  {auth.isAuthenticated && (
-                    <div className="sidebar-fact-row">
-                      <span className="fact-label">Technical Reports</span>
-                      <button className="fact-jump-link" onClick={() => setActiveTab('reports')}>
-                        {expedition.reports?.length || 0} Files →
-                      </button>
-                    </div>
-                  )}
                   <div className="sidebar-fact-row">
                     <span className="fact-label">Media Assets</span>
                     <button className="fact-jump-link" onClick={() => setActiveTab('media')}>
@@ -602,127 +372,6 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
                   </div>
                 </div>
               )}
-
-              {/* Fast Outreach Press Package Action (Admin Only) */}
-              {auth.isAuthenticated && (
-                <div className="glass-panel press-action-card">
-                  <Sparkles size={20} className="press-sparkle" />
-                  <h4>Press & Outreach Package</h4>
-                  <p>Ready-to-publish summary, verified social captions, and accessible photos for media and schools.</p>
-                  <button
-                    className="btn-primary full-width press-btn"
-                    onClick={() => setActiveTab('social')}
-                  >
-                    <Share2 size={14} />
-                    <span>Open Outreach Pack</span>
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* Tab 2: Reports & Text Extraction (Admin Only) */}
-        {activeTab === 'reports' && auth.isAuthenticated && (
-          <div className="reports-tab-container">
-            <div className="reports-tab-header">
-              <div className="reports-header-text">
-                <div className="reports-section-title-wrap">
-                  <span className="reports-section-badge">
-                    <Sparkles size={13} />
-                    <span>NCPOR AI Ingestion Pipeline</span>
-                  </span>
-                  <h3>Archived Scientific Reports & PDF Extraction</h3>
-                </div>
-                <p>These official expedition technical reports and field dossiers are parsed into NLP text streams to generate public outreach summaries.</p>
-              </div>
-            </div>
-
-            <div className="reports-list">
-              {expedition.reports && expedition.reports.map((rep) => {
-                const isExpanded = !!expandedReports[rep.id];
-                const isCopied = copiedReportId === rep.id;
-                const wordCount = rep.rawText ? rep.rawText.trim().split(/\s+/).length : 0;
-                const charCount = rep.rawText ? rep.rawText.length : 0;
-
-                return (
-                  <div key={rep.id} className="glass-panel report-card-refined">
-                    <div className="report-card-main-row">
-                      <div className="report-doc-info">
-                        <div className="report-pdf-badge-icon">
-                          <FileText size={22} className="report-pdf-icon" />
-                          <span className="pdf-tag">PDF</span>
-                        </div>
-                        <div className="report-doc-details">
-                          <h4 className="report-doc-title">{rep.title}</h4>
-                          <div className="report-doc-meta-pills">
-                            <span className="doc-meta-pill size-pill">{rep.fileSize || 'PDF Document'}</span>
-                            <span className="doc-meta-pill moes-pill">
-                              <ShieldCheck size={12} />
-                              <span>Official MoES Archive</span>
-                            </span>
-                            {rep.rawText && (
-                              <span className="doc-meta-pill ocr-pill">
-                                <Sparkles size={12} />
-                                <span>OCR Text Stream ({wordCount} words)</span>
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="report-card-actions">
-                        {rep.rawText && (
-                          <button 
-                            className={`btn-rep-toggle-stream ${isExpanded ? 'active' : ''}`}
-                            onClick={() => toggleReportExpanded(rep.id)}
-                            title="Inspect extracted OCR text stream"
-                          >
-                            {isExpanded ? <EyeOff size={14} /> : <Eye size={14} />}
-                            <span>{isExpanded ? 'Hide Extracted Stream' : 'Inspect Text Stream'}</span>
-                            <ChevronDown size={14} className={`chevron-icon ${isExpanded ? 'rotated' : ''}`} />
-                          </button>
-                        )}
-
-                        <a 
-                          href="#download" 
-                          className="btn-rep-download-primary" 
-                          onClick={(e) => { e.preventDefault(); alert("Downloading sample expedition report PDF archive."); }}
-                        >
-                          <Download size={14} />
-                          <span>Download PDF</span>
-                        </a>
-                      </div>
-                    </div>
-
-                    {/* Collapsible Extracted Text Stream Box */}
-                    {rep.rawText && isExpanded && (
-                      <div className="report-stream-inspector">
-                        <div className="inspector-top-bar">
-                          <div className="inspector-title">
-                            <FileCode size={14} className="inspector-icon" />
-                            <span>NLP Ingestion Stream Buffer</span>
-                            <span className="inspector-stats-badge">{wordCount} Words • {charCount} Chars</span>
-                          </div>
-
-                          <button 
-                            className={`btn-copy-stream-code ${isCopied ? 'copied' : ''}`}
-                            onClick={() => handleCopyReportText(rep.rawText, rep.id)}
-                            title="Copy entire raw text buffer"
-                          >
-                            {isCopied ? <Check size={13} /> : <Copy size={13} />}
-                            <span>{isCopied ? 'Stream Copied!' : 'Copy Stream'}</span>
-                          </button>
-                        </div>
-
-                        <div className="inspector-code-body">
-                          <pre className="inspector-pre-text">{rep.rawText}</pre>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
             </div>
           </div>
         )}
@@ -1011,34 +660,6 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
                 </button>
               </div>
             )}
-          </div>
-        )}
-
-        {/* Tab 5: Social Media Studio Pack (Admin Only) */}
-        {activeTab === 'social' && auth.isAuthenticated && (
-          <div className="social-tab-container">
-            <div className="section-intro-flex">
-              <div>
-                <h3>Outreach & Social Media Content Pack</h3>
-                <p>Auto-generated platform-tailored copy for Twitter/X, Instagram, and LinkedIn. Ready for NCPOR comms teams to copy & post.</p>
-              </div>
-              <button
-                className="btn-ai"
-                onClick={() => navigateTo(`admin-generate-${expedition.id}`)}
-              >
-                <Sparkles size={16} />
-                <span>Regenerate in AI Studio</span>
-              </button>
-            </div>
-
-            <SocialCardPreview
-              aiContent={expedition.aiGeneratedContent}
-              expeditionTitle={expedition.title}
-              region={expedition.region}
-              mediaUrl={expedition.media && expedition.media[0]?.url}
-              mediaList={expedition.media || []}
-              expedition={expedition}
-            />
           </div>
         )}
       </div>

@@ -197,7 +197,6 @@ export default function Expeditions({ onSelectExpedition, navigateTo }) {
               >
                 <option value="all">All Content</option>
                 {auth?.isAuthenticated && <option value="ai">Outreach Ready</option>}
-                {auth?.isAuthenticated && <option value="reports">With Reports</option>}
                 <option value="media">With Photos</option>
               </select>
             </div>
