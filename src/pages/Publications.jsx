@@ -26,6 +26,7 @@ import {
   Layers,
   FileCode
 } from 'lucide-react';
+import { downloadPublicationPDF } from '../utils/pdfGenerator';
 
 export default function Publications({ navigateTo }) {
   const { publications, datasets, auth } = usePortal();
@@ -150,7 +151,69 @@ export default function Publications({ navigateTo }) {
   };
 
   const handleDownload = (ds) => {
-    setDownloadToast(`Initiated open-access download for "${ds.title.substring(0, 45)}..." (${ds.format})`);
+    // Determine native dataset extension
+    let ext = 'csv';
+    let mimeType = 'text/csv;charset=utf-8';
+    const formatLower = (ds.format || '').toLowerCase();
+    
+    if (formatLower.includes('.nc') || formatLower.includes('netcdf')) {
+      ext = 'nc';
+      mimeType = 'application/x-netcdf';
+    } else if (formatLower.includes('.dat') || formatLower.includes('ascii') || formatLower.includes('tab')) {
+      ext = 'dat';
+      mimeType = 'text/plain;charset=utf-8';
+    } else if (formatLower.includes('.json')) {
+      ext = 'json';
+      mimeType = 'application/json';
+    }
+
+    const content = `================================================================================
+NCPOR OPEN SCIENTIFIC DATASET ARCHIVE
+National Centre for Polar and Ocean Research (MoES, Govt. of India)
+================================================================================
+
+DATASET TITLE:
+${ds.title}
+
+REGION / EXPEDITION:
+${ds.region}
+
+PARAMETERS MEASURED:
+${(ds.parameters || []).join(', ')}
+
+FORMAT & SIZE:
+${ds.format} • ${ds.fileSize}
+
+PERSISTENT IDENTIFIER (DOI):
+https://doi.org/${ds.doi}
+
+--------------------------------------------------------------------------------
+DATASET SUMMARY & METADATA:
+--------------------------------------------------------------------------------
+${ds.summary || 'Open observational dataset published under NCPOR data mandate.'}
+
+================================================================================
+Archived by NCPOR Polar Outreach & Science Communication Portal
+================================================================================`;
+
+    const blob = new Blob([content], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    const safeTitle = (ds.title || 'dataset').replace(/[^a-zA-Z0-9]/g, '_').substring(0, 35);
+    link.download = `NCPOR_${safeTitle}_${ds.year}.${ext}`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
+    setDownloadToast(`Downloaded dataset in native format: ${ds.format}`);
+    setTimeout(() => setDownloadToast(null), 3500);
+  };
+
+  const handleDownloadPub = (pub) => {
+    downloadPublicationPDF(pub);
+    setDownloadToast(`Downloaded "${pub.title.substring(0, 38)}..." (PDF Document)`);
     setTimeout(() => setDownloadToast(null), 3500);
   };
 
@@ -605,6 +668,15 @@ export default function Publications({ navigateTo }) {
                           ) : (
                             <><Copy size={14} /><span>Cite / APA</span></>
                           )}
+                        </button>
+
+                        <button 
+                          className="btn-download-primary"
+                          onClick={() => handleDownloadPub(pub)}
+                          title="Download open-access publication document"
+                        >
+                          <Download size={14} />
+                          <span>Download Paper</span>
                         </button>
 
                         <a 

@@ -35,6 +35,7 @@ import {
 } from 'lucide-react';
 import SocialCardPreview from '../components/SocialCardPreview';
 import { TwitterIcon, InstagramIcon, LinkedinIcon, FacebookIcon, BlogIcon, ArticleIcon } from '../components/SocialIcons';
+import { downloadPublicationPDF } from '../utils/pdfGenerator';
 
 export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
   const { expeditions, publications, auth, lang } = usePortal();
@@ -53,6 +54,7 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
   const [pubCategoryFilter, setPubCategoryFilter] = useState('all');
   const [copiedCitationId, setCopiedCitationId] = useState(null);
   const [copiedDoiId, setCopiedDoiId] = useState(null);
+  const [downloadedPubId, setDownloadedPubId] = useState(null);
   const [expandedAbstracts, setExpandedAbstracts] = useState({});
 
   const expedition = expeditions.find(e => e.id === expeditionId);
@@ -98,6 +100,14 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
     navigator.clipboard.writeText(`https://doi.org/${pub.doi}`);
     setCopiedDoiId(pub.id);
     setTimeout(() => setCopiedDoiId(null), 2200);
+  };
+
+  const handleDownloadPub = (pub) => {
+    setDownloadedPubId(pub.id);
+    downloadPublicationPDF(pub);
+    setTimeout(() => {
+      setDownloadedPubId(null);
+    }, 2200);
   };
 
   const toggleAbstractExpanded = (pubId) => {
@@ -954,6 +964,24 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
                         </div>
 
                         <div className="pub-footer-right-actions">
+                          <button
+                            className={`btn-pub-download ${downloadedPubId === pub.id ? 'downloaded' : ''}`}
+                            onClick={() => handleDownloadPub(pub)}
+                            title="Download publication document & citation archive"
+                          >
+                            {downloadedPubId === pub.id ? (
+                              <>
+                                <Check size={13} />
+                                <span>Downloaded!</span>
+                              </>
+                            ) : (
+                              <>
+                                <Download size={13} />
+                                <span>Download Publication</span>
+                              </>
+                            )}
+                          </button>
+
                           <a
                             href={`https://doi.org/${pub.doi}`}
                             target="_blank"
@@ -2834,6 +2862,41 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
           border-color: #a7f3d0;
           color: #059669;
           font-weight: 700;
+        }
+
+        .pub-footer-right-actions {
+          display: flex;
+          align-items: center;
+          gap: 0.6rem;
+          flex-wrap: wrap;
+        }
+
+        .btn-pub-download {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.4rem;
+          background: #ecfdf5;
+          border: 1px solid #a7f3d0;
+          color: #047857;
+          font-size: 0.78rem;
+          font-weight: 600;
+          padding: 0.4rem 0.95rem;
+          border-radius: 7px;
+          cursor: pointer;
+          transition: all 0.15s ease;
+        }
+
+        .btn-pub-download:hover {
+          background: #d1fae5;
+          border-color: #6ee7b7;
+          color: #065f46;
+          transform: translateY(-1px);
+        }
+
+        .btn-pub-download.downloaded {
+          background: #059669;
+          border-color: #059669;
+          color: #ffffff;
         }
 
         .btn-pub-doi-link {
