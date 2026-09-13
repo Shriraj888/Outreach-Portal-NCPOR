@@ -415,31 +415,31 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
       <div className="view-mode-tabs-container">
         <div className="view-mode-tabs">
           <button 
-            className={`mode-tab ${viewTab === 'all' ? 'active' : ''}`}
+            className={`mode-tab tab-all ${viewTab === 'all' ? 'active' : ''}`}
             onClick={() => setViewTab('all')}
           >
-            <Layers size={16} />
-            <span>All NCPOR Assets</span>
+            <Layers size={15} className="tab-icon" />
+            <span className="tab-label">All NCPOR Assets</span>
             <span className="tab-count-badge">
               {isLoading && dynamicPubs.length === 0 ? '...' : totalAssetsCount}
             </span>
           </button>
           <button 
-            className={`mode-tab ${viewTab === 'publications' ? 'active' : ''}`}
+            className={`mode-tab tab-pubs ${viewTab === 'publications' ? 'active' : ''}`}
             onClick={() => setViewTab('publications')}
           >
-            <BookOpen size={16} />
-            <span>Peer-Reviewed Papers</span>
+            <BookOpen size={15} className="tab-icon" />
+            <span className="tab-label">Peer-Reviewed Papers</span>
             <span className="tab-count-badge">
               {isLoading && dynamicPubs.length === 0 ? '...' : (totalPubsCount || allActivePublications.length)}
             </span>
           </button>
           <button 
-            className={`mode-tab ${viewTab === 'datasets' ? 'active' : ''}`}
+            className={`mode-tab tab-datasets ${viewTab === 'datasets' ? 'active' : ''}`}
             onClick={() => setViewTab('datasets')}
           >
-            <Database size={16} />
-            <span>Scientific Datasets</span>
+            <Database size={15} className="tab-icon" />
+            <span className="tab-label">Scientific Datasets</span>
             <span className="tab-count-badge">
               {isLoading && dynamicDatasets.length === 0 ? '...' : (totalDatasetsCount || allActiveDatasets.length)}
             </span>
@@ -546,11 +546,16 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
                 const catStyle = getCategoryColor(ds.category);
 
                 return (
-                  <div key={ds.id} className="pub-card-modern dataset-accent-border">
+                  <div key={ds.id} className="pub-card-modern dataset-card-style">
                     <div className="pub-card-main">
-                      {/* Badge Ribbon */}
+                      {/* Top Header Ribbon */}
                       <div className="card-top-ribbon">
                         <div className="badge-cluster">
+                          <span className="card-primary-tag dataset-primary-tag">
+                            <Database size={12} />
+                            <span>Polar Scientific Dataset</span>
+                          </span>
+
                           <span 
                             className="card-category-badge"
                             style={{ 
@@ -563,51 +568,49 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
                             {ds.category}
                           </span>
 
-                          <span className="card-format-pill">
-                            <FileCode size={12} />
+                          <span className="card-meta-pill format-pill">
+                            <FileCode size={11} />
                             {ds.format}
                           </span>
 
-                          <span className="card-year-pill">
-                            <Calendar size={12} />
+                          <span className="card-meta-pill year-pill">
+                            <Calendar size={11} />
                             {ds.year}
                           </span>
 
-                          <span className="card-license-pill">
-                            <ShieldCheck size={12} />
-                            {ds.license || 'CC-BY 4.0 Open Science'}
-                          </span>
-
-                          <span className="card-ncpor-origin-badge">
+                          <span className="card-meta-pill license-pill">
                             <ShieldCheck size={11} />
-                            <span>NCPOR Polar Dataset</span>
+                            {ds.license || 'CC-BY 4.0 Open Science'}
                           </span>
                         </div>
 
                         {ds.downloadsCount && (
-                          <span className="card-download-stat" title="Total downloads">
-                            <Download size={12} />
-                            <span>{ds.downloadsCount} downloads</span>
-                          </span>
+                          <div className="card-metric-badge dataset-metric" title="Total downloads recorded">
+                            <Download size={12} className="metric-icon" />
+                            <span><strong>{ds.downloadsCount}</strong> downloads</span>
+                          </div>
                         )}
                       </div>
 
                       {/* Title */}
                       <h3 className="card-title-text">{ds.title}</h3>
 
-                      {/* Meta information row */}
+                      {/* Meta Information Bar */}
                       <div className="card-meta-grid">
-                        <div className="meta-chip">
-                          <MapPin size={14} className="meta-icon geo-icon" />
+                        <div className="meta-chip" title="Spatial Geographic Coverage">
+                          <MapPin size={13} className="meta-icon geo-icon" />
+                          <span className="meta-label">Location:</span>
                           <span className="meta-value">{ds.spatialCoverage}</span>
                         </div>
-                        <div className="meta-chip">
-                          <Clock size={14} className="meta-icon time-icon" />
+                        <div className="meta-chip" title="Temporal Observation Range">
+                          <Clock size={13} className="meta-icon time-icon" />
+                          <span className="meta-label">Temporal:</span>
                           <span className="meta-value">{ds.temporalCoverage}</span>
                         </div>
-                        <div className="meta-chip">
-                          <FileText size={14} className="meta-icon size-icon" />
-                          <span className="meta-value">File Size: {ds.fileSize}</span>
+                        <div className="meta-chip" title="Data File Size">
+                          <FileText size={13} className="meta-icon size-icon" />
+                          <span className="meta-label">Size:</span>
+                          <span className="meta-value">{ds.fileSize}</span>
                         </div>
                       </div>
 
@@ -615,7 +618,7 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
                       {ds.parameters && ds.parameters.length > 0 && (
                         <div className="parameters-container">
                           <span className="params-title">
-                            <Tag size={12} />
+                            <Tag size={11} />
                             <span>Measured Variables:</span>
                           </span>
                           <div className="params-chips-wrap">
@@ -634,7 +637,7 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
                       <div className="expanded-details-drawer">
                         <div className="drawer-inner">
                           <div className="drawer-header">
-                            <h4 className="drawer-title">Dataset Summary & Technical Specifications</h4>
+                            <h4 className="drawer-title">Dataset Summary &amp; Technical Specifications</h4>
                           </div>
                           
                           <p className="drawer-description">{ds.summary}</p>
@@ -663,32 +666,29 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
                     {/* Actions Toolbar */}
                     <div className="card-actions-bar">
                       <button 
-                        className="btn-expand-toggle"
+                        className={`btn-expand-toggle ${isExpanded ? 'active-expanded' : ''}`}
                         onClick={() => toggleExpand(ds.id)}
                       >
-                        {isExpanded ? (
-                          <><span>Collapse Details</span><ChevronUp size={15} /></>
-                        ) : (
-                          <><span>Inspect Variables & Abstract</span><ChevronDown size={15} /></>
-                        )}
+                        <span>{isExpanded ? 'Collapse Details' : 'Inspect Variables & Abstract'}</span>
+                        {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
                       </button>
 
                       <div className="action-buttons-group">
                         <button 
-                          className="btn-secondary-action"
+                          className={`btn-secondary-action ${copiedDoiId === ds.id ? 'active-copied' : ''}`}
                           onClick={() => copyDoi(ds.doi, ds.id)}
                           title="Copy direct DOI"
                         >
-                          {copiedDoiId === ds.id ? <Check size={14} /> : <Share2 size={14} />}
-                          <span>DOI Link</span>
+                          {copiedDoiId === ds.id ? <Check size={13} /> : <Share2 size={13} />}
+                          <span>{copiedDoiId === ds.id ? 'Copied' : 'DOI Link'}</span>
                         </button>
 
                         <button 
-                          className="btn-download-primary"
+                          className="btn-download-primary btn-dataset-download"
                           onClick={() => handleDownload(ds)}
                           title="Download dataset"
                         >
-                          <Download size={14} />
+                          <Download size={13} />
                           <span>Download {ds.format.split(' ')[0]}</span>
                         </button>
                       </div>
@@ -722,11 +722,23 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
                 const catStyle = getCategoryColor(pub.category);
 
                 return (
-                  <div key={pub.id} className="pub-card-modern publication-card-accent">
+                  <div key={pub.id} className="pub-card-modern publication-card-style">
                     <div className="pub-card-main">
-                      {/* Badges */}
+                      {/* Top Header Ribbon */}
                       <div className="card-top-ribbon">
                         <div className="badge-cluster">
+                          {pub.isOa ? (
+                            <span className="card-primary-tag oa-primary-tag" title="Verified Open Access Publication">
+                              <CheckCircle2 size={11} />
+                              <span>Open Access Article</span>
+                            </span>
+                          ) : (
+                            <span className="card-primary-tag pub-primary-tag">
+                              <BookOpen size={11} />
+                              <span>Research Article</span>
+                            </span>
+                          )}
+
                           <span 
                             className="card-category-badge"
                             style={{ 
@@ -739,49 +751,44 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
                             {pub.category}
                           </span>
 
-                          <span className="card-year-pill">
-                            <Calendar size={12} />
+                          <span className="card-meta-pill year-pill">
+                            <Calendar size={11} />
                             {pub.year}
                           </span>
 
-                          <span className="card-journal-badge">
+                          <span className="card-journal-badge" title="Publishing Journal">
                             <em>{pub.journal}</em>
                           </span>
-
-                          {pub.isOa && (
-                            <span className="card-oa-pill" title="Verified Open Access Publication">
-                              <CheckCircle2 size={11} />
-                              <span>Open Access</span>
-                            </span>
-                          )}
                         </div>
 
                         {pub.citations !== undefined && (
-                          <span className="card-citation-badge" title="Citations tracked">
-                            <Sparkles size={12} />
-                            <span>{pub.citations} Citations</span>
-                          </span>
+                          <div className="card-metric-badge citation-metric" title="Total global citations recorded by OpenAlex">
+                            <Sparkles size={12} className="metric-icon gold-spark" />
+                            <span><strong>{pub.citations}</strong> Citations</span>
+                          </div>
                         )}
                       </div>
 
                       {/* Title */}
                       <h3 className="card-title-text">{pub.title}</h3>
 
+                      {/* Authors Line */}
+                      <div className="card-authors-bar">
+                        <User size={13} className="author-glyph" />
+                        <span className="author-names">{pub.authors.join(', ')}</span>
+                      </div>
+
                       {/* NCPOR Verified Authorship Strip */}
                       {pub.ncporAuthors && pub.ncporAuthors.length > 0 && (
                         <div className="ncpor-affiliation-strip">
-                          <ShieldCheck size={13} className="ncpor-shield-icon" />
-                          <span className="ncpor-strip-label">NCPOR Affiliation:</span>
+                          <div className="ncpor-strip-lead">
+                            <ShieldCheck size={13} className="ncpor-shield-icon" />
+                            <span className="ncpor-strip-label">NCPOR Affiliated:</span>
+                          </div>
                           <span className="ncpor-strip-names">{pub.ncporAuthors.join(', ')}</span>
                           <span className="ncpor-inst-tag">MoES • Govt. of India</span>
                         </div>
                       )}
-
-                      {/* Authors Line */}
-                      <div className="card-authors-bar">
-                        <User size={14} className="author-glyph" />
-                        <span className="author-names">{pub.authors.join(', ')}</span>
-                      </div>
 
                       {/* Tags */}
                       {pub.tags && pub.tags.length > 0 && (
@@ -818,7 +825,7 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
                               className="btn-publisher-link"
                             >
                               <span>Open Publisher Record</span>
-                              <ExternalLink size={13} />
+                              <ExternalLink size={12} />
                             </a>
                           </div>
                         </div>
@@ -828,14 +835,11 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
                     {/* Actions Toolbar */}
                     <div className="card-actions-bar">
                       <button 
-                        className="btn-expand-toggle"
+                        className={`btn-expand-toggle ${isExpanded ? 'active-expanded' : ''}`}
                         onClick={() => toggleExpand(pub.id)}
                       >
-                        {isExpanded ? (
-                          <><span>Hide Abstract</span><ChevronUp size={15} /></>
-                        ) : (
-                          <><span>Read Abstract</span><ChevronDown size={15} /></>
-                        )}
+                        <span>{isExpanded ? 'Hide Abstract' : 'Read Abstract'}</span>
+                        {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
                       </button>
 
                       <div className="action-buttons-group">
@@ -845,9 +849,9 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
                           title="Copy APA formatted citation"
                         >
                           {copiedId === pub.id ? (
-                            <><Check size={14} /><span>Copied APA</span></>
+                            <><Check size={13} /><span>Copied APA</span></>
                           ) : (
-                            <><Copy size={14} /><span>Cite / APA</span></>
+                            <><Copy size={13} /><span>Cite / APA</span></>
                           )}
                         </button>
 
@@ -859,19 +863,19 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
                             className="btn-oa-pdf"
                             title="Open full-text Open Access PDF from publisher"
                           >
-                            <FileText size={14} />
+                            <FileText size={13} />
                             <span>Full PDF</span>
                             <ExternalLink size={11} />
                           </a>
                         )}
 
                         <button 
-                          className="btn-download-primary"
+                          className="btn-download-secondary"
                           onClick={() => handleDownloadPub(pub)}
-                          title="Download open-access publication document"
+                          title="Download summary report"
                         >
-                          <Download size={14} />
-                          <span>Download Paper</span>
+                          <Download size={13} />
+                          <span>Summary</span>
                         </button>
 
                         <a 
@@ -882,7 +886,7 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
                           title="Visit original publication"
                         >
                           <span>View Article</span>
-                          <ExternalLink size={13} />
+                          <ExternalLink size={12} />
                         </a>
                       </div>
                     </div>
@@ -1347,60 +1351,113 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
           100% { background-position: 200% 0; }
         }
 
-        /* --- View Mode Tabs --- */
+        /* --- Modern Segmented View Mode Tabs --- */
         .view-mode-tabs-container {
           display: flex;
+          align-items: center;
           justify-content: flex-start;
+          margin-bottom: -0.25rem;
         }
 
         .view-mode-tabs {
           display: inline-flex;
           align-items: center;
-          background: #e2e8f0;
-          padding: 0.35rem;
-          border-radius: var(--radius-md);
-          gap: 0.35rem;
-          box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+          background: #f1f5f9;
+          padding: 0.3rem;
+          border-radius: 12px;
+          gap: 0.25rem;
+          border: 1px solid #e2e8f0;
+          box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
         }
 
         .mode-tab {
-          display: flex;
+          display: inline-flex;
           align-items: center;
-          gap: 0.5rem;
-          padding: 0.65rem 1.15rem;
+          gap: 0.55rem;
+          padding: 0.55rem 1.05rem;
           background: transparent;
-          border: none;
-          color: var(--text-secondary);
-          border-radius: var(--radius-sm);
-          font-size: 0.88rem;
+          border: 1px solid transparent;
+          color: #64748b;
+          border-radius: 9px;
+          font-size: 0.86rem;
           font-weight: 600;
           cursor: pointer;
-          transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+          transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+          user-select: none;
+          white-space: nowrap;
         }
 
-        .mode-tab:hover {
-          color: var(--navy);
+        .mode-tab .tab-icon {
+          color: #94a3b8;
+          transition: color 0.18s ease, transform 0.18s ease;
+          flex-shrink: 0;
+        }
+
+        .mode-tab:hover:not(.active) {
+          color: #0f172a;
+          background: rgba(255, 255, 255, 0.7);
+        }
+
+        .mode-tab:hover:not(.active) .tab-icon {
+          color: #475569;
+        }
+
+        .mode-tab:active {
+          transform: scale(0.98);
         }
 
         .mode-tab.active {
           background: #ffffff;
-          color: var(--navy);
-          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-          font-weight: 700;
+          color: #0f172a;
+          border-color: rgba(226, 232, 240, 0.95);
+          box-shadow: 0 2px 6px -1px rgba(15, 23, 42, 0.08), 0 1px 3px -1px rgba(15, 23, 42, 0.04);
+        }
+
+        .mode-tab.tab-all.active .tab-icon {
+          color: #0284c7;
+        }
+
+        .mode-tab.tab-pubs.active .tab-icon {
+          color: #2563eb;
+        }
+
+        .mode-tab.tab-datasets.active .tab-icon {
+          color: #059669;
         }
 
         .tab-count-badge {
-          background: #f1f5f9;
-          color: #475569;
-          font-size: 0.75rem;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          min-width: 22px;
+          padding: 0.12rem 0.5rem;
+          font-size: 0.74rem;
           font-weight: 700;
-          padding: 0.15rem 0.5rem;
-          border-radius: var(--radius-full);
+          border-radius: 9999px;
+          background: #e2e8f0;
+          color: #64748b;
+          line-height: 1.3;
+          transition: all 0.18s ease;
         }
 
-        .mode-tab.active .tab-count-badge {
+        .mode-tab:hover:not(.active) .tab-count-badge {
+          background: #cbd5e1;
+          color: #1e293b;
+        }
+
+        .mode-tab.tab-all.active .tab-count-badge {
+          background: #e0f2fe;
+          color: #0369a1;
+        }
+
+        .mode-tab.tab-pubs.active .tab-count-badge {
           background: #eff6ff;
           color: #1d4ed8;
+        }
+
+        .mode-tab.tab-datasets.active .tab-count-badge {
+          background: #ecfdf5;
+          color: #047857;
         }
 
         /* --- Filter & Search Hub --- */
@@ -1680,25 +1737,39 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
         .pub-card-modern {
           background: #ffffff;
           border: 1px solid #e2e8f0;
-          border-radius: var(--radius-md);
+          border-radius: 14px;
           overflow: hidden;
-          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
-          transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+          position: relative;
+          box-shadow: 0 2px 6px -1px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(15, 23, 42, 0.02);
+          transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
           display: flex;
           flex-direction: column;
         }
 
         .pub-card-modern:hover {
-          box-shadow: 0 8px 20px -4px rgba(15, 23, 42, 0.08), 0 4px 8px -2px rgba(15, 23, 42, 0.04);
+          box-shadow: 0 12px 28px -6px rgba(15, 23, 42, 0.09), 0 4px 12px -2px rgba(15, 23, 42, 0.04);
           border-color: #cbd5e1;
+          transform: translateY(-2px);
         }
 
-        .dataset-accent-border {
-          border-left: 4px solid #059669;
+        .dataset-card-style::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 3px;
+          background: linear-gradient(90deg, #059669 0%, #10b981 100%);
         }
 
-        .publication-card-accent {
-          border-left: 4px solid #d97706;
+        .publication-card-style::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 3px;
+          background: linear-gradient(90deg, #0284c7 0%, #3b82f6 100%);
         }
 
         .pub-card-main {
@@ -1723,14 +1794,42 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
           gap: 0.45rem;
         }
 
+        .card-primary-tag {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.35rem;
+          font-size: 0.74rem;
+          font-weight: 700;
+          padding: 0.2rem 0.6rem;
+          border-radius: 6px;
+        }
+
+        .dataset-primary-tag {
+          background: #ecfdf5;
+          color: #047857;
+          border: 1px solid #a7f3d0;
+        }
+
+        .oa-primary-tag {
+          background: #f0fdf4;
+          color: #15803d;
+          border: 1px solid #bbf7d0;
+        }
+
+        .pub-primary-tag {
+          background: #f0f9ff;
+          color: #0369a1;
+          border: 1px solid #bae6fd;
+        }
+
         .card-category-badge {
           display: inline-flex;
           align-items: center;
           gap: 0.35rem;
-          font-size: 0.76rem;
+          font-size: 0.74rem;
           font-weight: 700;
-          padding: 0.25rem 0.7rem;
-          border-radius: var(--radius-full);
+          padding: 0.2rem 0.65rem;
+          border-radius: 9999px;
           border: 1px solid transparent;
         }
 
@@ -1741,103 +1840,84 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
           display: inline-block;
         }
 
-        .card-format-pill {
+        .card-meta-pill {
           display: inline-flex;
           align-items: center;
           gap: 0.3rem;
-          background: #f1f5f9;
-          color: #334155;
-          border: 1px solid #e2e8f0;
-          font-size: 0.74rem;
-          font-weight: 700;
-          padding: 0.2rem 0.6rem;
-          border-radius: 4px;
-        }
-
-        .card-year-pill {
-          display: inline-flex;
-          align-items: center;
-          gap: 0.3rem;
-          font-size: 0.76rem;
-          color: #64748b;
-          font-weight: 600;
           background: #f8fafc;
+          color: #475569;
           border: 1px solid #e2e8f0;
-          padding: 0.2rem 0.55rem;
-          border-radius: 4px;
-        }
-
-        .card-license-pill {
-          display: inline-flex;
-          align-items: center;
-          gap: 0.3rem;
           font-size: 0.74rem;
-          color: #047857;
-          background: #ecfdf5;
-          border: 1px solid #a7f3d0;
-          padding: 0.2rem 0.55rem;
-          border-radius: 4px;
           font-weight: 600;
+          padding: 0.2rem 0.55rem;
+          border-radius: 6px;
         }
 
         .card-journal-badge {
-          font-size: 0.78rem;
+          font-size: 0.76rem;
           color: #475569;
           background: #f8fafc;
           border: 1px solid #e2e8f0;
           padding: 0.2rem 0.6rem;
-          border-radius: 4px;
+          border-radius: 6px;
         }
 
-        .card-citation-badge {
+        .card-metric-badge {
           display: inline-flex;
           align-items: center;
           gap: 0.35rem;
           font-size: 0.76rem;
-          color: #b45309;
-          background: #fffbeb;
-          border: 1px solid #fde68a;
-          padding: 0.25rem 0.65rem;
-          border-radius: var(--radius-full);
+          padding: 0.25rem 0.7rem;
+          border-radius: 9999px;
+          font-weight: 500;
+        }
+
+        .card-metric-badge strong {
           font-weight: 700;
         }
 
-        .card-download-stat {
-          display: inline-flex;
-          align-items: center;
-          gap: 0.35rem;
-          font-size: 0.76rem;
-          color: #047857;
+        .citation-metric {
+          background: #fffbeb;
+          border: 1px solid #fef3c7;
+          color: #b45309;
+        }
+
+        .dataset-metric {
           background: #ecfdf5;
-          border: 1px solid #a7f3d0;
-          padding: 0.25rem 0.65rem;
-          border-radius: var(--radius-full);
-          font-weight: 600;
+          border: 1px solid #d1fae5;
+          color: #047857;
+        }
+
+        .metric-icon {
+          flex-shrink: 0;
         }
 
         .card-title-text {
-          font-size: 1.22rem;
+          font-size: 1.18rem;
           font-weight: 700;
-          color: var(--navy);
-          line-height: 1.35;
-          margin: 0.2rem 0;
-          letter-spacing: -0.01em;
+          color: #0f172a;
+          line-height: 1.4;
+          margin: 0.15rem 0;
+          letter-spacing: -0.015em;
         }
 
         .card-meta-grid {
           display: flex;
           align-items: center;
           flex-wrap: wrap;
-          gap: 1.25rem;
-          padding: 0.5rem 0;
+          gap: 0.65rem 1.1rem;
+          padding: 0.25rem 0;
         }
 
         .meta-chip {
-          display: flex;
+          display: inline-flex;
           align-items: center;
-          gap: 0.4rem;
-          font-size: 0.84rem;
-          color: #475569;
+          gap: 0.35rem;
+          font-size: 0.82rem;
+          background: #f8fafc;
+          border: 1px solid #f1f5f9;
+          padding: 0.25rem 0.6rem;
+          border-radius: 6px;
         }
 
         .meta-icon {
@@ -1848,8 +1928,17 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
         .time-icon { color: #d97706; }
         .size-icon { color: #059669; }
 
+        .meta-label {
+          color: #94a3b8;
+          font-size: 0.72rem;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.03em;
+        }
+
         .meta-value {
-          font-weight: 500;
+          font-weight: 600;
+          color: #1e293b;
         }
 
         .parameters-container {
@@ -1857,44 +1946,43 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
           align-items: flex-start;
           flex-wrap: wrap;
           gap: 0.5rem;
-          margin-top: 0.25rem;
+          margin-top: 0.15rem;
         }
 
         .params-title {
           display: inline-flex;
           align-items: center;
           gap: 0.3rem;
-          font-size: 0.76rem;
+          font-size: 0.74rem;
           font-weight: 700;
           color: #64748b;
           text-transform: uppercase;
-          letter-spacing: 0.02em;
-          padding-top: 0.25rem;
+          letter-spacing: 0.03em;
+          padding-top: 0.2rem;
         }
 
         .params-chips-wrap {
           display: flex;
           flex-wrap: wrap;
-          gap: 0.4rem;
+          gap: 0.35rem;
         }
 
         .variable-chip {
           background: #f1f5f9;
           border: 1px solid #cbd5e1;
           color: #334155;
-          font-size: 0.76rem;
+          font-size: 0.75rem;
           font-weight: 600;
-          padding: 0.2rem 0.55rem;
-          border-radius: 4px;
-          font-family: var(--font-mono);
+          padding: 0.18rem 0.55rem;
+          border-radius: 5px;
           letter-spacing: -0.01em;
         }
 
         .card-authors-bar {
           display: flex;
           align-items: center;
-          gap: 0.5rem;
-          font-size: 0.88rem;
+          gap: 0.45rem;
+          font-size: 0.86rem;
           color: #334155;
         }
 
@@ -1905,22 +1993,72 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
 
         .author-names {
           font-weight: 500;
+          color: #475569;
+        }
+
+        .ncpor-affiliation-strip {
+          display: flex;
+          align-items: center;
+          flex-wrap: wrap;
+          gap: 0.55rem;
+          background: linear-gradient(135deg, rgba(240, 253, 244, 0.85), rgba(248, 250, 252, 0.95));
+          border: 1px solid #bbf7d0;
+          border-left: 3px solid #059669;
+          border-radius: 8px;
+          padding: 0.45rem 0.85rem;
+          margin-top: 0.1rem;
+          font-size: 0.82rem;
+        }
+
+        .ncpor-strip-lead {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.35rem;
+        }
+
+        .ncpor-shield-icon {
+          color: #059669;
+          flex-shrink: 0;
+        }
+
+        .ncpor-strip-label {
+          font-weight: 700;
+          color: #065f46;
+          font-size: 0.76rem;
+          text-transform: uppercase;
+          letter-spacing: 0.03em;
+        }
+
+        .ncpor-strip-names {
+          font-weight: 600;
+          color: #0f172a;
+        }
+
+        .ncpor-inst-tag {
+          margin-left: auto;
+          font-size: 0.7rem;
+          font-weight: 700;
+          color: #047857;
+          background: #dcfce7;
+          padding: 0.15rem 0.5rem;
+          border-radius: 4px;
+          letter-spacing: 0.02em;
         }
 
         .pub-keywords-row {
           display: flex;
           flex-wrap: wrap;
-          gap: 0.4rem;
-          margin-top: 0.2rem;
+          gap: 0.35rem;
+          margin-top: 0.1rem;
         }
 
         .keyword-chip {
-          font-size: 0.74rem;
+          font-size: 0.73rem;
           background: #f8fafc;
           border: 1px solid #e2e8f0;
           color: #64748b;
           padding: 0.15rem 0.5rem;
-          border-radius: 4px;
+          border-radius: 5px;
           font-weight: 500;
         }
 
@@ -1951,7 +2089,7 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
         }
 
         .drawer-title {
-          font-size: 0.82rem;
+          font-size: 0.8rem;
           font-weight: 700;
           color: #0f172a;
           text-transform: uppercase;
@@ -1960,8 +2098,8 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
         }
 
         .drawer-description {
-          font-size: 0.9rem;
-          line-height: 1.6;
+          font-size: 0.88rem;
+          line-height: 1.65;
           color: #334155;
           margin: 0;
         }
@@ -1973,8 +2111,8 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
           flex-wrap: wrap;
           gap: 0.75rem;
           background: #ffffff;
-          padding: 0.75rem 1rem;
-          border-radius: var(--radius-sm);
+          padding: 0.7rem 0.95rem;
+          border-radius: 8px;
           border: 1px solid #e2e8f0;
         }
 
@@ -1986,14 +2124,14 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
         }
 
         .doi-prefix {
-          font-size: 0.78rem;
+          font-size: 0.76rem;
           color: #64748b;
           font-weight: 600;
         }
 
         .doi-code-box {
           font-family: var(--font-mono);
-          font-size: 0.82rem;
+          font-size: 0.8rem;
           color: #047857;
           background: #ecfdf5;
           padding: 0.2rem 0.5rem;
@@ -2008,10 +2146,10 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
           background: #f1f5f9;
           border: 1px solid #cbd5e1;
           color: #334155;
-          font-size: 0.78rem;
+          font-size: 0.76rem;
           font-weight: 600;
-          padding: 0.35rem 0.75rem;
-          border-radius: 4px;
+          padding: 0.3rem 0.7rem;
+          border-radius: 6px;
           cursor: pointer;
           transition: all 0.15s ease;
         }
@@ -2034,10 +2172,10 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
           background: #eff6ff;
           border: 1px solid #bfdbfe;
           color: #1d4ed8;
-          font-size: 0.78rem;
+          font-size: 0.76rem;
           font-weight: 600;
-          padding: 0.35rem 0.75rem;
-          border-radius: 4px;
+          padding: 0.3rem 0.7rem;
+          border-radius: 6px;
           text-decoration: none;
           transition: all 0.15s ease;
         }
@@ -2048,8 +2186,9 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
 
         /* --- Actions Toolbar --- */
         .card-actions-bar {
-          padding: 0.9rem 1.75rem;
-          background: #ffffff;
+          padding: 0.8rem 1.75rem;
+          background: #fafbfc;
+          border-top: 1px solid #f1f5f9;
           display: flex;
           align-items: center;
           justify-content: space-between;
@@ -2060,26 +2199,36 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
         .btn-expand-toggle {
           display: inline-flex;
           align-items: center;
-          gap: 0.35rem;
-          background: transparent;
-          border: none;
-          color: #059669;
-          font-size: 0.85rem;
-          font-weight: 700;
+          gap: 0.4rem;
+          background: #ffffff;
+          border: 1px solid #e2e8f0;
+          color: #475569;
+          padding: 0.4rem 0.8rem;
+          border-radius: 7px;
+          font-size: 0.8rem;
+          font-weight: 600;
           cursor: pointer;
-          padding: 0.2rem 0;
-          transition: color 0.15s ease;
+          transition: all 0.18s ease;
+          box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
         }
 
         .btn-expand-toggle:hover {
+          background: #f8fafc;
+          border-color: #cbd5e1;
+          color: #0f172a;
+        }
+
+        .btn-expand-toggle.active-expanded {
+          background: #f0fdf4;
+          border-color: #bbf7d0;
           color: #047857;
-          text-decoration: underline;
         }
 
         .action-buttons-group {
           display: flex;
           align-items: center;
-          gap: 0.6rem;
+          gap: 0.55rem;
+          flex-wrap: wrap;
         }
 
         .btn-secondary-action {
@@ -2089,12 +2238,13 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
           background: #ffffff;
           border: 1px solid #cbd5e1;
           color: #334155;
-          padding: 0.5rem 0.9rem;
-          border-radius: var(--radius-sm);
+          padding: 0.45rem 0.85rem;
+          border-radius: 7px;
           font-size: 0.82rem;
           font-weight: 600;
           cursor: pointer;
           transition: all 0.15s ease;
+          box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
         }
 
         .btn-secondary-action:hover {
@@ -2116,19 +2266,41 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
           background: #059669;
           border: 1px solid #047857;
           color: #ffffff;
-          padding: 0.5rem 1.1rem;
-          border-radius: var(--radius-sm);
-          font-size: 0.84rem;
-          font-weight: 700;
+          padding: 0.45rem 1rem;
+          border-radius: 7px;
+          font-size: 0.82rem;
+          font-weight: 600;
           cursor: pointer;
-          transition: all 0.2s ease;
-          box-shadow: 0 2px 4px rgba(5, 150, 105, 0.25);
+          transition: all 0.18s ease;
+          box-shadow: 0 1px 3px rgba(5, 150, 105, 0.25);
         }
 
         .btn-download-primary:hover {
           background: #047857;
-          box-shadow: 0 4px 8px rgba(5, 150, 105, 0.35);
+          box-shadow: 0 3px 8px rgba(5, 150, 105, 0.35);
           transform: translateY(-1px);
+        }
+
+        .btn-download-secondary {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.4rem;
+          background: #ffffff;
+          border: 1px solid #cbd5e1;
+          color: #334155;
+          padding: 0.45rem 0.85rem;
+          border-radius: 7px;
+          font-size: 0.82rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.15s ease;
+          box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+        }
+
+        .btn-download-secondary:hover {
+          background: #f8fafc;
+          border-color: #94a3b8;
+          color: var(--navy);
         }
 
         .btn-primary-view {
@@ -2138,19 +2310,20 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
           background: #0f172a;
           border: 1px solid #0f172a;
           color: #ffffff;
-          padding: 0.5rem 1.1rem;
-          border-radius: var(--radius-sm);
-          font-size: 0.84rem;
-          font-weight: 700;
+          padding: 0.45rem 1rem;
+          border-radius: 7px;
+          font-size: 0.82rem;
+          font-weight: 600;
           text-decoration: none;
           cursor: pointer;
-          transition: all 0.2s ease;
-          box-shadow: 0 2px 4px rgba(15, 23, 42, 0.2);
+          transition: all 0.18s ease;
+          box-shadow: 0 1px 3px rgba(15, 23, 42, 0.2);
         }
 
         .btn-primary-view:hover {
           background: #1e293b;
           transform: translateY(-1px);
+          box-shadow: 0 3px 8px rgba(15, 23, 42, 0.3);
         }
 
         /* --- Empty Results State --- */
