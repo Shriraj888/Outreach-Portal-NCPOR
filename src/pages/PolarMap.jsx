@@ -20,7 +20,8 @@ import {
   BarChart3,
   RefreshCw,
   Mountain,
-  ChevronRight
+  ChevronRight,
+  ExternalLink
 } from 'lucide-react';
 import { usePolarData } from '../hooks/usePolarData';
 
@@ -780,27 +781,41 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
         </div>
       </div>
 
-      {/* NCPOR Latest News Ticker from ncpor.res.in */}
+      {/* NCPOR Latest News Ticker (Modern Smooth Marquee) */}
       {ncporNews && ncporNews.length > 0 && (
         <div className="ncpor-news-banner">
           <div className="news-banner-label">
-            <span className="dot dot-green" />
             <span>NCPOR LATEST</span>
           </div>
-          <div className="news-ticker-track">
-            {ncporNews.map((item, i) => (
-              <a
-                key={i}
-                href={item.link}
-                target="_blank"
-                rel="noreferrer"
-                className="news-ticker-item"
-              >
-                <span className="news-sep">❯</span>
-                {item.title}
-              </a>
-            ))}
+
+          <div className="news-ticker-viewport">
+            <div className="news-ticker-track">
+              {[...ncporNews, ...ncporNews].map((item, i) => (
+                <a
+                  key={i}
+                  href={item.link}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="news-ticker-item"
+                >
+                  <span className="news-chevron">❯</span>
+                  <span className="news-headline">{item.title}</span>
+                  <ExternalLink size={10} className="news-ext-icon" />
+                </a>
+              ))}
+            </div>
           </div>
+
+          <a 
+            href="https://ncpor.res.in" 
+            target="_blank" 
+            rel="noreferrer" 
+            className="news-source-pill"
+            title="Visit NCPOR Official Portal"
+          >
+            <span>ncpor.res.in</span>
+            <ExternalLink size={9} />
+          </a>
         </div>
       )}
 
@@ -819,48 +834,60 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
         <div className="stations-grid">
           {filteredStations.map((st) => {
             const isSelected = selectedStation?.id === st.id;
+            const regionClass = st.region.toLowerCase().replace(' ', '-');
+            const weather = getStationWeather(st.id, st.temp, st.wind);
+
             return (
               <div 
                 key={st.id} 
-                className={`glass-panel station-mini-card ${isSelected ? 'active-station' : ''}`}
+                className={`glass-panel station-mini-card ${regionClass} ${isSelected ? 'active-station' : ''}`}
                 onClick={() => handleStationClick(st)}
               >
-                <div className="mini-card-top">
-                  <div className="mini-card-img-wrap">
-                    <img src={st.image} alt={st.name} className="mini-card-img" />
-                    <span className={`mini-region-badge ${st.region.toLowerCase()}`}>{st.region}</span>
-                  </div>
+                {/* Visual Header Banner */}
+                <div className="mini-card-img-wrap">
+                  <img src={st.image} alt={st.name} className="mini-card-img" loading="lazy" />
+                  <div className="mini-card-img-overlay" />
                   
-                  <div className="mini-card-header">
-                    <h4>{lang === 'hi' && st.nameHi ? st.nameHi : st.name}</h4>
-                    <span className="mini-status-text">
-                      <span className="dot dot-green"></span>
-                      {st.status.split('(')[0]}
+                  <div className="mini-card-badges-top">
+                    <span className={`mini-region-badge ${regionClass}`}>
+                      {st.region}
+                    </span>
+                    <span className="mini-status-badge">
+                      {st.status.includes('Active') ? 'Active' : 'Heritage Depot'}
                     </span>
                   </div>
-                </div>
 
-                <p className="mini-desc">{st.description}</p>
-                
-                <div className="mini-footer-stats">
-                  <div className="stat-pill">
-                    <ThermometerSnowflake size={13} className="pill-icon" />
-                    <span>{st.temp}</span>
-                  </div>
-                  <div className="stat-pill">
-                    <Navigation size={13} className="pill-icon" />
-                    <span>{st.elevation}</span>
-                  </div>
-                  <div className="stat-pill coords">
-                    <span>{st.lat.toFixed(1)}° / {st.lng.toFixed(1)}°</span>
+                  <div className="mini-card-coords-tag">
+                    <MapPin size={10} />
+                    <span>{Math.abs(st.lat).toFixed(1)}°{st.lat >= 0 ? 'N' : 'S'}, {Math.abs(st.lng).toFixed(1)}°{st.lng >= 0 ? 'E' : 'W'}</span>
                   </div>
                 </div>
 
-                <div className="mini-card-action-bar">
-                  <span className="inspect-link">
-                    <span>Focus in Globe</span>
-                    <ArrowRight size={13} />
-                  </span>
+                {/* Card Body */}
+                <div className="mini-card-body">
+                  <h4 className="mini-station-title">
+                    {lang === 'hi' && st.nameHi ? st.nameHi : st.name}
+                  </h4>
+
+                  <p className="mini-desc">{st.description}</p>
+                  
+                  <div className="mini-footer-stats">
+                    <div className="stat-pill temp">
+                      <ThermometerSnowflake size={12} className="pill-icon" />
+                      <span>{weather.temp || st.temp.split(' ')[0]}</span>
+                    </div>
+                    <div className="stat-pill elevation">
+                      <Navigation size={12} className="pill-icon" />
+                      <span>{st.elevation}</span>
+                    </div>
+                  </div>
+
+                  <div className="mini-card-action-bar">
+                    <span className="inspect-link-text">Focus in Globe</span>
+                    <div className="inspect-arrow-circle">
+                      <ArrowRight size={13} className="inspect-arrow" />
+                    </div>
+                  </div>
                 </div>
               </div>
             );
@@ -1988,41 +2015,52 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
 
         .stations-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+          grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
           gap: 1.25rem;
         }
 
         .station-mini-card {
-          padding: 1.15rem;
+          padding: 0;
           cursor: pointer;
-          transition: all 0.2s ease;
+          transition: all 0.26s cubic-bezier(0.16, 1, 0.3, 1);
           display: flex;
           flex-direction: column;
-          justify-content: space-between;
           background: #ffffff;
-          border: 1px solid var(--border-card);
-          box-shadow: var(--shadow-sm);
+          border: 1px solid rgba(226, 232, 240, 0.9);
+          border-radius: var(--radius-md, 14px);
+          overflow: hidden;
+          box-shadow: 0 2px 10px -2px rgba(15, 23, 42, 0.05);
+          position: relative;
         }
 
-        .station-mini-card:hover, .station-mini-card.active-station {
-          border-color: #94a3b8;
-          transform: translateY(-3px);
-          box-shadow: var(--shadow-md);
+        .station-mini-card:hover {
+          transform: translateY(-4px);
+          box-shadow: 0 16px 32px -8px rgba(15, 23, 42, 0.12), 0 4px 12px rgba(0, 0, 0, 0.04);
         }
 
-        .mini-card-top {
-          display: flex;
-          gap: 0.85rem;
-          margin-bottom: 0.75rem;
+        .station-mini-card.active-station {
+          border-color: #0284c7;
+          box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.3), 0 12px 28px -6px rgba(2, 132, 199, 0.2);
         }
 
+        .station-mini-card.antarctica:hover {
+          border-color: rgba(5, 150, 105, 0.45);
+        }
+
+        .station-mini-card.arctic:hover {
+          border-color: rgba(2, 132, 199, 0.45);
+        }
+
+        .station-mini-card.himalaya:hover {
+          border-color: rgba(217, 119, 6, 0.45);
+        }
+
+        /* Image Visual Banner */
         .mini-card-img-wrap {
           position: relative;
-          width: 75px;
-          height: 60px;
-          border-radius: var(--radius-xs);
+          width: 100%;
+          height: 145px;
           overflow: hidden;
-          flex-shrink: 0;
           background: #f1f5f9;
         }
 
@@ -2030,95 +2068,180 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
           width: 100%;
           height: 100%;
           object-fit: cover;
+          transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .station-mini-card:hover .mini-card-img {
+          transform: scale(1.06);
+        }
+
+        .mini-card-img-overlay {
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(180deg, rgba(15, 23, 42, 0.1) 0%, rgba(15, 23, 42, 0.65) 100%);
+          pointer-events: none;
+        }
+
+        .mini-card-badges-top {
+          position: absolute;
+          top: 0.65rem;
+          left: 0.65rem;
+          right: 0.65rem;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          z-index: 2;
         }
 
         .mini-region-badge {
-          position: absolute;
-          bottom: 2px;
-          left: 2px;
-          right: 2px;
-          text-align: center;
-          font-size: 0.6rem;
+          font-size: 0.66rem;
           font-weight: 700;
-          padding: 1px 2px;
-          border-radius: 2px;
+          padding: 0.2rem 0.55rem;
+          border-radius: 9999px;
+          letter-spacing: 0.03em;
+          text-transform: uppercase;
           background: rgba(255, 255, 255, 0.95);
+          backdrop-filter: blur(6px);
+          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
         }
 
         .mini-region-badge.antarctica { color: #047857; }
-        .mini-region-badge.arctic { color: #059669; }
-        .mini-region-badge.himalaya { color: #d97706; }
+        .mini-region-badge.arctic     { color: #0284c7; }
+        .mini-region-badge.himalaya   { color: #d97706; }
 
-        .mini-card-header h4 {
-          font-size: 0.98rem;
-          color: var(--navy);
-          margin-bottom: 0.2rem;
+        .mini-status-badge {
+          font-size: 0.64rem;
           font-weight: 700;
+          padding: 0.2rem 0.5rem;
+          border-radius: 9999px;
+          background: rgba(15, 23, 42, 0.7);
+          backdrop-filter: blur(6px);
+          color: #ffffff;
+          border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        .mini-status-text {
-          display: flex;
+        .mini-card-coords-tag {
+          position: absolute;
+          bottom: 0.55rem;
+          left: 0.65rem;
+          display: inline-flex;
           align-items: center;
-          gap: 0.35rem;
-          font-size: 0.72rem;
-          color: var(--text-secondary);
+          gap: 0.25rem;
+          font-size: 0.66rem;
+          font-family: var(--font-mono, monospace);
           font-weight: 600;
+          color: rgba(255, 255, 255, 0.95);
+          text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+          z-index: 2;
+        }
+
+        /* Card Body */
+        .mini-card-body {
+          padding: 1rem 1.15rem 1.15rem;
+          display: flex;
+          flex-direction: column;
+          flex: 1;
+          justify-content: space-between;
+        }
+
+        .mini-station-title {
+          font-size: 1.05rem;
+          color: var(--navy, #0f172a);
+          margin: 0 0 0.45rem;
+          font-weight: 800;
+          letter-spacing: -0.01em;
+          line-height: 1.3;
         }
 
         .mini-desc {
-          font-size: 0.82rem;
-          color: var(--text-secondary);
-          line-height: 1.45;
-          margin-bottom: 0.85rem;
+          font-size: 0.81rem;
+          color: var(--text-secondary, #64748b);
+          line-height: 1.5;
+          margin-bottom: 0.95rem;
           display: -webkit-box;
           -webkit-line-clamp: 2;
           -webkit-box-orient: vertical;
           overflow: hidden;
+          min-height: 2.45rem;
         }
 
         .mini-footer-stats {
           display: flex;
           align-items: center;
-          gap: 0.4rem;
-          margin-bottom: 0.75rem;
+          gap: 0.45rem;
+          margin-bottom: 0.95rem;
           flex-wrap: wrap;
         }
 
         .stat-pill {
-          display: flex;
+          display: inline-flex;
           align-items: center;
-          gap: 0.25rem;
-          background: #f1f5f9;
-          border: 1px solid var(--border-subtle);
-          padding: 0.25rem 0.5rem;
-          border-radius: var(--radius-xs);
+          gap: 0.3rem;
+          background: #f8fafc;
+          border: 1px solid var(--border-subtle, #e2e8f0);
+          padding: 0.25rem 0.55rem;
+          border-radius: 8px;
           font-size: 0.72rem;
-          color: var(--navy);
+          color: var(--navy, #0f172a);
           font-weight: 700;
+          font-family: var(--font-mono, monospace);
         }
 
-        .stat-pill.coords {
-          font-family: var(--font-mono);
-          color: var(--text-secondary);
+        .stat-pill.temp {
+          background: #f0f9ff;
+          border-color: #bae6fd;
+          color: #0284c7;
         }
 
         .pill-icon {
-          color: #0284c7;
+          color: inherit;
+          flex-shrink: 0;
         }
 
+        /* Action Bar */
         .mini-card-action-bar {
-          border-top: 1px solid #f1f5f9;
-          padding-top: 0.6rem;
-        }
-
-        .inspect-link {
+          border-top: 1px solid var(--border-subtle, #e2e8f0);
+          padding-top: 0.75rem;
           display: flex;
           align-items: center;
-          justify-content: flex-end;
-          gap: 0.35rem;
-          font-size: 0.75rem;
-          color: #0284c7;
+          justify-content: space-between;
+        }
+
+        .inspect-link-text {
+          font-size: 0.74rem;
           font-weight: 700;
+          color: #0284c7;
+          transition: color 0.15s ease;
+        }
+
+        .station-mini-card:hover .inspect-link-text {
+          color: #0369a1;
+        }
+
+        .inspect-arrow-circle {
+          width: 26px;
+          height: 26px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: #f1f5f9;
+          color: #64748b;
+          transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .station-mini-card:hover .inspect-arrow-circle {
+          background: #0284c7;
+          color: #ffffff;
+          transform: translateX(3px);
+        }
+
+        .station-mini-card.antarctica:hover .inspect-arrow-circle {
+          background: #059669;
+        }
+
+        .station-mini-card.himalaya:hover .inspect-arrow-circle {
+          background: #d97706;
         }
 
         /* Mobile Quick Station Drawer */
@@ -2380,54 +2503,138 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
           }
         }
 
-        /* NCPOR Live News Banner */
+        /* NCPOR Live News Banner (Modern Smooth Redesign) */
         .ncpor-news-banner {
           display: flex;
           align-items: center;
-          gap: 0.75rem;
+          gap: 0.85rem;
           background: #ffffff;
-          border: 1px solid var(--border-card);
-          border-radius: var(--radius-sm, 8px);
-          padding: 0.5rem 0.85rem;
-          margin-bottom: 1.25rem;
+          border: 1px solid rgba(226, 232, 240, 0.9);
+          border-radius: var(--radius-sm, 10px);
+          padding: 0.4rem 0.65rem 0.4rem 0.55rem;
+          margin-bottom: 1.5rem;
           overflow: hidden;
-          box-shadow: var(--shadow-xs);
+          box-shadow: 0 2px 8px -2px rgba(15, 23, 42, 0.04);
+          position: relative;
         }
 
         .news-banner-label {
-          display: flex;
+          display: inline-flex;
           align-items: center;
-          gap: 0.4rem;
+          gap: 0.45rem;
+          background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+          color: #ffffff;
+          padding: 0.26rem 0.65rem;
+          border-radius: 9999px;
           font-size: 0.68rem;
           font-weight: 800;
-          letter-spacing: 0.08em;
-          color: #0284c7;
+          letter-spacing: 0.06em;
           white-space: nowrap;
-          padding-right: 0.6rem;
-          border-right: 1px solid var(--border-subtle);
+          flex-shrink: 0;
+          box-shadow: 0 2px 6px rgba(2, 132, 199, 0.25);
+        }
+
+        .news-ticker-viewport {
+          flex: 1;
+          overflow: hidden;
+          position: relative;
+          mask-image: linear-gradient(to right, transparent, black 15px, black calc(100% - 20px), transparent);
+          -webkit-mask-image: linear-gradient(to right, transparent, black 15px, black calc(100% - 20px), transparent);
+          display: flex;
+          align-items: center;
         }
 
         .news-ticker-track {
           display: flex;
+          align-items: center;
           gap: 1.5rem;
-          overflow-x: auto;
-          scrollbar-width: none;
+          white-space: nowrap;
+          animation: tickerInfiniteScroll 38s linear infinite;
+          width: max-content;
         }
-        .news-ticker-track::-webkit-scrollbar { display: none; }
+
+        .ncpor-news-banner:hover .news-ticker-track {
+          animation-play-state: paused;
+        }
+
+        @keyframes tickerInfiniteScroll {
+          0% {
+            transform: translateX(0);
+          }
+          100% {
+            transform: translateX(-50%);
+          }
+        }
 
         .news-ticker-item {
-          display: flex;
+          display: inline-flex;
           align-items: center;
-          gap: 0.4rem;
-          font-size: 0.75rem;
-          color: var(--text-primary);
+          gap: 0.45rem;
+          font-size: 0.76rem;
+          color: var(--navy, #0f172a);
           font-weight: 600;
           text-decoration: none;
           white-space: nowrap;
-          transition: color 0.15s;
+          padding: 0.25rem 0.55rem;
+          border-radius: 6px;
+          transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .news-ticker-item:hover { color: #0284c7; }
-        .news-sep { color: #0284c7; font-size: 0.65rem; }
+
+        .news-chevron {
+          color: #0284c7;
+          font-size: 0.65rem;
+          font-weight: 800;
+          transition: transform 0.2s ease;
+        }
+
+        .news-headline {
+          letter-spacing: -0.005em;
+        }
+
+        .news-ext-icon {
+          color: #94a3b8;
+          opacity: 0;
+          transform: translateX(-3px);
+          transition: all 0.2s ease;
+        }
+
+        .news-ticker-item:hover {
+          color: #0284c7;
+          background: rgba(2, 132, 199, 0.08);
+        }
+
+        .news-ticker-item:hover .news-chevron {
+          transform: translateX(2px);
+        }
+
+        .news-ticker-item:hover .news-ext-icon {
+          opacity: 1;
+          transform: translateX(0);
+          color: #0284c7;
+        }
+
+        .news-source-pill {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.3rem;
+          background: #f8fafc;
+          border: 1px solid var(--border-subtle, #e2e8f0);
+          color: var(--text-muted, #64748b);
+          padding: 0.22rem 0.55rem;
+          border-radius: 9999px;
+          font-size: 0.66rem;
+          font-weight: 600;
+          text-decoration: none;
+          white-space: nowrap;
+          flex-shrink: 0;
+          transition: all 0.18s ease;
+        }
+
+        .news-source-pill:hover {
+          background: #f1f5f9;
+          color: #0284c7;
+          border-color: #cbd5e1;
+        }
 
         /* Aurora severity highlight classes */
         .highlight-red   { color: #dc2626 !important; }
