@@ -18,7 +18,9 @@ import {
   Activity,
   Sun,
   BarChart3,
-  RefreshCw
+  RefreshCw,
+  Mountain,
+  ChevronRight
 } from 'lucide-react';
 import { usePolarData } from '../hooks/usePolarData';
 
@@ -36,6 +38,9 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
 
   // Active Station Inspector Tab: 'telemetry' | 'science' | 'expeditions'
   const [stationTab, setStationTab] = useState('telemetry');
+
+  // Network card region filter: 'all' | 'antarctica' | 'arctic' | 'himalaya'
+  const [networkFilter, setNetworkFilter] = useState('all');
 
   // Layer Toggles
   const [layers, setLayers] = useState({
@@ -391,6 +396,14 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
                     <span className="live-pulse"></span>
                     <span>{selectedStation.status}</span>
                   </div>
+                  <button 
+                    type="button"
+                    className="station-close-inspect-btn" 
+                    onClick={() => setSelectedStation(null)}
+                    title="Return to Polar Geospatial Network Overview"
+                  >
+                    ✕
+                  </button>
                 </div>
 
                 <div className="station-image-footer">
@@ -652,23 +665,115 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
               </div>
             </div>
           ) : (
-            <div className="empty-inspect">
-              <Globe2 size={42} className="empty-icon" />
-              <h3>NCPOR Polar Geospatial Network</h3>
-              <p>Select any research base on the 3D globe or click below to inspect live telemetry, weather metrics, and ongoing missions:</p>
-              
-              <div className="empty-station-chips">
-                {stations.map(st => (
+            <div className="geospatial-network-panel">
+              {/* Pulsing Radar Beacon Graphic */}
+              <div className="radar-beacon-container">
+                <div className="radar-ping-ring ping-1" />
+                <div className="radar-ping-ring ping-2" />
+                <div className="radar-beacon-core">
+                  <Globe2 size={28} className="beacon-globe-icon" />
+                </div>
+              </div>
+
+              {/* Title & Subtitle */}
+              <h3 className="geo-network-title">NCPOR Polar Geospatial Network</h3>
+              <p className="geo-network-desc">
+                {lang === 'hi'
+                  ? '3D ग्लोब पर किसी भी भारतीय अनुसंधान केंद्र का चयन करें अथवा नीचे क्लिक करके लाइव टेलीमेट्री एवं मौसम डेटा देखें:'
+                  : 'Select any research base on the 3D globe or click below to inspect live telemetry, weather metrics, and ongoing missions:'}
+              </p>
+
+              {/* Region Filter Tabs */}
+              <div className="geo-filter-pill-row">
+                {[
+                  { id: 'all', label: 'All Bases', count: stations.length },
+                  { id: 'antarctica', label: 'Antarctica', count: stations.filter(s => s.region === 'Antarctica').length },
+                  { id: 'arctic', label: 'Arctic', count: stations.filter(s => s.region === 'Arctic').length },
+                  { id: 'himalaya', label: 'Himalaya', count: stations.filter(s => s.region === 'Himalaya').length }
+                ].map(tab => (
                   <button
-                    key={st.id}
-                    className="empty-station-chip"
-                    onClick={() => handleStationClick(st)}
+                    key={tab.id}
+                    type="button"
+                    className={`geo-filter-pill ${networkFilter === tab.id ? 'active' : ''}`}
+                    onClick={() => setNetworkFilter(tab.id)}
                   >
-                    <span className={`chip-dot ${st.region.toLowerCase()}`} />
-                    <span className="chip-name">{st.name}</span>
-                    <span className="chip-region">{st.region}</span>
+                    <span>{tab.label}</span>
+                    <span className="geo-filter-count">{tab.count}</span>
                   </button>
                 ))}
+              </div>
+
+              {/* Modern Interactive Station Cards */}
+              <div className="geo-station-list">
+                {stations
+                  .filter(s => {
+                    if (networkFilter === 'all') return true;
+                    if (networkFilter === 'antarctica') return s.region === 'Antarctica';
+                    if (networkFilter === 'arctic') return s.region === 'Arctic';
+                    if (networkFilter === 'himalaya') return s.region === 'Himalaya';
+                    return true;
+                  })
+                  .map(st => {
+                    const weather = getStationWeather(st.id, st.temp, st.wind);
+                    const isAntarctica = st.region === 'Antarctica';
+                    const isArctic = st.region === 'Arctic';
+                    const isHimalaya = st.region === 'Himalaya';
+                    const regionClass = isAntarctica ? 'antarctica' : isArctic ? 'arctic' : 'himalaya';
+
+                    return (
+                      <button
+                        key={st.id}
+                        type="button"
+                        className={`geo-station-card ${regionClass}`}
+                        onClick={() => handleStationClick(st)}
+                      >
+                        <div className="geo-station-leading">
+                          <div className={`geo-station-avatar ${regionClass}`}>
+                            {isHimalaya ? (
+                              <Mountain size={16} />
+                            ) : st.id === 'st-indarc' ? (
+                              <Waves size={16} />
+                            ) : (
+                              <Compass size={16} />
+                            )}
+                          </div>
+
+                          <div className="geo-station-meta">
+                            <div className="geo-station-name-line">
+                              <span className="geo-station-title">
+                                {lang === 'hi' && st.nameHi ? st.nameHi : st.name}
+                              </span>
+                            </div>
+                            <div className="geo-station-subline">
+                              <span className={`geo-region-tag ${regionClass}`}>
+                                {st.region.toUpperCase()}
+                              </span>
+                              <span className="geo-sub-dot">•</span>
+                              <span className="geo-station-loc">
+                                {Math.abs(st.lat).toFixed(1)}°{st.lat >= 0 ? 'N' : 'S'}, {Math.abs(st.lng).toFixed(1)}°{st.lng >= 0 ? 'E' : 'W'}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="geo-station-trailing">
+                          <div className="geo-temp-pill">
+                            <ThermometerSnowflake size={11} className="geo-temp-icon" />
+                            <span>{weather.temp || st.temp.split(' ')[0]}</span>
+                          </div>
+                          <div className="geo-arrow-btn">
+                            <ChevronRight size={14} className="geo-chevron-icon" />
+                          </div>
+                        </div>
+                      </button>
+                    );
+                  })}
+              </div>
+
+              {/* Bottom Interactive Hint */}
+              <div className="geo-card-footer">
+                <Radio size={12} className="geo-footer-icon" />
+                <span>Click any station or 3D globe pin to lock telemetry</span>
               </div>
             </div>
           )}
@@ -1118,7 +1223,34 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
           flex-direction: column;
           background: #ffffff;
           border: 1px solid var(--border-card);
-          box-shadow: var(--shadow-sm);
+          box-shadow: 0 10px 30px -10px rgba(15, 23, 42, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04);
+          border-radius: var(--radius-lg, 16px);
+          position: relative;
+          overflow: hidden;
+          transition: all 0.3s ease;
+        }
+
+        .station-close-inspect-btn {
+          width: 26px;
+          height: 26px;
+          border-radius: 50%;
+          background: rgba(15, 23, 42, 0.7);
+          backdrop-filter: blur(8px);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          color: #ffffff;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          font-size: 0.75rem;
+          transition: all 0.15s ease;
+          margin-left: auto;
+        }
+
+        .station-close-inspect-btn:hover {
+          background: rgba(239, 68, 68, 0.85);
+          border-color: rgba(239, 68, 68, 0.4);
+          transform: scale(1.08);
         }
 
         .station-thumb-wrap {
@@ -1445,86 +1577,391 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
           font-weight: 700;
         }
 
-        .empty-inspect {
+        /* NCPOR Polar Geospatial Network Panel (Modern Redesign) */
+        .geospatial-network-panel {
           display: flex;
           flex-direction: column;
           align-items: center;
-          justify-content: center;
           text-align: center;
-          padding: 3rem 1.5rem;
-          color: var(--text-secondary);
+          padding: 1rem 0.25rem 0.5rem;
+          width: 100%;
+          animation: geoFadeIn 0.3s ease-out;
         }
 
-        .empty-icon {
+        @keyframes geoFadeIn {
+          from { opacity: 0; transform: translateY(6px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Radar Beacon Graphic */
+        .radar-beacon-container {
+          position: relative;
+          width: 62px;
+          height: 62px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin: 0.25rem auto 0.85rem;
+        }
+
+        .radar-ping-ring {
+          position: absolute;
+          inset: 0;
+          border-radius: 50%;
+          border: 1.5px solid rgba(2, 132, 199, 0.35);
+          pointer-events: none;
+        }
+
+        .radar-ping-ring.ping-1 {
+          animation: radarBeaconPing 3s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+        }
+
+        .radar-ping-ring.ping-2 {
+          animation: radarBeaconPing 3s cubic-bezier(0, 0.2, 0.8, 1) infinite 1.5s;
+        }
+
+        @keyframes radarBeaconPing {
+          0% {
+            transform: scale(0.85);
+            opacity: 0.9;
+          }
+          100% {
+            transform: scale(1.5);
+            opacity: 0;
+          }
+        }
+
+        .radar-beacon-core {
+          width: 48px;
+          height: 48px;
+          border-radius: 50%;
+          background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 60%, #7dd3fc 100%);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 6px 18px -3px rgba(2, 132, 199, 0.35), inset 0 2px 4px rgba(255, 255, 255, 0.8);
+          position: relative;
+          z-index: 2;
+        }
+
+        .beacon-globe-icon {
           color: #0284c7;
-          margin-bottom: 1rem;
+          filter: drop-shadow(0 1px 2px rgba(2, 132, 199, 0.2));
         }
 
-        .empty-inspect h3 {
-          color: var(--navy);
-          margin-bottom: 0.5rem;
-          font-weight: 700;
+        /* Title & Description */
+        .geo-network-title {
+          color: var(--navy, #0f172a);
+          font-size: 1.2rem;
+          font-weight: 800;
+          letter-spacing: -0.015em;
+          margin: 0 0 0.4rem;
+          line-height: 1.3;
         }
 
-        .empty-inspect p {
-          font-size: 0.85rem;
+        .geo-network-desc {
+          font-size: 0.82rem;
           line-height: 1.5;
-          max-width: 340px;
-          margin-bottom: 1.25rem;
-          color: var(--text-muted);
+          max-width: 360px;
+          margin: 0 auto 1.1rem;
+          color: var(--text-secondary, #64748b);
         }
 
-        .empty-station-chips {
+        /* Regional Filter Pills */
+        .geo-filter-pill-row {
+          display: flex;
+          align-items: center;
+          gap: 0.35rem;
+          margin-bottom: 0.85rem;
+          width: 100%;
+          overflow-x: auto;
+          scrollbar-width: none;
+          padding-bottom: 2px;
+        }
+
+        .geo-filter-pill-row::-webkit-scrollbar {
+          display: none;
+        }
+
+        .geo-filter-pill {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.3rem;
+          background: #f8fafc;
+          border: 1px solid var(--border-subtle, #e2e8f0);
+          color: var(--text-secondary, #64748b);
+          padding: 0.28rem 0.6rem;
+          border-radius: 9999px;
+          font-size: 0.72rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+          white-space: nowrap;
+          flex-shrink: 0;
+        }
+
+        .geo-filter-pill:hover {
+          background: #f1f5f9;
+          color: var(--navy, #0f172a);
+          border-color: #cbd5e1;
+        }
+
+        .geo-filter-pill.active {
+          background: var(--navy, #0f172a);
+          border-color: var(--navy, #0f172a);
+          color: #ffffff;
+          box-shadow: 0 2px 6px rgba(15, 23, 42, 0.15);
+        }
+
+        .geo-filter-count {
+          font-size: 0.6rem;
+          font-weight: 700;
+          padding: 0.05rem 0.32rem;
+          border-radius: 9999px;
+          background: rgba(0, 0, 0, 0.06);
+          line-height: 1.2;
+        }
+
+        .geo-filter-pill.active .geo-filter-count {
+          background: rgba(255, 255, 255, 0.22);
+          color: #ffffff;
+        }
+
+        /* Station Cards List */
+        .geo-station-list {
           display: flex;
           flex-direction: column;
           gap: 0.5rem;
           width: 100%;
-          max-width: 320px;
         }
 
-        .empty-station-chip {
+        .geo-station-card {
           display: flex;
           align-items: center;
-          gap: 0.6rem;
-          background: #f8fafc;
-          border: 1px solid var(--border-subtle);
-          border-radius: var(--radius-xs, 6px);
-          padding: 0.55rem 0.75rem;
-          color: var(--text-primary);
+          justify-content: space-between;
+          width: 100%;
+          background: #ffffff;
+          border: 1px solid rgba(226, 232, 240, 0.85);
+          border-radius: var(--radius-sm, 10px);
+          padding: 0.6rem 0.75rem;
+          color: var(--text-primary, #0f172a);
           cursor: pointer;
-          transition: all 0.15s ease;
+          transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
           text-align: left;
+          position: relative;
+          box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
         }
 
-        .empty-station-chip:hover {
+        .geo-station-card:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 8px 20px -5px rgba(2, 132, 199, 0.12), 0 2px 6px rgba(0, 0, 0, 0.04);
+        }
+
+        .geo-station-card:active {
+          transform: translateY(0) scale(0.985);
+        }
+
+        .geo-station-card.antarctica:hover {
           border-color: #059669;
-          background: #ecfdf5;
-          transform: translateY(-1px);
+          background: linear-gradient(135deg, rgba(236, 253, 245, 0.7) 0%, #ffffff 100%);
         }
 
-        .chip-dot {
-          width: 8px;
-          height: 8px;
-          border-radius: 50%;
-          flex-shrink: 0;
+        .geo-station-card.arctic:hover {
+          border-color: #0284c7;
+          background: linear-gradient(135deg, rgba(240, 249, 255, 0.7) 0%, #ffffff 100%);
         }
-        .chip-dot.antarctica { background: #047857; }
-        .chip-dot.arctic     { background: #059669; }
-        .chip-dot.himalaya   { background: #d97706; }
-        .chip-dot.southern-ocean { background: #0f766e; }
 
-        .chip-name {
-          font-size: 0.82rem;
-          font-weight: 700;
-          color: var(--navy);
+        .geo-station-card.himalaya:hover {
+          border-color: #d97706;
+          background: linear-gradient(135deg, rgba(254, 243, 199, 0.7) 0%, #ffffff 100%);
+        }
+
+        /* Station Leading Section */
+        .geo-station-leading {
+          display: flex;
+          align-items: center;
+          gap: 0.65rem;
+          min-width: 0;
           flex: 1;
         }
 
-        .chip-region {
+        .geo-station-avatar {
+          width: 34px;
+          height: 34px;
+          border-radius: 8px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          position: relative;
+          flex-shrink: 0;
+          transition: transform 0.2s ease;
+        }
+
+        .geo-station-card:hover .geo-station-avatar {
+          transform: scale(1.05);
+        }
+
+        .geo-station-avatar.antarctica {
+          background: rgba(5, 150, 105, 0.1);
+          color: #047857;
+        }
+
+        .geo-station-avatar.arctic {
+          background: rgba(2, 132, 199, 0.1);
+          color: #0284c7;
+        }
+
+        .geo-station-avatar.himalaya {
+          background: rgba(217, 119, 6, 0.1);
+          color: #d97706;
+        }
+
+        .geo-status-indicator {
+          position: absolute;
+          bottom: -2px;
+          right: -2px;
+          width: 7px;
+          height: 7px;
+          border-radius: 50%;
+          border: 1.5px solid #ffffff;
+        }
+
+        .geo-status-indicator.antarctica {
+          background: #059669;
+          box-shadow: 0 0 5px #059669;
+        }
+
+        .geo-status-indicator.arctic {
+          background: #0284c7;
+          box-shadow: 0 0 5px #0284c7;
+        }
+
+        .geo-status-indicator.himalaya {
+          background: #d97706;
+          box-shadow: 0 0 5px #d97706;
+        }
+
+        /* Station Meta Info */
+        .geo-station-meta {
+          display: flex;
+          flex-direction: column;
+          min-width: 0;
+          flex: 1;
+        }
+
+        .geo-station-name-line {
+          display: flex;
+          align-items: center;
+        }
+
+        .geo-station-title {
+          font-size: 0.84rem;
+          font-weight: 700;
+          color: var(--navy, #0f172a);
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .geo-station-subline {
+          display: flex;
+          align-items: center;
+          gap: 0.35rem;
+          margin-top: 0.15rem;
+        }
+
+        .geo-region-tag {
+          font-size: 0.65rem;
+          font-weight: 700;
+          letter-spacing: 0.03em;
+        }
+
+        .geo-region-tag.antarctica { color: #047857; }
+        .geo-region-tag.arctic     { color: #0284c7; }
+        .geo-region-tag.himalaya   { color: #d97706; }
+
+        .geo-sub-dot {
+          color: #cbd5e1;
+          font-size: 0.65rem;
+        }
+
+        .geo-station-loc {
+          font-size: 0.64rem;
+          color: var(--text-muted, #94a3b8);
+          font-family: var(--font-mono, monospace);
+        }
+
+        /* Station Trailing Section */
+        .geo-station-trailing {
+          display: flex;
+          align-items: center;
+          gap: 0.45rem;
+          flex-shrink: 0;
+        }
+
+        .geo-temp-pill {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.2rem;
+          background: #f1f5f9;
+          border: 1px solid var(--border-subtle, #e2e8f0);
+          padding: 0.18rem 0.42rem;
+          border-radius: 6px;
           font-size: 0.68rem;
-          color: var(--text-muted);
-          font-weight: 600;
-          text-transform: uppercase;
+          font-weight: 700;
+          color: var(--navy, #0f172a);
+          font-family: var(--font-mono, monospace);
+        }
+
+        .geo-temp-icon {
+          color: #0284c7;
+        }
+
+        .geo-arrow-btn {
+          width: 22px;
+          height: 22px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: #f8fafc;
+          color: #94a3b8;
+          transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .geo-station-card:hover .geo-arrow-btn {
+          background: #0284c7;
+          color: #ffffff;
+          transform: translateX(2px);
+        }
+
+        .geo-station-card.antarctica:hover .geo-arrow-btn {
+          background: #059669;
+          color: #ffffff;
+        }
+
+        .geo-station-card.himalaya:hover .geo-arrow-btn {
+          background: #d97706;
+          color: #ffffff;
+        }
+
+        /* Card Footer Hint */
+        .geo-card-footer {
+          margin-top: 0.95rem;
+          padding-top: 0.75rem;
+          border-top: 1px dashed var(--border-subtle, #e2e8f0);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.35rem;
+          font-size: 0.7rem;
+          color: var(--text-muted, #64748b);
+          width: 100%;
+        }
+
+        .geo-footer-icon {
+          color: #0284c7;
+          flex-shrink: 0;
         }
 
         /* Facility Directory */
