@@ -304,7 +304,7 @@ export default function Home({ navigateTo, onSelectExpedition }) {
               <div className="pillar-bg-img bg-antarctica"></div>
               <div className="pillar-overlay"></div>
               <div className="pillar-top-tag">
-                <span className="pillar-tag-badge">South Pole</span>
+                <span className="pillar-tag-badge">SOUTH POLE</span>
               </div>
               <div className="pillar-content">
                 <h3 className="pillar-title">Antarctica</h3>
@@ -332,7 +332,7 @@ export default function Home({ navigateTo, onSelectExpedition }) {
               <div className="pillar-bg-img bg-arctic"></div>
               <div className="pillar-overlay"></div>
               <div className="pillar-top-tag">
-                <span className="pillar-tag-badge">North Pole</span>
+                <span className="pillar-tag-badge">NORTH POLE</span>
               </div>
               <div className="pillar-content">
                 <h3 className="pillar-title">Arctic</h3>
@@ -360,7 +360,7 @@ export default function Home({ navigateTo, onSelectExpedition }) {
               <div className="pillar-bg-img bg-himalaya"></div>
               <div className="pillar-overlay"></div>
               <div className="pillar-top-tag">
-                <span className="pillar-tag-badge">Third Pole</span>
+                <span className="pillar-tag-badge">THIRD POLE</span>
               </div>
               <div className="pillar-content">
                 <h3 className="pillar-title">Himalayas</h3>
@@ -1354,19 +1354,19 @@ export default function Home({ navigateTo, onSelectExpedition }) {
 
         .pillar-card {
           position: relative;
-          height: 380px;
-          border-radius: 16px;
+          height: 385px;
+          border-radius: 20px;
           overflow: hidden;
           cursor: pointer;
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          box-shadow: 0 8px 24px -6px rgba(0, 0, 0, 0.25);
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          box-shadow: 0 12px 30px -8px rgba(15, 23, 42, 0.2), 0 4px 12px -2px rgba(15, 23, 42, 0.08);
           transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease, border-color 0.35s ease;
         }
 
         .pillar-card:hover {
           transform: translateY(-6px);
-          box-shadow: 0 22px 42px -10px rgba(0, 0, 0, 0.45);
-          border-color: rgba(255, 255, 255, 0.25);
+          box-shadow: 0 20px 40px -10px rgba(15, 23, 42, 0.32), 0 6px 16px -4px rgba(15, 23, 42, 0.12);
+          border-color: rgba(255, 255, 255, 0.2);
         }
 
         .pillar-card:active {
@@ -1378,11 +1378,11 @@ export default function Home({ navigateTo, onSelectExpedition }) {
           inset: 0;
           background-size: cover;
           background-position: center;
-          transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+          transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .pillar-card:hover .pillar-bg-img {
-          transform: scale(1.08);
+          transform: scale(1.06);
         }
 
         .bg-antarctica { background-image: url('https://data.ncpor.res.in/static/images/slider/bharati/IMG_(17).JPG'); }
@@ -1392,43 +1392,56 @@ export default function Home({ navigateTo, onSelectExpedition }) {
         .pillar-overlay {
           position: absolute;
           inset: 0;
-          background: linear-gradient(180deg, rgba(10, 20, 40, 0.15) 0%, rgba(10, 20, 40, 0.35) 35%, rgba(8, 15, 30, 0.95) 100%);
+          background: linear-gradient(
+            180deg, 
+            rgba(15, 23, 42, 0) 0%, 
+            rgba(15, 23, 42, 0.04) 26%, 
+            rgba(15, 23, 42, 0.62) 52%, 
+            rgba(12, 18, 32, 0.93) 76%, 
+            rgba(8, 14, 26, 0.98) 100%
+          );
           transition: background 0.35s ease;
         }
 
         .pillar-card:hover .pillar-overlay {
-          background: linear-gradient(180deg, rgba(10, 20, 40, 0.08) 0%, rgba(10, 20, 40, 0.28) 30%, rgba(8, 15, 30, 0.96) 100%);
+          background: linear-gradient(
+            180deg, 
+            rgba(15, 23, 42, 0) 0%, 
+            rgba(15, 23, 42, 0.02) 24%, 
+            rgba(15, 23, 42, 0.58) 48%, 
+            rgba(12, 18, 32, 0.95) 74%, 
+            rgba(8, 14, 26, 1) 100%
+          );
         }
 
         .pillar-top-tag {
           position: absolute;
-          top: 1.15rem;
-          left: 1.15rem;
+          top: 1.1rem;
+          left: 1.1rem;
           z-index: 2;
         }
 
         .pillar-tag-badge {
           display: inline-flex;
           align-items: center;
-          padding: 0.3rem 0.75rem;
-          font-size: 0.7rem;
+          padding: 0.32rem 0.75rem;
+          font-size: 0.65rem;
           font-weight: 700;
-          letter-spacing: 0.04em;
+          letter-spacing: 0.06em;
           text-transform: uppercase;
           color: #ffffff;
-          background: rgba(10, 20, 40, 0.65);
+          background: rgba(26, 34, 48, 0.85);
           backdrop-filter: blur(10px);
           -webkit-backdrop-filter: blur(10px);
-          border: 1px solid rgba(255, 255, 255, 0.2);
+          border: 1px solid rgba(255, 255, 255, 0.12);
           border-radius: 9999px;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-          transition: background 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+          transition: background 0.25s ease, border-color 0.25s ease;
         }
 
         .pillar-card:hover .pillar-tag-badge {
-          background: rgba(10, 20, 40, 0.85);
-          border-color: rgba(255, 255, 255, 0.4);
-          transform: translateY(-1px);
+          background: rgba(32, 42, 60, 0.95);
+          border-color: rgba(255, 255, 255, 0.25);
         }
 
         .pillar-content {
@@ -1436,16 +1449,17 @@ export default function Home({ navigateTo, onSelectExpedition }) {
           bottom: 0;
           left: 0;
           right: 0;
-          padding: 1.35rem;
+          padding: 1.25rem;
           z-index: 1;
         }
 
         .pillar-title {
-          font-size: 1.35rem;
+          font-size: 1.38rem;
           font-weight: 800;
           color: #ffffff;
           margin: 0 0 0.35rem;
-          letter-spacing: -0.01em;
+          letter-spacing: -0.015em;
+          line-height: 1.2;
           transition: transform 0.25s ease;
         }
 
@@ -1455,34 +1469,39 @@ export default function Home({ navigateTo, onSelectExpedition }) {
 
         .pillar-desc {
           font-size: 0.78rem;
-          color: rgba(255, 255, 255, 0.8);
-          line-height: 1.45;
-          margin: 0 0 0.7rem;
+          color: rgba(241, 245, 249, 0.9);
+          line-height: 1.42;
+          margin: 0 0 0.65rem;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+          text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
         }
 
         .pillar-chips {
           display: flex;
           flex-wrap: wrap;
-          gap: 0.4rem;
+          gap: 0.35rem;
           margin-bottom: 0.85rem;
         }
 
         .pillar-chip {
           font-size: 0.68rem;
           font-weight: 600;
-          color: rgba(255, 255, 255, 0.9);
-          background: rgba(255, 255, 255, 0.12);
+          color: rgba(255, 255, 255, 0.95);
+          background: rgba(30, 38, 52, 0.75);
           backdrop-filter: blur(8px);
           -webkit-backdrop-filter: blur(8px);
-          border: 1px solid rgba(255, 255, 255, 0.15);
-          padding: 0.2rem 0.55rem;
+          border: 1px solid rgba(255, 255, 255, 0.14);
+          padding: 0.22rem 0.62rem;
           border-radius: 6px;
           transition: all 0.2s ease;
         }
 
         .pillar-card:hover .pillar-chip {
-          background: rgba(255, 255, 255, 0.2);
-          border-color: rgba(255, 255, 255, 0.3);
+          background: rgba(38, 48, 66, 0.9);
+          border-color: rgba(255, 255, 255, 0.25);
           color: #ffffff;
         }
 
@@ -1490,37 +1509,38 @@ export default function Home({ navigateTo, onSelectExpedition }) {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          padding-top: 0.65rem;
-          border-top: 1px solid rgba(255, 255, 255, 0.1);
+          padding-top: 0;
+          border-top: none;
         }
 
         .pillar-meta {
           display: flex;
           align-items: center;
-          gap: 0.4rem;
+          gap: 0.35rem;
           font-size: 0.72rem;
-          font-weight: 600;
-          color: rgba(255, 255, 255, 0.65);
+          font-weight: 500;
+          color: rgba(203, 213, 225, 0.85);
+          letter-spacing: 0.01em;
         }
 
         .meta-dot {
-          opacity: 0.5;
+          opacity: 0.55;
+          margin: 0 0.08rem;
         }
 
         .pillar-action {
           display: inline-flex;
           align-items: center;
           gap: 0.35rem;
-          font-size: 0.74rem;
-          font-weight: 700;
-          padding: 0.38rem 0.85rem;
+          font-size: 0.72rem;
+          font-weight: 600;
+          padding: 0.36rem 0.9rem;
           border-radius: 9999px;
           transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-          background: rgba(255, 255, 255, 0.14);
-          border: 1px solid rgba(255, 255, 255, 0.2);
+          background: rgba(34, 42, 58, 0.92);
+          border: 1px solid rgba(255, 255, 255, 0.14);
           color: #ffffff;
-          backdrop-filter: blur(8px);
-          -webkit-backdrop-filter: blur(8px);
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
         }
 
         .pillar-arrow {
@@ -1528,10 +1548,9 @@ export default function Home({ navigateTo, onSelectExpedition }) {
         }
 
         .pillar-card:hover .pillar-action {
-          background: #ffffff;
-          color: #0b192c;
-          border-color: #ffffff;
-          box-shadow: 0 4px 14px rgba(255, 255, 255, 0.25);
+          background: rgba(48, 60, 82, 0.98);
+          border-color: rgba(255, 255, 255, 0.3);
+          box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
         }
 
         .pillar-card:hover .pillar-arrow {

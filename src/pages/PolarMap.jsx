@@ -837,55 +837,86 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
             const regionClass = st.region.toLowerCase().replace(' ', '-');
             const weather = getStationWeather(st.id, st.temp, st.wind);
 
+            const poleLabel = st.region === 'Antarctica' 
+              ? 'SOUTH POLE' 
+              : st.region === 'Arctic' 
+                ? 'NORTH POLE' 
+                : st.region === 'Himalaya' 
+                  ? 'THIRD POLE' 
+                  : (st.region || 'POLAR').toUpperCase();
+
             return (
               <div 
                 key={st.id} 
-                className={`glass-panel station-mini-card ${regionClass} ${isSelected ? 'active-station' : ''}`}
+                className={`station-immersive-card ${regionClass} ${isSelected ? 'active-station' : ''}`}
                 onClick={() => handleStationClick(st)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    handleStationClick(st);
+                  }
+                }}
               >
-                {/* Visual Header Banner */}
-                <div className="mini-card-img-wrap">
-                  <img src={st.image} alt={st.name} className="mini-card-img" loading="lazy" />
-                  <div className="mini-card-img-overlay" />
-                  
-                  <div className="mini-card-badges-top">
-                    <span className={`mini-region-badge ${regionClass}`}>
-                      {st.region}
-                    </span>
-                    <span className="mini-status-badge">
-                      {st.status.includes('Active') ? 'Active' : 'Heritage Depot'}
-                    </span>
-                  </div>
+                {/* Background Hero Image */}
+                <div 
+                  className="station-card-bg"
+                  style={{ backgroundImage: `url('${st.image}')` }}
+                />
 
-                  <div className="mini-card-coords-tag">
-                    <MapPin size={10} />
-                    <span>{Math.abs(st.lat).toFixed(1)}°{st.lat >= 0 ? 'N' : 'S'}, {Math.abs(st.lng).toFixed(1)}°{st.lng >= 0 ? 'E' : 'W'}</span>
-                  </div>
+                {/* Cinematic Dark Gradient Overlay */}
+                <div className="station-card-overlay" />
+
+                {/* Top Badges */}
+                <div className="station-card-top">
+                  <span className="station-pole-badge">
+                    {poleLabel}
+                  </span>
+                  <span className="station-status-badge">
+                    {st.commissioned ? `EST. ${st.commissioned}` : (st.status.includes('Active') ? 'ACTIVE' : 'HERITAGE')}
+                  </span>
                 </div>
 
-                {/* Card Body */}
-                <div className="mini-card-body">
-                  <h4 className="mini-station-title">
+                {/* Floating Content Area */}
+                <div className="station-card-content">
+                  <h4 className="station-card-title">
                     {lang === 'hi' && st.nameHi ? st.nameHi : st.name}
                   </h4>
 
-                  <p className="mini-desc">{st.description}</p>
-                  
-                  <div className="mini-footer-stats">
-                    <div className="stat-pill temp">
-                      <ThermometerSnowflake size={12} className="pill-icon" />
+                  <p className="station-card-desc">
+                    {st.description}
+                  </p>
+
+                  {/* Telemetry & Metrics Chips */}
+                  <div className="station-card-chips">
+                    <span className="station-chip">
+                      <ThermometerSnowflake size={11} className="chip-glyph" />
                       <span>{weather.temp || st.temp.split(' ')[0]}</span>
-                    </div>
-                    <div className="stat-pill elevation">
-                      <Navigation size={12} className="pill-icon" />
+                    </span>
+                    <span className="station-chip">
+                      <Navigation size={11} className="chip-glyph" />
                       <span>{st.elevation}</span>
-                    </div>
+                    </span>
+                    {weather.wind && (
+                      <span className="station-chip">
+                        <Wind size={11} className="chip-glyph" />
+                        <span>{weather.wind}</span>
+                      </span>
+                    )}
                   </div>
 
-                  <div className="mini-card-action-bar">
-                    <span className="inspect-link-text">Focus in Globe</span>
-                    <div className="inspect-arrow-circle">
-                      <ArrowRight size={13} className="inspect-arrow" />
+                  {/* Footer Row */}
+                  <div className="station-card-footer">
+                    <div className="station-card-meta">
+                      <span>{Math.abs(st.lat).toFixed(1)}°{st.lat >= 0 ? 'N' : 'S'}</span>
+                      <span className="meta-dot">•</span>
+                      <span>{Math.abs(st.lng).toFixed(1)}°{st.lng >= 0 ? 'E' : 'W'}</span>
+                    </div>
+
+                    <div className="station-card-action">
+                      <span>Focus in Globe</span>
+                      <ArrowRight size={13} className="action-arrow" />
                     </div>
                   </div>
                 </div>
@@ -2019,229 +2050,249 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
           gap: 1.25rem;
         }
 
-        .station-mini-card {
-          padding: 0;
+        .station-immersive-card {
+          position: relative;
+          height: 385px;
+          border-radius: 20px;
+          overflow: hidden;
           cursor: pointer;
-          transition: all 0.26s cubic-bezier(0.16, 1, 0.3, 1);
-          display: flex;
-          flex-direction: column;
-          background: #ffffff;
-          border: 1px solid rgba(226, 232, 240, 0.9);
-          border-radius: var(--radius-md, 14px);
-          overflow: hidden;
-          box-shadow: 0 2px 10px -2px rgba(15, 23, 42, 0.05);
-          position: relative;
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          box-shadow: 0 12px 30px -8px rgba(15, 23, 42, 0.2), 0 4px 12px -2px rgba(15, 23, 42, 0.08);
+          transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease, border-color 0.35s ease;
+          user-select: none;
         }
 
-        .station-mini-card:hover {
-          transform: translateY(-4px);
-          box-shadow: 0 16px 32px -8px rgba(15, 23, 42, 0.12), 0 4px 12px rgba(0, 0, 0, 0.04);
+        .station-immersive-card:hover {
+          transform: translateY(-6px);
+          box-shadow: 0 20px 40px -10px rgba(15, 23, 42, 0.32), 0 6px 16px -4px rgba(15, 23, 42, 0.12);
+          border-color: rgba(255, 255, 255, 0.2);
         }
 
-        .station-mini-card.active-station {
-          border-color: #0284c7;
-          box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.3), 0 12px 28px -6px rgba(2, 132, 199, 0.2);
+        .station-immersive-card:active {
+          transform: translateY(-2px);
         }
 
-        .station-mini-card.antarctica:hover {
-          border-color: rgba(5, 150, 105, 0.45);
+        .station-immersive-card.active-station {
+          border-color: #38bdf8;
+          box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.5), 0 20px 40px -8px rgba(2, 132, 199, 0.4);
         }
 
-        .station-mini-card.arctic:hover {
-          border-color: rgba(2, 132, 199, 0.45);
+        .station-card-bg {
+          position: absolute;
+          inset: 0;
+          background-size: cover;
+          background-position: center;
+          transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        .station-mini-card.himalaya:hover {
-          border-color: rgba(217, 119, 6, 0.45);
-        }
-
-        /* Image Visual Banner */
-        .mini-card-img-wrap {
-          position: relative;
-          width: 100%;
-          height: 145px;
-          overflow: hidden;
-          background: #f1f5f9;
-        }
-
-        .mini-card-img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-          transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .station-mini-card:hover .mini-card-img {
+        .station-immersive-card:hover .station-card-bg {
           transform: scale(1.06);
         }
 
-        .mini-card-img-overlay {
+        .station-card-overlay {
           position: absolute;
           inset: 0;
-          background: linear-gradient(180deg, rgba(15, 23, 42, 0.1) 0%, rgba(15, 23, 42, 0.65) 100%);
-          pointer-events: none;
+          background: linear-gradient(
+            180deg, 
+            rgba(15, 23, 42, 0) 0%, 
+            rgba(15, 23, 42, 0.04) 26%, 
+            rgba(15, 23, 42, 0.62) 52%, 
+            rgba(12, 18, 32, 0.93) 76%, 
+            rgba(8, 14, 26, 0.98) 100%
+          );
+          transition: background 0.35s ease;
         }
 
-        .mini-card-badges-top {
+        .station-immersive-card:hover .station-card-overlay {
+          background: linear-gradient(
+            180deg, 
+            rgba(15, 23, 42, 0) 0%, 
+            rgba(15, 23, 42, 0.02) 24%, 
+            rgba(15, 23, 42, 0.58) 48%, 
+            rgba(12, 18, 32, 0.95) 74%, 
+            rgba(8, 14, 26, 1) 100%
+          );
+        }
+
+        .station-card-top {
           position: absolute;
-          top: 0.65rem;
-          left: 0.65rem;
-          right: 0.65rem;
+          top: 1.1rem;
+          left: 1.1rem;
+          right: 1.1rem;
           display: flex;
           align-items: center;
           justify-content: space-between;
           z-index: 2;
         }
 
-        .mini-region-badge {
-          font-size: 0.66rem;
-          font-weight: 700;
-          padding: 0.2rem 0.55rem;
-          border-radius: 9999px;
-          letter-spacing: 0.03em;
-          text-transform: uppercase;
-          background: rgba(255, 255, 255, 0.95);
-          backdrop-filter: blur(6px);
-          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-        }
-
-        .mini-region-badge.antarctica { color: #047857; }
-        .mini-region-badge.arctic     { color: #0284c7; }
-        .mini-region-badge.himalaya   { color: #d97706; }
-
-        .mini-status-badge {
-          font-size: 0.64rem;
-          font-weight: 700;
-          padding: 0.2rem 0.5rem;
-          border-radius: 9999px;
-          background: rgba(15, 23, 42, 0.7);
-          backdrop-filter: blur(6px);
-          color: #ffffff;
-          border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .mini-card-coords-tag {
-          position: absolute;
-          bottom: 0.55rem;
-          left: 0.65rem;
+        .station-pole-badge {
           display: inline-flex;
           align-items: center;
-          gap: 0.25rem;
-          font-size: 0.66rem;
-          font-family: var(--font-mono, monospace);
-          font-weight: 600;
-          color: rgba(255, 255, 255, 0.95);
-          text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
-          z-index: 2;
+          padding: 0.32rem 0.75rem;
+          font-size: 0.65rem;
+          font-weight: 700;
+          letter-spacing: 0.06em;
+          text-transform: uppercase;
+          color: #ffffff;
+          background: rgba(26, 34, 48, 0.85);
+          backdrop-filter: blur(10px);
+          -webkit-backdrop-filter: blur(10px);
+          border: 1px solid rgba(255, 255, 255, 0.12);
+          border-radius: 9999px;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+          transition: background 0.25s ease, border-color 0.25s ease;
         }
 
-        /* Card Body */
-        .mini-card-body {
-          padding: 1rem 1.15rem 1.15rem;
-          display: flex;
-          flex-direction: column;
-          flex: 1;
-          justify-content: space-between;
+        .station-immersive-card:hover .station-pole-badge {
+          background: rgba(32, 42, 60, 0.95);
+          border-color: rgba(255, 255, 255, 0.25);
         }
 
-        .mini-station-title {
-          font-size: 1.05rem;
-          color: var(--navy, #0f172a);
-          margin: 0 0 0.45rem;
+        .station-status-badge {
+          display: inline-flex;
+          align-items: center;
+          padding: 0.32rem 0.65rem;
+          font-size: 0.65rem;
+          font-weight: 700;
+          letter-spacing: 0.04em;
+          color: rgba(255, 255, 255, 0.9);
+          background: rgba(26, 34, 48, 0.75);
+          backdrop-filter: blur(10px);
+          -webkit-backdrop-filter: blur(10px);
+          border: 1px solid rgba(255, 255, 255, 0.12);
+          border-radius: 9999px;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .station-card-content {
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          padding: 1.25rem;
+          z-index: 1;
+        }
+
+        .station-card-title {
+          font-size: 1.28rem;
           font-weight: 800;
-          letter-spacing: -0.01em;
-          line-height: 1.3;
+          color: #ffffff;
+          margin: 0 0 0.35rem;
+          letter-spacing: -0.015em;
+          line-height: 1.2;
+          text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+          transition: transform 0.25s ease;
         }
 
-        .mini-desc {
-          font-size: 0.81rem;
-          color: var(--text-secondary, #64748b);
-          line-height: 1.5;
-          margin-bottom: 0.95rem;
+        .station-immersive-card:hover .station-card-title {
+          transform: translateX(2px);
+        }
+
+        .station-card-desc {
+          font-size: 0.78rem;
+          color: rgba(241, 245, 249, 0.9);
+          line-height: 1.42;
+          margin: 0 0 0.65rem;
           display: -webkit-box;
           -webkit-line-clamp: 2;
           -webkit-box-orient: vertical;
           overflow: hidden;
-          min-height: 2.45rem;
+          text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
         }
 
-        .mini-footer-stats {
+        .station-card-chips {
           display: flex;
-          align-items: center;
-          gap: 0.45rem;
-          margin-bottom: 0.95rem;
           flex-wrap: wrap;
+          gap: 0.35rem;
+          margin-bottom: 0.85rem;
         }
 
-        .stat-pill {
+        .station-chip {
           display: inline-flex;
           align-items: center;
-          gap: 0.3rem;
-          background: #f8fafc;
-          border: 1px solid var(--border-subtle, #e2e8f0);
-          padding: 0.25rem 0.55rem;
-          border-radius: 8px;
-          font-size: 0.72rem;
-          color: var(--navy, #0f172a);
-          font-weight: 700;
-          font-family: var(--font-mono, monospace);
+          gap: 0.25rem;
+          font-size: 0.68rem;
+          font-weight: 600;
+          color: rgba(255, 255, 255, 0.95);
+          background: rgba(30, 38, 52, 0.75);
+          backdrop-filter: blur(8px);
+          -webkit-backdrop-filter: blur(8px);
+          border: 1px solid rgba(255, 255, 255, 0.14);
+          padding: 0.22rem 0.62rem;
+          border-radius: 6px;
+          transition: all 0.2s ease;
         }
 
-        .stat-pill.temp {
-          background: #f0f9ff;
-          border-color: #bae6fd;
-          color: #0284c7;
-        }
-
-        .pill-icon {
-          color: inherit;
+        .station-chip .chip-glyph {
+          color: #38bdf8;
           flex-shrink: 0;
         }
 
-        /* Action Bar */
-        .mini-card-action-bar {
-          border-top: 1px solid var(--border-subtle, #e2e8f0);
-          padding-top: 0.75rem;
+        .station-immersive-card:hover .station-chip {
+          background: rgba(38, 48, 66, 0.9);
+          border-color: rgba(255, 255, 255, 0.25);
+          color: #ffffff;
+        }
+
+        .station-card-footer {
           display: flex;
           align-items: center;
           justify-content: space-between;
+          padding-top: 0;
+          gap: 0.45rem;
         }
 
-        .inspect-link-text {
-          font-size: 0.74rem;
-          font-weight: 700;
-          color: #0284c7;
-          transition: color 0.15s ease;
-        }
-
-        .station-mini-card:hover .inspect-link-text {
-          color: #0369a1;
-        }
-
-        .inspect-arrow-circle {
-          width: 26px;
-          height: 26px;
-          border-radius: 50%;
+        .station-card-meta {
           display: flex;
           align-items: center;
-          justify-content: center;
-          background: #f1f5f9;
-          color: #64748b;
-          transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+          gap: 0.35rem;
+          font-size: 0.72rem;
+          font-weight: 500;
+          color: rgba(203, 213, 225, 0.85);
+          letter-spacing: 0.01em;
+          font-family: var(--font-mono, monospace);
         }
 
-        .station-mini-card:hover .inspect-arrow-circle {
-          background: #0284c7;
+        .station-card-action {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.35rem;
+          font-size: 0.72rem;
+          font-weight: 600;
+          padding: 0.36rem 0.9rem;
+          border-radius: 9999px;
+          transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+          background: rgba(34, 42, 58, 0.92);
+          border: 1px solid rgba(255, 255, 255, 0.14);
           color: #ffffff;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+          flex-shrink: 0;
+        }
+
+        .station-card-action .action-arrow {
+          transition: transform 0.25s ease;
+        }
+
+        .station-immersive-card:hover .station-card-action {
+          background: rgba(48, 60, 82, 0.98);
+          border-color: rgba(255, 255, 255, 0.3);
+          box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+        }
+
+        .station-immersive-card:hover .station-card-action .action-arrow {
           transform: translateX(3px);
         }
 
-        .station-mini-card.antarctica:hover .inspect-arrow-circle {
-          background: #059669;
-        }
-
-        .station-mini-card.himalaya:hover .inspect-arrow-circle {
-          background: #d97706;
+        @media (max-width: 640px) {
+          .station-immersive-card {
+            height: 360px;
+          }
+          .station-card-content {
+            padding: 1.15rem;
+          }
+          .station-card-title {
+            font-size: 1.15rem;
+          }
         }
 
         /* Mobile Quick Station Drawer */
