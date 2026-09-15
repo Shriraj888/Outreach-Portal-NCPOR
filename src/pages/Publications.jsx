@@ -553,7 +553,7 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
                         <div className="badge-cluster">
                           <span className="card-primary-tag dataset-primary-tag">
                             <Database size={12} />
-                            <span>Polar Scientific Dataset</span>
+                            <span>Dataset</span>
                           </span>
 
                           <span 
@@ -595,22 +595,36 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
                       {/* Title */}
                       <h3 className="card-title-text">{ds.title}</h3>
 
-                      {/* Meta Information Bar */}
-                      <div className="card-meta-grid">
-                        <div className="meta-chip" title="Spatial Geographic Coverage">
-                          <MapPin size={13} className="meta-icon geo-icon" />
-                          <span className="meta-label">Location:</span>
-                          <span className="meta-value">{ds.spatialCoverage}</span>
+                      {/* Meta Information Cards Row */}
+                      <div className="dataset-meta-matrix">
+                        <div className="meta-matrix-card" title="Spatial Geographic Coverage">
+                          <div className="meta-matrix-icon-box geo-box">
+                            <MapPin size={14} />
+                          </div>
+                          <div className="meta-matrix-content">
+                            <span className="meta-matrix-label">Geographic Coverage</span>
+                            <span className="meta-matrix-value">{ds.spatialCoverage}</span>
+                          </div>
                         </div>
-                        <div className="meta-chip" title="Temporal Observation Range">
-                          <Clock size={13} className="meta-icon time-icon" />
-                          <span className="meta-label">Temporal:</span>
-                          <span className="meta-value">{ds.temporalCoverage}</span>
+
+                        <div className="meta-matrix-card" title="Temporal Observation Range">
+                          <div className="meta-matrix-icon-box time-box">
+                            <Clock size={14} />
+                          </div>
+                          <div className="meta-matrix-content">
+                            <span className="meta-matrix-label">Temporal Range</span>
+                            <span className="meta-matrix-value">{ds.temporalCoverage}</span>
+                          </div>
                         </div>
-                        <div className="meta-chip" title="Data File Size">
-                          <FileText size={13} className="meta-icon size-icon" />
-                          <span className="meta-label">Size:</span>
-                          <span className="meta-value">{ds.fileSize}</span>
+
+                        <div className="meta-matrix-card" title="Data File Size & Format">
+                          <div className="meta-matrix-icon-box size-box">
+                            <FileText size={14} />
+                          </div>
+                          <div className="meta-matrix-content">
+                            <span className="meta-matrix-label">File Size</span>
+                            <span className="meta-matrix-value">{ds.fileSize} ({ds.format})</span>
+                          </div>
                         </div>
                       </div>
 
@@ -618,8 +632,8 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
                       {ds.parameters && ds.parameters.length > 0 && (
                         <div className="parameters-container">
                           <span className="params-title">
-                            <Tag size={11} />
-                            <span>Measured Variables:</span>
+                            <Tag size={12} />
+                            <span>Measured Variables</span>
                           </span>
                           <div className="params-chips-wrap">
                             {ds.parameters.map((param, i) => (
@@ -729,12 +743,12 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
                         <div className="badge-cluster">
                           {pub.isOa ? (
                             <span className="card-primary-tag oa-primary-tag" title="Verified Open Access Publication">
-                              <CheckCircle2 size={11} />
+                              <CheckCircle2 size={12} />
                               <span>Open Access Article</span>
                             </span>
                           ) : (
                             <span className="card-primary-tag pub-primary-tag">
-                              <BookOpen size={11} />
+                              <BookOpen size={12} />
                               <span>Research Article</span>
                             </span>
                           )}
@@ -757,6 +771,7 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
                           </span>
 
                           <span className="card-journal-badge" title="Publishing Journal">
+                            <BookOpen size={11} />
                             <em>{pub.journal}</em>
                           </span>
                         </div>
@@ -774,16 +789,21 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
 
                       {/* Authors Line */}
                       <div className="card-authors-bar">
-                        <User size={13} className="author-glyph" />
-                        <span className="author-names">{pub.authors.join(', ')}</span>
+                        <div className="author-glyph-box">
+                          <User size={13} />
+                        </div>
+                        <div className="author-content">
+                          <span className="author-lead-label">Authors:</span>
+                          <span className="author-names">{pub.authors.join(', ')}</span>
+                        </div>
                       </div>
 
                       {/* NCPOR Verified Authorship Strip */}
                       {pub.ncporAuthors && pub.ncporAuthors.length > 0 && (
                         <div className="ncpor-affiliation-strip">
                           <div className="ncpor-strip-lead">
-                            <ShieldCheck size={13} className="ncpor-shield-icon" />
-                            <span className="ncpor-strip-label">NCPOR Affiliated:</span>
+                            <ShieldCheck size={14} className="ncpor-shield-icon" />
+                            <span className="ncpor-strip-label">NCPOR Affiliated</span>
                           </div>
                           <span className="ncpor-strip-names">{pub.ncporAuthors.join(', ')}</span>
                           <span className="ncpor-inst-tag">MoES • Govt. of India</span>
@@ -793,11 +813,17 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
                       {/* Tags */}
                       {pub.tags && pub.tags.length > 0 && (
                         <div className="pub-keywords-row">
-                          {pub.tags.map((tag, i) => (
-                            <span key={i} className="keyword-chip">
-                              #{tag}
-                            </span>
-                          ))}
+                          <span className="keywords-label">
+                            <Tag size={12} />
+                            <span>Keywords</span>
+                          </span>
+                          <div className="pub-keywords-wrap">
+                            {pub.tags.map((tag, i) => (
+                              <span key={i} className="keyword-chip">
+                                #{tag}
+                              </span>
+                            ))}
+                          </div>
                         </div>
                       )}
                     </div>
@@ -1739,53 +1765,51 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
 
         .pub-card-modern {
           background: #ffffff;
-          border: 1px solid #e8ecf0;
-          border-radius: 18px;
+          border: 1px solid #e2e8f0;
+          border-radius: 20px;
           overflow: hidden;
           position: relative;
           box-shadow:
-            0 1px 3px rgba(15, 23, 42, 0.04),
-            0 4px 12px rgba(15, 23, 42, 0.03);
-          transition: box-shadow 0.28s cubic-bezier(0.16, 1, 0.3, 1),
-                      border-color 0.28s ease,
-                      transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+            0 4px 20px -2px rgba(15, 23, 42, 0.05),
+            0 2px 6px -1px rgba(15, 23, 42, 0.02);
+          transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
           display: flex;
           flex-direction: column;
         }
 
         .pub-card-modern:hover {
           box-shadow:
-            0 8px 24px -4px rgba(15, 23, 42, 0.11),
-            0 3px 10px -2px rgba(15, 23, 42, 0.06);
-          border-color: #c8d0db;
+            0 16px 36px -8px rgba(15, 23, 42, 0.1),
+            0 4px 12px -2px rgba(15, 23, 42, 0.04);
+          border-color: #cbd5e1;
           transform: translateY(-3px);
         }
 
-        /* Gradient accent bar — datasets (teal) */
+        /* Gradient accent bar — datasets (emerald / teal) */
         .dataset-card-style::before {
           content: '';
           position: absolute;
           top: 0; left: 0; right: 0;
-          height: 4px;
-          background: linear-gradient(90deg, #059669 0%, #34d399 55%, #6ee7b7 100%);
-          border-radius: 18px 18px 0 0;
+          height: 3.5px;
+          background: linear-gradient(90deg, #10b981 0%, #06b6d4 50%, #3b82f6 100%);
+          border-radius: 20px 20px 0 0;
         }
 
-        /* Gradient accent bar — publications (blue) */
+        /* Gradient accent bar — publications (blue / indigo / violet) */
         .publication-card-style::before {
           content: '';
           position: absolute;
           top: 0; left: 0; right: 0;
-          height: 4px;
-          background: linear-gradient(90deg, #2563eb 0%, #60a5fa 55%, #93c5fd 100%);
-          border-radius: 18px 18px 0 0;
+          height: 3.5px;
+          background: linear-gradient(90deg, #2563eb 0%, #6366f1 50%, #8b5cf6 100%);
+          border-radius: 20px 20px 0 0;
         }
 
         .pub-card-main {
-          padding: 1.55rem 1.8rem 1.2rem;
+          padding: 1.6rem 1.85rem 1.35rem;
           display: flex;
           flex-direction: column;
-          gap: 0.9rem;
+          gap: 1.05rem;
         }
 
         /* ---- Badge ribbon ---- */
@@ -1794,58 +1818,58 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
           align-items: center;
           justify-content: space-between;
           flex-wrap: wrap;
-          gap: 0.55rem;
+          gap: 0.65rem;
         }
 
         .badge-cluster {
           display: flex;
           align-items: center;
           flex-wrap: wrap;
-          gap: 0.4rem;
+          gap: 0.45rem;
         }
 
         /* Primary type tags */
         .card-primary-tag {
           display: inline-flex;
           align-items: center;
-          gap: 0.32rem;
+          gap: 0.35rem;
           font-size: 0.72rem;
-          font-weight: 700;
-          padding: 0.22rem 0.62rem;
-          border-radius: 7px;
-          letter-spacing: 0.01em;
+          font-weight: 750;
+          padding: 0.26rem 0.75rem;
+          border-radius: 9999px;
+          letter-spacing: 0.02em;
           text-transform: uppercase;
         }
 
         .dataset-primary-tag {
-          background: linear-gradient(135deg, #d1fae5, #ecfdf5);
-          color: #065f46;
-          border: 1px solid #6ee7b7;
-          box-shadow: 0 1px 3px rgba(5, 150, 105, 0.12);
+          background: #ecfdf5;
+          color: #047857;
+          border: 1px solid #a7f3d0;
+          box-shadow: 0 1px 2px rgba(16, 185, 129, 0.08);
         }
 
         .oa-primary-tag {
-          background: linear-gradient(135deg, #d1fae5, #f0fdf4);
-          color: #15803d;
-          border: 1px solid #86efac;
-          box-shadow: 0 1px 3px rgba(21, 128, 61, 0.12);
+          background: #ecfdf5;
+          color: #047857;
+          border: 1px solid #a7f3d0;
+          box-shadow: 0 1px 2px rgba(16, 185, 129, 0.08);
         }
 
         .pub-primary-tag {
-          background: linear-gradient(135deg, #dbeafe, #eff6ff);
+          background: #eff6ff;
           color: #1d4ed8;
-          border: 1px solid #93c5fd;
-          box-shadow: 0 1px 3px rgba(37, 99, 235, 0.12);
+          border: 1px solid #bfdbfe;
+          box-shadow: 0 1px 2px rgba(37, 99, 235, 0.08);
         }
 
         /* Category badge pill */
         .card-category-badge {
           display: inline-flex;
           align-items: center;
-          gap: 0.32rem;
+          gap: 0.35rem;
           font-size: 0.73rem;
           font-weight: 700;
-          padding: 0.22rem 0.68rem;
+          padding: 0.25rem 0.75rem;
           border-radius: 9999px;
           border: 1px solid transparent;
           letter-spacing: 0.01em;
@@ -1863,27 +1887,30 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
         .card-meta-pill {
           display: inline-flex;
           align-items: center;
-          gap: 0.28rem;
-          background: #f4f6f9;
-          color: #52677c;
-          border: 1px solid #e0e6ed;
+          gap: 0.32rem;
+          background: #f8fafc;
+          color: #475569;
+          border: 1px solid #e2e8f0;
           font-size: 0.72rem;
           font-weight: 600;
-          padding: 0.2rem 0.55rem;
-          border-radius: 6px;
+          padding: 0.24rem 0.68rem;
+          border-radius: 9999px;
           letter-spacing: 0.005em;
         }
 
         /* Journal badge */
         .card-journal-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.35rem;
           font-size: 0.74rem;
-          color: #52677c;
-          background: #f4f6f9;
-          border: 1px solid #e0e6ed;
-          padding: 0.2rem 0.6rem;
-          border-radius: 6px;
+          color: #334155;
+          background: #f8fafc;
+          border: 1px solid #e2e8f0;
+          padding: 0.24rem 0.75rem;
+          border-radius: 9999px;
           font-style: normal;
-          max-width: 280px;
+          max-width: 320px;
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
@@ -1893,11 +1920,11 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
         .card-metric-badge {
           display: inline-flex;
           align-items: center;
-          gap: 0.32rem;
+          gap: 0.35rem;
           font-size: 0.75rem;
-          padding: 0.28rem 0.75rem;
+          padding: 0.28rem 0.8rem;
           border-radius: 9999px;
-          font-weight: 500;
+          font-weight: 600;
           flex-shrink: 0;
         }
 
@@ -1907,132 +1934,185 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
         }
 
         .citation-metric {
-          background: linear-gradient(135deg, #fef3c7, #fffbeb);
+          background: #fffbeb;
           border: 1px solid #fde68a;
           color: #92400e;
-          box-shadow: 0 1px 3px rgba(217, 119, 6, 0.1);
+          box-shadow: 0 1px 3px rgba(217, 119, 6, 0.08);
         }
 
         .gold-spark { color: #d97706; }
 
         .dataset-metric {
-          background: linear-gradient(135deg, #d1fae5, #ecfdf5);
-          border: 1px solid #6ee7b7;
-          color: #065f46;
-          box-shadow: 0 1px 3px rgba(5, 150, 105, 0.1);
+          background: #ecfdf5;
+          border: 1px solid #a7f3d0;
+          color: #047857;
+          box-shadow: 0 1px 3px rgba(5, 150, 105, 0.08);
         }
 
         .metric-icon { flex-shrink: 0; }
 
         /* ---- Card title ---- */
         .card-title-text {
-          font-size: 1.15rem;
-          font-weight: 750;
-          color: #0d1929;
-          line-height: 1.45;
-          margin: 0.1rem 0;
-          letter-spacing: -0.02em;
+          font-size: 1.25rem;
+          font-weight: 800;
+          color: #0f172a;
+          line-height: 1.42;
+          margin: 0;
+          letter-spacing: -0.025em;
+          transition: color 0.18s ease;
         }
 
-        /* ---- Dataset meta grid ---- */
-        .card-meta-grid {
+        .pub-card-modern:hover .card-title-text {
+          color: #0284c7;
+        }
+
+        /* ---- Dataset 3-Card Data Matrix ---- */
+        .dataset-meta-matrix {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+          gap: 0.75rem;
+        }
+
+        .meta-matrix-card {
+          background: #f8fafc;
+          border: 1px solid #e2e8f0;
+          border-radius: 12px;
+          padding: 0.65rem 0.9rem;
           display: flex;
           align-items: center;
-          flex-wrap: wrap;
-          gap: 0.55rem 1rem;
-          padding: 0.2rem 0;
+          gap: 0.75rem;
+          transition: all 0.2s ease;
         }
 
-        .meta-chip {
-          display: inline-flex;
+        .meta-matrix-card:hover {
+          background: #f1f5f9;
+          border-color: #cbd5e1;
+        }
+
+        .meta-matrix-icon-box {
+          width: 34px;
+          height: 34px;
+          border-radius: 9px;
+          display: flex;
           align-items: center;
-          gap: 0.35rem;
-          font-size: 0.81rem;
-          background: #f8fafc;
-          border: 1px solid #eaeff4;
-          padding: 0.28rem 0.7rem;
-          border-radius: 8px;
+          justify-content: center;
+          flex-shrink: 0;
         }
 
-        .meta-icon { flex-shrink: 0; }
-        .geo-icon  { color: #2563eb; }
-        .time-icon { color: #d97706; }
-        .size-icon { color: #059669; }
+        .geo-box  { background: #eff6ff; color: #2563eb; }
+        .time-box { background: #fffbeb; color: #d97706; }
+        .size-box { background: #ecfdf5; color: #059669; }
 
-        .meta-label {
-          color: #8fa0b4;
+        .meta-matrix-content {
+          display: flex;
+          flex-direction: column;
+          gap: 0.12rem;
+          min-width: 0;
+          overflow: hidden;
+        }
+
+        .meta-matrix-label {
+          color: #64748b;
           font-size: 0.68rem;
-          font-weight: 700;
+          font-weight: 750;
           text-transform: uppercase;
-          letter-spacing: 0.04em;
+          letter-spacing: 0.05em;
         }
 
-        .meta-value {
-          font-weight: 650;
-          color: #1a2c42;
-          font-size: 0.82rem;
+        .meta-matrix-value {
+          font-weight: 700;
+          color: #1e293b;
+          font-size: 0.83rem;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
         }
 
         /* ---- Variable / parameter chips ---- */
         .parameters-container {
           display: flex;
-          align-items: flex-start;
+          align-items: center;
           flex-wrap: wrap;
-          gap: 0.45rem;
-          margin-top: 0.1rem;
+          gap: 0.5rem 0.8rem;
+          padding-top: 0.1rem;
         }
 
         .params-title {
           display: inline-flex;
           align-items: center;
-          gap: 0.3rem;
-          font-size: 0.7rem;
-          font-weight: 700;
+          gap: 0.35rem;
+          font-size: 0.72rem;
+          font-weight: 750;
           color: #64748b;
           text-transform: uppercase;
           letter-spacing: 0.04em;
-          padding-top: 0.25rem;
           flex-shrink: 0;
         }
 
         .params-chips-wrap {
           display: flex;
           flex-wrap: wrap;
-          gap: 0.3rem;
+          gap: 0.4rem;
         }
 
         .variable-chip {
-          background: #eef2f7;
-          border: 1px solid #d8e0eb;
-          color: #2d4260;
-          font-size: 0.74rem;
+          background: #f8fafc;
+          border: 1px solid #e2e8f0;
+          color: #334155;
+          font-size: 0.75rem;
           font-weight: 600;
-          padding: 0.2rem 0.6rem;
-          border-radius: 6px;
+          padding: 0.22rem 0.7rem;
+          border-radius: 9999px;
           letter-spacing: -0.005em;
-          transition: background 0.15s ease, border-color 0.15s ease;
+          transition: all 0.15s ease;
         }
 
         .variable-chip:hover {
-          background: #e1eaf5;
-          border-color: #b8c9de;
+          background: #e2e8f0;
+          color: #0f172a;
+          transform: translateY(-1px);
         }
 
         /* ---- Authors bar ---- */
         .card-authors-bar {
           display: flex;
-          align-items: flex-start;
-          gap: 0.45rem;
+          align-items: center;
+          gap: 0.6rem;
           font-size: 0.86rem;
           color: #334155;
           line-height: 1.5;
         }
 
-        .author-glyph { color: #2563eb; flex-shrink: 0; margin-top: 1px; }
+        .author-glyph-box {
+          width: 28px;
+          height: 28px;
+          border-radius: 50%;
+          background: #eff6ff;
+          color: #2563eb;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+        }
+
+        .author-content {
+          display: flex;
+          align-items: baseline;
+          gap: 0.4rem;
+          flex-wrap: wrap;
+        }
+
+        .author-lead-label {
+          font-size: 0.75rem;
+          font-weight: 750;
+          color: #64748b;
+          text-transform: uppercase;
+          letter-spacing: 0.04em;
+        }
 
         .author-names {
-          font-weight: 500;
-          color: #445568;
+          font-weight: 600;
+          color: #1e293b;
         }
 
         /* ---- NCPOR affiliation strip ---- */
@@ -2040,34 +2120,33 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
           display: flex;
           align-items: center;
           flex-wrap: wrap;
-          gap: 0.5rem;
-          background: linear-gradient(135deg, rgba(236, 253, 245, 0.9), rgba(248, 250, 252, 0.95));
-          border: 1px solid #a7f3d0;
-          border-left: 3px solid #059669;
-          border-radius: 9px;
-          padding: 0.45rem 0.9rem;
-          margin-top: 0.05rem;
+          gap: 0.75rem;
+          background: linear-gradient(90deg, rgba(240, 253, 244, 0.95) 0%, rgba(248, 250, 252, 0.75) 100%);
+          border: 1px solid #bbf7d0;
+          border-left: 3.5px solid #10b981;
+          border-radius: 12px;
+          padding: 0.55rem 0.95rem;
           font-size: 0.82rem;
         }
 
         .ncpor-strip-lead {
           display: inline-flex;
           align-items: center;
-          gap: 0.35rem;
+          gap: 0.4rem;
         }
 
         .ncpor-shield-icon { color: #059669; flex-shrink: 0; }
 
         .ncpor-strip-label {
-          font-weight: 700;
-          color: #065f46;
+          font-weight: 800;
+          color: #047857;
           font-size: 0.72rem;
           text-transform: uppercase;
           letter-spacing: 0.04em;
         }
 
         .ncpor-strip-names {
-          font-weight: 600;
+          font-weight: 700;
           color: #0f172a;
         }
 
@@ -2077,34 +2156,54 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
           font-weight: 700;
           color: #047857;
           background: #dcfce7;
-          padding: 0.15rem 0.5rem;
-          border-radius: 5px;
+          padding: 0.18rem 0.58rem;
+          border-radius: 9999px;
           letter-spacing: 0.02em;
-          border: 1px solid #bbf7d0;
+          border: 1px solid #86efac;
         }
 
         /* ---- Keyword chips ---- */
         .pub-keywords-row {
           display: flex;
+          align-items: center;
           flex-wrap: wrap;
-          gap: 0.3rem;
-          margin-top: 0.1rem;
+          gap: 0.5rem 0.8rem;
+          padding-top: 0.1rem;
+        }
+
+        .keywords-label {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.35rem;
+          font-size: 0.72rem;
+          font-weight: 750;
+          color: #64748b;
+          text-transform: uppercase;
+          letter-spacing: 0.04em;
+          flex-shrink: 0;
+        }
+
+        .pub-keywords-wrap {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.4rem;
         }
 
         .keyword-chip {
-          font-size: 0.72rem;
-          background: #f0f4f8;
-          border: 1px solid #dce4ef;
-          color: #5a748c;
-          padding: 0.16rem 0.52rem;
-          border-radius: 5px;
-          font-weight: 500;
-          transition: background 0.12s ease;
+          font-size: 0.74rem;
+          background: #f8fafc;
+          border: 1px solid #e2e8f0;
+          color: #475569;
+          padding: 0.2rem 0.65rem;
+          border-radius: 9999px;
+          font-weight: 600;
+          transition: all 0.15s ease;
         }
 
         .keyword-chip:hover {
-          background: #e3edf7;
-          color: #2d4260;
+          background: #e2e8f0;
+          color: #0f172a;
+          transform: translateY(-1px);
         }
 
         /* =========================================================
@@ -2112,10 +2211,10 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
            ========================================================= */
 
         .expanded-details-drawer {
-          background: linear-gradient(180deg, #f7f9fc 0%, #f0f4f8 100%);
-          border-top: 1px solid #e4eaf0;
-          border-bottom: 1px solid #e4eaf0;
-          padding: 1.3rem 1.8rem;
+          background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+          border-top: 1px solid #e2e8f0;
+          border-bottom: 1px solid #e2e8f0;
+          padding: 1.4rem 1.85rem;
           animation: expandFade 0.22s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
@@ -2127,7 +2226,7 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
         .drawer-inner {
           display: flex;
           flex-direction: column;
-          gap: 0.9rem;
+          gap: 0.95rem;
         }
 
         .drawer-header {
@@ -2137,18 +2236,18 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
         }
 
         .drawer-title {
-          font-size: 0.72rem;
+          font-size: 0.74rem;
           font-weight: 800;
-          color: #4a6080;
+          color: #475569;
           text-transform: uppercase;
           letter-spacing: 0.07em;
           margin: 0;
         }
 
         .drawer-description {
-          font-size: 0.875rem;
+          font-size: 0.88rem;
           line-height: 1.7;
-          color: #374151;
+          color: #334155;
           margin: 0;
         }
 
@@ -2159,9 +2258,9 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
           flex-wrap: wrap;
           gap: 0.75rem;
           background: #ffffff;
-          padding: 0.72rem 1rem;
-          border-radius: 10px;
-          border: 1px solid #dce4ef;
+          padding: 0.75rem 1.1rem;
+          border-radius: 12px;
+          border: 1px solid #e2e8f0;
           box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
         }
 
@@ -2173,7 +2272,7 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
         }
 
         .doi-prefix {
-          font-size: 0.73rem;
+          font-size: 0.74rem;
           color: #64748b;
           font-weight: 600;
         }
@@ -2183,8 +2282,8 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
           font-size: 0.78rem;
           color: #047857;
           background: #ecfdf5;
-          padding: 0.22rem 0.55rem;
-          border-radius: 5px;
+          padding: 0.24rem 0.6rem;
+          border-radius: 6px;
           border: 1px solid #a7f3d0;
         }
 
@@ -2192,20 +2291,20 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
           display: flex;
           align-items: center;
           gap: 0.35rem;
-          background: #f4f6f9;
-          border: 1px solid #d8e0eb;
+          background: #f8fafc;
+          border: 1px solid #e2e8f0;
           color: #334155;
           font-size: 0.76rem;
           font-weight: 600;
-          padding: 0.32rem 0.75rem;
-          border-radius: 7px;
+          padding: 0.35rem 0.85rem;
+          border-radius: 9999px;
           cursor: pointer;
           transition: all 0.15s ease;
         }
 
         .btn-doi-copy:hover {
-          background: #e8edf4;
-          border-color: #b8c9de;
+          background: #f1f5f9;
+          border-color: #cbd5e1;
           color: #0f172a;
         }
 
@@ -2219,62 +2318,64 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
           display: inline-flex;
           align-items: center;
           gap: 0.35rem;
-          background: linear-gradient(135deg, #dbeafe, #eff6ff);
-          border: 1px solid #93c5fd;
+          background: #eff6ff;
+          border: 1px solid #bfdbfe;
           color: #1d4ed8;
           font-size: 0.76rem;
           font-weight: 600;
-          padding: 0.32rem 0.75rem;
-          border-radius: 7px;
+          padding: 0.35rem 0.85rem;
+          border-radius: 9999px;
           text-decoration: none;
           transition: all 0.15s ease;
         }
 
         .btn-publisher-link:hover {
-          background: linear-gradient(135deg, #bfdbfe, #dbeafe);
-          border-color: #60a5fa;
+          background: #dbeafe;
+          border-color: #93c5fd;
         }
 
         /* =========================================================
-           CARD ACTIONS BAR — modern frosted bar
+           CARD ACTIONS BAR — modern frosted rounded bar
            ========================================================= */
 
         .card-actions-bar {
-          padding: 0.85rem 1.8rem;
-          background: linear-gradient(180deg, #f9fafb 0%, #f4f6f9 100%);
-          border-top: 1px solid #e8ecf0;
+          padding: 0.85rem 1.85rem;
+          background: #fafbfc;
+          border-top: 1px solid #edf2f7;
           display: flex;
           align-items: center;
           justify-content: space-between;
           flex-wrap: wrap;
           gap: 0.75rem;
+          border-radius: 0 0 20px 20px;
         }
 
         /* Expand/collapse toggle */
         .btn-expand-toggle {
           display: inline-flex;
           align-items: center;
-          gap: 0.4rem;
-          background: transparent;
-          border: 1px solid #d8e0eb;
-          color: #52677c;
-          padding: 0.38rem 0.85rem;
-          border-radius: 8px;
+          gap: 0.45rem;
+          background: #ffffff;
+          border: 1px solid #e2e8f0;
+          color: #475569;
+          padding: 0.44rem 1rem;
+          border-radius: 9999px;
           font-size: 0.8rem;
           font-weight: 600;
           cursor: pointer;
           transition: all 0.18s ease;
+          box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03);
         }
 
         .btn-expand-toggle:hover {
-          background: #eef2f7;
-          border-color: #b8c9de;
+          background: #f1f5f9;
+          border-color: #cbd5e1;
           color: #0f172a;
         }
 
         .btn-expand-toggle.active-expanded {
           background: #ecfdf5;
-          border-color: #6ee7b7;
+          border-color: #a7f3d0;
           color: #047857;
         }
 
@@ -2282,7 +2383,7 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
         .action-buttons-group {
           display: flex;
           align-items: center;
-          gap: 0.45rem;
+          gap: 0.5rem;
           flex-wrap: wrap;
         }
 
@@ -2290,25 +2391,25 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
         .btn-ghost-action {
           display: inline-flex;
           align-items: center;
-          gap: 0.38rem;
+          gap: 0.4rem;
           background: #ffffff;
-          border: 1px solid #d8e0eb;
-          color: #445568;
-          padding: 0.42rem 0.85rem;
-          border-radius: 8px;
+          border: 1px solid #e2e8f0;
+          color: #334155;
+          padding: 0.44rem 1rem;
+          border-radius: 9999px;
           font-size: 0.8rem;
           font-weight: 600;
           cursor: pointer;
           transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
-          box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+          box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
         }
 
         .btn-ghost-action:hover {
-          background: #eef2f7;
-          border-color: #b8c9de;
+          background: #f1f5f9;
+          border-color: #cbd5e1;
           color: #0d1929;
           transform: translateY(-1px);
-          box-shadow: 0 3px 8px rgba(15, 23, 42, 0.09);
+          box-shadow: 0 3px 8px rgba(15, 23, 42, 0.06);
         }
 
         .btn-ghost-action.active-copied {
@@ -2321,23 +2422,23 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
         .btn-download-primary {
           display: inline-flex;
           align-items: center;
-          gap: 0.42rem;
+          gap: 0.45rem;
           background: linear-gradient(135deg, #059669 0%, #10b981 100%);
           border: 1px solid #047857;
           color: #ffffff;
-          padding: 0.42rem 1.05rem;
-          border-radius: 8px;
+          padding: 0.45rem 1.25rem;
+          border-radius: 9999px;
           font-size: 0.8rem;
           font-weight: 700;
           cursor: pointer;
           transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-          box-shadow: 0 2px 6px rgba(5, 150, 105, 0.3), 0 1px 2px rgba(5, 150, 105, 0.15);
+          box-shadow: 0 3px 10px rgba(5, 150, 105, 0.28);
           letter-spacing: 0.01em;
         }
 
         .btn-download-primary:hover {
           background: linear-gradient(135deg, #047857 0%, #059669 100%);
-          box-shadow: 0 4px 14px rgba(5, 150, 105, 0.4), 0 2px 4px rgba(5, 150, 105, 0.2);
+          box-shadow: 0 5px 16px rgba(5, 150, 105, 0.38);
           transform: translateY(-1px);
         }
 
@@ -2350,23 +2451,23 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
         .btn-oa-pdf {
           display: inline-flex;
           align-items: center;
-          gap: 0.38rem;
-          background: linear-gradient(135deg, #15803d 0%, #22c55e 100%);
-          border: 1px solid #15803d;
+          gap: 0.4rem;
+          background: linear-gradient(135deg, #0284c7 0%, #0ea5e9 100%);
+          border: 1px solid #0284c7;
           color: #ffffff;
-          padding: 0.42rem 0.95rem;
-          border-radius: 8px;
+          padding: 0.45rem 1.15rem;
+          border-radius: 9999px;
           font-size: 0.8rem;
           font-weight: 700;
           text-decoration: none;
           transition: all 0.2s ease;
-          box-shadow: 0 2px 6px rgba(21, 128, 61, 0.3);
+          box-shadow: 0 3px 10px rgba(2, 132, 199, 0.25);
           letter-spacing: 0.01em;
         }
 
         .btn-oa-pdf:hover {
-          background: linear-gradient(135deg, #166534 0%, #16a34a 100%);
-          box-shadow: 0 4px 12px rgba(21, 128, 61, 0.4);
+          background: linear-gradient(135deg, #0369a1 0%, #0284c7 100%);
+          box-shadow: 0 5px 16px rgba(2, 132, 199, 0.35);
           transform: translateY(-1px);
         }
 
@@ -2374,24 +2475,23 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
         .btn-primary-view {
           display: inline-flex;
           align-items: center;
-          gap: 0.42rem;
+          gap: 0.45rem;
           background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
           border: 1px solid #0f172a;
           color: #ffffff;
-          padding: 0.42rem 1.05rem;
-          border-radius: 8px;
+          padding: 0.45rem 1.25rem;
+          border-radius: 9999px;
           font-size: 0.8rem;
           font-weight: 700;
           text-decoration: none;
-          cursor: pointer;
           transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-          box-shadow: 0 2px 6px rgba(15, 23, 42, 0.25), 0 1px 2px rgba(15, 23, 42, 0.12);
+          box-shadow: 0 3px 10px rgba(15, 23, 42, 0.2);
           letter-spacing: 0.01em;
         }
 
         .btn-primary-view:hover {
           background: linear-gradient(135deg, #334155 0%, #1e293b 100%);
-          box-shadow: 0 4px 14px rgba(15, 23, 42, 0.35), 0 2px 4px rgba(15, 23, 42, 0.15);
+          box-shadow: 0 5px 16px rgba(15, 23, 42, 0.3);
           transform: translateY(-1px);
         }
 
