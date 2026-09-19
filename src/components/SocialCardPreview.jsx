@@ -11,14 +11,8 @@ import {
   ThumbsUp,
   Download,
   ExternalLink,
-  Edit3,
-  RotateCcw,
-  LayoutGrid,
   Smartphone,
   ImageIcon,
-  Hash,
-  ShieldCheck,
-  Send,
   BookOpen,
   FileText
 } from 'lucide-react';
@@ -30,15 +24,11 @@ export default function SocialCardPreview({
   region,
   mediaUrl,
   mediaList = [],
-  defaultViewMode = 'mock',
   defaultPlatform = 'linkedin'
 }) {
   const [activePlatform, setActivePlatform] = useState(defaultPlatform || 'linkedin');
-  const [viewMode, setViewMode] = useState(defaultViewMode || 'mock'); // 'mock' (Interactive Feed Mockup) or 'grid'
-  const [customCaptions, setCustomCaptions] = useState({});
   const [selectedMediaOverride, setSelectedMediaOverride] = useState(null);
   const [copiedKey, setCopiedKey] = useState(null);
-  const [editingPlatform, setEditingPlatform] = useState(null);
 
   const defaultCaptions = {
     twitter: "❄️ Setting sail for scientific discovery! The Indian Scientific Expedition #NCPOR #MoES has deployed critical cryosphere & climate monitoring assets. 🇮🇳🇦🇶 #PolarScience",
@@ -51,19 +41,10 @@ export default function SocialCardPreview({
 
   const captions = {
     ...defaultCaptions,
-    ...(aiContent?.socialCaptions || {}),
-    ...customCaptions
+    ...(aiContent?.socialCaptions || {})
   };
 
   const selectedMediaUrl = selectedMediaOverride ?? mediaUrl ?? (mediaList[0]?.url) ?? '';
-
-  const setCaptions = (updater) => {
-    if (typeof updater === 'function') {
-      setCustomCaptions(prev => updater({ ...captions, ...prev }));
-    } else {
-      setCustomCaptions(prev => ({ ...prev, ...updater }));
-    }
-  };
 
   const setSelectedMediaUrl = (url) => {
     setSelectedMediaOverride(url);
@@ -138,35 +119,6 @@ Caption: ${selectedMediaObj.caption || ''}
     window.open(url, '_blank', 'noopener,noreferrer');
   };
 
-  const handleAppendHashtag = (tag, platform) => {
-    const current = captions[platform] || '';
-    if (!current.includes(tag)) {
-      setCaptions(prev => ({
-        ...prev,
-        [platform]: `${current.trim()} ${tag}`
-      }));
-    }
-  };
-
-  const handleResetCaption = (platform) => {
-    setCustomCaptions(prev => {
-      const next = { ...prev };
-      delete next[platform];
-      return next;
-    });
-    setEditingPlatform(null);
-  };
-
-  // Character limits
-  const limits = {
-    twitter: 280,
-    instagram: 2200,
-    linkedin: 3000,
-    facebook: 5000,
-    blog: 10000,
-    article: 10000
-  };
-
   const platforms = [
     { id: 'twitter', label: 'Twitter / X', icon: <TwitterIcon size={15} />, badge: 'Short Form' },
     { id: 'instagram', label: 'Instagram', icon: <InstagramIcon size={15} />, badge: 'Visual' },
@@ -183,11 +135,11 @@ Caption: ${selectedMediaObj.caption || ''}
         <div className="exec-left-info">
           <div className="social-pack-ready-badge">
             <Sparkles size={14} className="sparkle-active" />
-            <span>Multi-Channel Outreach Hub (6 Formats)</span>
+            <span>Interactive Feed Mockup</span>
             <span className="live-pill">LIVE DISPATCH READY</span>
           </div>
           <p className="exec-desc">
-            Pre-formatted copy for Twitter/X, Instagram, LinkedIn, Facebook, Science Blog, and Press News Articles.
+            Interactive social feed previews for Twitter/X, Instagram, LinkedIn, Facebook, Science Blog, and Press News Articles.
           </p>
         </div>
 
@@ -203,26 +155,13 @@ Caption: ${selectedMediaObj.caption || ''}
         </div>
       </div>
 
-      {/* Control Strip: View Mode & Media Switcher */}
+      {/* Control Strip: Feed Mockup Indicator & Media Switcher */}
       <div className="social-control-strip">
         <div className="view-mode-selector">
-          <span className="ctrl-label">Display Mode:</span>
-          <div className="view-mode-buttons">
-            <button
-              className={`btn-mode ${viewMode === 'grid' ? 'active' : ''}`}
-              onClick={() => setViewMode('grid')}
-            >
-              <LayoutGrid size={14} />
-              <span>Multi-Channel Grid (6 Formats)</span>
-            </button>
-            <button
-              className={`btn-mode ${viewMode === 'mock' ? 'active' : ''}`}
-              onClick={() => setViewMode('mock')}
-            >
-              <Smartphone size={14} />
-              <span>Interactive Feed Mockup</span>
-            </button>
-          </div>
+          <span className="ctrl-label">
+            <Smartphone size={14} />
+            <span>Interactive Feed Mockup</span>
+          </span>
         </div>
 
         {/* Media Selector Strip */}
@@ -249,402 +188,8 @@ Caption: ${selectedMediaObj.caption || ''}
         )}
       </div>
 
-      {/* VIEW 1: MULTI-CHANNEL GRID (ALL 6 FORMATS) */}
-      {viewMode === 'grid' && (
-        <div className="social-grid-6col">
-          {/* 1. Twitter / X */}
-          <div className="channel-column-card twitter-theme">
-            <div className="channel-card-header">
-              <div className="channel-title-wrap">
-                <div className="channel-icon-circle twitter-bg">
-                  <TwitterIcon size={14} />
-                </div>
-                <div>
-                  <h4>Twitter / X</h4>
-                  <span className="channel-sub">Fast & Punchy Updates</span>
-                </div>
-              </div>
-              <div className="char-meter-badge">
-                <span className={`char-num ${captions.twitter.length > limits.twitter ? 'over-limit' : ''}`}>
-                  {captions.twitter.length} / {limits.twitter}
-                </span>
-              </div>
-            </div>
-
-            {selectedMediaUrl && (
-              <div className="channel-media-preview">
-                <img src={selectedMediaUrl} alt="" className="grid-media-thumb" />
-                <div className="media-tag-overlay">
-                  <ShieldCheck size={11} />
-                  <span>Alt-Text Attached</span>
-                </div>
-              </div>
-            )}
-
-            <div className="channel-caption-container">
-              {editingPlatform === 'twitter' ? (
-                <textarea
-                  className="channel-textarea"
-                  value={captions.twitter}
-                  onChange={(e) => setCaptions({ ...captions, twitter: e.target.value })}
-                  rows={5}
-                />
-              ) : (
-                <p className="channel-text-display twitter-font">{captions.twitter}</p>
-              )}
-            </div>
-
-            <div className="quick-tags-wrap">
-              <span className="tags-label"><Hash size={11} /> Tags:</span>
-              <div className="tag-chips">
-                {['#NCPOR', '#PolarScience', '#MoES', '#Antarctica'].map(t => (
-                  <button key={t} className="chip-btn" onClick={() => handleAppendHashtag(t, 'twitter')}>{t}</button>
-                ))}
-              </div>
-            </div>
-
-            <div className="channel-actions-footer">
-              <div className="edit-reset-actions">
-                <button className="btn-edit-caption" onClick={() => setEditingPlatform(editingPlatform === 'twitter' ? null : 'twitter')}>
-                  <Edit3 size={13} />
-                  <span>{editingPlatform === 'twitter' ? 'Done' : 'Edit'}</span>
-                </button>
-                {editingPlatform === 'twitter' && (
-                  <button className="btn-reset-caption" onClick={() => handleResetCaption('twitter')}><RotateCcw size={12} /></button>
-                )}
-              </div>
-              <div className="main-copy-share-btns">
-                <button className={`btn-channel-copy ${copiedKey === 'twitter' ? 'copied' : ''}`} onClick={() => handleCopy(captions.twitter, 'twitter')}>
-                  {copiedKey === 'twitter' ? <Check size={13} /> : <Copy size={13} />}
-                  <span>{copiedKey === 'twitter' ? 'Copied!' : 'Copy'}</span>
-                </button>
-                <button className="btn-channel-share twitter-btn" onClick={() => handleShareTwitter(captions.twitter)}>
-                  <Send size={13} />
-                  <span>Post on X</span>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* 2. Instagram */}
-          <div className="channel-column-card instagram-theme">
-            <div className="channel-card-header">
-              <div className="channel-title-wrap">
-                <div className="channel-icon-circle instagram-bg">
-                  <InstagramIcon size={14} />
-                </div>
-                <div>
-                  <h4>Instagram</h4>
-                  <span className="channel-sub">Visual Story & Tags</span>
-                </div>
-              </div>
-              <div className="char-meter-badge">
-                <span className="char-num">{captions.instagram.length} chars</span>
-              </div>
-            </div>
-
-            {selectedMediaUrl && (
-              <div className="channel-media-preview">
-                <img src={selectedMediaUrl} alt="" className="grid-media-thumb" />
-                <div className="media-tag-overlay">
-                  <ShieldCheck size={11} />
-                  <span>1080x1080 Ready</span>
-                </div>
-              </div>
-            )}
-
-            <div className="channel-caption-container">
-              {editingPlatform === 'instagram' ? (
-                <textarea
-                  className="channel-textarea"
-                  value={captions.instagram}
-                  onChange={(e) => setCaptions({ ...captions, instagram: e.target.value })}
-                  rows={5}
-                />
-              ) : (
-                <p className="channel-text-display instagram-font">{captions.instagram}</p>
-              )}
-            </div>
-
-            <div className="quick-tags-wrap">
-              <span className="tags-label"><Hash size={11} /> Tags:</span>
-              <div className="tag-chips">
-                {['#PolarExploration', '#ClimateChange', '#IndiaInAntarctica'].map(t => (
-                  <button key={t} className="chip-btn" onClick={() => handleAppendHashtag(t, 'instagram')}>{t}</button>
-                ))}
-              </div>
-            </div>
-
-            <div className="channel-actions-footer">
-              <div className="edit-reset-actions">
-                <button className="btn-edit-caption" onClick={() => setEditingPlatform(editingPlatform === 'instagram' ? null : 'instagram')}>
-                  <Edit3 size={13} />
-                  <span>{editingPlatform === 'instagram' ? 'Done' : 'Edit'}</span>
-                </button>
-                {editingPlatform === 'instagram' && (
-                  <button className="btn-reset-caption" onClick={() => handleResetCaption('instagram')}><RotateCcw size={12} /></button>
-                )}
-              </div>
-              <div className="main-copy-share-btns">
-                <button className={`btn-channel-copy insta-copy-btn ${copiedKey === 'instagram' ? 'copied' : ''}`} onClick={() => handleCopy(captions.instagram, 'instagram')}>
-                  {copiedKey === 'instagram' ? <Check size={13} /> : <Copy size={13} />}
-                  <span>{copiedKey === 'instagram' ? 'Caption Copied!' : 'Copy for IG'}</span>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* 3. LinkedIn */}
-          <div className="channel-column-card linkedin-theme">
-            <div className="channel-card-header">
-              <div className="channel-title-wrap">
-                <div className="channel-icon-circle linkedin-bg">
-                  <LinkedinIcon size={14} />
-                </div>
-                <div>
-                  <h4>LinkedIn</h4>
-                  <span className="channel-sub">Professional & Executive</span>
-                </div>
-              </div>
-              <div className="char-meter-badge">
-                <span className="char-num">{captions.linkedin.length} chars</span>
-              </div>
-            </div>
-
-            {selectedMediaUrl && (
-              <div className="channel-media-preview">
-                <img src={selectedMediaUrl} alt="" className="grid-media-thumb" />
-                <div className="media-tag-overlay">
-                  <ShieldCheck size={11} />
-                  <span>1200x627 High-Res</span>
-                </div>
-              </div>
-            )}
-
-            <div className="channel-caption-container">
-              {editingPlatform === 'linkedin' ? (
-                <textarea
-                  className="channel-textarea"
-                  value={captions.linkedin}
-                  onChange={(e) => setCaptions({ ...captions, linkedin: e.target.value })}
-                  rows={5}
-                />
-              ) : (
-                <p className="channel-text-display linkedin-font">{captions.linkedin}</p>
-              )}
-            </div>
-
-            <div className="quick-tags-wrap">
-              <span className="tags-label"><Hash size={11} /> Tags:</span>
-              <div className="tag-chips">
-                {['#NCPOR', '#EarthSciences', '#OpenScience', '#ClimateResilience'].map(t => (
-                  <button key={t} className="chip-btn" onClick={() => handleAppendHashtag(t, 'linkedin')}>{t}</button>
-                ))}
-              </div>
-            </div>
-
-            <div className="channel-actions-footer">
-              <div className="edit-reset-actions">
-                <button className="btn-edit-caption" onClick={() => setEditingPlatform(editingPlatform === 'linkedin' ? null : 'linkedin')}>
-                  <Edit3 size={13} />
-                  <span>{editingPlatform === 'linkedin' ? 'Done' : 'Edit'}</span>
-                </button>
-                {editingPlatform === 'linkedin' && (
-                  <button className="btn-reset-caption" onClick={() => handleResetCaption('linkedin')}><RotateCcw size={12} /></button>
-                )}
-              </div>
-              <div className="main-copy-share-btns">
-                <button className={`btn-channel-copy ${copiedKey === 'linkedin' ? 'copied' : ''}`} onClick={() => handleCopy(captions.linkedin, 'linkedin')}>
-                  {copiedKey === 'linkedin' ? <Check size={13} /> : <Copy size={13} />}
-                  <span>{copiedKey === 'linkedin' ? 'Copied!' : 'Copy'}</span>
-                </button>
-                <button className="btn-channel-share linkedin-btn" onClick={() => handleShareLinkedIn(captions.linkedin)}>
-                  <Send size={13} />
-                  <span>Share</span>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* 4. Facebook */}
-          <div className="channel-column-card facebook-theme">
-            <div className="channel-card-header">
-              <div className="channel-title-wrap">
-                <div className="channel-icon-circle facebook-bg">
-                  <FacebookIcon size={14} />
-                </div>
-                <div>
-                  <h4>Facebook</h4>
-                  <span className="channel-sub">Community Outreach</span>
-                </div>
-              </div>
-              <div className="char-meter-badge">
-                <span className="char-num">{captions.facebook.length} chars</span>
-              </div>
-            </div>
-
-            {selectedMediaUrl && (
-              <div className="channel-media-preview">
-                <img src={selectedMediaUrl} alt="" className="grid-media-thumb" />
-                <div className="media-tag-overlay">
-                  <ShieldCheck size={11} />
-                  <span>Public Outreach</span>
-                </div>
-              </div>
-            )}
-
-            <div className="channel-caption-container">
-              {editingPlatform === 'facebook' ? (
-                <textarea
-                  className="channel-textarea"
-                  value={captions.facebook}
-                  onChange={(e) => setCaptions({ ...captions, facebook: e.target.value })}
-                  rows={5}
-                />
-              ) : (
-                <p className="channel-text-display facebook-font">{captions.facebook}</p>
-              )}
-            </div>
-
-            <div className="quick-tags-wrap">
-              <span className="tags-label"><Hash size={11} /> Tags:</span>
-              <div className="tag-chips">
-                {['#NCPOR', '#MoES', '#ScienceForAll', '#IndiaInPolar'].map(t => (
-                  <button key={t} className="chip-btn" onClick={() => handleAppendHashtag(t, 'facebook')}>{t}</button>
-                ))}
-              </div>
-            </div>
-
-            <div className="channel-actions-footer">
-              <div className="edit-reset-actions">
-                <button className="btn-edit-caption" onClick={() => setEditingPlatform(editingPlatform === 'facebook' ? null : 'facebook')}>
-                  <Edit3 size={13} />
-                  <span>{editingPlatform === 'facebook' ? 'Done' : 'Edit'}</span>
-                </button>
-                {editingPlatform === 'facebook' && (
-                  <button className="btn-reset-caption" onClick={() => handleResetCaption('facebook')}><RotateCcw size={12} /></button>
-                )}
-              </div>
-              <div className="main-copy-share-btns">
-                <button className={`btn-channel-copy ${copiedKey === 'facebook' ? 'copied' : ''}`} onClick={() => handleCopy(captions.facebook, 'facebook')}>
-                  {copiedKey === 'facebook' ? <Check size={13} /> : <Copy size={13} />}
-                  <span>{copiedKey === 'facebook' ? 'Copied!' : 'Copy'}</span>
-                </button>
-                <button className="btn-channel-share facebook-btn" onClick={handleShareFacebook}>
-                  <Send size={13} />
-                  <span>Post</span>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* 5. Science Blog Post */}
-          <div className="channel-column-card blog-theme">
-            <div className="channel-card-header">
-              <div className="channel-title-wrap">
-                <div className="channel-icon-circle blog-bg">
-                  <BlogIcon size={14} />
-                </div>
-                <div>
-                  <h4>Science Blog</h4>
-                  <span className="channel-sub">In-Depth Story & Editorial</span>
-                </div>
-              </div>
-              <div className="char-meter-badge">
-                <span className="char-num">{captions.blog.split(/\s+/).length} words</span>
-              </div>
-            </div>
-
-            <div className="channel-caption-container blog-scroll-container">
-              {editingPlatform === 'blog' ? (
-                <textarea
-                  className="channel-textarea"
-                  value={captions.blog}
-                  onChange={(e) => setCaptions({ ...captions, blog: e.target.value })}
-                  rows={9}
-                />
-              ) : (
-                <div className="blog-formatted-text">
-                  <pre className="blog-pre-preview">{captions.blog}</pre>
-                </div>
-              )}
-            </div>
-
-            <div className="channel-actions-footer">
-              <div className="edit-reset-actions">
-                <button className="btn-edit-caption" onClick={() => setEditingPlatform(editingPlatform === 'blog' ? null : 'blog')}>
-                  <Edit3 size={13} />
-                  <span>{editingPlatform === 'blog' ? 'Done' : 'Edit'}</span>
-                </button>
-                {editingPlatform === 'blog' && (
-                  <button className="btn-reset-caption" onClick={() => handleResetCaption('blog')}><RotateCcw size={12} /></button>
-                )}
-              </div>
-              <div className="main-copy-share-btns">
-                <button className={`btn-channel-copy blog-copy-btn ${copiedKey === 'blog' ? 'copied' : ''}`} onClick={() => handleCopy(captions.blog, 'blog')}>
-                  {copiedKey === 'blog' ? <Check size={13} /> : <Copy size={13} />}
-                  <span>{copiedKey === 'blog' ? 'Markdown Copied!' : 'Copy Blog Post (Markdown)'}</span>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* 6. Press Article & Official Dispatch */}
-          <div className="channel-column-card article-theme">
-            <div className="channel-card-header">
-              <div className="channel-title-wrap">
-                <div className="channel-icon-circle article-bg">
-                  <ArticleIcon size={14} />
-                </div>
-                <div>
-                  <h4>Press Article</h4>
-                  <span className="channel-sub">Official Media Release</span>
-                </div>
-              </div>
-              <div className="char-meter-badge">
-                <span className="char-num">{captions.article.split(/\s+/).length} words</span>
-              </div>
-            </div>
-
-            <div className="channel-caption-container blog-scroll-container">
-              {editingPlatform === 'article' ? (
-                <textarea
-                  className="channel-textarea"
-                  value={captions.article}
-                  onChange={(e) => setCaptions({ ...captions, article: e.target.value })}
-                  rows={9}
-                />
-              ) : (
-                <div className="article-formatted-text">
-                  <pre className="article-pre-preview">{captions.article}</pre>
-                </div>
-              )}
-            </div>
-
-            <div className="channel-actions-footer">
-              <div className="edit-reset-actions">
-                <button className="btn-edit-caption" onClick={() => setEditingPlatform(editingPlatform === 'article' ? null : 'article')}>
-                  <Edit3 size={13} />
-                  <span>{editingPlatform === 'article' ? 'Done' : 'Edit'}</span>
-                </button>
-                {editingPlatform === 'article' && (
-                  <button className="btn-reset-caption" onClick={() => handleResetCaption('article')}><RotateCcw size={12} /></button>
-                )}
-              </div>
-              <div className="main-copy-share-btns">
-                <button className={`btn-channel-copy article-copy-btn ${copiedKey === 'article' ? 'copied' : ''}`} onClick={() => handleCopy(captions.article, 'article')}>
-                  {copiedKey === 'article' ? <Check size={13} /> : <Copy size={13} />}
-                  <span>{copiedKey === 'article' ? 'Press Release Copied!' : 'Copy Press Article'}</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* VIEW 2: AUTHENTIC FEED MOCKUP PREVIEW */}
-      {viewMode === 'mock' && (
-        <div className="mock-preview-container">
+      {/* AUTHENTIC FEED MOCKUP PREVIEW */}
+      <div className="mock-preview-container">
           {/* Tab bar across all 6 channels */}
           <div className="platform-tab-bar">
             {platforms.map(p => (
@@ -851,7 +396,6 @@ Caption: ${selectedMediaObj.caption || ''}
             )}
           </div>
         </div>
-      )}
 
       <style>{`
         .social-command-center {
@@ -874,53 +418,62 @@ Caption: ${selectedMediaObj.caption || ''}
           align-items: center;
           justify-content: space-between;
           flex-wrap: wrap;
-          gap: 1rem;
+          gap: 1.25rem;
         }
 
         .exec-left-info {
           display: flex;
           flex-direction: column;
-          gap: 0.3rem;
-          flex: 1;
-          min-width: 280px;
+          gap: 0.35rem;
+          flex: 1 1 auto;
+          min-width: 0;
         }
 
         .social-pack-ready-badge {
           display: inline-flex;
           align-items: center;
-          gap: 0.45rem;
+          flex-wrap: nowrap;
+          gap: 0.65rem;
           font-size: 0.82rem;
           font-weight: 800;
           color: #065f46;
           text-transform: uppercase;
           letter-spacing: 0.04em;
+          white-space: nowrap;
         }
 
         .sparkle-active {
           color: #059669;
+          flex-shrink: 0;
         }
 
         .live-pill {
           background: #059669;
           color: #ffffff;
-          font-size: 0.62rem;
-          font-weight: 900;
-          padding: 0.15rem 0.5rem;
+          font-size: 0.65rem;
+          font-weight: 800;
+          padding: 0.2rem 0.55rem;
           border-radius: 4px;
           letter-spacing: 0.05em;
+          white-space: nowrap;
+          display: inline-flex;
+          align-items: center;
+          line-height: 1;
+          flex-shrink: 0;
         }
 
         .exec-desc {
           font-size: 0.84rem;
           color: #047857;
           margin: 0;
+          line-height: 1.4;
         }
 
         .exec-actions-right {
           display: flex;
           align-items: center;
           gap: 0.65rem;
-          flex-wrap: wrap;
+          flex-shrink: 0;
         }
 
         .btn-exec-bulk {
@@ -962,6 +515,8 @@ Caption: ${selectedMediaObj.caption || ''}
           font-weight: 600;
           cursor: pointer;
           transition: all 0.18s ease;
+          white-space: nowrap;
+          flex-shrink: 0;
         }
 
         .btn-exec-download:hover {
