@@ -24,9 +24,17 @@ export default function SocialCardPreview({
   region,
   mediaUrl,
   mediaList = [],
-  defaultPlatform = 'linkedin'
+  defaultPlatform = 'twitter',
+  activePlatform: controlledPlatform,
+  onPlatformChange
 }) {
-  const [activePlatform, setActivePlatform] = useState(defaultPlatform || 'linkedin');
+  const [internalPlatform, setInternalPlatform] = useState(defaultPlatform || 'twitter');
+  const activePlatform = controlledPlatform !== undefined ? controlledPlatform : internalPlatform;
+
+  const setActivePlatform = (p) => {
+    setInternalPlatform(p);
+    onPlatformChange?.(p);
+  };
   const [selectedMediaOverride, setSelectedMediaOverride] = useState(null);
   const [copiedKey, setCopiedKey] = useState(null);
 
@@ -191,19 +199,23 @@ Caption: ${selectedMediaObj.caption || ''}
       {/* AUTHENTIC FEED MOCKUP PREVIEW */}
       <div className="mock-preview-container">
           {/* Tab bar across all 6 channels */}
-          <div className="platform-tab-bar">
+          <div className="platform-tab-bar" role="tablist" aria-label="Social Media Platforms">
             {platforms.map(p => (
               <button
                 key={p.id}
                 type="button"
+                role="tab"
+                aria-selected={activePlatform === p.id}
                 className={`platform-btn ${p.id} ${activePlatform === p.id ? 'active' : ''}`}
                 onClick={() => setActivePlatform(p.id)}
               >
                 <span className={`platform-btn-icon ${p.id}`}>
                   {p.icon}
                 </span>
-                <span className="platform-btn-label">{p.label}</span>
-                <span className="char-badge">{p.badge}</span>
+                <div className="platform-btn-info">
+                  <span className="platform-btn-label">{p.label}</span>
+                  <span className="platform-btn-badge">{p.badge}</span>
+                </div>
               </button>
             ))}
           </div>
@@ -961,17 +973,45 @@ Caption: ${selectedMediaObj.caption || ''}
         /* Mockup View */
         .mock-preview-container {
           background: #f8fafc;
+          container-type: inline-size;
+          container-name: previewTabs;
         }
 
         .platform-tab-bar {
           display: grid;
           grid-template-columns: repeat(6, 1fr);
           gap: 0.5rem;
-          padding: 0.85rem 1.5rem;
+          padding: 0.85rem 1.15rem;
           background: #f8fafc;
           border-bottom: 1px solid var(--border-subtle);
           box-sizing: border-box;
           width: 100%;
+        }
+
+        @container previewTabs (max-width: 860px) {
+          .platform-tab-bar {
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.6rem;
+          }
+        }
+
+        @container previewTabs (max-width: 520px) {
+          .platform-tab-bar {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.5rem;
+          }
+        }
+
+        @container previewTabs (max-width: 330px) {
+          .platform-tab-bar {
+            grid-template-columns: 1fr;
+          }
+        }
+
+        @media (max-width: 1350px) and (min-width: 1181px) {
+          .platform-tab-bar {
+            grid-template-columns: repeat(3, 1fr);
+          }
         }
 
         .platform-btn {
@@ -979,26 +1019,27 @@ Caption: ${selectedMediaObj.caption || ''}
           flex-direction: row;
           align-items: center;
           justify-content: flex-start;
-          gap: 0.45rem;
-          padding: 0.5rem 0.65rem;
+          gap: 0.5rem;
+          padding: 0.5rem 0.6rem;
           background: #ffffff;
           border: 1px solid #e2e8f0;
-          border-radius: 8px;
+          border-radius: 9px;
           color: #334155;
-          font-size: 0.78rem;
-          font-weight: 600;
           cursor: pointer;
-          transition: all 0.15s ease;
+          transition: all 0.16s ease;
           box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
           box-sizing: border-box;
           width: 100%;
-          min-height: 42px;
+          min-height: 46px;
+          min-width: 0;
+          text-align: left;
         }
 
         .platform-btn:hover {
-          background: #f8fafc;
+          background: #ffffff;
           border-color: #cbd5e1;
           color: #0f172a;
+          box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
           transform: translateY(-1px);
         }
 
@@ -1006,13 +1047,13 @@ Caption: ${selectedMediaObj.caption || ''}
           background: #0f172a;
           color: #ffffff;
           border-color: #0f172a;
-          box-shadow: 0 2px 8px rgba(15, 23, 42, 0.25);
+          box-shadow: 0 4px 14px rgba(15, 23, 42, 0.22);
         }
 
         .platform-btn-icon {
-          width: 24px;
-          height: 24px;
-          border-radius: 6px;
+          width: 28px;
+          height: 28px;
+          border-radius: 7px;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -1022,32 +1063,53 @@ Caption: ${selectedMediaObj.caption || ''}
           transition: all 0.15s ease;
         }
 
+        .platform-btn-icon.twitter { background: #f1f5f9; color: #0f172a; }
+        .platform-btn-icon.instagram { background: #fdf2f8; color: #db2777; }
+        .platform-btn-icon.linkedin { background: #eff6ff; color: #0284c7; }
+        .platform-btn-icon.facebook { background: #eff6ff; color: #1877f2; }
+        .platform-btn-icon.blog { background: #ecfdf5; color: #059669; }
+        .platform-btn-icon.article { background: #f5f3ff; color: #7c3aed; }
+
         .platform-btn.active .platform-btn-icon {
-          background: rgba(255, 255, 255, 0.2);
+          background: rgba(255, 255, 255, 0.18);
           color: #ffffff;
         }
 
+        .platform-btn-info {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          min-width: 0;
+          overflow: hidden;
+          line-height: 1.25;
+        }
+
         .platform-btn-label {
+          font-size: 0.8rem;
           font-weight: 700;
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
+          max-width: 100%;
+          color: #1e293b;
         }
 
-        .char-badge {
-          margin-left: auto;
-          font-size: 0.64rem;
-          font-weight: 600;
-          background: #f1f5f9;
-          color: #64748b;
-          padding: 0.1rem 0.35rem;
-          border-radius: 4px;
-          flex-shrink: 0;
-        }
-
-        .platform-btn.active .char-badge {
-          background: rgba(255, 255, 255, 0.2);
+        .platform-btn.active .platform-btn-label {
           color: #ffffff;
+        }
+
+        .platform-btn-badge {
+          font-size: 0.65rem;
+          font-weight: 500;
+          color: #64748b;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          max-width: 100%;
+        }
+
+        .platform-btn.active .platform-btn-badge {
+          color: #93c5fd;
         }
 
         .platform-card-wrapper {
@@ -1459,7 +1521,7 @@ Caption: ${selectedMediaObj.caption || ''}
           .platform-tab-bar {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 0.5rem;
+            gap: 0.45rem;
             padding: 0.65rem 0.75rem;
             background: #f1f5f9;
             border-bottom: 1px solid var(--border-subtle);
@@ -1471,11 +1533,9 @@ Caption: ${selectedMediaObj.caption || ''}
             flex-direction: row;
             align-items: center;
             justify-content: flex-start;
-            gap: 0.5rem;
-            padding: 0.5rem 0.65rem;
-            font-size: 0.75rem;
+            gap: 0.45rem;
+            padding: 0.45rem 0.55rem;
             text-align: left;
-            white-space: nowrap;
             min-height: 42px;
             background: #ffffff;
             border: 1px solid #cbd5e1;
@@ -1483,6 +1543,7 @@ Caption: ${selectedMediaObj.caption || ''}
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
             width: 100%;
             box-sizing: border-box;
+            min-width: 0;
           }
           .platform-btn.active {
             background: #0f172a;
@@ -1491,8 +1552,8 @@ Caption: ${selectedMediaObj.caption || ''}
             box-shadow: 0 3px 8px rgba(15, 23, 42, 0.3);
           }
           .platform-btn-icon {
-            width: 22px;
-            height: 22px;
+            width: 24px;
+            height: 24px;
             border-radius: 6px;
             display: flex;
             align-items: center;
@@ -1505,15 +1566,33 @@ Caption: ${selectedMediaObj.caption || ''}
             background: rgba(255, 255, 255, 0.2);
             color: #ffffff;
           }
+          .platform-btn-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            min-width: 0;
+            overflow: hidden;
+            line-height: 1.2;
+          }
           .platform-btn-label {
-            font-size: 0.75rem;
+            font-size: 0.74rem;
             font-weight: 700;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            max-width: 100%;
           }
-          .char-badge {
-            display: none;
+          .platform-btn-badge {
+            font-size: 0.62rem;
+            font-weight: 500;
+            color: #64748b;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+          }
+          .platform-btn.active .platform-btn-badge {
+            color: #93c5fd;
           }
           .platform-card-wrapper {
             padding: 0.85rem 0.5rem;

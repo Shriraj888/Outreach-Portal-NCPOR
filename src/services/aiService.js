@@ -57,6 +57,9 @@ export async function generateOutreachPackage({ expedition, asset, assetType = "
   let twitter;
   let instagram;
   let linkedin;
+  let facebook;
+  let blog;
+  let article;
   let factCards = [];
 
   if (assetType === "dataset") {
@@ -135,6 +138,13 @@ export async function generateOutreachPackage({ expedition, asset, assetType = "
     }
   }
 
+  // Generate Facebook, Science Blog, and Press Article
+  facebook = `❄️ Exploring the Ends of the Earth! 🌏 Discover how Indian scientists with the National Centre for Polar and Ocean Research (NCPOR), Ministry of Earth Sciences, conducted vital research during the ${title} in ${region}.\n\n🔬 Highlights of the Mission:\n• In-situ baseline recording under extreme sub-zero conditions across ${stationList}.\n• Deployment of real-time telemetry sensor arrays and cryospheric monitoring networks.\n• Uncovering critical links between polar weather and the Indian monsoon.\n\n👉 Share this to celebrate Indian science! 🇮🇳\n\n#NCPOR #MoES #PolarScience #IndiaInAntarctica`;
+
+  blog = `## Exploring the Frontiers of Polar Science: Insights from ${title}\n\n**By NCPOR Science Outreach Division • Ministry of Earth Sciences**\n\nPolar regions may feel a world away, but the groundbreaking work conducted during **${title}** in ${region} directly influences our global climate and the Indian monsoon system. Operating across ${stationList}, Indian researchers braved extreme sub-zero weather to gather unblemished environmental logs.\n\n### Key Mission Milestones\n- **In-situ Cryospheric Probing**: High-resolution ice profiling and paleoclimatic archives across polar margins.\n- **Atmospheric Physics**: Continuous baseline monitoring of polar air masses and aerosol interactions.\n- **Green Hybrid Power Integration**: Reducing fuel dependency through cold-tolerant renewable microgrids at Indian polar stations.\n\n### Why This Matters for India\nWhat happens at the poles drives deep oceanic and atmospheric teleconnections. By deploying cutting-edge instrumentation and retrieving unblemished climate records, Indian researchers are safeguarding our future and cementing India's leadership in international polar governance.\n\n*Explore open datasets, research publications, and high-res media on the NCPOR Portal.*`;
+
+  article = `PRESS RELEASE / NATIONAL SCIENCE DISPATCH\n\nDATELINE: GOA / NEW DELHI — MINISTRY OF EARTH SCIENCES, GOVT. OF INDIA\n\nSUBJECT: NCPOR Issues Scientific Report on ${title}\n\nThe National Centre for Polar and Ocean Research (NCPOR), Ministry of Earth Sciences, announces the successful archival and validation of technical logs from the ${title} in ${region}.\n\nOperating across key scientific hubs including ${stationList}, the mission achieved significant breakthroughs:\n1. Recovery of benchmark scientific logs from extreme polar terrain.\n2. Deployment of autonomous sensor buoys with satellite links.\n3. Validation of cold-tolerant renewable microgrids and zero-emission station technologies.\n\nThe complete archive, comprising peer-reviewed papers, open datasets, and outreach multimedia, is publicly accessible on the NCPOR Outreach Portal.`;
+
   // Vision Alt-Text generation for media
   const mediaItems = target.media || [];
   const altTextSuggestions = mediaItems.map((m) => {
@@ -155,7 +165,10 @@ export async function generateOutreachPackage({ expedition, asset, assetType = "
     socialCaptions: {
       twitter,
       instagram,
-      linkedin
+      linkedin,
+      facebook,
+      blog,
+      article
     },
     factCards,
     altTextSuggestions,
