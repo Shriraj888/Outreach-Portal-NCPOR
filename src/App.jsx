@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { PortalProvider } from './context/PortalContext';
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -13,29 +13,81 @@ import UploadStudio from './pages/admin/UploadStudio';
 import ExpeditionForm from './pages/admin/ExpeditionForm';
 import AIGenerateStudio from './pages/admin/AIGenerateStudio';
 import SelectiveAIStudio from './pages/admin/SelectiveAIStudio';
+import { routeToHash, hashToRoute } from './utils/routes';
 import './App.css';
 
 function MainApp() {
-  const [currentRoute, setCurrentRoute] = useState('home');
-  const [selectedExpeditionId, setSelectedExpeditionId] = useState(null);
+  // Parse initial route from window.location.hash on mount
+  const initial = hashToRoute(window.location.hash);
+  const [currentRoute, setCurrentRoute] = useState(initial.route);
+  const [selectedExpeditionId, setSelectedExpeditionId] = useState(initial.params.expeditionId || null);
+  const navCountRef = useRef(0);
 
-  const navigateTo = (route) => {
+  // Synchronize hash changes from browser Back & Forward navigation or URL bar edits
+  useEffect(() => {
+    // If initially no hash, normalize to '#/' without creating extra history entry
+    if (!window.location.hash) {
+      window.history.replaceState(null, '', '#/');
+    }
+
+    const handleHashChange = () => {
+      const parsed = hashToRoute(window.location.hash);
+      setCurrentRoute(parsed.route);
+      if (parsed.params.expeditionId) {
+        setSelectedExpeditionId(parsed.params.expeditionId);
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
+  const navigateTo = useCallback((route, params = {}) => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    setCurrentRoute(route);
-  };
+    navCountRef.current += 1;
 
-  const handleSelectExpedition = (id) => {
+    let finalParams = { ...params };
+    if (route === 'expedition-detail' && selectedExpeditionId && !finalParams.expeditionId) {
+      finalParams.expeditionId = selectedExpeditionId;
+    } else if (route.startsWith('expedition-') && route !== 'expedition-detail') {
+      finalParams.expeditionId = route.replace('expedition-', '');
+    }
+
+    const targetHash = routeToHash(route, finalParams);
+    if (window.location.hash !== targetHash) {
+      window.location.hash = targetHash;
+    } else {
+      setCurrentRoute(route);
+      if (finalParams.expeditionId) {
+        setSelectedExpeditionId(finalParams.expeditionId);
+      }
+    }
+  }, [selectedExpeditionId]);
+
+  const handleSelectExpedition = useCallback((id) => {
     setSelectedExpeditionId(id);
-    navigateTo('expedition-detail');
-  };
+    navigateTo('expedition-detail', { expeditionId: id });
+  }, [navigateTo]);
+
+  const handleBack = useCallback((fallbackRoute = 'home') => {
+    if (navCountRef.current > 0 && window.history.length > 1) {
+      window.history.back();
+    } else {
+      navigateTo(fallbackRoute);
+    }
+  }, [navigateTo]);
 
   const renderContent = () => {
     // Detail route
-    if (currentRoute === 'expedition-detail') {
+    if (currentRoute === 'expedition-detail' || currentRoute.startsWith('expedition-')) {
+      const expId = currentRoute.startsWith('expedition-') && currentRoute !== 'expedition-detail'
+        ? currentRoute.replace('expedition-', '')
+        : (selectedExpeditionId || 'isea-43');
       return (
         <ExpeditionDetail 
-          expeditionId={selectedExpeditionId || 'isea-43'}
-          onBack={() => navigateTo('expeditions')}
+          expeditionId={expId}
+          onBack={() => handleBack('expeditions')}
           navigateTo={navigateTo}
         />
       );
@@ -62,7 +114,7 @@ function MainApp() {
       return (
         <UploadStudio 
           initialCategory={category}
-          onBack={() => navigateTo('admin-dashboard')} 
+          onBack={() => handleBack('admin-dashboard')} 
           navigateTo={navigateTo} 
         />
       );
@@ -72,7 +124,7 @@ function MainApp() {
       return (
         <UploadStudio 
           initialCategory="reports"
-          onBack={() => navigateTo('admin-dashboard')} 
+          onBack={() => handleBack('admin-dashboard')} 
           navigateTo={navigateTo} 
         />
       );
@@ -83,7 +135,7 @@ function MainApp() {
       return (
         <ExpeditionForm 
           expeditionId={expId}
-          onBack={() => navigateTo('admin-dashboard')} 
+          onBack={() => handleBack('admin-dashboard')} 
           navigateTo={navigateTo} 
         />
       );
@@ -94,7 +146,7 @@ function MainApp() {
       return (
         <AIGenerateStudio 
           expeditionId={expId}
-          onBack={() => navigateTo('admin-dashboard')} 
+          onBack={() => handleBack('admin-dashboard')} 
           navigateTo={navigateTo}
           onSelectExpedition={handleSelectExpedition}
         />
@@ -108,7 +160,7 @@ function MainApp() {
       return (
         <SelectiveAIStudio 
           initialAssetId={assetId}
-          onBack={() => navigateTo('admin-dashboard')}
+          onBack={() => handleBack('admin-dashboard')}
           navigateTo={navigateTo}
         />
       );
