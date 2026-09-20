@@ -20,6 +20,7 @@ import {
   UploadCloud,
   AlertCircle,
   Layers,
+  ShieldCheck,
   X
 } from 'lucide-react';
 
@@ -197,7 +198,7 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
       <div className="admin-header-row">
         <div>
           <div className="section-eyebrow">NCPOR POLAR OUTREACH & CONTENT STUDIO</div>
-          <h1 className="page-title">Science Archival & AI Studio</h1>
+          <h1 className="page-title">Science Archival & Verification Studio</h1>
           <p className="page-sub">
             Logged in as <strong>{auth.user?.name || 'Dr. Arvind Shrivastava'}</strong> ({auth.user?.department || 'Outreach & Polar Science Division'})
           </p>
@@ -503,24 +504,24 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
 
                     <td className="text-right">
                       <div className="action-buttons-group">
-                        {/* AI Generate Studio Button */}
+                        {/* Verification Studio Button */}
                         <button 
                           className="btn-action ai"
                           onClick={() => navigateTo(`admin-generate-${item.id}`)}
-                          title="Open AI Content Generation Studio"
+                          title="Open Outreach Review & Verification Studio"
                         >
-                          <Sparkles size={13} />
-                          <span>AI Studio</span>
+                          <ShieldCheck size={13} />
+                          <span>Verification Studio</span>
                         </button>
 
-                        {/* Selective Chunk AI Button */}
+                        {/* Selective AI Studio Button */}
                         <button 
                           className="btn-action selective-ai"
                           onClick={() => navigateTo(`admin-selective-ai-${item.id}`)}
-                          title="Synthesize targeted output from selected chunks"
+                          title="Synthesize targeted output in Selective AI Studio"
                         >
                           <Layers size={13} />
-                          <span>Chunk AI</span>
+                          <span>Selective AI</span>
                         </button>
 
                         {/* Public View */}
@@ -660,19 +661,19 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
                   <button 
                     className="btn-action ai"
                     onClick={() => navigateTo(`admin-generate-${item.id}`)}
-                    title="Open AI Studio"
+                    title="Open Outreach Review & Verification Studio"
                   >
-                    <Sparkles size={13} />
-                    <span>AI Studio</span>
+                    <ShieldCheck size={13} />
+                    <span>Verification Studio</span>
                   </button>
 
                   <button 
                     className="btn-action selective-ai"
                     onClick={() => navigateTo(`admin-selective-ai-${item.id}`)}
-                    title="Selective Chunk AI"
+                    title="Open Selective AI Studio"
                   >
                     <Layers size={13} />
-                    <span>Chunk AI</span>
+                    <span>Selective AI</span>
                   </button>
 
                   <div className="mobile-card-icon-actions">

@@ -127,9 +127,10 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
                 <button
                   className="btn-ai-pill"
                   onClick={() => navigateTo(`admin-generate-${expedition.id}`)}
+                  title="Open Outreach Review & Verification Studio"
                 >
-                  <Sparkles size={14} />
-                  <span>AI Content Studio</span>
+                  <ShieldCheck size={14} />
+                  <span>Verification Studio</span>
                 </button>
                 <button
                   className="btn-edit-pill"
