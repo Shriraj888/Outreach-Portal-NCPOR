@@ -162,7 +162,7 @@ export default function Header({ currentRoute, navigateTo }) {
           <nav className="desktop-nav">
             {navItems.map((item) => {
               const Icon = item.icon;
-              const isActive = currentRoute === item.id;
+              const isActive = currentRoute === item.id || (item.id === 'expeditions' && (currentRoute === 'expedition-detail' || currentRoute.startsWith('expedition-')));
               return (
                 <button
                   key={item.id}
@@ -288,7 +288,7 @@ export default function Header({ currentRoute, navigateTo }) {
               <div className="mobile-nav-group">
                 {navItems.map((item) => {
                   const Icon = item.icon;
-                  const isActive = currentRoute === item.id;
+                  const isActive = currentRoute === item.id || (item.id === 'expeditions' && (currentRoute === 'expedition-detail' || currentRoute.startsWith('expedition-')));
                   return (
                     <button
                       key={item.id}

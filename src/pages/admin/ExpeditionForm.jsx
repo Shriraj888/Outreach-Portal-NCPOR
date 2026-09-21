@@ -9,7 +9,8 @@ import {
   FileText, 
   Plus, 
   Trash2, 
-  Layers
+  Layers,
+  ShieldCheck
 } from 'lucide-react';
 
 export default function ExpeditionForm({ expeditionId, onBack, navigateTo }) {
@@ -264,7 +265,7 @@ The voyage departed Cape Town with 48 scientists from MoES institutes, Survey of
         <div className="glass-panel form-section-card">
           <h3 className="section-title-tag">
             <FileText size={18} />
-            <span>2. Scientific Report & Raw Text Ingestion (Source for AI Studio)</span>
+            <span>2. Scientific Report & Raw Text Ingestion (Source for Verification & Selective AI)</span>
           </h3>
 
           <div className="form-group">
@@ -407,8 +408,8 @@ The voyage departed Cape Town with 48 scientists from MoES institutes, Survey of
               className="btn-ai"
               onClick={(e) => handleSubmit(e, true)}
             >
-              <Sparkles size={16} />
-              <span>Save & Launch AI Content Studio</span>
+              <ShieldCheck size={16} />
+              <span>Save & Launch Verification Studio</span>
             </button>
           </div>
         </div>
