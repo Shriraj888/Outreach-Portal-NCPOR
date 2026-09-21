@@ -1,7 +1,7 @@
 # NCPOR Polar Science Outreach Portal 🧭
 ### National Centre for Polar and Ocean Research (NCPOR)
 **Ministry of Earth Sciences, Government of India**
-
+ 
 An integrated, high-performance web platform delivering interactive public outreach, 3D cryosphere geospatial intelligence, educational discovery, and multi-tier archive management for India's scientific expeditions across **Antarctica**, the **Arctic**, and the **Himalayas (Third Pole)**.
 
 ---
