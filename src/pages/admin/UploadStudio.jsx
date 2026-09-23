@@ -2204,6 +2204,7 @@ export default function UploadStudio({ onBack, navigateTo, initialCategory = 'ex
 
         .upload-header-text {
           flex: 1;
+          min-width: 0;
         }
 
         .section-eyebrow {
@@ -2451,20 +2452,25 @@ export default function UploadStudio({ onBack, navigateTo, initialCategory = 'ex
         /* Forms Layout */
         .form-two-col-layout {
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
           gap: 1.5rem;
+          width: 100%;
         }
 
         .form-col {
           display: flex;
           flex-direction: column;
           gap: 1rem;
+          min-width: 0;
+          width: 100%;
         }
 
         .form-group {
           display: flex;
           flex-direction: column;
           gap: 0.4rem;
+          min-width: 0;
+          width: 100%;
         }
 
         .form-group label {
@@ -2477,6 +2483,8 @@ export default function UploadStudio({ onBack, navigateTo, initialCategory = 'ex
           display: flex;
           align-items: center;
           justify-content: space-between;
+          flex-wrap: wrap;
+          gap: 0.4rem;
         }
 
         .btn-auto-alt {
@@ -2498,6 +2506,9 @@ export default function UploadStudio({ onBack, navigateTo, initialCategory = 'ex
         }
 
         .form-input {
+          width: 100%;
+          box-sizing: border-box;
+          max-width: 100%;
           padding: 0.6rem 0.85rem;
           border: 1px solid #cbd5e1;
           border-radius: 8px;
@@ -2517,11 +2528,18 @@ export default function UploadStudio({ onBack, navigateTo, initialCategory = 'ex
           display: grid;
           grid-template-columns: 1fr 1fr;
           gap: 1rem;
+          width: 100%;
         }
 
         .tag-input-row {
           display: flex;
           gap: 0.5rem;
+          width: 100%;
+        }
+
+        .tag-input-row .form-input {
+          flex: 1;
+          min-width: 0;
         }
 
         .btn-add-tag {
@@ -3361,7 +3379,7 @@ export default function UploadStudio({ onBack, navigateTo, initialCategory = 'ex
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
-          max-width: 320px;
+          max-width: 100%;
         }
 
         .file-status-tag {
@@ -3639,6 +3657,372 @@ export default function UploadStudio({ onBack, navigateTo, initialCategory = 'ex
           border: 1px solid #fde68a;
           padding: 0.1rem 0.45rem;
           border-radius: 4px;
+        }
+
+        /* ========================================================= */
+        /* RESPONSIVE MEDIA QUERIES FOR TABLET & MOBILE             */
+        /* ========================================================= */
+
+        @media (max-width: 768px) {
+          .upload-studio-page {
+            padding-top: 1rem;
+            padding-bottom: 3rem;
+          }
+
+          .upload-header-row {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.85rem;
+            margin-bottom: 1.5rem;
+          }
+
+          .upload-header-text {
+            width: 100%;
+          }
+
+          .page-title {
+            font-size: 1.6rem;
+            line-height: 1.25;
+            margin-bottom: 0.4rem;
+          }
+
+          .page-sub {
+            font-size: 0.88rem;
+            line-height: 1.45;
+          }
+
+          /* Mode Selection Grid - Horizontally Arranged for Mobile */
+          .mode-selection-bar {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+          }
+
+          .mode-tab-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 0.75rem 0.35rem;
+            gap: 0.35rem;
+            min-width: 0;
+            width: 100%;
+            box-sizing: border-box;
+            border-radius: 10px;
+          }
+
+          .mode-card-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 0.35rem;
+            width: 100%;
+          }
+
+          .mode-icon-box {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+          }
+
+          .mode-title {
+            font-size: 0.76rem;
+            font-weight: 700;
+            line-height: 1.25;
+            text-align: center;
+            word-break: break-word;
+          }
+
+          .mode-flow-badge {
+            display: none;
+          }
+
+          .mode-desc {
+            display: none;
+          }
+
+          /* Stepper on Tablet & Mobile */
+          .pipeline-steps-bar {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            padding: 0.75rem 0.35rem;
+            gap: 0.25rem;
+          }
+
+          .step-connector {
+            display: none;
+          }
+
+          .pipeline-step-btn {
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 0.5rem 0.2rem;
+            gap: 0.35rem;
+            width: 100%;
+          }
+
+          .step-text-wrap {
+            align-items: center;
+            text-align: center;
+          }
+
+          .step-label {
+            font-size: 0.65rem;
+          }
+
+          .step-heading {
+            font-size: 0.72rem;
+            line-height: 1.2;
+            text-align: center;
+          }
+
+          /* Panels & Cards */
+          .step-content-panel,
+          .standalone-card {
+            padding: 1.25rem 0.85rem;
+            border-radius: 12px;
+          }
+
+          .form-subcard,
+          .media-creator-box,
+          .standalone-upload-banner {
+            padding: 1rem 0.75rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+          }
+
+          .step-panel-header,
+          .standalone-header-row {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+            padding-bottom: 1rem;
+            margin-bottom: 1.25rem;
+          }
+
+          .step-title,
+          .standalone-title {
+            font-size: 1.15rem;
+            line-height: 1.3;
+          }
+
+          .step-subtitle,
+          .standalone-subtitle {
+            font-size: 0.82rem;
+            line-height: 1.4;
+          }
+
+          /* Layouts to Single Column on Mobile */
+          .form-two-col-layout {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+          }
+
+          .form-grid-2 {
+            grid-template-columns: 1fr;
+            gap: 0.85rem;
+          }
+
+          /* Queued Media Grid */
+          .queued-media-grid {
+            grid-template-columns: 1fr;
+          }
+
+          /* Footers & Buttons */
+          .step-actions-footer {
+            flex-direction: column-reverse;
+            gap: 0.75rem;
+            align-items: stretch;
+            margin-top: 1.5rem;
+          }
+
+          .step-actions-footer > * {
+            width: 100%;
+          }
+
+          .btn-step-back,
+          .btn-primary-step,
+          .btn-publish-all {
+            width: 100%;
+            justify-content: center;
+            text-align: center;
+            padding: 0.75rem 1rem;
+            box-sizing: border-box;
+          }
+
+          .standalone-footer-actions {
+            flex-direction: column-reverse;
+            align-items: stretch;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+          }
+
+          .standalone-footer-actions .btn-step-back,
+          .btn-primary-publish {
+            width: 100%;
+            justify-content: center;
+            text-align: center;
+            padding: 0.75rem 1rem;
+            box-sizing: border-box;
+          }
+
+          /* File Uploaded Card Responsive */
+          .file-uploaded-card {
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            padding: 0.75rem;
+          }
+
+          .file-uploaded-info {
+            flex: 1 1 180px;
+            min-width: 0;
+          }
+
+          .file-card-actions {
+            width: 100%;
+            justify-content: flex-end;
+            padding-top: 0.5rem;
+            border-top: 1px solid #f1f5f9;
+          }
+
+          .btn-replace-file {
+            flex: 1;
+            justify-content: center;
+          }
+
+          /* Attached Publication Card */
+          .attached-pub-card {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 0.85rem;
+          }
+
+          .attached-pub-details {
+            width: 100%;
+          }
+
+          .attached-pub-title {
+            font-size: 0.88rem;
+            word-break: break-word;
+          }
+
+          .attached-pub-doi {
+            word-break: break-all;
+          }
+
+          .btn-remove-pub {
+            align-self: flex-end;
+          }
+
+          /* Media Creator Header */
+          .media-creator-header {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0.75rem;
+          }
+
+          .media-type-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            width: 100%;
+            gap: 0.5rem;
+          }
+
+          .type-toggle-btn {
+            justify-content: center;
+            padding: 0.5rem 0.4rem;
+            font-size: 0.75rem;
+            gap: 0.3rem;
+          }
+
+          .media-mode-hint {
+            text-align: center;
+          }
+
+          .media-source-toggle-bar {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0.5rem;
+          }
+
+          .input-mode-toggle-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            width: 100%;
+          }
+
+          .btn-mode-toggle {
+            justify-content: center;
+            padding: 0.4rem 0.5rem;
+            font-size: 0.7rem;
+          }
+
+          .media-add-action-row {
+            width: 100%;
+          }
+
+          .btn-add-media-item {
+            width: 100%;
+            justify-content: center;
+            padding: 0.7rem 1rem;
+          }
+
+          .upload-banner-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.4rem;
+          }
+
+          /* Mobile Toast Notification */
+          .toast-notification {
+            left: 16px;
+            right: 16px;
+            bottom: 16px;
+            justify-content: center;
+            text-align: center;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .page-title {
+            font-size: 1.35rem;
+          }
+
+          .subcard-icon-wrap {
+            width: 32px;
+            height: 32px;
+          }
+
+          .form-subcard-title {
+            font-size: 0.88rem;
+          }
+
+          .tag-input-row {
+            flex-direction: column;
+          }
+
+          .btn-add-tag {
+            width: 100%;
+            justify-content: center;
+            padding: 0.5rem 1rem;
+          }
+
+          .custom-file-dropzone {
+            padding: 1.25rem 0.85rem;
+          }
+
+          .dropzone-icon-box {
+            width: 38px;
+            height: 38px;
+          }
+
+          .dropzone-prompt {
+            font-size: 0.8rem;
+          }
         }
       `}</style>
     </div>
