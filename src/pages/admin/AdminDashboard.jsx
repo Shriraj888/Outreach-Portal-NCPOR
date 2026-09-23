@@ -429,12 +429,12 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
           <table className="admin-table">
             <thead>
               <tr>
-                <th style={{ minWidth: '320px' }}>Asset Title & Type</th>
-                <th style={{ minWidth: '150px' }}>Region / Year</th>
-                <th style={{ minWidth: '170px' }}>Details / Parameters</th>
-                <th style={{ minWidth: '160px' }}>AI Outreach Status</th>
-                <th style={{ minWidth: '140px' }}>Live Status</th>
-                <th className="text-right" style={{ minWidth: '240px' }}>Actions</th>
+                <th className="th-asset">Asset Title & Type</th>
+                <th className="th-region">Region / Year</th>
+                <th className="th-details">Details</th>
+                <th className="th-ai">AI Outreach</th>
+                <th className="th-status">Live Status</th>
+                <th className="th-actions text-right">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -465,7 +465,7 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
                     </td>
 
                     <td>
-                      <span className="table-scientist-text">{item.authorOrChief}</span>
+                      <span className="table-scientist-text" title={item.authorOrChief}>{item.authorOrChief}</span>
                     </td>
 
                     <td>
@@ -504,62 +504,72 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
 
                     <td className="text-right">
                       <div className="action-buttons-group">
-                        {/* Verification Studio Button */}
-                        <button 
-                          className="btn-action ai"
-                          onClick={() => navigateTo(`admin-generate-${item.id}`)}
-                          title="Open Outreach Review & Verification Studio"
-                        >
-                          <ShieldCheck size={13} />
-                          <span>Verification Studio</span>
-                        </button>
+                        <div className="actions-grid-wrap">
+                          <div className="actions-row-studios">
+                            {/* Verification Studio Button */}
+                            <button 
+                              className="btn-action ai"
+                              onClick={() => navigateTo(`admin-generate-${item.id}`)}
+                              title="Open Outreach Review & Verification Studio"
+                            >
+                              <ShieldCheck size={12} />
+                              <span>Verification Studio</span>
+                            </button>
 
-                        {/* Selective AI Studio Button */}
-                        <button 
-                          className="btn-action selective-ai"
-                          onClick={() => navigateTo(`admin-selective-ai-${item.id}`)}
-                          title="Synthesize targeted output in Selective AI Studio"
-                        >
-                          <Layers size={13} />
-                          <span>Selective AI</span>
-                        </button>
+                            {/* Selective AI Studio Button */}
+                            <button 
+                              className="btn-action selective-ai"
+                              onClick={() => navigateTo(`admin-selective-ai-${item.id}`)}
+                              title="Synthesize targeted output in Selective AI Studio"
+                            >
+                              <Layers size={12} />
+                              <span>Selective AI</span>
+                            </button>
+                          </div>
 
-                        {/* Public View */}
-                        {item.type === 'report' ? (
-                          <button 
-                            className="btn-action icon-btn view"
-                            onClick={() => onSelectExpedition(item.id)}
-                            title="View Public Expedition Page"
-                          >
-                            <Eye size={14} />
-                          </button>
-                        ) : (
-                          <button 
-                            className="btn-action icon-btn view"
-                            onClick={() => navigateTo(item.type === 'dataset' || item.type === 'publication' ? 'publications' : 'home')}
-                            title="View on Public Portal"
-                          >
-                            <Eye size={14} />
-                          </button>
-                        )}
+                          <div className="actions-row-management">
+                            {/* Public View */}
+                            {item.type === 'report' ? (
+                              <button 
+                                className="btn-manage view"
+                                onClick={() => onSelectExpedition(item.id)}
+                                title="View Public Expedition Page"
+                              >
+                                <Eye size={12} />
+                                <span>View</span>
+                              </button>
+                            ) : (
+                              <button 
+                                className="btn-manage view"
+                                onClick={() => navigateTo(item.type === 'dataset' || item.type === 'publication' ? 'publications' : 'home')}
+                                title="View on Public Portal"
+                              >
+                                <Eye size={12} />
+                                <span>View</span>
+                              </button>
+                            )}
 
-                        {/* Edit */}
-                        <button 
-                          className="btn-action icon-btn edit"
-                          onClick={() => navigateTo(`admin-edit-${item.id}`)}
-                          title="Edit Asset"
-                        >
-                          <Edit size={14} />
-                        </button>
+                            {/* Edit */}
+                            <button 
+                              className="btn-manage edit"
+                              onClick={() => navigateTo(`admin-edit-${item.id}`)}
+                              title="Edit Asset"
+                            >
+                              <Edit size={12} />
+                              <span>Edit</span>
+                            </button>
 
-                        {/* Delete */}
-                        <button 
-                          className="btn-action icon-btn delete"
-                          onClick={() => handleDelete(item)}
-                          title="Delete from Archive"
-                        >
-                          <Trash2 size={14} />
-                        </button>
+                            {/* Delete */}
+                            <button 
+                              className="btn-manage delete"
+                              onClick={() => handleDelete(item)}
+                              title="Delete from Archive"
+                            >
+                              <Trash2 size={12} />
+                              <span>Delete</span>
+                            </button>
+                          </div>
+                        </div>
                       </div>
                     </td>
                   </tr>
@@ -1008,13 +1018,7 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
           border-bottom: 1px solid #e2e8f0;
           padding-bottom: 0.85rem;
           margin-bottom: 1.25rem;
-          overflow-x: auto;
-          -webkit-overflow-scrolling: touch;
-          scrollbar-width: none;
-        }
-
-        .archive-tab-bar::-webkit-scrollbar {
-          display: none;
+          flex-wrap: wrap;
         }
 
         .archive-tab-btn {
@@ -1168,25 +1172,34 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
         }
 
         .table-responsive {
-          overflow-x: auto;
-          -webkit-overflow-scrolling: touch;
+          width: 100%;
+          overflow-x: hidden;
           border-radius: var(--radius-sm);
           border: 1px solid #e2e8f0;
         }
 
-        .admin-table {
-          width: 100%;
+        .table-responsive .admin-table {
+          min-width: 0 !important;
+          width: 100% !important;
           border-collapse: collapse;
+          table-layout: fixed !important;
           text-align: left;
-          font-size: 0.85rem;
+          font-size: 0.84rem;
         }
 
+        .th-asset { width: 24%; }
+        .th-region { width: 9%; }
+        .th-details { width: 15%; }
+        .th-ai { width: 13%; }
+        .th-status { width: 11%; }
+        .th-actions { width: 28%; text-align: right; }
+
         .admin-table th {
-          padding: 0.9rem 1.1rem;
+          padding: 0.8rem 0.65rem;
           color: #475569;
           font-weight: 700;
           text-transform: uppercase;
-          font-size: 0.72rem;
+          font-size: 0.7rem;
           letter-spacing: 0.05em;
           border-bottom: 1px solid #e2e8f0;
           background: #f8fafc;
@@ -1194,7 +1207,7 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
         }
 
         .admin-table td {
-          padding: 1.1rem 1.1rem;
+          padding: 0.75rem 0.65rem;
           border-bottom: 1px solid #f1f5f9;
           vertical-align: middle;
           background: #ffffff;
@@ -1207,12 +1220,13 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
         .table-mission-cell {
           display: flex;
           align-items: center;
-          gap: 0.85rem;
+          gap: 0.65rem;
+          min-width: 0;
         }
 
         .table-thumb {
-          width: 48px;
-          height: 48px;
+          width: 42px;
+          height: 42px;
           border-radius: 8px;
           object-fit: cover;
           flex-shrink: 0;
@@ -1223,20 +1237,27 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
         .table-mission-info {
           display: flex;
           flex-direction: column;
-          gap: 0.25rem;
+          gap: 0.2rem;
+          min-width: 0;
+          flex: 1;
         }
 
         .table-mission-title {
           font-weight: 700;
           color: var(--navy);
-          line-height: 1.3;
-          font-size: 0.92rem;
+          line-height: 1.25;
+          font-size: 0.85rem;
+          word-break: break-word;
+          overflow: hidden;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
         }
 
         .table-type-tag {
           display: flex;
           align-items: center;
-          gap: 0.45rem;
+          gap: 0.35rem;
           flex-wrap: wrap;
         }
 
@@ -1264,8 +1285,9 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
 
         .table-region-cell {
           display: flex;
-          align-items: center;
-          gap: 0.5rem;
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 0.25rem;
         }
 
         .table-year-text {
@@ -1276,17 +1298,23 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
 
         .table-scientist-text {
           color: var(--text-secondary);
-          font-size: 0.84rem;
+          font-size: 0.78rem;
           font-weight: 500;
+          line-height: 1.35;
+          word-break: break-word;
+          overflow: hidden;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
         }
 
         .ai-status-badge {
           display: inline-flex;
           align-items: center;
-          gap: 0.35rem;
-          padding: 0.3rem 0.7rem;
+          gap: 0.3rem;
+          padding: 0.25rem 0.55rem;
           border-radius: var(--radius-full);
-          font-size: 0.74rem;
+          font-size: 0.72rem;
           font-weight: 600;
           white-space: nowrap;
         }
@@ -1306,10 +1334,10 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
         .status-toggle-btn {
           display: inline-flex;
           align-items: center;
-          gap: 0.35rem;
-          padding: 0.3rem 0.7rem;
+          gap: 0.3rem;
+          padding: 0.25rem 0.55rem;
           border-radius: var(--radius-full);
-          font-size: 0.76rem;
+          font-size: 0.74rem;
           font-weight: 600;
           cursor: pointer;
           border: none;
@@ -1339,85 +1367,120 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
 
         .action-buttons-group {
           display: flex;
-          align-items: center;
           justify-content: flex-end;
-          gap: 0.35rem;
-          white-space: nowrap;
+          width: 100%;
         }
 
-        .btn-action {
+        .actions-grid-wrap {
+          display: flex;
+          flex-direction: column;
+          gap: 0.35rem;
+          width: 100%;
+          max-width: 250px;
+        }
+
+        .actions-row-studios {
+          display: grid;
+          grid-template-columns: 1.25fr 1fr;
+          gap: 0.35rem;
+          width: 100%;
+        }
+
+        .actions-row-management {
+          display: grid;
+          grid-template-columns: 1fr 1fr 1fr;
+          gap: 0.35rem;
+          width: 100%;
+        }
+
+        .actions-row-studios .btn-action {
           display: inline-flex;
           align-items: center;
-          gap: 0.35rem;
-          padding: 0.4rem 0.7rem;
-          border-radius: var(--radius-sm);
-          font-size: 0.78rem;
+          justify-content: center;
+          gap: 0.3rem;
+          padding: 0.32rem 0.4rem;
+          font-size: 0.72rem;
           font-weight: 600;
+          border-radius: 6px;
+          white-space: nowrap;
           cursor: pointer;
-          border: 1px solid transparent;
           transition: all 0.15s ease;
         }
 
-        .btn-action.ai {
+        .actions-row-studios .btn-action.ai {
           background: #eff6ff;
-          border-color: #bfdbfe;
+          border: 1px solid #bfdbfe;
           color: #0369a1;
         }
 
-        .btn-action.ai:hover {
+        .actions-row-studios .btn-action.ai:hover {
           background: #0284c7;
           color: #ffffff;
           border-color: #0284c7;
         }
 
-        .btn-action.selective-ai {
+        .actions-row-studios .btn-action.selective-ai {
           background: #ecfdf5;
-          border-color: #a7f3d0;
+          border: 1px solid #a7f3d0;
           color: #047857;
         }
 
-        .btn-action.selective-ai:hover {
+        .actions-row-studios .btn-action.selective-ai:hover {
           background: #059669;
           color: #ffffff;
           border-color: #059669;
         }
 
-        .btn-action.icon-btn {
-          padding: 0.4rem 0.5rem;
-        }
-
-        .btn-action.view {
-          background: #f8fafc;
+        .btn-manage {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.28rem;
+          padding: 0.26rem 0.35rem;
+          font-size: 0.7rem;
+          font-weight: 600;
+          border-radius: 5px;
+          white-space: nowrap;
           border: 1px solid var(--border-subtle);
-          color: var(--text-secondary);
+          cursor: pointer;
+          transition: all 0.15s ease;
+          background: #ffffff;
         }
 
-        .btn-action.view:hover {
+        .btn-manage.view {
+          background: #f8fafc;
+          color: #475569;
+          border-color: #e2e8f0;
+        }
+
+        .btn-manage.view:hover {
           background: #f1f5f9;
           color: var(--navy);
-          border-color: #94a3b8;
+          border-color: #cbd5e1;
         }
 
-        .btn-action.edit {
-          background: #e0f2fe;
-          color: #0369a1;
+        .btn-manage.edit {
+          background: #f0f9ff;
+          color: #0284c7;
           border-color: #bae6fd;
         }
 
-        .btn-action.edit:hover {
-          background: #bae6fd;
-          color: #0284c7;
+        .btn-manage.edit:hover {
+          background: #e0f2fe;
+          color: #0369a1;
+          border-color: #7dd3fc;
         }
 
-        .btn-action.delete {
+        .btn-manage.delete {
           background: #fef2f2;
           color: #dc2626;
           border-color: #fecaca;
         }
 
-        .btn-action.delete:hover {
+        .btn-manage.delete:hover {
           background: #fee2e2;
           color: #b91c1c;
+          border-color: #fca5a5;
         }
 
         .desktop-table-view {
@@ -1426,6 +1489,9 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
 
         .admin-mobile-cards-view {
           display: none;
+          flex-direction: column;
+          gap: 0.75rem;
+          width: 100%;
         }
 
         .admin-mobile-card {
@@ -1610,7 +1676,7 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
           }
         }
 
-        @media (max-width: 768px) {
+        @media (max-width: 900px) {
           .admin-dashboard-page {
             padding: 1.25rem 0.75rem 3.5rem;
             gap: 1.25rem;
