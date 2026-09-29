@@ -520,7 +520,7 @@ export default function Header({ currentRoute, navigateTo }) {
         }
 
         .main-nav-bar {
-          padding: 0.8rem 0;
+          padding: 0.55rem 0;
           background: rgba(255, 255, 255, 0.96);
           backdrop-filter: blur(12px);
           -webkit-backdrop-filter: blur(12px);
@@ -556,8 +556,8 @@ export default function Header({ currentRoute, navigateTo }) {
         }
 
         .brand-logo-img {
-          width: 44px;
-          height: 44px;
+          width: 54px;
+          height: 54px;
           object-fit: contain;
           border-radius: 8px;
           flex-shrink: 0;
@@ -566,7 +566,7 @@ export default function Header({ currentRoute, navigateTo }) {
         }
 
         .brand-lockup:hover .brand-logo-img {
-          transform: scale(1.06);
+          transform: scale(1.05);
           filter: drop-shadow(0 4px 10px rgba(15, 23, 42, 0.22));
         }
 
@@ -1207,9 +1207,9 @@ export default function Header({ currentRoute, navigateTo }) {
           .brand-primary {
             font-size: 1.05rem;
           }
-          .brand-emblem-badge {
-            width: 36px;
-            height: 36px;
+          .brand-logo-img {
+            width: 44px;
+            height: 44px;
           }
           .a11y-toolbar {
             gap: 0.2rem;
