@@ -529,7 +529,7 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
         {/* DATASETS SECTION */}
         {(viewTab === 'all' || viewTab === 'datasets') && filteredDatasets.length > 0 && (
           <div className="section-block">
-            <div className="section-header-band reveal">
+            <div className="section-header-band">
               <div className="section-title-group">
                 <div className="section-icon-cube dataset-cube">
                   <Database size={18} />
@@ -548,7 +548,7 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
                 const catStyle = getCategoryColor(ds.category);
 
                 return (
-                  <div key={ds.id} className="pub-card-modern dataset-card-style reveal" style={{ '--delay': `${filteredDatasets.indexOf(ds) > 5 ? 0 : filteredDatasets.indexOf(ds) * 60}ms` }}>
+                  <div key={ds.id} className="pub-card-modern dataset-card-style">
                     <div className="pub-card-main">
                       {/* Top Header Ribbon */}
                       <div className="card-top-ribbon">
@@ -719,7 +719,7 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
         {/* PUBLICATIONS SECTION */}
         {(viewTab === 'all' || viewTab === 'publications') && filteredPubs.length > 0 && (
           <div className="section-block">
-            <div className="section-header-band reveal">
+            <div className="section-header-band">
               <div className="section-title-group">
                 <div className="section-icon-cube pub-cube">
                   <BookOpen size={18} />
@@ -738,7 +738,7 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
                 const catStyle = getCategoryColor(pub.category);
 
                 return (
-                  <div key={pub.id} className="pub-card-modern publication-card-style reveal" style={{ '--delay': `${filteredPubs.indexOf(pub) > 5 ? 0 : filteredPubs.indexOf(pub) * 60}ms` }}>
+                  <div key={pub.id} className="pub-card-modern publication-card-style">
                     <div className="pub-card-main">
                       {/* Top Header Ribbon */}
                       <div className="card-top-ribbon">
@@ -985,10 +985,10 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
 
       <style>{`
         .publications-page-container {
-          padding: 2.5rem 1.5rem 6rem;
+          padding: 1.5rem 1.5rem 5rem;
           display: flex;
           flex-direction: column;
-          gap: 2rem;
+          gap: 1.5rem;
           max-width: 1280px;
           margin: 0 auto;
         }
@@ -1493,10 +1493,10 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
           background: #ffffff;
           border: 1px solid var(--border-card);
           border-radius: var(--radius-md);
-          padding: 1.5rem;
+          padding: 1.15rem 1.35rem;
           display: flex;
           flex-direction: column;
-          gap: 1.25rem;
+          gap: 1rem;
           box-shadow: var(--shadow-sm);
         }
 
@@ -1777,6 +1777,18 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
           transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
           display: flex;
           flex-direction: column;
+          animation: cardAppear 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        @keyframes cardAppear {
+          from {
+            opacity: 0;
+            transform: translateY(10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
         }
 
         .pub-card-modern:hover {

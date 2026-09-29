@@ -1265,6 +1265,7 @@ export default function PolarGlobeMap({
   return (
     <div 
       ref={containerRef} 
+      data-lenis-prevent
       className={`polar-globe-wrapper ${isHoveringPin ? 'hovering-pin' : ''} ${isFullscreen ? 'pg-fullscreen-active' : ''}`}
     >
       {/* Top HUD Overlay Header */}

@@ -13,8 +13,18 @@ import UploadStudio from './pages/admin/UploadStudio';
 import ExpeditionForm from './pages/admin/ExpeditionForm';
 import AIGenerateStudio from './pages/admin/AIGenerateStudio';
 import SelectiveAIStudio from './pages/admin/SelectiveAIStudio';
+import SmoothScroll from './components/SmoothScroll';
+import ScrollToTop from './components/ScrollToTop';
 import { routeToHash, hashToRoute } from './utils/routes';
 import './App.css';
+
+function smoothScrollTop() {
+  if (window.lenis && typeof window.lenis.scrollTo === 'function') {
+    window.lenis.scrollTo(0, { immediate: false, duration: 0.65 });
+  } else {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+}
 
 function MainApp() {
   // Parse initial route from window.location.hash on mount
@@ -63,7 +73,7 @@ function MainApp() {
       if (parsed.params.expeditionId) {
         setSelectedExpeditionId(parsed.params.expeditionId);
       }
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      smoothScrollTop();
     };
 
     window.addEventListener('hashchange', handleHashChange);
@@ -71,7 +81,7 @@ function MainApp() {
   }, []);
 
   const navigateTo = useCallback((route, params = {}) => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    smoothScrollTop();
     navCountRef.current += 1;
 
     let finalParams = { ...params };
@@ -225,11 +235,13 @@ function MainApp() {
 
   return (
     <div className="app-shell">
+      <SmoothScroll currentRoute={currentRoute} />
       <Header currentRoute={currentRoute} navigateTo={navigateTo} />
       <main className={`app-main-content ${pageTransition}`}>
         {renderContent()}
       </main>
       <Footer navigateTo={navigateTo} />
+      <ScrollToTop />
     </div>
   );
 }
