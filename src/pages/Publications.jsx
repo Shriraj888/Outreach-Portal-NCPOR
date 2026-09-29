@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect, useCallback } from 'react';
+import useScrollRevealAll from '../hooks/useScrollRevealAll';
 import { usePortal } from '../context/PortalContext';
 import { 
   FileText, 
@@ -60,6 +61,7 @@ export default function Publications({ navigateTo }) {
   const [apiError, setApiError] = useState(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [lastSynced, setLastSynced] = useState(null);
+  const pageRef = useScrollRevealAll();
 
   const categories = [
     'All',
@@ -352,7 +354,7 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
   };
 
   return (
-    <div className="container publications-page-container">
+    <div className="container publications-page-container" ref={pageRef}>
       {/* Toast Notification Alert */}
       {downloadToast && (
         <div className="download-toast-box">
@@ -365,7 +367,7 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
       )}
 
       {/* Header */}
-      <div className="page-header-row">
+      <div className="page-header-row reveal">
         <div className="page-header-text">
           <div className="section-eyebrow">OPEN RESEARCH & DATA ARCHIVE</div>
           <h1 className="page-title">Polar Science Publications & Datasets</h1>
@@ -412,7 +414,7 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
       )}
 
       {/* View Mode Navigation Tabs */}
-      <div className="view-mode-tabs-container">
+      <div className="view-mode-tabs-container reveal" style={{ '--delay': '80ms' }}>
         <div className="view-mode-tabs">
           <button 
             className={`mode-tab tab-all ${viewTab === 'all' ? 'active' : ''}`}
@@ -449,7 +451,7 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
 
 
       {/* Filter & Search Bar Hub */}
-      <div className="glass-panel filter-hub-card">
+      <div className="glass-panel filter-hub-card reveal" style={{ '--delay': '120ms' }}>
         <div className="search-sort-row">
           <div className="search-input-wrapper">
             <Search size={18} className="search-icon-left" />
@@ -527,7 +529,7 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
         {/* DATASETS SECTION */}
         {(viewTab === 'all' || viewTab === 'datasets') && filteredDatasets.length > 0 && (
           <div className="section-block">
-            <div className="section-header-band">
+            <div className="section-header-band reveal">
               <div className="section-title-group">
                 <div className="section-icon-cube dataset-cube">
                   <Database size={18} />
@@ -546,7 +548,7 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
                 const catStyle = getCategoryColor(ds.category);
 
                 return (
-                  <div key={ds.id} className="pub-card-modern dataset-card-style">
+                  <div key={ds.id} className="pub-card-modern dataset-card-style reveal" style={{ '--delay': `${filteredDatasets.indexOf(ds) > 5 ? 0 : filteredDatasets.indexOf(ds) * 60}ms` }}>
                     <div className="pub-card-main">
                       {/* Top Header Ribbon */}
                       <div className="card-top-ribbon">
@@ -717,7 +719,7 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
         {/* PUBLICATIONS SECTION */}
         {(viewTab === 'all' || viewTab === 'publications') && filteredPubs.length > 0 && (
           <div className="section-block">
-            <div className="section-header-band">
+            <div className="section-header-band reveal">
               <div className="section-title-group">
                 <div className="section-icon-cube pub-cube">
                   <BookOpen size={18} />
@@ -736,7 +738,7 @@ Archived by NCPOR Polar Outreach & Science Communication Portal
                 const catStyle = getCategoryColor(pub.category);
 
                 return (
-                  <div key={pub.id} className="pub-card-modern publication-card-style">
+                  <div key={pub.id} className="pub-card-modern publication-card-style reveal" style={{ '--delay': `${filteredPubs.indexOf(pub) > 5 ? 0 : filteredPubs.indexOf(pub) * 60}ms` }}>
                     <div className="pub-card-main">
                       {/* Top Header Ribbon */}
                       <div className="card-top-ribbon">

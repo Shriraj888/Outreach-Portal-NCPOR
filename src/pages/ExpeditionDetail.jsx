@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import useScrollRevealAll from '../hooks/useScrollRevealAll';
 import { usePortal } from '../context/PortalContext';
 import {
   ArrowLeft,
@@ -41,6 +42,7 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
   const [copiedDoiId, setCopiedDoiId] = useState(null);
   const [downloadedPubId, setDownloadedPubId] = useState(null);
   const [expandedAbstracts, setExpandedAbstracts] = useState({});
+  const pageRef = useScrollRevealAll();
 
   const expedition = expeditions.find(e => e.id === expeditionId);
 
@@ -112,9 +114,9 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
   const title = (lang === 'hi' && expedition.titleHi) ? expedition.titleHi : expedition.title;
 
   return (
-    <div className="expedition-detail-page">
+    <div className="expedition-detail-page" ref={pageRef}>
       {/* Top Banner Navigation */}
-      <div className="detail-top-bar">
+      <div className="detail-top-bar reveal" style={{ '--delay': '0ms' }}>
         <div className="container detail-top-inner">
           <button className="btn-back" onClick={onBack}>
             <ArrowLeft size={16} />
@@ -158,16 +160,16 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
       {/* Hero Header */}
       <div className="detail-hero">
         <div className="container detail-hero-content">
-          <div className="detail-tags-row">
+          <div className="detail-tags-row reveal" style={{ '--delay': '80ms' }}>
             <span className="badge badge-antarctica">{expedition.region}</span>
             <span className="detail-year-tag">
               <Calendar size={13} /> {expedition.year}
             </span>
           </div>
 
-          <h1 className="detail-hero-title">{title}</h1>
+          <h1 className="detail-hero-title reveal" style={{ '--delay': '150ms' }}>{title}</h1>
 
-          <div className="detail-meta-grid">
+          <div className="detail-meta-grid reveal" style={{ '--delay': '220ms' }}>
             {expedition.chiefScientist && (
               <div className="meta-card">
                 <User size={16} className="meta-card-icon" />
@@ -233,7 +235,7 @@ export default function ExpeditionDetail({ expeditionId, onBack, navigateTo }) {
       </div>
 
       {/* Tab Contents */}
-      <div className="container detail-content-body">
+      <div className="container detail-content-body reveal" style={{ '--delay': '100ms' }}>
         {/* Tab 1: Overview & Outreach Summary */}
         {activeTab === 'overview' && (
           <div className="tab-pane-grid">

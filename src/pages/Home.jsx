@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import useScrollRevealAll from '../hooks/useScrollRevealAll';
 import { usePortal } from '../context/PortalContext';
 import { 
   Compass, 
@@ -26,6 +27,7 @@ export default function Home({ navigateTo, onSelectExpedition }) {
   } = usePortal();
 
   const [activeStationRegion, setActiveStationRegion] = useState('All');
+  const pageRef = useScrollRevealAll();
 
   // Featured expedition (e.g. 43rd Antarctic)
   const featuredExpedition = expeditions.find(e => e.id === 'isea-43') || expeditions[0];
@@ -43,7 +45,7 @@ export default function Home({ navigateTo, onSelectExpedition }) {
     });
 
   return (
-    <div className="home-page-container">
+    <div className="home-page-container" ref={pageRef}>
       {/* Live Polar Telemetry Ticker Bar */}
       <div className="telemetry-bar">
         <div className="container telemetry-inner">
@@ -119,7 +121,7 @@ export default function Home({ navigateTo, onSelectExpedition }) {
 
         <div className="container hero-content">
           {/* Sovereign & Scientific Institutional Masthead */}
-          <div className="hero-institutional-masthead">
+          <div className="hero-institutional-masthead reveal" style={{ '--delay': '0ms' }}>
             <div className="masthead-sovereign-line">
               <span className="masthead-rule left-rule"></span>
               <div className="masthead-identity">
@@ -141,7 +143,7 @@ export default function Home({ navigateTo, onSelectExpedition }) {
             </div>
           </div>
 
-          <h1 className="hero-heading">
+          <h1 className="hero-heading reveal" style={{ '--delay': '100ms' }}>
             <span className="hero-title-main">
               {lang === 'hi' ? 'राष्ट्रीय ध्रुवीय विज्ञान' : 'NATIONAL POLAR SCIENCE'}
             </span>
@@ -150,15 +152,15 @@ export default function Home({ navigateTo, onSelectExpedition }) {
             </span>
           </h1>
 
-          <h2 className="hero-tagline">
+          <h2 className="hero-tagline reveal" style={{ '--delay': '180ms' }}>
             {t.hero.title}
           </h2>
 
-          <p className="hero-subtext">
+          <p className="hero-subtext reveal" style={{ '--delay': '240ms' }}>
             {t.hero.subtitle}
           </p>
 
-          <div className="hero-cta-group">
+          <div className="hero-cta-group reveal" style={{ '--delay': '320ms' }}>
             <button 
               className="btn-saffron hero-btn hero-btn-primary"
               onClick={() => {
@@ -181,7 +183,7 @@ export default function Home({ navigateTo, onSelectExpedition }) {
 
 
           {/* India's Polar Research Stations Hub */}
-          <div className="hero-stations-hub">
+          <div className="hero-stations-hub reveal" style={{ '--delay': '400ms' }}>
             <div className="stations-hub-header">
               <div className="hub-header-left">
                 <span className="hub-eyebrow">
@@ -290,7 +292,7 @@ export default function Home({ navigateTo, onSelectExpedition }) {
       {/* 3 Polar Pillars Navigator */}
       <section className="pillars-section">
         <div className="container">
-          <div className="section-header">
+          <div className="section-header reveal">
             <div className="section-eyebrow">EXPLORE BY FRONTIER</div>
             <h2 className="section-title">India's Three Poles of Scientific Exploration</h2>
             <p className="section-subtitle">
@@ -300,7 +302,7 @@ export default function Home({ navigateTo, onSelectExpedition }) {
 
           <div className="pillars-grid">
             {/* Antarctica */}
-            <div className="pillar-card antarctica" onClick={() => handleRegionClick('Antarctica')}>
+            <div className="pillar-card antarctica reveal" style={{ '--delay': '0ms' }} onClick={() => handleRegionClick('Antarctica')}>
               <div className="pillar-bg-img bg-antarctica"></div>
               <div className="pillar-overlay"></div>
               <div className="pillar-top-tag">
@@ -328,7 +330,7 @@ export default function Home({ navigateTo, onSelectExpedition }) {
             </div>
 
             {/* Arctic */}
-            <div className="pillar-card arctic" onClick={() => handleRegionClick('Arctic')}>
+            <div className="pillar-card arctic reveal" style={{ '--delay': '100ms' }} onClick={() => handleRegionClick('Arctic')}>
               <div className="pillar-bg-img bg-arctic"></div>
               <div className="pillar-overlay"></div>
               <div className="pillar-top-tag">
@@ -356,7 +358,7 @@ export default function Home({ navigateTo, onSelectExpedition }) {
             </div>
 
             {/* Himalaya */}
-            <div className="pillar-card himalaya" onClick={() => handleRegionClick('Himalaya')}>
+            <div className="pillar-card himalaya reveal" style={{ '--delay': '200ms' }} onClick={() => handleRegionClick('Himalaya')}>
               <div className="pillar-bg-img bg-himalaya"></div>
               <div className="pillar-overlay"></div>
               <div className="pillar-top-tag">
@@ -390,11 +392,11 @@ export default function Home({ navigateTo, onSelectExpedition }) {
       {featuredExpedition && (
         <section className="featured-spotlight-section">
           <div className="container">
-            <div className="section-header">
+            <div className="section-header reveal">
               <div className="section-eyebrow">FEATURED MISSION</div>
               <h2 className="section-title">Latest Expedition Spotlight</h2>
             </div>
-            <div className="spotlight-card">
+            <div className="spotlight-card reveal" style={{ '--delay': '80ms' }}>
               <div className="spotlight-grid">
                 <div className="spotlight-media">
                   <img 
@@ -462,7 +464,7 @@ export default function Home({ navigateTo, onSelectExpedition }) {
       {/* Grid of Recent Expeditions */}
       <section className="recent-expeditions-section">
         <div className="container">
-          <div className="section-header-flex">
+          <div className="section-header-flex reveal">
             <div>
               <div className="section-eyebrow">POLAR ARCHIVES</div>
               <h2 className="section-title">Latest Archived Expeditions</h2>
@@ -496,7 +498,7 @@ export default function Home({ navigateTo, onSelectExpedition }) {
       {/* Latest Institutional News & Activities */}
       <section className="news-section">
         <div className="container">
-          <div className="section-header">
+          <div className="section-header reveal">
             <div className="section-eyebrow">INSTITUTIONAL ANNOUNCEMENTS</div>
             <h2 className="section-title">Latest Activities & Outreach Feed</h2>
           </div>
@@ -506,7 +508,7 @@ export default function Home({ navigateTo, onSelectExpedition }) {
               const cleanTitle = (lang === 'hi' && act.titleHi ? act.titleHi : act.title).replace(/[—–]/g, '-');
               const cleanSummary = act.summary ? act.summary.replace(/[—–]/g, '-') : '';
               return (
-                <div key={act.id} className="activity-card" role="article">
+                <div key={act.id} className="activity-card reveal" style={{ '--delay': `${activities.indexOf(act) * 80}ms` }} role="article">
                   <div className="act-top-bar">
                     <span className={`act-badge act-badge-${act.id}`}>
                       {act.badge}

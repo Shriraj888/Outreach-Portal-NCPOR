@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import useScrollRevealAll from '../hooks/useScrollRevealAll';
 import { usePortal } from '../context/PortalContext';
 import { 
   Search, 
@@ -35,6 +36,7 @@ export default function Expeditions({ onSelectExpedition, navigateTo }) {
   const [contentTypeFilter, setContentTypeFilter] = useState('all'); // all, ai, reports, media
   const [sortBy, setSortBy] = useState('newest'); // newest, oldest, title
   const [viewMode, setViewMode] = useState('grid'); // grid, list
+  const pageRef = useScrollRevealAll();
 
   const regions = [
     { id: 'All', label: 'All Frontiers' },
@@ -119,9 +121,9 @@ export default function Expeditions({ onSelectExpedition, navigateTo }) {
   const hasActiveFilters = selectedRegion !== 'All' || selectedYear !== 'All' || contentTypeFilter !== 'all' || searchQuery.trim() !== '';
 
   return (
-    <div className="container expeditions-page-container">
+    <div className="container expeditions-page-container" ref={pageRef}>
       {/* Page Header */}
-      <div className="page-header-row">
+      <div className="page-header-row reveal">
         <div className="header-text-block">
           <div className="section-eyebrow">
             <Compass size={13} className="eyebrow-icon" />
@@ -145,7 +147,7 @@ export default function Expeditions({ onSelectExpedition, navigateTo }) {
       </div>
 
       {/* Ultra-Compact Unified Filter Toolbar */}
-      <div className="filter-toolbar">
+      <div className="filter-toolbar reveal" style={{ '--delay': '80ms' }}>
         {/* Row 1: Search + Select Controls + View Toggle */}
         <div className="filter-primary-row">
           {/* Search Input */}
@@ -281,7 +283,7 @@ export default function Expeditions({ onSelectExpedition, navigateTo }) {
       </div>
 
       {/* Results Header Bar */}
-      <div className="results-status-bar">
+      <div className="results-status-bar reveal" style={{ '--delay': '120ms' }}>
         <div className="results-count-text">
           Showing <strong>{filteredExpeditions.length}</strong> of {expeditions.length} expeditions
         </div>
@@ -320,12 +322,13 @@ export default function Expeditions({ onSelectExpedition, navigateTo }) {
       {filteredExpeditions.length > 0 ? (
         viewMode === 'grid' ? (
           <div className="grid-cards">
-            {filteredExpeditions.map((exp) => (
-              <ExpeditionCard 
-                key={exp.id} 
-                expedition={exp} 
-                onSelect={onSelectExpedition} 
-              />
+            {filteredExpeditions.map((exp, idx) => (
+              <div key={exp.id} className="reveal" style={{ '--delay': `${Math.min(idx, 5) * 80}ms` }}>
+                <ExpeditionCard 
+                  expedition={exp} 
+                  onSelect={onSelectExpedition} 
+                />
+              </div>
             ))}
           </div>
         ) : (
@@ -399,7 +402,7 @@ export default function Expeditions({ onSelectExpedition, navigateTo }) {
           </div>
         )
       ) : (
-        <div className="empty-results-box glass-panel">
+        <div className="empty-results-box glass-panel reveal-scale">
           <div className="empty-icon-wrap">
             <Search size={30} />
           </div>

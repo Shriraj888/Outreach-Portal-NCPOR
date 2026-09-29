@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { usePortal } from '../../context/PortalContext';
+import useScrollRevealAll from '../../hooks/useScrollRevealAll';
 import { 
   Plus, 
   Sparkles, 
@@ -25,6 +26,7 @@ import {
 } from 'lucide-react';
 
 export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
+  const containerRef = useScrollRevealAll();
   const { 
     expeditions, 
     datasets,
@@ -193,9 +195,9 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
   };
 
   return (
-    <div className="container admin-dashboard-page">
+    <div className="container admin-dashboard-page" ref={containerRef}>
       {/* Top Banner */}
-      <div className="admin-header-row">
+      <div className="admin-header-row reveal">
         <div>
           <div className="section-eyebrow">NCPOR POLAR OUTREACH & CONTENT STUDIO</div>
           <h1 className="page-title">Science Archival & Verification Studio</h1>
@@ -238,7 +240,7 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
       </div>
 
       {/* Upload Focus Action Cards */}
-      <div className="upload-focus-banner glass-panel">
+      <div className="upload-focus-banner glass-panel reveal">
         <div className="upload-focus-header">
           <div className="upload-focus-title">
             <UploadCloud size={20} className="pulse-glow" />
@@ -248,7 +250,7 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
         </div>
 
         <div className="quick-upload-grid three-col">
-          <div className="quick-upload-card highlighted-card" onClick={() => navigateTo('admin-upload-expedition')}>
+          <div className="quick-upload-card highlighted-card reveal" style={{ '--delay': '0ms' }} onClick={() => navigateTo('admin-upload-expedition')}>
             <div className="quick-icon-box bg-blue">
               <Compass size={20} />
             </div>
@@ -259,7 +261,7 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
             <span className="btn-quick-plus"><Plus size={14} /></span>
           </div>
 
-          <div className="quick-upload-card" onClick={() => navigateTo('admin-upload-publications')}>
+          <div className="quick-upload-card reveal" style={{ '--delay': '80ms' }} onClick={() => navigateTo('admin-upload-publications')}>
             <div className="quick-icon-box bg-amber">
               <BookOpen size={20} />
             </div>
@@ -270,7 +272,7 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
             <span className="btn-quick-plus"><Plus size={14} /></span>
           </div>
 
-          <div className="quick-upload-card" onClick={() => navigateTo('admin-upload-datasets')}>
+          <div className="quick-upload-card reveal" style={{ '--delay': '160ms' }} onClick={() => navigateTo('admin-upload-datasets')}>
             <div className="quick-icon-box bg-purple">
               <Database size={20} />
             </div>
@@ -285,7 +287,7 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
 
       {/* KPI Cards Grid */}
       <div className="admin-kpi-grid">
-        <div className="glass-panel kpi-card">
+        <div className="glass-panel kpi-card reveal" style={{ '--delay': '0ms' }}>
           <div className="kpi-icon-box bg-blue">
             <Compass size={22} />
           </div>
@@ -295,7 +297,7 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
           </div>
         </div>
 
-        <div className="glass-panel kpi-card">
+        <div className="glass-panel kpi-card reveal" style={{ '--delay': '60ms' }}>
           <div className="kpi-icon-box bg-purple">
             <Database size={22} />
           </div>
@@ -305,7 +307,7 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
           </div>
         </div>
 
-        <div className="glass-panel kpi-card">
+        <div className="glass-panel kpi-card reveal" style={{ '--delay': '120ms' }}>
           <div className="kpi-icon-box bg-amber">
             <BookOpen size={22} />
           </div>
@@ -315,7 +317,7 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
           </div>
         </div>
 
-        <div className="glass-panel kpi-card">
+        <div className="glass-panel kpi-card reveal" style={{ '--delay': '180ms' }}>
           <div className="kpi-icon-box bg-cyan">
             <ImageIcon size={22} />
           </div>
@@ -325,7 +327,7 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
           </div>
         </div>
 
-        <div className="glass-panel kpi-card">
+        <div className="glass-panel kpi-card reveal" style={{ '--delay': '240ms' }}>
           <div className="kpi-icon-box bg-green">
             <Sparkles size={22} />
           </div>
@@ -337,7 +339,7 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
       </div>
 
       {/* Universal Multi-Asset Archive Table */}
-      <div className="glass-panel table-card">
+      <div className="glass-panel table-card reveal">
         {/* Tab Filters for 6 Pillars */}
         <div className="archive-tab-bar">
           <button className={`archive-tab-btn ${activeTab === 'all' ? 'active' : ''}`} onClick={() => setActiveTab('all')}>

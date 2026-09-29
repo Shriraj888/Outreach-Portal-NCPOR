@@ -8,4 +8,16 @@
 
 .app-main-content {
   flex: 1;
+  transition: opacity 280ms var(--ease-out, cubic-bezier(0, 0, 0.2, 1)),
+              transform 280ms var(--ease-out, cubic-bezier(0, 0, 0.2, 1));
+}
+
+.app-main-content.page-exit {
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
+}
+
+.app-main-content.page-enter {
+  animation: fadeInUp 350ms var(--ease-out, cubic-bezier(0, 0, 0.2, 1)) forwards;
 }

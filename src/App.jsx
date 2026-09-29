@@ -23,6 +23,33 @@ function MainApp() {
   const [selectedExpeditionId, setSelectedExpeditionId] = useState(initial.params.expeditionId || null);
   const navCountRef = useRef(0);
 
+  // Page transition state
+  const [displayedRoute, setDisplayedRoute] = useState(initial.route);
+  const [pageTransition, setPageTransition] = useState(''); // '', 'page-exit', 'page-enter'
+  const transitionTimerRef = useRef(null);
+  const prevRouteRef = useRef(initial.route);
+
+  // Trigger page transition whenever currentRoute changes
+  useEffect(() => {
+    if (currentRoute === prevRouteRef.current) return;
+    prevRouteRef.current = currentRoute;
+
+    // Start exit animation
+    setPageTransition('page-exit');
+    if (transitionTimerRef.current) clearTimeout(transitionTimerRef.current);
+    transitionTimerRef.current = setTimeout(() => {
+      setDisplayedRoute(currentRoute);
+      setPageTransition('page-enter');
+      transitionTimerRef.current = setTimeout(() => {
+        setPageTransition('');
+      }, 350);
+    }, 250);
+
+    return () => {
+      if (transitionTimerRef.current) clearTimeout(transitionTimerRef.current);
+    };
+  }, [currentRoute]);
+
   // Synchronize hash changes from browser Back & Forward navigation or URL bar edits
   useEffect(() => {
     // If initially no hash, normalize to '#/' without creating extra history entry
@@ -79,10 +106,11 @@ function MainApp() {
   }, [navigateTo]);
 
   const renderContent = () => {
+    const route = displayedRoute;
     // Detail route
-    if (currentRoute === 'expedition-detail' || currentRoute.startsWith('expedition-')) {
-      const expId = currentRoute.startsWith('expedition-') && currentRoute !== 'expedition-detail'
-        ? currentRoute.replace('expedition-', '')
+    if (route === 'expedition-detail' || route.startsWith('expedition-')) {
+      const expId = route.startsWith('expedition-') && route !== 'expedition-detail'
+        ? route.replace('expedition-', '')
         : (selectedExpeditionId || 'isea-43');
       return (
         <ExpeditionDetail 
@@ -94,11 +122,11 @@ function MainApp() {
     }
 
     // Admin Routes
-    if (currentRoute === 'admin-login') {
+    if (route === 'admin-login') {
       return <AdminLogin navigateTo={navigateTo} />;
     }
 
-    if (currentRoute === 'admin-dashboard') {
+    if (route === 'admin-dashboard') {
       return (
         <AdminDashboard 
           navigateTo={navigateTo} 
@@ -107,9 +135,9 @@ function MainApp() {
       );
     }
 
-    if (currentRoute === 'admin-upload' || currentRoute.startsWith('admin-upload-')) {
-      const category = currentRoute.startsWith('admin-upload-') 
-        ? currentRoute.replace('admin-upload-', '') 
+    if (route === 'admin-upload' || route.startsWith('admin-upload-')) {
+      const category = route.startsWith('admin-upload-') 
+        ? route.replace('admin-upload-', '') 
         : 'reports';
       return (
         <UploadStudio 
@@ -120,7 +148,7 @@ function MainApp() {
       );
     }
 
-    if (currentRoute === 'admin-new-expedition') {
+    if (route === 'admin-new-expedition') {
       return (
         <UploadStudio 
           initialCategory="reports"
@@ -130,8 +158,8 @@ function MainApp() {
       );
     }
 
-    if (currentRoute.startsWith('admin-edit-')) {
-      const expId = currentRoute.replace('admin-edit-', '');
+    if (route.startsWith('admin-edit-')) {
+      const expId = route.replace('admin-edit-', '');
       return (
         <ExpeditionForm 
           expeditionId={expId}
@@ -141,8 +169,8 @@ function MainApp() {
       );
     }
 
-    if (currentRoute.startsWith('admin-generate-')) {
-      const expId = currentRoute.replace('admin-generate-', '');
+    if (route.startsWith('admin-generate-')) {
+      const expId = route.replace('admin-generate-', '');
       return (
         <AIGenerateStudio 
           expeditionId={expId}
@@ -153,9 +181,9 @@ function MainApp() {
       );
     }
 
-    if (currentRoute === 'admin-selective-ai' || currentRoute.startsWith('admin-selective-ai-')) {
-      const assetId = currentRoute.startsWith('admin-selective-ai-')
-        ? currentRoute.replace('admin-selective-ai-', '')
+    if (route === 'admin-selective-ai' || route.startsWith('admin-selective-ai-')) {
+      const assetId = route.startsWith('admin-selective-ai-')
+        ? route.replace('admin-selective-ai-', '')
         : null;
       return (
         <SelectiveAIStudio 
@@ -167,7 +195,7 @@ function MainApp() {
     }
 
     // Public Pages
-    switch (currentRoute) {
+    switch (route) {
       case 'expeditions':
         return (
           <Expeditions 
@@ -198,7 +226,7 @@ function MainApp() {
   return (
     <div className="app-shell">
       <Header currentRoute={currentRoute} navigateTo={navigateTo} />
-      <main className="app-main-content">
+      <main className={`app-main-content ${pageTransition}`}>
         {renderContent()}
       </main>
       <Footer navigateTo={navigateTo} />

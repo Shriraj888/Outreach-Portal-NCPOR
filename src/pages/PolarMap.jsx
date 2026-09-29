@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { usePortal } from '../context/PortalContext';
 import PolarGlobeMap from '../components/PolarGlobeMap';
+import useScrollRevealAll from '../hooks/useScrollRevealAll';
 import { 
   MapPin, 
   Compass, 
@@ -27,6 +28,7 @@ import { usePolarData } from '../hooks/usePolarData';
 
 export default function PolarMap({ onSelectExpedition, navigateTo }) {
   const { stations, expeditions, lang } = usePortal();
+  const containerRef = useScrollRevealAll();
   
   // Selected Station (starts as null to show full India/global overview)
   const [selectedStation, setSelectedStation] = useState(null);
@@ -100,9 +102,9 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
   );
 
   return (
-    <div className="container polar-map-page">
+    <div className="container polar-map-page" ref={containerRef}>
       {/* Top Header & Geospatial Network Bar */}
-      <div className="page-header-row">
+      <div className="page-header-row reveal">
         <div>
           <div className="section-eyebrow">
             <Radio size={14} className="eyebrow-icon pulse" />
@@ -148,7 +150,7 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
       </div>
 
       {/* Region Camera Presets Bar */}
-      <div className="map-view-pills-bar">
+      <div className="map-view-pills-bar reveal">
         <div className="pills-label">
           <Compass size={14} />
           <span>Camera Focus:</span>
@@ -201,7 +203,7 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
       </div>
 
       {/* Live Telemetry Realtime Status Banner */}
-      <div className="telemetry-statusbar">
+      <div className="telemetry-statusbar reveal">
         <div className="status-item">
           <span className={`dot ${dataLoading ? 'dot-orange' : dataError ? 'dot-red' : 'dot-green'}`} />
           <span className="status-label">SATCOM LINK:</span>
@@ -243,7 +245,7 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
       {/* Main Map Layout Grid */}
       <div className="map-layout-grid">
         {/* Left Column: Interactive 3D Globe / Polar Map Viewport Card */}
-        <div className="glass-panel map-viewport-card">
+        <div className="glass-panel map-viewport-card reveal">
           {/* Interactive Layer Switches HUD */}
           <div className="viewport-layers-toolbar">
             <div className="layers-title">
@@ -376,7 +378,7 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
         </div>
 
         {/* Right Column: Selected Station Telemetry & Mission Command Center */}
-        <div id="station-inspector-section" className="glass-panel station-inspect-card">
+        <div id="station-inspector-section" className="glass-panel station-inspect-card reveal">
           {selectedStation ? (
             <div className="station-card-inner">
               {/* Header Visual with Badges */}
@@ -783,7 +785,7 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
 
       {/* NCPOR Latest News Ticker (Modern Smooth Marquee) */}
       {ncporNews && ncporNews.length > 0 && (
-        <div className="ncpor-news-banner">
+        <div className="ncpor-news-banner reveal">
           <div className="news-banner-label">
             <span>NCPOR LATEST</span>
           </div>
@@ -821,7 +823,7 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
 
       {/* Permanent Polar Research Facilities Directory */}
       <div className="stations-directory-section">
-        <div className="section-header-flex">
+        <div className="section-header-flex reveal">
           <div>
             <div className="section-eyebrow">RESEARCH INFRASTRUCTURE</div>
             <h3 className="section-title">
@@ -832,7 +834,7 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
         </div>
 
         <div className="stations-grid">
-          {filteredStations.map((st) => {
+          {filteredStations.map((st, idx) => {
             const isSelected = selectedStation?.id === st.id;
             const regionClass = st.region.toLowerCase().replace(' ', '-');
             const weather = getStationWeather(st.id, st.temp, st.wind);
@@ -848,7 +850,8 @@ export default function PolarMap({ onSelectExpedition, navigateTo }) {
             return (
               <div 
                 key={st.id} 
-                className={`station-immersive-card ${regionClass} ${isSelected ? 'active-station' : ''}`}
+                className={`station-immersive-card ${regionClass} ${isSelected ? 'active-station' : ''} reveal`}
+                style={{ '--delay': `${idx * 80}ms` }}
                 onClick={() => handleStationClick(st)}
                 role="button"
                 tabIndex={0}

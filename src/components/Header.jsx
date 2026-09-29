@@ -623,7 +623,7 @@ export default function Header({ currentRoute, navigateTo }) {
           background: transparent;
           border: 1px solid transparent;
           cursor: pointer;
-          transition: all 0.18s ease;
+          transition: color 0.2s var(--ease, ease), background-color 0.2s var(--ease, ease), border-color 0.2s var(--ease, ease), transform 0.2s var(--ease-spring, cubic-bezier(0.34, 1.56, 0.64, 1)), box-shadow 0.2s var(--ease, ease);
           position: relative;
           white-space: nowrap;
         }
@@ -631,7 +631,7 @@ export default function Header({ currentRoute, navigateTo }) {
         .nav-link:hover {
           color: var(--navy);
           background: #f1f5f9;
-          transform: translateY(-1px);
+          transform: translateY(-2px);
         }
 
         .nav-link.active {
@@ -640,6 +640,27 @@ export default function Header({ currentRoute, navigateTo }) {
           border-color: #a7f3d0;
           font-weight: 700;
           box-shadow: 0 1px 3px rgba(4, 120, 87, 0.08);
+        }
+
+        .nav-link::after {
+          content: '';
+          position: absolute;
+          bottom: 2px;
+          left: 50%;
+          transform: translateX(-50%) scaleX(0);
+          width: 55%;
+          height: 2px;
+          background: #059669;
+          border-radius: 2px;
+          transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .nav-link:hover::after {
+          transform: translateX(-50%) scaleX(0.7);
+        }
+
+        .nav-link.active::after {
+          transform: translateX(-50%) scaleX(1);
         }
 
         .nav-actions {
@@ -782,6 +803,7 @@ export default function Header({ currentRoute, navigateTo }) {
           backdrop-filter: blur(5px);
           -webkit-backdrop-filter: blur(5px);
           z-index: 140;
+          animation: fadeIn 0.2s ease-out;
         }
 
         .mobile-drawer {

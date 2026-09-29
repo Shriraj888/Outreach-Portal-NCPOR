@@ -1,19 +1,21 @@
+import useScrollRevealAll from '../hooks/useScrollRevealAll';
 import { usePortal } from '../context/PortalContext';
 import { Compass, ExternalLink, Mail, Phone, MapPin, Award, ArrowUp } from 'lucide-react';
 
 export default function Footer({ navigateTo }) {
   const { lang } = usePortal();
+  const footerRef = useScrollRevealAll();
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
-    <footer className="site-footer" role="contentinfo">
+    <footer className="site-footer" role="contentinfo" ref={footerRef}>
       <div className="container footer-content">
         <div className="footer-grid">
           {/* Column 1: Institute Info */}
-          <div className="footer-col brand-col">
+          <div className="footer-col brand-col reveal" style={{ '--delay': '0ms' }}>
             <div className="footer-brand">
               <div className="footer-logo-badge">
                 <Compass size={23} className="footer-compass" />
@@ -34,7 +36,7 @@ export default function Footer({ navigateTo }) {
           </div>
 
           {/* Column 2: Polar Expeditions */}
-          <div className="footer-col">
+          <div className="footer-col reveal" style={{ '--delay': '80ms' }}>
             <h5 className="footer-heading">Polar Expeditions</h5>
             <ul className="footer-links">
               <li>
@@ -56,7 +58,7 @@ export default function Footer({ navigateTo }) {
           </div>
 
           {/* Column 3: Education & Outreach */}
-          <div className="footer-col">
+          <div className="footer-col reveal" style={{ '--delay': '160ms' }}>
             <h5 className="footer-heading">Education & Outreach</h5>
             <ul className="footer-links">
               <li>
@@ -78,7 +80,7 @@ export default function Footer({ navigateTo }) {
           </div>
 
           {/* Column 4: Headquarters & Hackathon Badge */}
-          <div className="footer-col hq-col">
+          <div className="footer-col hq-col reveal" style={{ '--delay': '240ms' }}>
             <h5 className="footer-heading">Headquarters</h5>
             <div className="footer-contact">
               <div className="contact-item">
