@@ -1,6 +1,7 @@
 import useScrollRevealAll from '../hooks/useScrollRevealAll';
 import { usePortal } from '../context/PortalContext';
-import { Compass, ExternalLink, Mail, Phone, MapPin, Award, ArrowUp } from 'lucide-react';
+import { ExternalLink, Mail, Phone, MapPin, Award, ArrowUp } from 'lucide-react';
+import logoImg from '../assets/logo.png';
 
 export default function Footer({ navigateTo }) {
   const { lang } = usePortal();
@@ -16,16 +17,14 @@ export default function Footer({ navigateTo }) {
         <div className="footer-grid">
           {/* Column 1: Institute Info */}
           <div className="footer-col brand-col reveal" style={{ '--delay': '0ms' }}>
-            <div className="footer-brand">
-              <div className="footer-logo-badge">
-                <Compass size={23} className="footer-compass" />
-              </div>
+            <div className="footer-brand" onClick={scrollToTop}>
+              <img src={logoImg} alt="PolarPedia Logo" className="footer-logo-img" />
               <div>
                 <h4 className="footer-brand-title">
-                  {lang === 'hi' ? 'राष्ट्रीय ध्रुवीय एवं महासागर अनुसंधान केंद्र' : 'NCPOR'}
+                  {lang === 'hi' ? 'पोलरपीडिया' : 'PolarPedia'}
                 </h4>
                 <p className="footer-brand-sub">
-                  Ministry of Earth Sciences, Govt. of India
+                  National Centre for Polar and Ocean Research
                 </p>
               </div>
             </div>
@@ -164,33 +163,20 @@ export default function Footer({ navigateTo }) {
           cursor: pointer;
         }
 
-        .footer-logo-badge {
-          width: 40px;
-          height: 40px;
+        .footer-logo-img {
+          width: 42px;
+          height: 42px;
+          object-fit: contain;
           border-radius: 8px;
-          background: #0f172a;
-          border: 1px solid rgba(59, 130, 246, 0.35);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: #fbbf24;
-          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
           flex-shrink: 0;
-          transition: transform 0.2s ease, box-shadow 0.2s ease;
+          transition: transform 0.2s ease;
         }
 
-        .footer-brand:hover .footer-logo-badge {
-          transform: translateY(-1px);
-          box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+        .footer-brand:hover .footer-logo-img {
+          transform: scale(1.05);
         }
 
-        .footer-compass {
-          transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        }
 
-        .footer-brand:hover .footer-compass {
-          transform: rotate(25deg);
-        }
 
         .footer-brand-title {
           font-size: 1.05rem;

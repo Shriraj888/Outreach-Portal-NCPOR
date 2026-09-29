@@ -1,23 +1,22 @@
 import { useState } from 'react';
 import { usePortal } from '../../context/PortalContext';
-import useScrollRevealAll from '../../hooks/useScrollRevealAll';
-import { 
-  Plus, 
-  Sparkles, 
-  FileText, 
+import {
+  Plus,
+  Sparkles,
+  FileText,
   Database,
-  BookOpen, 
-  Image as ImageIcon, 
+  BookOpen,
+  Image as ImageIcon,
   Video,
   Calendar,
-  CheckCircle2, 
-  Clock, 
-  Trash2, 
-  Edit, 
-  Eye, 
-  RotateCcw, 
-  Search, 
-  Compass, 
+  CheckCircle2,
+  Clock,
+  Trash2,
+  Edit,
+  Eye,
+  RotateCcw,
+  Search,
+  Compass,
   UploadCloud,
   AlertCircle,
   Layers,
@@ -26,15 +25,14 @@ import {
 } from 'lucide-react';
 
 export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
-  const containerRef = useScrollRevealAll();
-  const { 
-    expeditions, 
+  const {
+    expeditions,
     datasets,
-    publications, 
+    publications,
     mediaArchives,
     activities,
-    auth, 
-    deleteExpedition, 
+    auth,
+    deleteExpedition,
     updateExpedition,
     deleteDataset,
     updateDataset,
@@ -44,7 +42,7 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
     updateMediaArchive,
     deleteActivity,
     updateActivity,
-    resetToDefaultData 
+    resetToDefaultData
   } = usePortal();
 
   const [activeTab, setActiveTab] = useState('all'); // all, reports, datasets, publications, photos, videos, activities
@@ -195,9 +193,9 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
   };
 
   return (
-    <div className="container admin-dashboard-page" ref={containerRef}>
+    <div className="container admin-dashboard-page">
       {/* Top Banner */}
-      <div className="admin-header-row reveal">
+      <div className="admin-header-row">
         <div>
           <div className="section-eyebrow">NCPOR POLAR OUTREACH & CONTENT STUDIO</div>
           <h1 className="page-title">Science Archival & Verification Studio</h1>
@@ -208,7 +206,7 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
 
         <div className="admin-header-actions">
           <div className="admin-primary-actions-row">
-            <button 
+            <button
               className="btn-selective-ai-header"
               onClick={() => navigateTo('admin-selective-ai')}
               title="Synthesize targeted outreach releases from selected data chunks"
@@ -216,7 +214,7 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
               <Layers size={16} />
               <span>Selective AI Studio</span>
             </button>
-            <button 
+            <button
               className="btn-primary-upload"
               onClick={() => navigateTo('admin-upload')}
             >
@@ -224,7 +222,7 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
               <span>Upload New Polar Asset</span>
             </button>
           </div>
-          <button 
+          <button
             className="btn-secondary btn-reset-seed"
             onClick={() => {
               if (window.confirm("Reset all portal data back to original authentic polar datasets?")) {
@@ -240,7 +238,7 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
       </div>
 
       {/* Upload Focus Action Cards */}
-      <div className="upload-focus-banner glass-panel reveal">
+      <div className="upload-focus-banner glass-panel">
         <div className="upload-focus-header">
           <div className="upload-focus-title">
             <UploadCloud size={20} className="pulse-glow" />
@@ -250,7 +248,7 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
         </div>
 
         <div className="quick-upload-grid three-col">
-          <div className="quick-upload-card highlighted-card reveal" style={{ '--delay': '0ms' }} onClick={() => navigateTo('admin-upload-expedition')}>
+          <div className="quick-upload-card highlighted-card" onClick={() => navigateTo('admin-upload-expedition')}>
             <div className="quick-icon-box bg-blue">
               <Compass size={20} />
             </div>
@@ -261,7 +259,7 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
             <span className="btn-quick-plus"><Plus size={14} /></span>
           </div>
 
-          <div className="quick-upload-card reveal" style={{ '--delay': '80ms' }} onClick={() => navigateTo('admin-upload-publications')}>
+          <div className="quick-upload-card" onClick={() => navigateTo('admin-upload-publications')}>
             <div className="quick-icon-box bg-amber">
               <BookOpen size={20} />
             </div>
@@ -272,7 +270,7 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
             <span className="btn-quick-plus"><Plus size={14} /></span>
           </div>
 
-          <div className="quick-upload-card reveal" style={{ '--delay': '160ms' }} onClick={() => navigateTo('admin-upload-datasets')}>
+          <div className="quick-upload-card" onClick={() => navigateTo('admin-upload-datasets')}>
             <div className="quick-icon-box bg-purple">
               <Database size={20} />
             </div>
@@ -287,7 +285,7 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
 
       {/* KPI Cards Grid */}
       <div className="admin-kpi-grid">
-        <div className="glass-panel kpi-card reveal" style={{ '--delay': '0ms' }}>
+        <div className="glass-panel kpi-card">
           <div className="kpi-icon-box bg-blue">
             <Compass size={22} />
           </div>
@@ -297,7 +295,7 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
           </div>
         </div>
 
-        <div className="glass-panel kpi-card reveal" style={{ '--delay': '60ms' }}>
+        <div className="glass-panel kpi-card">
           <div className="kpi-icon-box bg-purple">
             <Database size={22} />
           </div>
@@ -307,7 +305,7 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
           </div>
         </div>
 
-        <div className="glass-panel kpi-card reveal" style={{ '--delay': '120ms' }}>
+        <div className="glass-panel kpi-card">
           <div className="kpi-icon-box bg-amber">
             <BookOpen size={22} />
           </div>
@@ -317,7 +315,7 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
           </div>
         </div>
 
-        <div className="glass-panel kpi-card reveal" style={{ '--delay': '180ms' }}>
+        <div className="glass-panel kpi-card">
           <div className="kpi-icon-box bg-cyan">
             <ImageIcon size={22} />
           </div>
@@ -327,7 +325,7 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
           </div>
         </div>
 
-        <div className="glass-panel kpi-card reveal" style={{ '--delay': '240ms' }}>
+        <div className="glass-panel kpi-card">
           <div className="kpi-icon-box bg-green">
             <Sparkles size={22} />
           </div>
@@ -339,7 +337,7 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
       </div>
 
       {/* Universal Multi-Asset Archive Table */}
-      <div className="glass-panel table-card reveal">
+      <div className="glass-panel table-card">
         {/* Tab Filters for 6 Pillars */}
         <div className="archive-tab-bar">
           <button className={`archive-tab-btn ${activeTab === 'all' ? 'active' : ''}`} onClick={() => setActiveTab('all')}>
@@ -388,8 +386,8 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
           <div className="table-filters">
             <div className="table-search-wrap">
               <Search size={15} className="table-search-icon" />
-              <input 
-                type="text" 
+              <input
+                type="text"
                 placeholder="Search archives by keyword, author, type..."
                 value={searchTable}
                 onChange={(e) => setSearchTable(e.target.value)}
@@ -403,8 +401,8 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
             </div>
 
             <div className="table-select-group">
-              <select 
-                value={filterRegion} 
+              <select
+                value={filterRegion}
                 onChange={(e) => setFilterRegion(e.target.value)}
                 className="table-select"
               >
@@ -415,8 +413,8 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
                 <option value="Southern Ocean">Southern Ocean</option>
               </select>
 
-              <select 
-                value={filterStatus} 
+              <select
+                value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
                 className="table-select"
               >
@@ -487,7 +485,7 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
                     </td>
 
                     <td>
-                      <button 
+                      <button
                         className={`status-toggle-btn ${item.status}`}
                         onClick={() => toggleStatus(item)}
                         title="Click to toggle status"
@@ -511,7 +509,7 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
                         <div className="actions-grid-wrap">
                           <div className="actions-row-studios">
                             {/* Verification Studio Button */}
-                            <button 
+                            <button
                               className="btn-action ai"
                               onClick={() => navigateTo(`admin-generate-${item.id}`)}
                               title="Open Outreach Review & Verification Studio"
@@ -521,7 +519,7 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
                             </button>
 
                             {/* Selective AI Studio Button */}
-                            <button 
+                            <button
                               className="btn-action selective-ai"
                               onClick={() => navigateTo(`admin-selective-ai-${item.id}`)}
                               title="Synthesize targeted output in Selective AI Studio"
@@ -534,7 +532,7 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
                           <div className="actions-row-management">
                             {/* Public View */}
                             {item.type === 'report' ? (
-                              <button 
+                              <button
                                 className="btn-manage view"
                                 onClick={() => onSelectExpedition(item.id)}
                                 title="View Public Expedition Page"
@@ -543,7 +541,7 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
                                 <span>View</span>
                               </button>
                             ) : (
-                              <button 
+                              <button
                                 className="btn-manage view"
                                 onClick={() => navigateTo(item.type === 'dataset' || item.type === 'publication' ? 'publications' : 'home')}
                                 title="View on Public Portal"
@@ -554,7 +552,7 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
                             )}
 
                             {/* Edit */}
-                            <button 
+                            <button
                               className="btn-manage edit"
                               onClick={() => navigateTo(`admin-edit-${item.id}`)}
                               title="Edit Asset"
@@ -564,7 +562,7 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
                             </button>
 
                             {/* Delete */}
-                            <button 
+                            <button
                               className="btn-manage delete"
                               onClick={() => handleDelete(item)}
                               title="Delete from Archive"
@@ -584,7 +582,7 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
                     <div className="empty-table-content">
                       <Search size={24} className="empty-table-icon" />
                       <p>No archived records match your filter criteria.</p>
-                      <button 
+                      <button
                         className="btn-table-reset"
                         onClick={() => {
                           setSearchTable('');
@@ -650,7 +648,7 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
                   </div>
 
                   <div className="mobile-status-item">
-                    <button 
+                    <button
                       className={`status-toggle-btn ${item.status}`}
                       onClick={() => toggleStatus(item)}
                       title="Click to toggle status"
@@ -673,7 +671,7 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
                 {/* Actions Row */}
                 <div className="mobile-card-actions">
                   <div className="mobile-actions-studios">
-                    <button 
+                    <button
                       className="btn-action ai"
                       onClick={() => navigateTo(`admin-generate-${item.id}`)}
                       title="Open Outreach Review & Verification Studio"
@@ -682,7 +680,7 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
                       <span>Verification Studio</span>
                     </button>
 
-                    <button 
+                    <button
                       className="btn-action selective-ai"
                       onClick={() => navigateTo(`admin-selective-ai-${item.id}`)}
                       title="Open Selective AI Studio"
@@ -694,7 +692,7 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
 
                   <div className="mobile-actions-management">
                     {item.type === 'report' ? (
-                      <button 
+                      <button
                         className="btn-manage view"
                         onClick={() => onSelectExpedition(item.id)}
                         title="View Public Expedition"
@@ -703,7 +701,7 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
                         <span>View</span>
                       </button>
                     ) : (
-                      <button 
+                      <button
                         className="btn-manage view"
                         onClick={() => navigateTo(item.type === 'dataset' || item.type === 'publication' ? 'publications' : 'home')}
                         title="View on Portal"
@@ -713,7 +711,7 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
                       </button>
                     )}
 
-                    <button 
+                    <button
                       className="btn-manage edit"
                       onClick={() => navigateTo(`admin-edit-${item.id}`)}
                       title="Edit Asset"
@@ -722,7 +720,7 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
                       <span>Edit</span>
                     </button>
 
-                    <button 
+                    <button
                       className="btn-manage delete"
                       onClick={() => handleDelete(item)}
                       title="Delete Asset"
@@ -738,7 +736,7 @@ export default function AdminDashboard({ navigateTo, onSelectExpedition }) {
             <div className="empty-table-content" style={{ padding: '2rem 1rem' }}>
               <Search size={24} className="empty-table-icon" />
               <p>No archived records match your filter criteria.</p>
-              <button 
+              <button
                 className="btn-table-reset"
                 onClick={() => {
                   setSearchTable('');

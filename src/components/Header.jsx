@@ -1,34 +1,35 @@
 import { useState, useEffect, useRef } from 'react';
 import { usePortal } from '../context/PortalContext';
-import { 
-  Compass, 
-  Search, 
-  Globe2, 
-  Layers, 
-  MapPin, 
-  FileText, 
-  Lock, 
-  Sun, 
-  Menu, 
+import {
+  Compass,
+  Search,
+  Globe2,
+  Layers,
+  MapPin,
+  FileText,
+  Lock,
+  Sun,
+  Menu,
   X,
   Sparkles,
   ChevronRight
 } from 'lucide-react';
 
 import IndiaFlag from './IndiaFlag';
+import logoImg from '../assets/logo.png';
 
 export default function Header({ currentRoute, navigateTo }) {
-  const { 
-    lang, 
-    toggleLang, 
-    t, 
-    a11y, 
-    toggleHighContrast, 
-    setFontSize, 
-    auth, 
+  const {
+    lang,
+    toggleLang,
+    t,
+    a11y,
+    toggleHighContrast,
+    setFontSize,
+    auth,
     logout,
-    searchQuery, 
-    setSearchQuery 
+    searchQuery,
+    setSearchQuery
   } = usePortal();
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -37,9 +38,9 @@ export default function Header({ currentRoute, navigateTo }) {
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (
-        e.key === '/' && 
-        document.activeElement !== searchInputRef.current && 
-        document.activeElement?.tagName !== 'INPUT' && 
+        e.key === '/' &&
+        document.activeElement !== searchInputRef.current &&
+        document.activeElement?.tagName !== 'INPUT' &&
         document.activeElement?.tagName !== 'TEXTAREA'
       ) {
         e.preventDefault();
@@ -95,19 +96,19 @@ export default function Header({ currentRoute, navigateTo }) {
             {/* Font Scaler */}
             <div className="a11y-group" title="Adjust Text Size">
               <span className="a11y-label">Text:</span>
-              <button 
+              <button
                 className={`a11y-btn ${a11y.fontSize === 'normal' ? 'active' : ''}`}
                 onClick={() => setFontSize('normal')}
               >
                 A
               </button>
-              <button 
+              <button
                 className={`a11y-btn ${a11y.fontSize === 'large' ? 'active' : ''}`}
                 onClick={() => setFontSize('large')}
               >
                 A+
               </button>
-              <button 
+              <button
                 className={`a11y-btn ${a11y.fontSize === 'larger' ? 'active' : ''}`}
                 onClick={() => setFontSize('larger')}
               >
@@ -116,7 +117,7 @@ export default function Header({ currentRoute, navigateTo }) {
             </div>
 
             {/* High Contrast Toggle */}
-            <button 
+            <button
               className={`a11y-toggle ${a11y.highContrast ? 'active' : ''}`}
               onClick={toggleHighContrast}
               title="Toggle High Contrast (WCAG-AA)"
@@ -141,13 +142,11 @@ export default function Header({ currentRoute, navigateTo }) {
           {/* Logo & Institute Identity */}
           <div className="brand-lockup" onClick={() => handleNav('home')} role="button" tabIndex={0}>
             <div className="brand-logo-container">
-              <div className="brand-emblem-badge">
-                <Compass className="brand-icon" size={23} />
-              </div>
+              <img src={logoImg} alt="PolarPedia Logo" className="brand-logo-img" />
             </div>
             <div className="brand-text">
               <div className="brand-primary">
-                {lang === 'hi' ? 'राष्ट्रीय ध्रुवीय एवं महासागर अनुसंधान केंद्र' : 'NCPOR'}
+                {lang === 'hi' ? 'पोलरपीडिया' : 'PolarPedia'}
               </div>
               <div className="brand-secondary">
                 {lang === 'hi' ? 'राष्ट्रीय ध्रुवीय एवं महासागर अनुसंधान केंद्र' : 'National Centre for Polar and Ocean Research'}
@@ -195,7 +194,7 @@ export default function Header({ currentRoute, navigateTo }) {
                 className="header-search-input"
               />
               {searchQuery ? (
-                <button 
+                <button
                   className="clear-search-btn"
                   onClick={() => setSearchQuery('')}
                   title="Clear search"
@@ -211,14 +210,14 @@ export default function Header({ currentRoute, navigateTo }) {
             {/* Admin Portal Button */}
             {auth.isAuthenticated ? (
               <div className="admin-logged-group">
-                <button 
+                <button
                   className="btn-admin active"
                   onClick={() => handleNav('admin-dashboard')}
                 >
                   <Sparkles size={14} />
                   <span>Admin Studio</span>
                 </button>
-                <button 
+                <button
                   className="btn-logout"
                   onClick={logout}
                   title="Sign out of NCPOR Admin"
@@ -227,7 +226,7 @@ export default function Header({ currentRoute, navigateTo }) {
                 </button>
               </div>
             ) : (
-              <button 
+              <button
                 className="btn-admin"
                 onClick={() => handleNav('admin-login')}
               >
@@ -237,7 +236,7 @@ export default function Header({ currentRoute, navigateTo }) {
             )}
 
             {/* Mobile Hamburger Toggle */}
-            <button 
+            <button
               className="mobile-menu-toggle"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-label="Toggle navigation menu"
@@ -251,9 +250,9 @@ export default function Header({ currentRoute, navigateTo }) {
       {/* Mobile Drawer Menu & Overlay */}
       {mobileMenuOpen && (
         <>
-          <div 
-            className="mobile-drawer-backdrop" 
-            onClick={() => setMobileMenuOpen(false)} 
+          <div
+            className="mobile-drawer-backdrop"
+            onClick={() => setMobileMenuOpen(false)}
             aria-hidden="true"
           />
           <div className="mobile-drawer" role="dialog" aria-modal="true" aria-label="Mobile Navigation">
@@ -274,8 +273,8 @@ export default function Header({ currentRoute, navigateTo }) {
                   className="mobile-search-input"
                 />
                 {searchQuery && (
-                  <button 
-                    className="mobile-clear-btn" 
+                  <button
+                    className="mobile-clear-btn"
                     onClick={() => setSearchQuery('')}
                     aria-label="Clear search"
                   >
@@ -355,21 +354,21 @@ export default function Header({ currentRoute, navigateTo }) {
                 <div className="mobile-controls-row">
                   {/* Font Size Selector */}
                   <div className="mobile-control-chip-group">
-                    <button 
+                    <button
                       className={`mobile-a11y-pill ${a11y.fontSize === 'normal' ? 'active' : ''}`}
                       onClick={() => setFontSize('normal')}
                       title="Normal font size"
                     >
                       A
                     </button>
-                    <button 
+                    <button
                       className={`mobile-a11y-pill ${a11y.fontSize === 'large' ? 'active' : ''}`}
                       onClick={() => setFontSize('large')}
                       title="Large font size"
                     >
                       A+
                     </button>
-                    <button 
+                    <button
                       className={`mobile-a11y-pill ${a11y.fontSize === 'larger' ? 'active' : ''}`}
                       onClick={() => setFontSize('larger')}
                       title="Larger font size"
@@ -379,7 +378,7 @@ export default function Header({ currentRoute, navigateTo }) {
                   </div>
 
                   {/* Contrast Toggle */}
-                  <button 
+                  <button
                     className={`mobile-contrast-btn ${a11y.highContrast ? 'active' : ''}`}
                     onClick={toggleHighContrast}
                     title="Toggle High Contrast"
@@ -549,32 +548,26 @@ export default function Header({ currentRoute, navigateTo }) {
           flex-shrink: 0;
         }
 
-        .brand-icon {
-          transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .brand-lockup:hover .brand-icon {
-          transform: rotate(25deg);
-        }
-
-        .brand-emblem-badge {
-          width: 40px;
-          height: 40px;
-          border-radius: 8px;
-          background: var(--navy);
-          border: 1px solid #0f2b5c;
+        .brand-logo-container {
           display: flex;
           align-items: center;
           justify-content: center;
-          color: #fbbf24;
-          box-shadow: 0 2px 5px rgba(10, 37, 64, 0.15);
           flex-shrink: 0;
-          transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
 
-        .brand-lockup:hover .brand-emblem-badge {
-          transform: translateY(-1px);
-          box-shadow: 0 4px 10px rgba(10, 37, 64, 0.22);
+        .brand-logo-img {
+          width: 44px;
+          height: 44px;
+          object-fit: contain;
+          border-radius: 8px;
+          flex-shrink: 0;
+          transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.25s ease;
+          filter: drop-shadow(0 2px 5px rgba(15, 23, 42, 0.15));
+        }
+
+        .brand-lockup:hover .brand-logo-img {
+          transform: scale(1.06);
+          filter: drop-shadow(0 4px 10px rgba(15, 23, 42, 0.22));
         }
 
         .brand-text {
@@ -623,7 +616,7 @@ export default function Header({ currentRoute, navigateTo }) {
           background: transparent;
           border: 1px solid transparent;
           cursor: pointer;
-          transition: color 0.2s var(--ease, ease), background-color 0.2s var(--ease, ease), border-color 0.2s var(--ease, ease), transform 0.2s var(--ease-spring, cubic-bezier(0.34, 1.56, 0.64, 1)), box-shadow 0.2s var(--ease, ease);
+          transition: all 0.18s ease;
           position: relative;
           white-space: nowrap;
         }
@@ -631,7 +624,7 @@ export default function Header({ currentRoute, navigateTo }) {
         .nav-link:hover {
           color: var(--navy);
           background: #f1f5f9;
-          transform: translateY(-2px);
+          transform: translateY(-1px);
         }
 
         .nav-link.active {
@@ -640,27 +633,6 @@ export default function Header({ currentRoute, navigateTo }) {
           border-color: #a7f3d0;
           font-weight: 700;
           box-shadow: 0 1px 3px rgba(4, 120, 87, 0.08);
-        }
-
-        .nav-link::after {
-          content: '';
-          position: absolute;
-          bottom: 2px;
-          left: 50%;
-          transform: translateX(-50%) scaleX(0);
-          width: 55%;
-          height: 2px;
-          background: #059669;
-          border-radius: 2px;
-          transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        .nav-link:hover::after {
-          transform: translateX(-50%) scaleX(0.7);
-        }
-
-        .nav-link.active::after {
-          transform: translateX(-50%) scaleX(1);
         }
 
         .nav-actions {
@@ -803,7 +775,6 @@ export default function Header({ currentRoute, navigateTo }) {
           backdrop-filter: blur(5px);
           -webkit-backdrop-filter: blur(5px);
           z-index: 140;
-          animation: fadeIn 0.2s ease-out;
         }
 
         .mobile-drawer {
