@@ -138,9 +138,9 @@ export default function Footer({ navigateTo }) {
 
       <style>{`
         .site-footer {
-          background: #0f172a;
+          background: #020617;
           color: #94a3b8;
-          border-top: 1px solid #1e293b;
+          border-top: 1px solid rgba(255, 255, 255, 0.08);
           position: relative;
           margin-top: 3.5rem;
         }
@@ -314,7 +314,7 @@ export default function Footer({ navigateTo }) {
 
         .footer-divider {
           height: 1px;
-          background: #1e293b;
+          background: rgba(255, 255, 255, 0.08);
           margin: 2rem 0 1.25rem 0;
         }
 
@@ -350,8 +350,8 @@ export default function Footer({ navigateTo }) {
           display: inline-flex;
           align-items: center;
           gap: 0.35rem;
-          background: #1e293b;
-          border: 1px solid #334155;
+          background: #0f172a;
+          border: 1px solid #1e293b;
           color: #cbd5e1;
           font-size: 0.72rem;
           font-weight: 600;
@@ -362,9 +362,9 @@ export default function Footer({ navigateTo }) {
         }
 
         .footer-back-to-top:hover {
-          background: #334155;
+          background: #1e293b;
           color: #ffffff;
-          border-color: #64748b;
+          border-color: #334155;
           transform: translateY(-2px);
         }
 
