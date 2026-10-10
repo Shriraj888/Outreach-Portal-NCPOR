@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { usePortal } from '../../context/PortalContext';
-import { Shield, ArrowRight, Compass, Sparkles, KeyRound, Mail } from 'lucide-react';
+import { Shield, ArrowRight, Sparkles, KeyRound, Mail } from 'lucide-react';
 
 export default function AdminLogin({ navigateTo }) {
   const { login } = usePortal();
@@ -28,7 +28,7 @@ export default function AdminLogin({ navigateTo }) {
       <div className="login-card">
         <div className="login-header">
           <div className="login-logo-wrap">
-            <Compass size={28} className="login-compass" />
+            <img src="/logo.png" alt="NCPOR PolarPedia Logo" className="login-logo-img" />
           </div>
           <span className="login-gov-tag">MINISTRY OF EARTH SCIENCES • GOVT. OF INDIA</span>
           <h2>NCPOR Outreach & Science Comms Admin Studio</h2>
@@ -119,16 +119,24 @@ export default function AdminLogin({ navigateTo }) {
         }
 
         .login-logo-wrap {
-          width: 54px;
-          height: 54px;
-          border-radius: 14px;
-          background: #0a2540;
+          width: 68px;
+          height: 68px;
           display: flex;
           align-items: center;
           justify-content: center;
-          margin: 0 auto 1rem;
-          color: #d97706;
-          box-shadow: var(--shadow-sm);
+          margin: 0 auto 1.25rem;
+        }
+
+        .login-logo-img {
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+          filter: drop-shadow(0 4px 12px rgba(10, 37, 64, 0.14));
+          transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .login-logo-wrap:hover .login-logo-img {
+          transform: scale(1.06);
         }
 
         .login-gov-tag {
